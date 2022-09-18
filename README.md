@@ -3,7 +3,7 @@ alt="App icon">
 
 # Mauth
 
-[![CI](https://img.shields.io/github/workflow/status/X1nto/Mauth/build/master)](https://github.com/X1nto/Mauth/actions/workflows/build.yaml?query=branch%3Amaster)
+[![CI](https://img.shields.io/github/workflow/status/X1nto/Mauth/Build%20APK?color=blue&style=for-the-badge)](https://github.com/X1nto/Mauth/actions?query=branch%3Amaster)
 
 Mauth (pronounced Moth) is a Two-Factor Authentication app with support for TOTP and HOTP (coming soon) and compatibility with Google Authenticator (coming soon).
 
