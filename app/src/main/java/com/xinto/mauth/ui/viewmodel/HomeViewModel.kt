@@ -1,0 +1,95 @@
+package com.xinto.mauth.ui.viewmodel
+
+import android.app.Application
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.widget.Toast
+import androidx.compose.runtime.*
+import androidx.core.content.getSystemService
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.xinto.mauth.Mauth
+import com.xinto.mauth.domain.model.DomainAccount
+import com.xinto.mauth.domain.repository.HomeRepository
+import com.xinto.mauth.otp.generator.TotpGenerator
+import com.xinto.mauth.otp.transformer.KeyTransformer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import kotlin.concurrent.fixedRateTimer
+
+class HomeViewModel(
+    application: Application,
+    private val totpService: TotpGenerator,
+    private val keyTransformer: KeyTransformer,
+    private val homeRepository: HomeRepository,
+) : AndroidViewModel(application) {
+
+    private val keyBytes = mutableMapOf<String, ByteArray>()
+
+    sealed interface State {
+        object Loading : State
+        object Loaded : State
+        object Failed: State
+    }
+
+    var state by mutableStateOf<State>(State.Loading)
+        private set
+    var timerProgress by mutableStateOf(0f)
+        private set
+    val codes = mutableStateMapOf<String, String>()
+    val accounts = mutableStateListOf<DomainAccount>()
+
+    private val timerTask = fixedRateTimer(name = null, daemon = false, period = 1000L) {
+        val seconds = System.currentTimeMillis() / 1000
+        viewModelScope.launch(Dispatchers.Main) {
+            accounts.forEach {
+                val keyByte = keyBytes[it.secret]
+                if (keyByte != null) {
+                    codes[it.secret] = totpService.generate(keyByte, interval = 30, seconds = seconds)
+                }
+            }
+            timerProgress = 1f - ((seconds % 30) / 30f)
+        }
+    }
+
+    fun copyCodeToClipboard(label: String, code: String?) {
+        val application = getApplication<Mauth>()
+        if (code != null) {
+            val clipboardService = application.getSystemService<ClipboardManager>()
+            clipboardService?.setPrimaryClip(ClipData.newPlainText(label, code))
+            Toast.makeText(application, "Successfully copied the code to clipboard", Toast.LENGTH_LONG).show()
+        } else {
+            Toast.makeText(application, "Failed to copy: the code is null", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    override fun onCleared() {
+        timerTask.cancel()
+    }
+
+    init {
+        viewModelScope.launch {
+            homeRepository.observeAccounts()
+                .onEach { domainAccounts ->
+                    state = State.Loading
+
+                    accounts.clear()
+                    accounts.addAll(domainAccounts)
+
+                    keyBytes.clear()
+                    domainAccounts.forEach {
+                        keyBytes[it.secret] = keyTransformer.transformToBytes(it.secret)
+                    }
+
+                    state = State.Loaded
+                }
+                .catch {
+                    state = State.Failed
+                }
+                .launchIn(this)
+        }
+    }
+}
