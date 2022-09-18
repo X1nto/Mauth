@@ -54,7 +54,8 @@ Note: features marked with `^` are incomplete, while those marked as `!` are cur
         - Microsoft Authenticator!
 
 # Screenshots
-![Screenshot 1](github/screenshot_1.png)
+<img width=200 alt="Screenshot 1"
+src="github/screenshot_1.png?raw=true">
 
 # License
 ```
