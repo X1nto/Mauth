@@ -35,5 +35,5 @@ jobs:
       - name: Upload the APK
         uses: actions/upload-artifact@v2
         with:
-          name: discord
+          name: mauth
           path: app/build/outputs/apk/debug/app-debug.apk

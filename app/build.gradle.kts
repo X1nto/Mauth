@@ -66,6 +66,7 @@ android {
 }
 
 dependencies {
+    implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
     implementation("androidx.activity:activity-compose:1.5.1")
 
