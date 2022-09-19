@@ -1,0 +1,9 @@
+Mauth (pronounced Moth) is a Two-Factor Authentication app with support for TOTP and HOTP (coming soon) and compatibility with Google Authenticator (coming soon). It comes with a rich UI while also providing many necessary features.
+
+Features:
+- Compatible with Google Authenticator (so far, only partially)
+- Secure
+- Many ways to add your accounts
+- Algorithms (Currently only TOTP is supported with SHA1)
+- Organization (coming soon)
+- Export/Import (coming soon)
