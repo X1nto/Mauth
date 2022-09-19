@@ -8,13 +8,6 @@ interface TotpGenerator {
     fun generate(
         secret: ByteArray,
         interval: Long,
-        digits: Int = 6,
-        digest: OtpDigest = OtpDigest.Sha1
-    ): String
-
-    fun generate(
-        secret: ByteArray,
-        interval: Long,
         seconds: Long,
         digits: Int = 6,
         digest: OtpDigest = OtpDigest.Sha1
@@ -23,15 +16,6 @@ interface TotpGenerator {
 }
 
 class TotpGeneratorImpl(private val hotpGenerator: HotpGenerator): TotpGenerator {
-
-    override fun generate(
-        secret: ByteArray,
-        interval: Long,
-        digits: Int,
-        digest: OtpDigest
-    ): String {
-        return generate(secret, interval, seconds = System.currentTimeMillis() / 1000, digits, digest)
-    }
 
     override fun generate(
         secret: ByteArray,
