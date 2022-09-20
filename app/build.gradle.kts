@@ -39,7 +39,8 @@ android {
         freeCompilerArgs = freeCompilerArgs +
             "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi" +
             "-opt-in=androidx.compose.animation.ExperimentalAnimationApi" +
-            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api" +
+            "-opt-in=com.google.accompanist.permissions.ExperimentalPermissionsApi"
     }
 
     buildFeatures {
@@ -78,9 +79,11 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling:$composeVersion")
     debugImplementation("androidx.compose.ui:ui-test-manifest:$composeVersion")
 
-//    val cameraxVersion = "1.2.0-beta01"
-//    implementation("androidx.camera:camera-core:$cameraxVersion")
-//    implementation("androidx.camera:camera-mlkit-vision:$cameraxVersion")
+    val cameraxVersion = "1.2.0-beta01"
+    implementation("androidx.camera:camera-core:$cameraxVersion")
+    implementation("androidx.camera:camera-camera2:$cameraxVersion")
+    implementation("androidx.camera:camera-view:$cameraxVersion")
+    implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
 
     val roomVersion = "2.4.3"
     implementation("androidx.room:room-common:$roomVersion")
@@ -93,12 +96,15 @@ dependencies {
 
     implementation("commons-codec:commons-codec:1.15")
 
+    implementation("com.google.zxing:core:3.5.0")
+
     val koinVersion = "3.2.1"
     implementation("io.insert-koin:koin-core:$koinVersion")
     implementation("io.insert-koin:koin-android:$koinVersion")
     implementation("io.insert-koin:koin-androidx-compose:3.2.0")
 
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.26.3-beta")
+    implementation("com.google.accompanist:accompanist-permissions:0.26.3-beta")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.3")

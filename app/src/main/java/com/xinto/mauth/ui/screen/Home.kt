@@ -154,7 +154,9 @@ fun HomeScreen(
             ) {
                 AddAccountType(
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        navigator.push(Mauth.ScanQr)
+                    },
                     icon = {
                         Icon(
                             imageVector = Icons.Rounded.QrCodeScanner,
@@ -165,7 +167,6 @@ fun HomeScreen(
                         Text("Scan a QR code")
                     },
                     color = MaterialTheme.colorScheme.primaryContainer,
-                    enabled = false,
                 )
                 AddAccountType(
                     modifier = Modifier.fillMaxWidth(),

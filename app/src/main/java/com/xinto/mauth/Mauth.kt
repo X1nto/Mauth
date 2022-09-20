@@ -7,7 +7,6 @@ import com.xinto.mauth.di.homeModule
 import com.xinto.mauth.di.otpModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
-import org.koin.dsl.koinApplication
 
 class Mauth : Application() {
 
@@ -20,5 +19,4 @@ class Mauth : Application() {
             modules(homeModule, dbModule, otpModule, addAccountModel)
         }
     }
-
 }
