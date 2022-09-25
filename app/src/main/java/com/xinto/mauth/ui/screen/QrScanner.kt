@@ -87,7 +87,7 @@ fun QrScannerScreen(
                                     .padding(12.dp)
                                     .clip(MaterialTheme.shapes.large),
                                 onQrResult = {
-                                    val params = viewModel.parseUri(it.text)
+                                    val params = viewModel.parseOtpUri(it.text)
                                     if (params != null) {
                                         navigator.push(Mauth.AddAccount(params))
                                     }

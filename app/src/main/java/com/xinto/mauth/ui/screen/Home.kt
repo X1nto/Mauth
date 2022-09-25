@@ -142,7 +142,7 @@ fun HomeScreen(
     if (showAddAccount) {
         val photoPickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
-                val qrCode = viewModel.decodeQrCodeFromImage(uri)
+                val qrCode = viewModel.decodeQrCodeFromImageUri(uri)
                 if (qrCode != null) {
                     val params = viewModel.parseOtpUri(qrCode)
                     if (params != null) {

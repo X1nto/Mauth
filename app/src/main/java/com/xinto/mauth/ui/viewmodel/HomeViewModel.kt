@@ -75,13 +75,13 @@ class HomeViewModel(
         }
     }
 
-    fun decodeQrCodeFromImage(imageUri: Uri): String? {
+    fun decodeQrCodeFromImageUri(uri: Uri): String? {
         val application = getApplication<Mauth>()
         val contentResolver = application.contentResolver
         val bitmap = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
-            MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
+            MediaStore.Images.Media.getBitmap(contentResolver, uri)
         } else {
-            val source = ImageDecoder.createSource(contentResolver, imageUri)
+            val source = ImageDecoder.createSource(contentResolver, uri)
             ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.ARGB_8888, false)
         }
         val pixels = IntArray(bitmap.width * bitmap.height)
@@ -103,7 +103,7 @@ class HomeViewModel(
 
     fun parseOtpUri(uri: String): AddAccountParams? {
         val application = getApplication<Mauth>()
-        return when (val result = otpUriParser.parseUriKey(uri)) {
+        return when (val result = otpUriParser.parseOtpUri(uri)) {
             is OtpUriParserResult.Success -> {
                 AddAccountParams(
                     label = result.data.label,

@@ -8,8 +8,8 @@ class QrScannerViewModel(
     private val otpUriParser: OtpUriParser
 ) : ViewModel() {
 
-    fun parseUri(uri: String): AddAccountParams? {
-        return when (val result = otpUriParser.parseUriKey(uri)) {
+    fun parseOtpUri(uri: String): AddAccountParams? {
+        return when (val result = otpUriParser.parseOtpUri(uri)) {
             is OtpUriParserResult.Success -> {
                 AddAccountParams(
                     label = result.data.label,

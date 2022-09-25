@@ -1,7 +1,6 @@
 package com.xinto.mauth.otp.parser
 
 import android.net.Uri
-import android.util.Log
 import com.xinto.mauth.otp.OtpData
 import com.xinto.mauth.otp.OtpDigest
 import com.xinto.mauth.otp.OtpType
@@ -26,7 +25,7 @@ enum class OtpUriParserError {
 
 interface OtpUriParser {
 
-    fun parseUriKey(keyUri: String): OtpUriParserResult
+    fun parseOtpUri(keyUri: String): OtpUriParserResult
 
 }
 
@@ -34,7 +33,7 @@ class OtpUriParserImpl : OtpUriParser {
 
 //    private val uriValidationFormat = """otpauth://(totp|hotp)/[a-zA-Z0-9%:]+\?.+""".toRegex()
 
-    override fun parseUriKey(keyUri: String): OtpUriParserResult {
+    override fun parseOtpUri(keyUri: String): OtpUriParserResult {
         val uri = Uri.parse(keyUri)
 
 //        if (!uriValidationFormat.matches(keyUri)) {
