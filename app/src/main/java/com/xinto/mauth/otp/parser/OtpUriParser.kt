@@ -13,7 +13,6 @@ sealed interface OtpUriParserResult {
 enum class OtpUriParserError {
     ERROR_INVALID_PROTOCOL,
     ERROR_INVALID_TYPE,
-    ERROR_INVALID_URI,
     ERROR_INVALID_ALGORITHM,
     ERROR_INVALID_DIGITS,
     ERROR_INVALID_PERIOD,
@@ -31,14 +30,8 @@ interface OtpUriParser {
 
 class OtpUriParserImpl : OtpUriParser {
 
-//    private val uriValidationFormat = """otpauth://(totp|hotp)/[a-zA-Z0-9%:]+\?.+""".toRegex()
-
     override fun parseOtpUri(keyUri: String): OtpUriParserResult {
         val uri = Uri.parse(keyUri)
-
-//        if (!uriValidationFormat.matches(keyUri)) {
-//            return OtpUriParserResult.Failure(OtpUriParserError.ERROR_INVALID_URI)
-//        }
 
         val protocol = uri.scheme
         if (protocol != "otpauth") {
