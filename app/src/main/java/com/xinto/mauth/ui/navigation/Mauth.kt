@@ -1,6 +1,5 @@
 package com.xinto.mauth.ui.navigation
 
-import com.xinto.mauth.ui.viewmodel.AddAccountParams
 import com.xinto.taxi.BackstackNavigator
 import com.xinto.taxi.Destination
 import kotlinx.parcelize.Parcelize
@@ -12,7 +11,10 @@ sealed interface Mauth : Destination {
     object Home : Mauth
 
     @Parcelize
-    object CaptureQr : Mauth
+    object QrScanner : Mauth
+
+    @Parcelize
+    object QrSelector: Mauth
 
     @Parcelize
     class AddAccount(

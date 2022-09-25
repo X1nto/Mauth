@@ -1,5 +1,8 @@
 package com.xinto.mauth.ui.screen
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -17,9 +20,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.xinto.mauth.ui.component.MaterialBottomSheetDialog
+import com.xinto.mauth.ui.navigation.AddAccountParams
 import com.xinto.mauth.ui.navigation.Mauth
 import com.xinto.mauth.ui.navigation.MauthNavigator
-import com.xinto.mauth.ui.viewmodel.AddAccountParams
 import com.xinto.mauth.ui.viewmodel.HomeViewModel
 import org.koin.androidx.compose.getViewModel
 
@@ -137,6 +140,17 @@ fun HomeScreen(
     }
 
     if (showAddAccount) {
+        val photoPickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+                val qrCode = viewModel.decodeQrCodeFromImageUri(uri)
+                if (qrCode != null) {
+                    val params = viewModel.parseOtpUri(qrCode)
+                    if (params != null) {
+                        navigator.push(Mauth.AddAccount(params))
+                    }
+                }
+            }
+        }
         MaterialBottomSheetDialog(
             onDismissRequest = {
                 showAddAccount = false
@@ -154,7 +168,9 @@ fun HomeScreen(
             ) {
                 AddAccountType(
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        navigator.push(Mauth.QrScanner)
+                    },
                     icon = {
                         Icon(
                             imageVector = Icons.Rounded.QrCodeScanner,
@@ -165,11 +181,12 @@ fun HomeScreen(
                         Text("Scan a QR code")
                     },
                     color = MaterialTheme.colorScheme.primaryContainer,
-                    enabled = false,
                 )
                 AddAccountType(
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        photoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                    },
                     icon = {
                         Icon(
                             imageVector = Icons.Rounded.Image,
@@ -180,7 +197,6 @@ fun HomeScreen(
                         Text("Scan an image")
                     },
                     color = MaterialTheme.colorScheme.tertiaryContainer,
-                    enabled = false
                 )
                 AddAccountType(
                     modifier = Modifier.fillMaxWidth(),
@@ -273,7 +289,6 @@ private fun Account(
 fun AddAccountType(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
     color: Color = MaterialTheme.colorScheme.surface,
     icon: @Composable () -> Unit,
     text: @Composable () -> Unit,
@@ -281,9 +296,8 @@ fun AddAccountType(
     Surface(
         modifier = modifier,
         onClick = onClick,
-        color = color.copy(if (enabled) 1f else 0.5f),
+        color = color,
         shape = MaterialTheme.shapes.extraSmall,
-        enabled = enabled
     ) {
         Row(
             modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),

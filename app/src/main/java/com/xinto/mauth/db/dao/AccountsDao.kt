@@ -1,14 +1,9 @@
 package com.xinto.mauth.db.dao
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 import com.xinto.mauth.db.entity.EntityAccount
 import kotlinx.coroutines.flow.Flow
-import java.util.UUID
+import java.util.*
 
 @Dao
 interface AccountsDao {

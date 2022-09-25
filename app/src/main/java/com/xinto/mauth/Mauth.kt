@@ -1,13 +1,9 @@
 package com.xinto.mauth
 
 import android.app.Application
-import com.xinto.mauth.di.addAccountModel
-import com.xinto.mauth.di.dbModule
-import com.xinto.mauth.di.homeModule
-import com.xinto.mauth.di.otpModule
+import com.xinto.mauth.di.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
-import org.koin.dsl.koinApplication
 
 class Mauth : Application() {
 
@@ -17,8 +13,7 @@ class Mauth : Application() {
         startKoin {
             androidContext(this@Mauth)
 
-            modules(homeModule, dbModule, otpModule, addAccountModel)
+            modules(homeModule, dbModule, otpModule, addAccountModel, qrScanModule)
         }
     }
-
 }

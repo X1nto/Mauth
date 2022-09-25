@@ -3,7 +3,7 @@ package com.xinto.mauth.db.converter
 import androidx.room.TypeConverter
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.util.UUID
+import java.util.*
 
 class UuidConverter {
 

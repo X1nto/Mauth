@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import com.xinto.mauth.ui.navigation.Mauth
 import com.xinto.mauth.ui.screen.AddAccountScreen
 import com.xinto.mauth.ui.screen.HomeScreen
+import com.xinto.mauth.ui.screen.QrScannerScreen
 import com.xinto.mauth.ui.theme.MauthTheme
 import com.xinto.mauth.ui.viewmodel.AddAccountViewModel
 import com.xinto.taxi.Taxi
@@ -70,7 +71,10 @@ fun Main() {
             is Mauth.Home -> {
                 HomeScreen(navigator)
             }
-            is Mauth.CaptureQr -> {
+            is Mauth.QrScanner -> {
+                QrScannerScreen(navigator)
+            }
+            is Mauth.QrSelector -> {
 
             }
             is Mauth.Settings -> {
