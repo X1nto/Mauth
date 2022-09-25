@@ -28,7 +28,7 @@ import androidx.core.content.ContextCompat
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
 import com.xinto.mauth.camera.analyzer.QrCodeAnalyzer
-import com.xinto.mauth.ui.navigation.Mauth
+import com.xinto.mauth.ui.navigation.MauthDestination
 import com.xinto.mauth.ui.navigation.MauthNavigator
 import com.xinto.mauth.ui.viewmodel.QrScannerViewModel
 import kotlinx.coroutines.launch
@@ -89,7 +89,7 @@ fun QrScannerScreen(
                                 onQrResult = {
                                     val params = viewModel.parseOtpUri(it.text)
                                     if (params != null) {
-                                        navigator.replace(Mauth.AddAccount(params))
+                                        navigator.replace(MauthDestination.AddAccount(params))
                                     }
                                 }
                             )
