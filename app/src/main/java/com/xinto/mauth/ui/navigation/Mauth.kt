@@ -1,6 +1,5 @@
 package com.xinto.mauth.ui.navigation
 
-import com.xinto.mauth.ui.viewmodel.AddAccountParams
 import com.xinto.taxi.BackstackNavigator
 import com.xinto.taxi.Destination
 import kotlinx.parcelize.Parcelize

@@ -1,6 +1,5 @@
 package com.xinto.mauth.ui.viewmodel
 
-import android.os.Parcelable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,20 +9,8 @@ import com.xinto.mauth.db.dao.AccountsDao
 import com.xinto.mauth.db.entity.EntityAccount
 import com.xinto.mauth.otp.OtpDigest
 import com.xinto.mauth.otp.OtpType
+import com.xinto.mauth.ui.navigation.AddAccountParams
 import kotlinx.coroutines.launch
-import kotlinx.parcelize.Parcelize
-
-@Parcelize
-data class AddAccountParams(
-    val label: String = "",
-    val issuer: String = "",
-    val secret: String = "",
-    val algorithm: OtpDigest = OtpDigest.Sha1,
-    val type: OtpType = OtpType.Totp,
-    val digits: Int = 6,
-    val counter: Int = 0,
-    val period: Int = 30,
-) : Parcelable
 
 class AddAccountViewModel(
     private val params: AddAccountParams,
@@ -121,19 +108,6 @@ class AddAccountViewModel(
                     period = period
                 )
             )
-            clear()
         }
     }
-    
-    fun clear() {
-        secret = ""
-        label = ""
-        issuer = ""
-        algorithm = OtpDigest.Sha1
-        type = OtpType.Totp
-        digits = 0
-        counter = 0
-        period = period
-    }
-
 }

@@ -45,7 +45,7 @@ fun AddAccountScreen(
                     Text("Add an account")
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navigator.pop() }) {
+                    IconButton(onClick = { showExitDialog = true }) {
                         Icon(
                             imageVector = Icons.Rounded.Close,
                             contentDescription = null
@@ -299,21 +299,18 @@ fun AddAccountScreen(
         AlertDialog(
             onDismissRequest = {},
             title = {
-                Text("Save a draft?")
+                Text("Discard changes?")
             },
             text = {
-                Text("Do you want to save the changes as a draft, in order to continue later?")
+                Text("Your changes will not be saved.")
             },
             confirmButton = {
                 TextButton(onClick = { navigator.pop() }) {
-                    Text("Save")
+                    Text("Discard")
                 }
             },
             dismissButton = {
-                TextButton(onClick = {
-                    viewModel.clear()
-                    navigator.pop()
-                }) {
+                TextButton(onClick = { showExitDialog = false }) {
                     Text("Cancel")
                 }
             }

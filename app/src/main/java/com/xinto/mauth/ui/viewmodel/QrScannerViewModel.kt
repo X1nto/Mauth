@@ -3,6 +3,7 @@ package com.xinto.mauth.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import com.xinto.mauth.otp.parser.OtpUriParser
 import com.xinto.mauth.otp.parser.OtpUriParserResult
+import com.xinto.mauth.ui.navigation.AddAccountParams
 
 class QrScannerViewModel(
     private val otpUriParser: OtpUriParser

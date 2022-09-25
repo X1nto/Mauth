@@ -20,9 +20,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.xinto.mauth.ui.component.MaterialBottomSheetDialog
+import com.xinto.mauth.ui.navigation.AddAccountParams
 import com.xinto.mauth.ui.navigation.Mauth
 import com.xinto.mauth.ui.navigation.MauthNavigator
-import com.xinto.mauth.ui.viewmodel.AddAccountParams
 import com.xinto.mauth.ui.viewmodel.HomeViewModel
 import org.koin.androidx.compose.getViewModel
 
