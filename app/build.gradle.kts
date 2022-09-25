@@ -83,7 +83,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling:$composeVersion")
     debugImplementation("androidx.compose.ui:ui-test-manifest:$composeVersion")
 
-    val cameraxVersion = "1.2.0-beta01"
+    val cameraxVersion = "1.2.0-beta02"
     implementation("androidx.camera:camera-core:$cameraxVersion")
     implementation("androidx.camera:camera-camera2:$cameraxVersion")
     implementation("androidx.camera:camera-view:$cameraxVersion")
