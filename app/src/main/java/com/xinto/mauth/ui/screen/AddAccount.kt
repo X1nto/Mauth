@@ -297,7 +297,9 @@ fun AddAccountScreen(
     }
     if (showExitDialog) {
         AlertDialog(
-            onDismissRequest = {},
+            onDismissRequest = {
+                showExitDialog = false
+            },
             title = {
                 Text("Discard changes?")
             },
