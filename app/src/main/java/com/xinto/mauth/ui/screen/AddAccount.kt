@@ -305,7 +305,10 @@ fun AddAccountScreen(
                 Text("Your changes will not be saved.")
             },
             confirmButton = {
-                TextButton(onClick = { navigator.pop() }) {
+                TextButton(onClick = {
+                    showExitDialog = false
+                    navigator.pop()
+                }) {
                     Text("Discard")
                 }
             },
