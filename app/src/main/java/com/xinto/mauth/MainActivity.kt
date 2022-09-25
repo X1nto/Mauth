@@ -11,7 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.xinto.mauth.ui.navigation.Mauth
+import com.xinto.mauth.ui.navigation.MauthDestination
 import com.xinto.mauth.ui.screen.AddAccountScreen
 import com.xinto.mauth.ui.screen.HomeScreen
 import com.xinto.mauth.ui.screen.QrScannerScreen
@@ -38,15 +38,14 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun Main() {
-    val navigator = rememberBackstackNavigator<Mauth>(Mauth.Home)
+    val navigator = rememberBackstackNavigator<MauthDestination>(MauthDestination.Home)
     Taxi(
         navigator = navigator,
         transitionSpec = {
             when {
-                targetState is Mauth.AddAccount -> {
+                targetState.isFullscreenDialog -> {
                     slideIntoContainer(
                         towards = AnimatedContentScope.SlideDirection.Up,
                         animationSpec = spring(
@@ -55,7 +54,7 @@ fun Main() {
                         )
                     ) with fadeOut()
                 }
-                initialState is Mauth.AddAccount -> {
+                initialState.isFullscreenDialog -> {
                     fadeIn() with slideOutOfContainer(
                         towards = AnimatedContentScope.SlideDirection.Down,
                         animationSpec = spring(
@@ -68,19 +67,16 @@ fun Main() {
         }
     ) { screen ->
         when (screen) {
-            is Mauth.Home -> {
+            is MauthDestination.Home -> {
                 HomeScreen(navigator)
             }
-            is Mauth.QrScanner -> {
+            is MauthDestination.QrScanner -> {
                 QrScannerScreen(navigator)
             }
-            is Mauth.QrSelector -> {
+            is MauthDestination.Settings -> {
 
             }
-            is Mauth.Settings -> {
-
-            }
-            is Mauth.AddAccount -> {
+            is MauthDestination.AddAccount -> {
                 val viewModel: AddAccountViewModel = getViewModel { parametersOf(screen.params) }
                 AddAccountScreen(
                     navigator = navigator,
@@ -89,5 +85,4 @@ fun Main() {
             }
         }
     }
-
 }

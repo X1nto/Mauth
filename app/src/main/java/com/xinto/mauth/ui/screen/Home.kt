@@ -21,7 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.xinto.mauth.ui.component.MaterialBottomSheetDialog
 import com.xinto.mauth.ui.navigation.AddAccountParams
-import com.xinto.mauth.ui.navigation.Mauth
+import com.xinto.mauth.ui.navigation.MauthDestination
 import com.xinto.mauth.ui.navigation.MauthNavigator
 import com.xinto.mauth.ui.viewmodel.HomeViewModel
 import org.koin.androidx.compose.getViewModel
@@ -146,7 +146,7 @@ fun HomeScreen(
                 if (qrCode != null) {
                     val params = viewModel.parseOtpUri(qrCode)
                     if (params != null) {
-                        navigator.push(Mauth.AddAccount(params))
+                        navigator.push(MauthDestination.AddAccount(params))
                     }
                 }
             }
@@ -169,7 +169,7 @@ fun HomeScreen(
                 AddAccountType(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        navigator.push(Mauth.QrScanner)
+                        navigator.push(MauthDestination.QrScanner)
                     },
                     icon = {
                         Icon(
@@ -202,7 +202,7 @@ fun HomeScreen(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
                         showAddAccount = false
-                        navigator.push(Mauth.AddAccount(AddAccountParams()))
+                        navigator.push(MauthDestination.AddAccount(AddAccountParams()))
                     },
                     icon = {
                         Icon(
