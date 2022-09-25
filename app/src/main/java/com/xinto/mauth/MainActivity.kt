@@ -45,7 +45,7 @@ fun Main() {
         navigator = navigator,
         transitionSpec = {
             when {
-                targetState.isFullDialog -> {
+                targetState.isFullscreenDialog -> {
                     slideIntoContainer(
                         towards = AnimatedContentScope.SlideDirection.Up,
                         animationSpec = spring(
@@ -54,7 +54,7 @@ fun Main() {
                         )
                     ) with fadeOut()
                 }
-                initialState.isFullDialog -> {
+                initialState.isFullscreenDialog -> {
                     fadeIn() with slideOutOfContainer(
                         towards = AnimatedContentScope.SlideDirection.Down,
                         animationSpec = spring(

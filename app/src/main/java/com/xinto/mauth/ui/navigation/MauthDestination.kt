@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 typealias MauthNavigator = BackstackNavigator<MauthDestination>
 
-sealed class MauthDestination(val isFullDialog: Boolean = false) : Destination {
+sealed class MauthDestination(val isFullscreenDialog: Boolean = false) : Destination {
     @Parcelize
     object Home : MauthDestination()
 
@@ -16,7 +16,7 @@ sealed class MauthDestination(val isFullDialog: Boolean = false) : Destination {
     @Parcelize
     class AddAccount(
         val params: AddAccountParams
-    ): MauthDestination(isFullDialog = true)
+    ): MauthDestination(isFullscreenDialog = true)
 
     @Parcelize
     object Settings : MauthDestination()
