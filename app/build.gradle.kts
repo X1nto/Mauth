@@ -107,8 +107,9 @@ dependencies {
     implementation("io.insert-koin:koin-android:$koinVersion")
     implementation("io.insert-koin:koin-androidx-compose:3.2.0")
 
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.26.3-beta")
-    implementation("com.google.accompanist:accompanist-permissions:0.26.3-beta")
+    val accompanistVersion = "0.26.4-beta"
+    implementation("com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion")
+    implementation("com.google.accompanist:accompanist-permissions:$accompanistVersion")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
