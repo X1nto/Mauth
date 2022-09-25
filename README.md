@@ -21,11 +21,13 @@ Note: features marked with `^` are incomplete, while those marked as `!` are cur
     - Biometrics!
     - Password!
 - Ways to add your accounts
-    - QR Code scanning!
-    - Manual entering of the details^
+    - QR Code scanning
+        - Using a camera
+        - From an image
+    - Manual entering of the details
 - Algorithms
     - TOTP^
-    - HOTP!
+    - HOTP^
 - Organization
     - Search
         - By name!
