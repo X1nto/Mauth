@@ -155,7 +155,7 @@ fun HomeScreen(
                 AddAccountType(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        navigator.push(Mauth.ScanQr)
+                        navigator.push(Mauth.QrScanner)
                     },
                     icon = {
                         Icon(

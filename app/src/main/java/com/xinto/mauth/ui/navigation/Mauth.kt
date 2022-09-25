@@ -12,7 +12,7 @@ sealed interface Mauth : Destination {
     object Home : Mauth
 
     @Parcelize
-    object ScanQr : Mauth
+    object QrScanner : Mauth
 
     @Parcelize
     class AddAccount(

@@ -30,16 +30,16 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.xinto.mauth.camera.analyzer.QrCodeAnalyzer
 import com.xinto.mauth.ui.navigation.Mauth
 import com.xinto.mauth.ui.navigation.MauthNavigator
-import com.xinto.mauth.ui.viewmodel.QrScanViewModel
+import com.xinto.mauth.ui.viewmodel.QrScannerViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @Composable
-fun QrScanScreen(
+fun QrScannerScreen(
     navigator: MauthNavigator,
-    viewModel: QrScanViewModel = getViewModel()
+    viewModel: QrScannerViewModel = getViewModel()
 ) {
     val cameraPermission = rememberPermissionState(
         permission = android.Manifest.permission.CAMERA
