@@ -4,6 +4,8 @@ import com.xinto.mauth.otp.generator.HotpGenerator
 import com.xinto.mauth.otp.generator.HotpGeneratorImpl
 import com.xinto.mauth.otp.generator.TotpGenerator
 import com.xinto.mauth.otp.generator.TotpGeneratorImpl
+import com.xinto.mauth.otp.parser.OtpUriParser
+import com.xinto.mauth.otp.parser.OtpUriParserImpl
 import com.xinto.mauth.otp.transformer.KeyTransformer
 import com.xinto.mauth.otp.transformer.KeyTransformerImpl
 import org.apache.commons.codec.binary.Base32
@@ -24,7 +26,12 @@ val otpModule = module {
         return KeyTransformerImpl(Base32())
     }
 
+    fun provideUriParser(): OtpUriParser {
+        return OtpUriParserImpl()
+    }
+
     singleOf(::provideHotpGenerator)
     singleOf(::provideTotpGenerator)
     singleOf(::provideKeyTransformer)
+    singleOf(::provideUriParser)
 }

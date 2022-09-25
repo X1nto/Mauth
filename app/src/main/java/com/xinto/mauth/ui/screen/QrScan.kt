@@ -1,7 +1,6 @@
 package com.xinto.mauth.ui.screen
 
 import android.content.Context
-import android.util.Log
 import android.view.ViewGroup
 import androidx.activity.compose.BackHandler
 import androidx.camera.core.CameraSelector
@@ -29,14 +28,18 @@ import androidx.core.content.ContextCompat
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
 import com.xinto.mauth.camera.analyzer.QrCodeAnalyzer
+import com.xinto.mauth.ui.navigation.Mauth
 import com.xinto.mauth.ui.navigation.MauthNavigator
+import com.xinto.mauth.ui.viewmodel.QrScanViewModel
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.getViewModel
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @Composable
 fun QrScanScreen(
-    navigator: MauthNavigator
+    navigator: MauthNavigator,
+    viewModel: QrScanViewModel = getViewModel()
 ) {
     val cameraPermission = rememberPermissionState(
         permission = android.Manifest.permission.CAMERA
@@ -84,7 +87,10 @@ fun QrScanScreen(
                                     .padding(12.dp)
                                     .clip(MaterialTheme.shapes.large),
                                 onQrResult = {
-                                    
+                                    val params = viewModel.parseUri(it.text)
+                                    if (params != null) {
+                                        navigator.push(Mauth.AddAccount(params))
+                                    }
                                 }
                             )
                         }

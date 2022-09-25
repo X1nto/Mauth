@@ -53,7 +53,6 @@ class QrCodeAnalyzer(
 
             try {
                 onSuccess(reader.decodeWithState(bitmap))
-                Log.d("test", "success")
             } catch (e: NotFoundException) {
                 onFail(e)
             }
