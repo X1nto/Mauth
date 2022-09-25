@@ -18,7 +18,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.xinto.mauth.R
 import com.xinto.mauth.ui.component.MaterialBottomSheetDialog
 import com.xinto.mauth.ui.navigation.AddAccountParams
 import com.xinto.mauth.ui.navigation.MauthDestination
@@ -39,7 +41,7 @@ fun HomeScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Mauth")
+                    Text(stringResource(R.string.app_name))
                 }
             )
         },
@@ -156,10 +158,10 @@ fun HomeScreen(
                 showAddAccount = false
             },
             title = {
-                Text("Add an account")
+                Text(stringResource(R.string.home_addaccount_title))
             },
             subtitle = {
-                Text("Scan a QR code or enter the key manually")
+                Text(stringResource(R.string.home_addaccount_subtitle))
             },
         ) {
             Column(
@@ -178,7 +180,7 @@ fun HomeScreen(
                         )
                     },
                     text = {
-                        Text("Scan a QR code")
+                        Text(stringResource(R.string.home_addaccount_data_scanqr))
                     },
                     color = MaterialTheme.colorScheme.primaryContainer,
                 )
@@ -194,7 +196,7 @@ fun HomeScreen(
                         )
                     },
                     text = {
-                        Text("Scan an image")
+                        Text(stringResource(R.string.home_addaccount_data_imageqr))
                     },
                     color = MaterialTheme.colorScheme.tertiaryContainer,
                 )
@@ -211,7 +213,7 @@ fun HomeScreen(
                         )
                     },
                     text = {
-                        Text("Enter the key")
+                        Text(stringResource(R.string.home_addaccount_data_manual))
                     },
                     color = MaterialTheme.colorScheme.secondaryContainer
                 )

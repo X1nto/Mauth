@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -35,6 +36,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import com.xinto.mauth.R
 
 @Composable
 fun QrScannerScreen(
@@ -52,7 +54,7 @@ fun QrScannerScreen(
         topBar = {
             LargeTopAppBar(
                 title = {
-                    Text("Scan a QR code")
+                    Text(stringResource(R.string.qrscan_title))
                 },
                 navigationIcon = {
                     IconButton(onClick = { navigator.pop() }) {
@@ -101,19 +103,19 @@ fun QrScannerScreen(
                         onDismissRequest = { /*TODO*/ },
                         text = {
                             if (status.shouldShowRationale) {
-                                Text("The camera permission is required for this app to scan and analyze the QR code, please grant the necessary permission.")
+                                Text(stringResource(R.string.qrscan_permissions_subtitle_rationale))
                             } else {
-                                Text("Camera permission not granted.")
+                                Text(stringResource(R.string.qrscan_permissions_subtitle))
                             }
                         },
                         confirmButton = {
                             Button(onClick = { cameraPermission.launchPermissionRequest() }) {
-                                Text("Grant")
+                                Text(stringResource(R.string.qrscan_permissions_button_grant))
                             }
                         },
                         dismissButton = {
                             Button(onClick = { navigator.pop() }) {
-                                Text("Cancel")
+                                Text(stringResource(R.string.qrscan_permissions_button_cancel))
                             }
                         }
                     )
