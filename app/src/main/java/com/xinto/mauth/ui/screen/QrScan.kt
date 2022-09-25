@@ -146,27 +146,31 @@ private fun Camera(
                 }
             },
             update = { previewView ->
-                val preview = Preview.Builder()
-                    .build()
-                    .also { preview ->
-                        preview.setSurfaceProvider(previewView.surfaceProvider)
-                    }
-
-                val analysis = ImageAnalysis.Builder()
-                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                    .build()
-                    .also { analysis ->
-                        analysis.setAnalyzer(
-                            ContextCompat.getMainExecutor(context),
-                            QrCodeAnalyzer(
-                                onSuccess = onQrResult,
-                                onFail = {}
-                            )
-                        )
-                    }
-
                 coroutineScope.launch {
                     val cameraProvider = getCameraProvider(context)
+
+                    val preview = Preview.Builder()
+                        .build()
+                        .also { preview ->
+                            preview.setSurfaceProvider(previewView.surfaceProvider)
+                        }
+
+                    val analysis = ImageAnalysis.Builder()
+                        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                        .build()
+                        .also { analysis ->
+                            analysis.setAnalyzer(
+                                ContextCompat.getMainExecutor(context),
+                                QrCodeAnalyzer(
+                                    onSuccess = {
+                                        cameraProvider.unbindAll()
+                                        onQrResult(it)
+                                    },
+                                    onFail = {}
+                                )
+                            )
+                        }
+
                     cameraProvider.unbindAll()
                     cameraProvider.bindToLifecycle(
                         lifecycleOwner,
