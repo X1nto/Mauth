@@ -15,6 +15,9 @@ sealed interface Mauth : Destination {
     object QrScanner : Mauth
 
     @Parcelize
+    object QrSelector: Mauth
+
+    @Parcelize
     class AddAccount(
         val params: AddAccountParams
     ): Mauth

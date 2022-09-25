@@ -74,6 +74,9 @@ fun Main() {
             is Mauth.QrScanner -> {
                 QrScannerScreen(navigator)
             }
+            is Mauth.QrSelector -> {
+
+            }
             is Mauth.Settings -> {
 
             }
