@@ -18,10 +18,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.xinto.mauth.R
 import com.xinto.mauth.otp.OtpDigest
 import com.xinto.mauth.otp.OtpType
 import com.xinto.mauth.ui.component.singleItem
@@ -42,7 +44,7 @@ fun AddAccountScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Add an account")
+                    Text(stringResource(R.string.addaccount_title))
                 },
                 navigationIcon = {
                     IconButton(onClick = { showExitDialog = true }) {
@@ -57,7 +59,7 @@ fun AddAccountScreen(
                         viewModel.save()
                         navigator.pop()
                     }) {
-                        Text("Save")
+                        Text(stringResource(R.string.addaccount_actions_save))
                     }
                 }
             )
@@ -101,10 +103,10 @@ fun AddAccountScreen(
                     value = viewModel.label,
                     onValueChange = viewModel::updateLabel,
                     label = {
-                        Text("Label")
+                        Text(stringResource(R.string.addaccount_data_label))
                     },
                     placeholder = {
-                        Text("John Doe")
+                        Text(stringResource(R.string.addaccount_data_label_placeholder))
                     },
                     leadingIcon = {
                         Icon(
@@ -121,10 +123,10 @@ fun AddAccountScreen(
                     value = viewModel.issuer,
                     onValueChange = viewModel::updateIssuer,
                     label = {
-                        Text("Issuer")
+                        Text(stringResource(R.string.addaccount_data_issuer))
                     },
                     placeholder = {
-                        Text("Your mom")
+                        Text(stringResource(R.string.addaccount_data_issuer_placeholder))
                     },
                     leadingIcon = {
                         Icon(
@@ -144,7 +146,7 @@ fun AddAccountScreen(
                     value = viewModel.secret,
                     onValueChange = viewModel::updateSecret,
                     label = {
-                        Text("Secret")
+                        Text(stringResource(R.string.addaccount_data_secret))
                     },
                     leadingIcon = {
                         Icon(
@@ -176,7 +178,7 @@ fun AddAccountScreen(
                         onValueChange = {},
                         readOnly = true,
                         label = {
-                            Text("Type")
+                            Text(stringResource(R.string.addaccount_data_type))
                         },
                         trailingIcon = {
                             val iconRotation by animateFloatAsState(if (expanded) 180f else 0f)
@@ -216,7 +218,7 @@ fun AddAccountScreen(
                         onValueChange = {},
                         readOnly = true,
                         label = {
-                            Text("Type")
+                            Text(stringResource(R.string.addaccount_data_algorithm))
                         },
                         trailingIcon = {
                             val iconRotation by animateFloatAsState(if (expanded) 180f else 0f)
@@ -253,7 +255,7 @@ fun AddAccountScreen(
                     value = viewModel.digits.toString(),
                     onValueChange = viewModel::updateDigits,
                     label = {
-                        Text("Digits")
+                        Text(stringResource(R.string.addaccount_data_digits))
                     },
                     keyboardOptions = keyboardOptions
                 )
@@ -275,7 +277,7 @@ fun AddAccountScreen(
                                 value = viewModel.counter.toString(),
                                 onValueChange = viewModel::updateCounter,
                                 label = {
-                                    Text("Counter")
+                                    Text(stringResource(R.string.addaccount_data_counter))
                                 },
                                 keyboardOptions = keyboardOptions
                             )
@@ -285,7 +287,7 @@ fun AddAccountScreen(
                                 value = viewModel.period.toString(),
                                 onValueChange = viewModel::updatePeriod,
                                 label = {
-                                    Text("Period")
+                                    Text(stringResource(R.string.addaccount_data_period))
                                 },
                                 keyboardOptions = keyboardOptions
                             )
@@ -301,22 +303,22 @@ fun AddAccountScreen(
                 showExitDialog = false
             },
             title = {
-                Text("Discard changes?")
+                Text(stringResource(R.string.addaccount_discard_title))
             },
             text = {
-                Text("Your changes will not be saved.")
+                Text(stringResource(R.string.addaccount_discard_subtitle))
             },
             confirmButton = {
                 TextButton(onClick = {
                     showExitDialog = false
                     navigator.pop()
                 }) {
-                    Text("Discard")
+                    Text(stringResource(R.string.addaccount_discard_buttons_discard))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showExitDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.addaccount_discard_buttons_cancel))
                 }
             }
         )

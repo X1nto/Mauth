@@ -1,3 +1,33 @@
 <resources>
     <string name="app_name">Mauth</string>
+
+    <string name="home_addaccount_title">Add an account</string>
+    <string name="home_addaccount_subtitle">Scan a QR code or enter the key manually</string>
+    <string name="home_addaccount_data_scanqr">Scan a QR code</string>
+    <string name="home_addaccount_data_imageqr">Choose an image</string>
+    <string name="home_addaccount_data_manual">Enter data manually</string>
+
+    <string name="qrscan_title">Scan a QR code</string>
+    <string name="qrscan_permissions_title">Missing permissions</string>
+    <string name="qrscan_permissions_subtitle">Camera permission not granted.</string>
+    <string name="qrscan_permissions_subtitle_rationale">The camera permission is required for this app to scan and analyze the QR code, without it, Mauth cannot scan and import your accounts.</string>
+    <string name="qrscan_permissions_button_grant">Grant</string>
+    <string name="qrscan_permissions_button_cancel">Cancel</string>
+
+    <string name="addaccount_title">Add an account</string>
+    <string name="addaccount_actions_save">Save</string>
+    <string name="addaccount_data_label">Label</string>
+    <string name="addaccount_data_label_placeholder">Discord</string>
+    <string name="addaccount_data_issuer">Issuer</string>
+    <string name="addaccount_data_issuer_placeholder">John Doe</string>
+    <string name="addaccount_data_secret">Secret</string>
+    <string name="addaccount_data_type">Type</string>
+    <string name="addaccount_data_algorithm">Algorithm</string>
+    <string name="addaccount_data_digits">Digits</string>
+    <string name="addaccount_data_counter">Counter</string>
+    <string name="addaccount_data_period">Period</string>
+    <string name="addaccount_discard_title">Discard changes?</string>
+    <string name="addaccount_discard_subtitle">Your changes will not be saved.</string>
+    <string name="addaccount_discard_buttons_discard">Discard</string>
+    <string name="addaccount_discard_buttons_cancel">Cancel</string>
 </resources>
