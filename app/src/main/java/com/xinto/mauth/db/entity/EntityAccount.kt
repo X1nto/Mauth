@@ -1,5 +1,6 @@
 package com.xinto.mauth.db.entity
 
+import android.net.Uri
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -12,6 +13,9 @@ data class EntityAccount(
     @PrimaryKey
     @ColumnInfo(name = "id", typeAffinity = ColumnInfo.BLOB)
     val id: UUID = UUID.randomUUID(),
+
+    @ColumnInfo(name = "icon")
+    val icon: Uri?,
 
     @ColumnInfo(name = "secret")
     val secret: String,

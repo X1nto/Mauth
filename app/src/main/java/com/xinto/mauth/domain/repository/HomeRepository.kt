@@ -39,6 +39,7 @@ class HomeRepositoryImpl(
             OtpType.Totp -> {
                 DomainAccount.Totp(
                     id = idString,
+                    icon = icon,
                     secret = secret,
                     label = label,
                     issuer = issuer,
@@ -51,6 +52,7 @@ class HomeRepositoryImpl(
                 DomainAccount.Hotp(
                     id = idString,
                     secret = secret,
+                    icon = icon,
                     label = label,
                     issuer = issuer,
                     algorithm = algorithm,

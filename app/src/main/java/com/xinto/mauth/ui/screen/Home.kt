@@ -6,7 +6,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.xinto.mauth.R
 import com.xinto.mauth.domain.model.DomainAccount
 import com.xinto.mauth.ui.component.MaterialBottomSheetDialog
+import com.xinto.mauth.ui.component.UriImage
 import com.xinto.mauth.ui.navigation.AddAccountParams
 import com.xinto.mauth.ui.navigation.MauthDestination
 import com.xinto.mauth.ui.navigation.MauthNavigator
@@ -103,12 +103,11 @@ fun HomeScreen(
                     } else null,
                     label = { Text(account.label, maxLines = 1) },
                     icon = {
-                        Box(
-                            Modifier
-                                .size(48.dp)
-                                .clip(MaterialTheme.shapes.large)
-                                .background(MaterialTheme.colorScheme.onSurfaceVariant)
-                        )
+                        if (account.icon != null) {
+                            UriImage(uri = account.icon!!)
+                        } else {
+                            Text(account.shortLabel)
+                        }
                     },
                     timer = if (account is DomainAccount.Totp) { ->
                         Box(
@@ -260,7 +259,19 @@ private fun Account(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                icon()
+                Surface(
+                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    shape = MaterialTheme.shapes.large
+                ) {
+                    Box(
+                        modifier = Modifier.size(48.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        ProvideTextStyle(MaterialTheme.typography.titleLarge) {
+                            icon()
+                        }
+                    }
+                }
                 Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     if (issuer != null) {
                         val color = LocalContentColor.current.copy(alpha = 0.7f)

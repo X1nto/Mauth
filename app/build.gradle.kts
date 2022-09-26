@@ -102,6 +102,8 @@ dependencies {
 
     implementation("com.google.zxing:core:3.5.0")
 
+    implementation("io.coil-kt:coil-compose:2.2.1")
+
     val koinVersion = "3.2.1"
     implementation("io.insert-koin:koin-core:$koinVersion")
     implementation("io.insert-koin:koin-android:$koinVersion")
