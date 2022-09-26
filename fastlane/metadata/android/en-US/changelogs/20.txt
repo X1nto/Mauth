@@ -1,0 +1,7 @@
+v0.2.0:
+- Revamped the home screen.
+- Implemented individual timers for each account.
+- Issuers are now visible on the account cards.
+- Added icons to the account cards.
+- Finished the "Add Account" screen.
+- Added the QR code scanner.

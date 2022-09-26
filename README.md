@@ -5,7 +5,7 @@ alt="App icon">
 
 [![CI](https://img.shields.io/github/workflow/status/X1nto/Mauth/Build%20APK?color=blue&style=for-the-badge)](https://github.com/X1nto/Mauth/actions?query=branch%3Amaster)
 
-Mauth (pronounced Moth) is a Two-Factor Authentication app with support for TOTP and HOTP (coming soon) and compatibility with Google Authenticator (coming soon).
+Mauth (pronounced Moth) is a Two-Factor Authentication app with support for TOTP and HOTP (coming soon) and compatibility with Google Authenticator.
 
 Logo by @wingio
 
@@ -16,7 +16,7 @@ While there are many 2FA authenticator apps out there, most of them come with an
 Note: features marked with `^` are incomplete, while those marked as `!` are currently unavailable, as the app is still in an active development.
 
 - FOSS
-- Compatible with Google Authenticator^
+- Compatible with Google Authenticator
 - Secure
     - Biometrics!
     - Password!
@@ -26,7 +26,7 @@ Note: features marked with `^` are incomplete, while those marked as `!` are cur
         - From an image
     - Manual entering of the details
 - Algorithms
-    - TOTP^
+    - TOTP
     - HOTP^
 - Organization
     - Search
@@ -41,10 +41,7 @@ Note: features marked with `^` are incomplete, while those marked as `!` are cur
     - Grouping
         - By category!
         - By category reverse!
-    - Editing
-       - Label!
-       - Secret!
-       - Icon!
+    - Editing!
 - Export/Import
     - Exporting
         - Plain text!
@@ -58,6 +55,12 @@ Note: features marked with `^` are incomplete, while those marked as `!` are cur
 # Screenshots
 <img width=200 alt="Screenshot 1"
 src="github/screenshot_1.png?raw=true">
+<img width=200 alt="Screenshot 2"
+src="github/screenshot_2.png?raw=true">
+<img width=200 alt="Screenshot 2"
+src="github/screenshot_3.png?raw=true">
+<img width=200 alt="Screenshot 2"
+src="github/screenshot_4.png?raw=true">
 
 # License
 ```
