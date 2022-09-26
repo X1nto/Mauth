@@ -79,79 +79,98 @@ fun HomeScreen(
             )
         }
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            items(viewModel.accounts) { account ->
-                var visible by remember { mutableStateOf(false) }
-                val code = viewModel.codes[account.secret]
-                Account(
-                    onCopyClick = {
-                        viewModel.copyCodeToClipboard(account.label, code)
-                    },
-                    onEditClick = {},
-                    onVisibleChange = {
-                        visible = !visible
-                    },
-                    visible = visible,
-                    issuer = if (account.issuer != "") { ->
-                        Text(account.issuer, maxLines = 1)
-                    } else null,
-                    label = { Text(account.label, maxLines = 1) },
-                    icon = {
-                        if (account.icon != null) {
-                            UriImage(uri = account.icon!!)
-                        } else {
-                            Text(account.shortLabel)
-                        }
-                    },
-                    timer = if (account is DomainAccount.Totp) { ->
-                        Box(
-                            modifier = Modifier.size(36.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            val timerProgress = viewModel.timerProgresses[account.secret]
-                            val timerValue = viewModel.timerValues[account.secret]
-                            if (timerProgress != null) {
-                                val animatedTimerProgress by animateFloatAsState(
-                                    targetValue = timerProgress,
-                                    animationSpec = tween(durationMillis = 500)
-                                )
-                                CircularProgressIndicator(progress = animatedTimerProgress)
+        if (viewModel.accounts.isNotEmpty()) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                items(viewModel.accounts) { account ->
+                    var visible by remember { mutableStateOf(false) }
+                    val code = viewModel.codes[account.secret]
+                    Account(
+                        onCopyClick = {
+                            viewModel.copyCodeToClipboard(account.label, code)
+                        },
+                        onEditClick = {},
+                        onVisibleChange = {
+                            visible = !visible
+                        },
+                        visible = visible,
+                        issuer = if (account.issuer != "") { ->
+                            Text(account.issuer, maxLines = 1)
+                        } else null,
+                        label = { Text(account.label, maxLines = 1) },
+                        icon = {
+                            if (account.icon != null) {
+                                UriImage(uri = account.icon!!)
+                            } else {
+                                Text(account.shortLabel)
                             }
-                            if (timerValue != null) {
-                                Text(timerValue.toString())
+                        },
+                        timer = if (account is DomainAccount.Totp) { ->
+                            Box(
+                                modifier = Modifier.size(36.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                val timerProgress = viewModel.timerProgresses[account.secret]
+                                val timerValue = viewModel.timerValues[account.secret]
+                                if (timerProgress != null) {
+                                    val animatedTimerProgress by animateFloatAsState(
+                                        targetValue = timerProgress,
+                                        animationSpec = tween(durationMillis = 500)
+                                    )
+                                    CircularProgressIndicator(progress = animatedTimerProgress)
+                                }
+                                if (timerValue != null) {
+                                    Text(timerValue.toString())
+                                }
                             }
-                        }
-                    } else null,
-                    code = {
-                        AnimatedContent(
-                            targetState = code,
-                            transitionSpec = {
-                                slideIntoContainer(
-                                    towards = AnimatedContentScope.SlideDirection.Up,
-                                    animationSpec = tween(500)
-                                ) + fadeIn() with
-                                    slideOutOfContainer(
+                        } else null,
+                        code = {
+                            AnimatedContent(
+                                targetState = code,
+                                transitionSpec = {
+                                    slideIntoContainer(
                                         towards = AnimatedContentScope.SlideDirection.Up,
                                         animationSpec = tween(500)
-                                    ) + fadeOut()
-                            }
-                        ) { animatedCode ->
-                            if (animatedCode != null) {
-                                if (visible) {
-                                    Text(animatedCode)
-                                } else {
-                                    Text("\u2022".repeat(animatedCode.length))
+                                    ) + fadeIn() with
+                                        slideOutOfContainer(
+                                            towards = AnimatedContentScope.SlideDirection.Up,
+                                            animationSpec = tween(500)
+                                        ) + fadeOut()
+                                }
+                            ) { animatedCode ->
+                                if (animatedCode != null) {
+                                    if (visible) {
+                                        Text(animatedCode)
+                                    } else {
+                                        Text("\u2022".repeat(animatedCode.length))
+                                    }
                                 }
                             }
                         }
-                    }
+                    )
+                }
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    modifier = Modifier.size(72.dp),
+                    imageVector = Icons.Rounded.Dashboard,
+                    contentDescription = null
                 )
+                ProvideTextStyle(MaterialTheme.typography.headlineSmall) {
+                    Text(stringResource(R.string.home_dashboard_empty))
+                }
             }
         }
     }

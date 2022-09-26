@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Mauth</string>
 
+    <string name="home_dashboard_empty">Nothing here yet</string>
     <string name="home_addaccount_title">Add an account</string>
     <string name="home_addaccount_subtitle">Scan a QR code or enter the key manually</string>
     <string name="home_addaccount_data_scanqr">Scan a QR code</string>
