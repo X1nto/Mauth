@@ -1,9 +1,13 @@
 package com.xinto.mauth.ui.screen
 
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -18,14 +22,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.xinto.mauth.R
+import com.xinto.mauth.contracts.PickVisualMediaPersistent
 import com.xinto.mauth.otp.OtpDigest
 import com.xinto.mauth.otp.OtpType
+import com.xinto.mauth.ui.component.UriImage
 import com.xinto.mauth.ui.component.singleItem
 import com.xinto.mauth.ui.navigation.MauthNavigator
 import com.xinto.mauth.ui.viewmodel.AddAccountViewModel
@@ -37,6 +46,9 @@ fun AddAccountScreen(
     viewModel: AddAccountViewModel = getViewModel()
 ) {
     var showExitDialog by remember { mutableStateOf(false) }
+    val imageSelectLauncher = rememberLauncherForActivityResult(PickVisualMediaPersistent()) {
+        viewModel.updateImageUri(it)
+    }
     BackHandler {
         navigator.pop()
     }
@@ -83,14 +95,21 @@ fun AddAccountScreen(
                         border = BorderStroke(
                             width = 1.dp,
                             SolidColor(MaterialTheme.colorScheme.outline)
-                        )
+                        ),
+                        onClick = {
+                            imageSelectLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                        }
                     ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Icon(
-                                modifier = Modifier.size(36.dp),
-                                imageVector = Icons.Rounded.AddAPhoto,
-                                contentDescription = null
-                            )
+                        if (viewModel.imageUri != null) {
+                            UriImage(uri = viewModel.imageUri!!)
+                        } else {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    modifier = Modifier.size(36.dp),
+                                    imageVector = Icons.Rounded.AddAPhoto,
+                                    contentDescription = null
+                                )
+                            }
                         }
                     }
                 }

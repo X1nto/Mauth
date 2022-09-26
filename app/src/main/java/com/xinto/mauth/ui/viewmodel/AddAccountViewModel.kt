@@ -1,10 +1,14 @@
 package com.xinto.mauth.ui.viewmodel
 
+import android.app.Application
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.xinto.mauth.Mauth
 import com.xinto.mauth.db.dao.AccountsDao
 import com.xinto.mauth.db.entity.EntityAccount
 import com.xinto.mauth.otp.OtpDigest
@@ -13,9 +17,21 @@ import com.xinto.mauth.ui.navigation.AddAccountParams
 import kotlinx.coroutines.launch
 
 class AddAccountViewModel(
+    application: Application,
     private val params: AddAccountParams,
     private val accountsDao: AccountsDao
-) : ViewModel() {
+) : AndroidViewModel(application) {
+
+    var imageUri by mutableStateOf<Uri?>(null)
+        private set
+
+    fun updateImageUri(imageUri: Uri?) {
+        this.imageUri = imageUri
+        if (imageUri != null) {
+            val contentResolver = getApplication<Mauth>().contentResolver
+            contentResolver.takePersistableUriPermission(imageUri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+    }
 
     var label by mutableStateOf(params.label)
         private set
@@ -94,11 +110,17 @@ class AddAccountViewModel(
         }
     }
 
+    fun takeUriPersistence(uri: Uri) {
+        val application = getApplication<Mauth>()
+        application.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    }
+
     fun save() {
         viewModelScope.launch {
             accountsDao.insert(
                 EntityAccount(
                     secret = secret,
+                    icon = imageUri,
                     label = label,
                     issuer = issuer,
                     algorithm = algorithm,

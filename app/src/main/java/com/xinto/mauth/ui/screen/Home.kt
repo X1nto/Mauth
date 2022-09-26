@@ -6,7 +6,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -21,7 +20,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.xinto.mauth.R
+import com.xinto.mauth.domain.model.DomainAccount
 import com.xinto.mauth.ui.component.MaterialBottomSheetDialog
+import com.xinto.mauth.ui.component.UriImage
 import com.xinto.mauth.ui.navigation.AddAccountParams
 import com.xinto.mauth.ui.navigation.MauthDestination
 import com.xinto.mauth.ui.navigation.MauthNavigator
@@ -35,108 +36,141 @@ fun HomeScreen(
 ) {
     var showAddAccount by remember { mutableStateOf(false) }
 
-    val timer by animateFloatAsState(viewModel.timerProgress, animationSpec = tween(500))
-
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = {
                     Text(stringResource(R.string.app_name))
                 }
             )
         },
         bottomBar = {
-            Column {
-                LinearProgressIndicator(
-                    modifier = Modifier.fillMaxWidth(),
-                    progress = timer
-                )
-                BottomAppBar(
-                    floatingActionButton = {
-                        FloatingActionButton(onClick = {
-                            showAddAccount = true
-                        }) {
-                            Icon(
-                                imageVector = Icons.Rounded.Add,
-                                contentDescription = null
-                            )
-                        }
-                    },
-                    actions = {
-                        IconButton(onClick = { /*TODO*/ }) {
-                            Icon(
-                                imageVector = Icons.Rounded.MoreVert,
-                                contentDescription = null
-                            )
-                        }
-                        IconButton(onClick = { /*TODO*/ }) {
-                            Icon(
-                                imageVector = Icons.Rounded.Search,
-                                contentDescription = null
-                            )
-                        }
-                        IconButton(onClick = { /*TODO*/ }) {
-                            Icon(
-                                imageVector = Icons.Rounded.Sort,
-                                contentDescription = null
-                            )
-                        }
-                    },
-                )
-            }
+            BottomAppBar(
+                floatingActionButton = {
+                    FloatingActionButton(onClick = {
+                        showAddAccount = true
+                    }) {
+                        Icon(
+                            imageVector = Icons.Rounded.Add,
+                            contentDescription = null
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(
+                            imageVector = Icons.Rounded.MoreVert,
+                            contentDescription = null
+                        )
+                    }
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(
+                            imageVector = Icons.Rounded.Search,
+                            contentDescription = null
+                        )
+                    }
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(
+                            imageVector = Icons.Rounded.Sort,
+                            contentDescription = null
+                        )
+                    }
+                },
+            )
         }
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            items(viewModel.accounts) { account ->
-                var visible by remember { mutableStateOf(false) }
-                val code = viewModel.codes[account.secret]
-                Account(
-                    onCopyClick = {
-                        viewModel.copyCodeToClipboard(account.label, code)
-                    },
-                    onVisibleChange = {
-                        visible = !visible
-                    },
-                    visible = visible,
-                    name = { Text(account.label) },
-                    icon = {
-                        Box(
-                            Modifier
-                                .size(48.dp)
-                                .clip(MaterialTheme.shapes.large)
-                                .background(MaterialTheme.colorScheme.onSurfaceVariant)
-                        )
-                    },
-                    code = {
-                        AnimatedContent(
-                            targetState = code,
-                            transitionSpec = {
-                                slideIntoContainer(
-                                    towards = AnimatedContentScope.SlideDirection.Up,
-                                    animationSpec = tween(500)
-                                ) + fadeIn() with
-                                    slideOutOfContainer(
+        if (viewModel.accounts.isNotEmpty()) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                items(viewModel.accounts) { account ->
+                    var visible by remember { mutableStateOf(false) }
+                    val code = viewModel.codes[account.secret]
+                    Account(
+                        onCopyClick = {
+                            viewModel.copyCodeToClipboard(account.label, code)
+                        },
+                        onEditClick = {},
+                        onVisibleChange = {
+                            visible = !visible
+                        },
+                        visible = visible,
+                        issuer = if (account.issuer != "") { ->
+                            Text(account.issuer, maxLines = 1)
+                        } else null,
+                        label = { Text(account.label, maxLines = 1) },
+                        icon = {
+                            if (account.icon != null) {
+                                UriImage(uri = account.icon!!)
+                            } else {
+                                Text(account.shortLabel)
+                            }
+                        },
+                        timer = if (account is DomainAccount.Totp) { ->
+                            Box(
+                                modifier = Modifier.size(36.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                val timerProgress = viewModel.timerProgresses[account.secret]
+                                val timerValue = viewModel.timerValues[account.secret]
+                                if (timerProgress != null) {
+                                    val animatedTimerProgress by animateFloatAsState(
+                                        targetValue = timerProgress,
+                                        animationSpec = tween(durationMillis = 500)
+                                    )
+                                    CircularProgressIndicator(progress = animatedTimerProgress)
+                                }
+                                if (timerValue != null) {
+                                    Text(timerValue.toString())
+                                }
+                            }
+                        } else null,
+                        code = {
+                            AnimatedContent(
+                                targetState = code,
+                                transitionSpec = {
+                                    slideIntoContainer(
                                         towards = AnimatedContentScope.SlideDirection.Up,
                                         animationSpec = tween(500)
-                                    ) + fadeOut()
-                            }
-                        ) { animatedCode ->
-                            if (animatedCode != null) {
-                                if (visible) {
-                                    Text(animatedCode)
-                                } else {
-                                    Text("*".repeat(animatedCode.length))
+                                    ) + fadeIn() with
+                                        slideOutOfContainer(
+                                            towards = AnimatedContentScope.SlideDirection.Up,
+                                            animationSpec = tween(500)
+                                        ) + fadeOut()
+                                }
+                            ) { animatedCode ->
+                                if (animatedCode != null) {
+                                    if (visible) {
+                                        Text(animatedCode)
+                                    } else {
+                                        Text("\u2022".repeat(animatedCode.length))
+                                    }
                                 }
                             }
                         }
-                    }
+                    )
+                }
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    modifier = Modifier.size(72.dp),
+                    imageVector = Icons.Rounded.Dashboard,
+                    contentDescription = null
                 )
+                ProvideTextStyle(MaterialTheme.typography.headlineSmall) {
+                    Text(stringResource(R.string.home_dashboard_empty))
+                }
             }
         }
     }
@@ -225,11 +259,14 @@ fun HomeScreen(
 @Composable
 private fun Account(
     onCopyClick: () -> Unit,
+    onEditClick: () -> Unit,
     onVisibleChange: (Boolean) -> Unit,
     visible: Boolean,
     modifier: Modifier = Modifier,
-    name: @Composable () -> Unit,
+    issuer: (@Composable () -> Unit)?,
+    label: @Composable () -> Unit,
     icon: @Composable () -> Unit,
+    timer: (@Composable () -> Unit)?,
     code: @Composable () -> Unit,
 ) {
     ElevatedCard(modifier = modifier) {
@@ -241,14 +278,34 @@ private fun Account(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                icon()
-                ProvideTextStyle(MaterialTheme.typography.headlineSmall) {
-                    name()
+                Surface(
+                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    shape = MaterialTheme.shapes.large
+                ) {
+                    Box(
+                        modifier = Modifier.size(48.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        ProvideTextStyle(MaterialTheme.typography.titleLarge) {
+                            icon()
+                        }
+                    }
+                }
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    if (issuer != null) {
+                        val color = LocalContentColor.current.copy(alpha = 0.7f)
+                        CompositionLocalProvider(LocalContentColor provides color) {
+                            ProvideTextStyle(MaterialTheme.typography.labelMedium) {
+                                issuer()
+                            }
+                        }
+                    }
+                    ProvideTextStyle(MaterialTheme.typography.bodyLarge) {
+                        label()
+                    }
                 }
                 Spacer(Modifier.weight(1f))
-                IconButton(onClick = {
-
-                }) {
+                IconButton(onClick = onEditClick) {
                     Icon(
                         imageVector = Icons.Rounded.Edit,
                         contentDescription = null
@@ -262,6 +319,11 @@ private fun Account(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                if (timer != null) {
+                    ProvideTextStyle(MaterialTheme.typography.labelLarge) {
+                        timer()
+                    }
+                }
                 ProvideTextStyle(MaterialTheme.typography.titleLarge) {
                     code()
                 }

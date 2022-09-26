@@ -8,6 +8,7 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.*
 import androidx.core.content.getSystemService
@@ -47,21 +48,29 @@ class HomeViewModel(
 
     var state by mutableStateOf<State>(State.Loading)
         private set
-    var timerProgress by mutableStateOf(0f)
-        private set
     val codes = mutableStateMapOf<String, String>()
+    val timerProgresses = mutableStateMapOf<String, Float>()
+    val timerValues = mutableStateMapOf<String, Long>()
     val accounts = mutableStateListOf<DomainAccount>()
 
-    private val timerTask = fixedRateTimer(name = null, daemon = false, period = 1000L) {
+    private val totpTimer = fixedRateTimer(name = "totp-timer", daemon = false, period = 1000L) {
         val seconds = System.currentTimeMillis() / 1000
         viewModelScope.launch(Dispatchers.Main) {
-            accounts.forEach {
+            accounts.filterIsInstance<DomainAccount.Totp>().forEach {
                 val keyByte = keyBytes[it.secret]
                 if (keyByte != null) {
-                    codes[it.secret] = totpService.generate(keyByte, interval = 30, seconds = seconds)
+                    codes[it.secret] = totpService.generate(
+                        secret = keyByte,
+                        interval = it.period.toLong(),
+                        digits = it.digits,
+                        seconds = seconds,
+                        digest = it.algorithm
+                    )
                 }
+                val diff = seconds % it.period
+                timerProgresses[it.secret] = 1f - (diff / it.period.toFloat())
+                timerValues[it.secret] = it.period - diff
             }
-            timerProgress = 1f - ((seconds % 30) / 30f)
         }
     }
 
@@ -125,7 +134,7 @@ class HomeViewModel(
     }
 
     override fun onCleared() {
-        timerTask.cancel()
+        totpTimer.cancel()
     }
 
     init {
