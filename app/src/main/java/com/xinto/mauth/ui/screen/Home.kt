@@ -105,7 +105,10 @@ fun HomeScreen(
                         label = { Text(account.label, maxLines = 1) },
                         icon = {
                             if (account.icon != null) {
-                                UriImage(uri = account.icon!!)
+                                UriImage(
+                                    modifier = Modifier.fillMaxSize(),
+                                    uri = account.icon!!
+                                )
                             } else {
                                 Text(account.shortLabel)
                             }
