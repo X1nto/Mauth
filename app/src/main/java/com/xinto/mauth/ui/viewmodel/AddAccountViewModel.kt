@@ -110,9 +110,15 @@ class AddAccountViewModel(
         }
     }
 
-    fun takeUriPersistence(uri: Uri) {
-        val application = getApplication<Mauth>()
-        application.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    fun reset() {
+        label = ""
+        issuer = ""
+        secret = ""
+        algorithm = OtpDigest.Sha1
+        type = OtpType.Totp
+        digits = 6
+        counter = 0
+        period = 30
     }
 
     fun save() {
@@ -130,6 +136,7 @@ class AddAccountViewModel(
                     period = period
                 )
             )
+            reset()
         }
     }
 }
