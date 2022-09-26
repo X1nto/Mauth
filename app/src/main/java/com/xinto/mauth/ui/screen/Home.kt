@@ -4,9 +4,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -101,9 +99,9 @@ fun HomeScreen(
                     },
                     visible = visible,
                     issuer = if (account.issuer != "") { ->
-                        Text(account.issuer)
+                        Text(account.issuer, maxLines = 1)
                     } else null,
-                    label = { Text(account.label) },
+                    label = { Text(account.label, maxLines = 1) },
                     icon = {
                         Box(
                             Modifier
@@ -149,7 +147,7 @@ fun HomeScreen(
                                 if (visible) {
                                     Text(animatedCode)
                                 } else {
-                                    Text("*".repeat(animatedCode.length))
+                                    Text("\u2022".repeat(animatedCode.length))
                                 }
                             }
                         }
@@ -265,8 +263,11 @@ private fun Account(
                 icon()
                 Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     if (issuer != null) {
-                        ProvideTextStyle(MaterialTheme.typography.labelMedium) {
-                            issuer()
+                        val color = LocalContentColor.current.copy(alpha = 0.7f)
+                        CompositionLocalProvider(LocalContentColor provides color) {
+                            ProvideTextStyle(MaterialTheme.typography.labelMedium) {
+                                issuer()
+                            }
                         }
                     }
                     ProvideTextStyle(MaterialTheme.typography.bodyLarge) {
