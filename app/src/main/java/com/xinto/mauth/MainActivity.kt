@@ -23,7 +23,6 @@ import com.xinto.mauth.ui.viewmodel.AddAccountViewModel
 import com.xinto.taxi.Taxi
 import com.xinto.taxi.rememberBackstackNavigator
 import org.koin.androidx.compose.getViewModel
-import org.koin.core.parameter.parametersOf
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,7 +79,8 @@ fun Main() {
 
             }
             is MauthDestination.AddAccount -> {
-                val viewModel: AddAccountViewModel = getViewModel { parametersOf(screen.params) }
+                val viewModel: AddAccountViewModel = getViewModel()
+                viewModel.update(screen.params)
                 AddAccountScreen(
                     navigator = navigator,
                     viewModel = viewModel

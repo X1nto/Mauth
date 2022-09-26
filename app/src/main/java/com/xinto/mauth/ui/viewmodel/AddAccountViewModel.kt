@@ -18,7 +18,6 @@ import kotlinx.coroutines.launch
 
 class AddAccountViewModel(
     application: Application,
-    private val params: AddAccountParams,
     private val accountsDao: AccountsDao
 ) : AndroidViewModel(application) {
 
@@ -36,42 +35,42 @@ class AddAccountViewModel(
         }
     }
 
-    var label by mutableStateOf(params.label)
+    var label by mutableStateOf("")
         private set
 
     fun updateLabel(label: String) {
         this.label = label
     }
 
-    var issuer by mutableStateOf(params.issuer)
+    var issuer by mutableStateOf("")
         private set
 
     fun updateIssuer(issuer: String) {
         this.issuer = issuer
     }
 
-    var secret by mutableStateOf(params.secret)
+    var secret by mutableStateOf("")
         private set
 
     fun updateSecret(secret: String) {
         this.secret = secret
     }
 
-    var algorithm by mutableStateOf(params.algorithm)
+    var algorithm by mutableStateOf(OtpDigest.Sha1)
         private set
 
     fun updateAlgorithm(algorithm: OtpDigest) {
         this.algorithm = algorithm
     }
 
-    var type by mutableStateOf(params.type)
+    var type by mutableStateOf(OtpType.Totp)
         private set
 
     fun updateType(type: OtpType) {
         this.type = type
     }
 
-    var digits by mutableStateOf(params.digits)
+    var digits by mutableStateOf(6)
         private set
 
     fun updateDigits(digits: Int) {
@@ -85,7 +84,7 @@ class AddAccountViewModel(
         }
     }
 
-    var counter by mutableStateOf(params.counter)
+    var counter by mutableStateOf(0)
         private set
 
     fun updateCounter(counter: Int) {
@@ -99,7 +98,7 @@ class AddAccountViewModel(
         }
     }
 
-    var period by mutableStateOf(params.period)
+    var period by mutableStateOf(30)
         private set
 
     fun updatePeriod(period: Int) {
@@ -113,15 +112,15 @@ class AddAccountViewModel(
         }
     }
 
-    fun reset() {
-        label = ""
-        issuer = ""
-        secret = ""
-        algorithm = OtpDigest.Sha1
-        type = OtpType.Totp
-        digits = 6
-        counter = 0
-        period = 30
+    fun update(params: AddAccountParams) {
+        label = params.label
+        issuer = params.issuer
+        secret = params.secret
+        algorithm = params.algorithm
+        type = params.type
+        digits = params.digits
+        counter = params.counter
+        period = params.period
     }
 
     fun save() {
@@ -139,7 +138,6 @@ class AddAccountViewModel(
                     period = period
                 )
             )
-            reset()
         }
     }
 }

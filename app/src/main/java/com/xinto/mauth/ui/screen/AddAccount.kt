@@ -331,7 +331,6 @@ fun AddAccountScreen(
             confirmButton = {
                 TextButton(onClick = {
                     showExitDialog = false
-                    viewModel.reset()
                     navigator.pop()
                 }) {
                     Text(stringResource(R.string.addaccount_discard_buttons_discard))
