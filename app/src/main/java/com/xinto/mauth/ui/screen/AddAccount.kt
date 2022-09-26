@@ -64,8 +64,9 @@ fun AddAccountScreen(
                 },
                 actions = {
                     TextButton(onClick = {
-                        viewModel.save()
-                        navigator.pop()
+                        if (viewModel.save()) {
+                            navigator.pop()
+                        }
                     }) {
                         Text(stringResource(R.string.addaccount_actions_save))
                     }
@@ -134,6 +135,7 @@ fun AddAccountScreen(
                         )
                     },
                     singleLine = true,
+                    isError = viewModel.errorLabel
                 )
             }
             singleItem {
@@ -272,12 +274,13 @@ fun AddAccountScreen(
                     KeyboardOptions(keyboardType = KeyboardType.Number)
                 }
                 OutlinedTextField(
-                    value = viewModel.digits.toString(),
+                    value = viewModel.digits,
                     onValueChange = viewModel::updateDigits,
                     label = {
                         Text(stringResource(R.string.addaccount_data_digits))
                     },
-                    keyboardOptions = keyboardOptions
+                    keyboardOptions = keyboardOptions,
+                    isError = viewModel.errorDigits
                 )
             }
             item {
@@ -294,22 +297,24 @@ fun AddAccountScreen(
                     when (animatedType) {
                         OtpType.Hotp -> {
                             OutlinedTextField(
-                                value = viewModel.counter.toString(),
+                                value = viewModel.counter,
                                 onValueChange = viewModel::updateCounter,
                                 label = {
                                     Text(stringResource(R.string.addaccount_data_counter))
                                 },
-                                keyboardOptions = keyboardOptions
+                                keyboardOptions = keyboardOptions,
+                                isError = viewModel.errorCounter
                             )
                         }
                         OtpType.Totp -> {
                             OutlinedTextField(
-                                value = viewModel.period.toString(),
+                                value = viewModel.period,
                                 onValueChange = viewModel::updatePeriod,
                                 label = {
                                     Text(stringResource(R.string.addaccount_data_period))
                                 },
-                                keyboardOptions = keyboardOptions
+                                keyboardOptions = keyboardOptions,
+                                isError = viewModel.errorPeriod
                             )
                         }
                     }

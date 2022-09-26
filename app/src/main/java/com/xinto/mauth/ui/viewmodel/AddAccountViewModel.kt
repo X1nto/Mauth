@@ -38,6 +38,9 @@ class AddAccountViewModel(
     var label by mutableStateOf("")
         private set
 
+    var errorLabel by mutableStateOf(false)
+        private set
+
     fun updateLabel(label: String) {
         this.label = label
     }
@@ -70,60 +73,80 @@ class AddAccountViewModel(
         this.type = type
     }
 
-    var digits by mutableStateOf(6)
+    var digits by mutableStateOf("6")
+        private set
+    
+    var errorDigits by mutableStateOf(false)
         private set
 
-    fun updateDigits(digits: Int) {
+    fun updateDigits(digits: String) {
         this.digits = digits
     }
 
-    fun updateDigits(digits: String) {
-        val intDigits = digits.toIntOrNull()
-        if (intDigits != null) {
-            updateDigits(intDigits)
-        }
-    }
-
-    var counter by mutableStateOf(0)
+    var counter by mutableStateOf("0")
+        private set
+    
+    var errorCounter by mutableStateOf(false)
         private set
 
-    fun updateCounter(counter: Int) {
+    fun updateCounter(counter: String) {
         this.counter = counter
     }
 
-    fun updateCounter(counter: String) {
-        val intCounter = counter.toIntOrNull()
-        if (intCounter != null) {
-            updateCounter(intCounter)
-        }
-    }
-
-    var period by mutableStateOf(30)
+    var period by mutableStateOf("30")
+        private set
+    
+    var errorPeriod by mutableStateOf(false)
         private set
 
-    fun updatePeriod(period: Int) {
+    fun updatePeriod(period: String) {
         this.period = period
     }
 
-    fun updatePeriod(period: String) {
-        val intPeriod = period.toIntOrNull()
-        if (intPeriod != null) {
-            updatePeriod(intPeriod)
-        }
-    }
-
     fun update(params: AddAccountParams) {
+        errorLabel = false
+        errorDigits = false
+        errorCounter = false
+        errorPeriod = false
         label = params.label
         issuer = params.issuer
         secret = params.secret
         algorithm = params.algorithm
         type = params.type
-        digits = params.digits
-        counter = params.counter
-        period = params.period
+        digits = params.digits.toString()
+        counter = params.counter.toString()
+        period = params.period.toString()
     }
 
-    fun save() {
+    fun save(): Boolean {
+        if (label == "") {
+            errorLabel = true
+            return false
+        }
+
+        val digits = digits.toIntOrNull()
+        if (digits == null) {
+            errorDigits = true
+            return false
+        }
+
+        val counter = counter.toIntOrNull()
+        if (counter == null) {
+            errorCounter = true
+            return false
+        }
+
+        val period = period.toIntOrNull()
+        if (period == null || period == 0) {
+            errorPeriod = true
+            return false
+        }
+
+        errorLabel = false
+        errorDigits = false
+        errorCounter = false
+        errorPeriod = false
+
         viewModelScope.launch {
             accountsDao.insert(
                 EntityAccount(
@@ -139,5 +162,6 @@ class AddAccountViewModel(
                 )
             )
         }
+        return true
     }
 }
