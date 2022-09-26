@@ -89,7 +89,7 @@ fun HomeScreen(
             ) {
                 items(viewModel.accounts) { account ->
                     var visible by remember { mutableStateOf(false) }
-                    val code = viewModel.codes[account.secret]
+                    val code = viewModel.codes[account.id]
                     Account(
                         onCopyClick = {
                             viewModel.copyCodeToClipboard(account.label, code)
@@ -118,8 +118,8 @@ fun HomeScreen(
                                 modifier = Modifier.size(36.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                val timerProgress = viewModel.timerProgresses[account.secret]
-                                val timerValue = viewModel.timerValues[account.secret]
+                                val timerProgress = viewModel.timerProgresses[account.id]
+                                val timerValue = viewModel.timerValues[account.id]
                                 if (timerProgress != null) {
                                     val animatedTimerProgress by animateFloatAsState(
                                         targetValue = timerProgress,

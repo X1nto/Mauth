@@ -47,9 +47,11 @@ class HomeViewModel(
 
     var state by mutableStateOf<State>(State.Loading)
         private set
+
     val codes = mutableStateMapOf<String, String>()
     val timerProgresses = mutableStateMapOf<String, Float>()
     val timerValues = mutableStateMapOf<String, Long>()
+
     val accounts = mutableStateListOf<DomainAccount>()
 
     private val totpTimer = fixedRateTimer(name = "totp-timer", daemon = false, period = 1000L) {
@@ -58,7 +60,7 @@ class HomeViewModel(
             accounts.filterIsInstance<DomainAccount.Totp>().forEach {
                 val keyByte = keyBytes[it.secret]
                 if (keyByte != null) {
-                    codes[it.secret] = totpService.generate(
+                    codes[it.id] = totpService.generate(
                         secret = keyByte,
                         interval = it.period.toLong(),
                         digits = it.digits,
@@ -67,8 +69,8 @@ class HomeViewModel(
                     )
                 }
                 val diff = seconds % it.period
-                timerProgresses[it.secret] = 1f - (diff / it.period.toFloat())
-                timerValues[it.secret] = it.period - diff
+                timerProgresses[it.id] = 1f - (diff / it.period.toFloat())
+                timerValues[it.id] = it.period - diff
             }
         }
     }
