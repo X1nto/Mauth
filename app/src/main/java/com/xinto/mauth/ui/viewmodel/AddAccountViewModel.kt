@@ -29,7 +29,10 @@ class AddAccountViewModel(
         this.imageUri = imageUri
         if (imageUri != null) {
             val contentResolver = getApplication<Mauth>().contentResolver
-            contentResolver.takePersistableUriPermission(imageUri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            contentResolver.takePersistableUriPermission(
+                imageUri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION
+            )
         }
     }
 
@@ -88,7 +91,7 @@ class AddAccountViewModel(
     fun updateCounter(counter: Int) {
         this.counter = counter
     }
-    
+
     fun updateCounter(counter: String) {
         val intCounter = counter.toIntOrNull()
         if (intCounter != null) {
@@ -102,7 +105,7 @@ class AddAccountViewModel(
     fun updatePeriod(period: Int) {
         this.period = period
     }
-    
+
     fun updatePeriod(period: String) {
         val intPeriod = period.toIntOrNull()
         if (intPeriod != null) {

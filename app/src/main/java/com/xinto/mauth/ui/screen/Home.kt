@@ -179,17 +179,18 @@ fun HomeScreen(
     }
 
     if (showAddAccount) {
-        val photoPickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            if (uri != null) {
-                val qrCode = viewModel.decodeQrCodeFromImageUri(uri)
-                if (qrCode != null) {
-                    val params = viewModel.parseOtpUri(qrCode)
-                    if (params != null) {
-                        navigator.push(MauthDestination.AddAccount(params))
+        val photoPickerLauncher =
+            rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+                if (uri != null) {
+                    val qrCode = viewModel.decodeQrCodeFromImageUri(uri)
+                    if (qrCode != null) {
+                        val params = viewModel.parseOtpUri(qrCode)
+                        if (params != null) {
+                            navigator.push(MauthDestination.AddAccount(params))
+                        }
                     }
                 }
             }
-        }
         MaterialBottomSheetDialog(
             onDismissRequest = {
                 showAddAccount = false
@@ -334,7 +335,10 @@ private fun Account(
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    FilledTonalIconToggleButton(checked = visible, onCheckedChange = onVisibleChange) {
+                    FilledTonalIconToggleButton(
+                        checked = visible,
+                        onCheckedChange = onVisibleChange
+                    ) {
                         Icon(
                             imageVector = if (visible) Icons.Rounded.Visibility else Icons.Rounded.VisibilityOff,
                             contentDescription = null

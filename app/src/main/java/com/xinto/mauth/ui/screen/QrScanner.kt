@@ -28,6 +28,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
+import com.xinto.mauth.R
 import com.xinto.mauth.camera.analyzer.QrCodeAnalyzer
 import com.xinto.mauth.ui.navigation.MauthDestination
 import com.xinto.mauth.ui.navigation.MauthNavigator
@@ -36,7 +37,6 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
-import com.xinto.mauth.R
 
 @Composable
 fun QrScannerScreen(

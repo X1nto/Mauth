@@ -16,7 +16,7 @@ sealed class MauthDestination(val isFullscreenDialog: Boolean = false) : Destina
     @Parcelize
     class AddAccount(
         val params: AddAccountParams
-    ): MauthDestination(isFullscreenDialog = true)
+    ) : MauthDestination(isFullscreenDialog = true)
 
     @Parcelize
     object Settings : MauthDestination()

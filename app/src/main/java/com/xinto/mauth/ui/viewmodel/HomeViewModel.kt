@@ -8,7 +8,6 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.*
 import androidx.core.content.getSystemService
@@ -43,7 +42,7 @@ class HomeViewModel(
     sealed interface State {
         object Loading : State
         object Loaded : State
-        object Failed: State
+        object Failed : State
     }
 
     var state by mutableStateOf<State>(State.Loading)
@@ -79,9 +78,14 @@ class HomeViewModel(
         if (code != null) {
             val clipboardService = application.getSystemService<ClipboardManager>()
             clipboardService?.setPrimaryClip(ClipData.newPlainText(label, code))
-            Toast.makeText(application, "Successfully copied the code to clipboard", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                application,
+                "Successfully copied the code to clipboard",
+                Toast.LENGTH_LONG
+            ).show()
         } else {
-            Toast.makeText(application, "Failed to copy: the code is null", Toast.LENGTH_LONG).show()
+            Toast.makeText(application, "Failed to copy: the code is null", Toast.LENGTH_LONG)
+                .show()
         }
     }
 
@@ -104,7 +108,8 @@ class HomeViewModel(
                 return it.text
             },
             onError = {
-                Toast.makeText(application, "Failed to decode the QR code.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(application, "Failed to decode the QR code.", Toast.LENGTH_SHORT)
+                    .show()
             }
         )
 

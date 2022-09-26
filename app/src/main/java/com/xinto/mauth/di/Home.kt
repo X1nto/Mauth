@@ -25,7 +25,13 @@ val homeModule = module {
         homeRepository: HomeRepository,
         keyTransformer: KeyTransformer
     ): HomeViewModel {
-        return HomeViewModel(application, totpGenerator, keyTransformer, otpUriParser, homeRepository)
+        return HomeViewModel(
+            application,
+            totpGenerator,
+            keyTransformer,
+            otpUriParser,
+            homeRepository
+        )
     }
 
     singleOf(::provideHomeRepository)

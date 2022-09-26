@@ -15,7 +15,7 @@ interface TotpGenerator {
 
 }
 
-class TotpGeneratorImpl(private val hotpGenerator: HotpGenerator): TotpGenerator {
+class TotpGeneratorImpl(private val hotpGenerator: HotpGenerator) : TotpGenerator {
 
     override fun generate(
         secret: ByteArray,
