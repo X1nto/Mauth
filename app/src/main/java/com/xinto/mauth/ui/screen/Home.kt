@@ -4,7 +4,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -21,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.xinto.mauth.R
+import com.xinto.mauth.domain.model.DomainAccount
 import com.xinto.mauth.ui.component.MaterialBottomSheetDialog
 import com.xinto.mauth.ui.navigation.AddAccountParams
 import com.xinto.mauth.ui.navigation.MauthDestination
@@ -35,8 +38,6 @@ fun HomeScreen(
 ) {
     var showAddAccount by remember { mutableStateOf(false) }
 
-    val timer by animateFloatAsState(viewModel.timerProgress, animationSpec = tween(500))
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -46,44 +47,38 @@ fun HomeScreen(
             )
         },
         bottomBar = {
-            Column {
-                LinearProgressIndicator(
-                    modifier = Modifier.fillMaxWidth(),
-                    progress = timer
-                )
-                BottomAppBar(
-                    floatingActionButton = {
-                        FloatingActionButton(onClick = {
-                            showAddAccount = true
-                        }) {
-                            Icon(
-                                imageVector = Icons.Rounded.Add,
-                                contentDescription = null
-                            )
-                        }
-                    },
-                    actions = {
-                        IconButton(onClick = { /*TODO*/ }) {
-                            Icon(
-                                imageVector = Icons.Rounded.MoreVert,
-                                contentDescription = null
-                            )
-                        }
-                        IconButton(onClick = { /*TODO*/ }) {
-                            Icon(
-                                imageVector = Icons.Rounded.Search,
-                                contentDescription = null
-                            )
-                        }
-                        IconButton(onClick = { /*TODO*/ }) {
-                            Icon(
-                                imageVector = Icons.Rounded.Sort,
-                                contentDescription = null
-                            )
-                        }
-                    },
-                )
-            }
+            BottomAppBar(
+                floatingActionButton = {
+                    FloatingActionButton(onClick = {
+                        showAddAccount = true
+                    }) {
+                        Icon(
+                            imageVector = Icons.Rounded.Add,
+                            contentDescription = null
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(
+                            imageVector = Icons.Rounded.MoreVert,
+                            contentDescription = null
+                        )
+                    }
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(
+                            imageVector = Icons.Rounded.Search,
+                            contentDescription = null
+                        )
+                    }
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(
+                            imageVector = Icons.Rounded.Sort,
+                            contentDescription = null
+                        )
+                    }
+                },
+            )
         }
     ) { paddingValues ->
         LazyColumn(
@@ -100,11 +95,15 @@ fun HomeScreen(
                     onCopyClick = {
                         viewModel.copyCodeToClipboard(account.label, code)
                     },
+                    onEditClick = {},
                     onVisibleChange = {
                         visible = !visible
                     },
                     visible = visible,
-                    name = { Text(account.label) },
+                    issuer = if (account.issuer != "") { ->
+                        Text(account.issuer)
+                    } else null,
+                    label = { Text(account.label) },
                     icon = {
                         Box(
                             Modifier
@@ -113,6 +112,25 @@ fun HomeScreen(
                                 .background(MaterialTheme.colorScheme.onSurfaceVariant)
                         )
                     },
+                    timer = if (account is DomainAccount.Totp) { ->
+                        Box(
+                            modifier = Modifier.size(36.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            val timerProgress = viewModel.timerProgresses[account.secret]
+                            val timerValue = viewModel.timerValues[account.secret]
+                            if (timerProgress != null) {
+                                val animatedTimerProgress by animateFloatAsState(
+                                    targetValue = timerProgress,
+                                    animationSpec = tween(durationMillis = 500)
+                                )
+                                CircularProgressIndicator(progress = animatedTimerProgress)
+                            }
+                            if (timerValue != null) {
+                                Text(timerValue.toString())
+                            }
+                        }
+                    } else null,
                     code = {
                         AnimatedContent(
                             targetState = code,
@@ -225,11 +243,14 @@ fun HomeScreen(
 @Composable
 private fun Account(
     onCopyClick: () -> Unit,
+    onEditClick: () -> Unit,
     onVisibleChange: (Boolean) -> Unit,
     visible: Boolean,
     modifier: Modifier = Modifier,
-    name: @Composable () -> Unit,
+    issuer: (@Composable () -> Unit)?,
+    label: @Composable () -> Unit,
     icon: @Composable () -> Unit,
+    timer: (@Composable () -> Unit)?,
     code: @Composable () -> Unit,
 ) {
     ElevatedCard(modifier = modifier) {
@@ -242,13 +263,18 @@ private fun Account(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 icon()
-                ProvideTextStyle(MaterialTheme.typography.headlineSmall) {
-                    name()
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    if (issuer != null) {
+                        ProvideTextStyle(MaterialTheme.typography.labelMedium) {
+                            issuer()
+                        }
+                    }
+                    ProvideTextStyle(MaterialTheme.typography.bodyLarge) {
+                        label()
+                    }
                 }
                 Spacer(Modifier.weight(1f))
-                IconButton(onClick = {
-
-                }) {
+                IconButton(onClick = onEditClick) {
                     Icon(
                         imageVector = Icons.Rounded.Edit,
                         contentDescription = null
@@ -262,6 +288,11 @@ private fun Account(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                if (timer != null) {
+                    ProvideTextStyle(MaterialTheme.typography.labelLarge) {
+                        timer()
+                    }
+                }
                 ProvideTextStyle(MaterialTheme.typography.titleLarge) {
                     code()
                 }
