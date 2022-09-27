@@ -13,44 +13,31 @@ Logo by @wingio
 While there are many 2FA authenticator apps out there, most of them come with an outdated UI/UX and functionality. Mauth aims to be as intuitive and feature-rich as possible, while also providing a beautiful Material You UI.
 
 # Features
-Note: features marked with `^` are incomplete, while those marked as `!` are currently unavailable, as the app is still in an active development.
-
-- FOSS
-- Compatible with Google Authenticator
-- Secure
-    - Biometrics!
-    - Password!
+- [x] Compatibility with Google Authenticator
+- Security
+  - [ ] Biometrics!
+  - [ ] Password!
 - Ways to add your accounts
-    - QR Code scanning
-        - Using a camera
-        - From an image
-    - Manual entering of the details
+  - [x] Scanning a QR code
+    - [x] Using a camera
+    - [x] From an image
+  - [x] Manually
 - Algorithms
-    - TOTP
-    - HOTP^
+  - [x] TOTP
+  - [ ] HOTP
 - Organization
-    - Search
-        - By name!
-        - By label!
-        - By issuer!
-    - Sorting
-        - By label!
-        - By label reverse!
-        - By issuer!
-        - By issuer reverse!
-    - Grouping
-        - By category!
-        - By category reverse!
-    - Editing!
-- Export/Import
-    - Exporting
-        - Plain text!
-        - Encrypted data!
-    - Importing
-        - Google Authenticator!
-        - Authy!
-        - Aegis!
-        - Microsoft Authenticator!
+  - [ ] Search
+  - [ ] Sorting
+  - [ ] Grouping
+  - [ ] Editing
+- Exporting
+  - [ ] Plain text
+  - [ ] Encrypted data
+- Importing
+  - [ ] Google Authenticator
+  - [ ] Authy
+  - [ ] Aegis
+  - [ ] Microsoft Authenticator
 
 # Screenshots
 <img width=200 alt="Screenshot 1"
