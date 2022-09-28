@@ -15,8 +15,8 @@ While there are many 2FA authenticator apps out there, most of them come with an
 # Features
 - [x] Compatibility with Google Authenticator
 - Security
-  - [ ] Biometrics!
-  - [ ] Password!
+  - [ ] Biometrics
+  - [ ] Password
 - Ways to add your accounts
   - [x] Scanning a QR code
     - [x] Using a camera
