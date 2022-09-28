@@ -1,0 +1,4 @@
+v0.2.1:
+A hotfix release.
+- Prevent the camera from closing (freezing) when an invalid QR code is detected.
+- Fixed a crash that occurs when the URI label is not provided.
