@@ -46,7 +46,7 @@ class OtpUriParserImpl : OtpUriParser {
 
         val label = try {
             uri.pathSegments[0]
-        } catch (e: NoSuchElementException) {
+        } catch (e: IndexOutOfBoundsException) {
             return OtpUriParserResult.Failure(OtpUriParserError.ERROR_MISSING_LABEL)
         }
 
