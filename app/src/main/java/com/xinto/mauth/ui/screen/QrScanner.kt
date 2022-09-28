@@ -3,6 +3,7 @@ package com.xinto.mauth.ui.screen
 import android.content.Context
 import android.view.ViewGroup
 import androidx.activity.compose.BackHandler
+import androidx.camera.core.CameraProvider
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
@@ -88,9 +89,10 @@ fun QrScannerScreen(
                                     .matchParentSize()
                                     .padding(12.dp)
                                     .clip(MaterialTheme.shapes.large),
-                                onQrResult = {
-                                    val params = viewModel.parseOtpUri(it.text)
+                                onQrResult = { cameraProvider, qr ->
+                                    val params = viewModel.parseOtpUri(qr.text)
                                     if (params != null) {
+                                        cameraProvider.unbindAll()
                                         navigator.replace(MauthDestination.AddAccount(params))
                                     }
                                 }
@@ -128,7 +130,7 @@ fun QrScannerScreen(
 @Composable
 private fun Camera(
     modifier: Modifier = Modifier,
-    onQrResult: (com.google.zxing.Result) -> Unit,
+    onQrResult: (ProcessCameraProvider, com.google.zxing.Result) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -165,8 +167,7 @@ private fun Camera(
                                 ContextCompat.getMainExecutor(context),
                                 QrCodeAnalyzer(
                                     onSuccess = {
-                                        cameraProvider.unbindAll()
-                                        onQrResult(it)
+                                        onQrResult(cameraProvider, it)
                                     },
                                     onFail = {}
                                 )
