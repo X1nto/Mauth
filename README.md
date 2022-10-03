@@ -53,8 +53,8 @@ src="github/screenshot_4.png?raw=true">
 
 # Download
 Mauth is available on F-Droid and GitHub Releases page.  
-<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="75">
-<img src="github/get_it_on_github.png" height="75">
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="75">](https://f-droid.org/en/packages/com.xinto.mauth)
+[<img src="github/get_it_on_github.png" height="75">](https://github.com/X1nto/Mauth/releases)
 
 # License
 ```
