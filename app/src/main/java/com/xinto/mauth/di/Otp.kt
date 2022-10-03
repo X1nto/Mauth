@@ -1,9 +1,7 @@
 package com.xinto.mauth.di
 
-import com.xinto.mauth.otp.generator.HotpGenerator
-import com.xinto.mauth.otp.generator.HotpGeneratorImpl
-import com.xinto.mauth.otp.generator.TotpGenerator
-import com.xinto.mauth.otp.generator.TotpGeneratorImpl
+import com.xinto.mauth.otp.generator.OtpGenerator
+import com.xinto.mauth.otp.generator.OtpGeneratorImpl
 import com.xinto.mauth.otp.parser.OtpUriParser
 import com.xinto.mauth.otp.parser.OtpUriParserImpl
 import com.xinto.mauth.otp.transformer.KeyTransformer
@@ -14,12 +12,8 @@ import org.koin.dsl.module
 
 val otpModule = module {
 
-    fun provideHotpGenerator(): HotpGenerator {
-        return HotpGeneratorImpl()
-    }
-
-    fun provideTotpGenerator(hotpGenerator: HotpGenerator): TotpGenerator {
-        return TotpGeneratorImpl(hotpGenerator)
+    fun provideOtpGenerator(): OtpGenerator {
+        return OtpGeneratorImpl()
     }
 
     fun provideKeyTransformer(): KeyTransformer {
@@ -30,8 +24,7 @@ val otpModule = module {
         return OtpUriParserImpl()
     }
 
-    singleOf(::provideHotpGenerator)
-    singleOf(::provideTotpGenerator)
+    singleOf(::provideOtpGenerator)
     singleOf(::provideKeyTransformer)
     singleOf(::provideUriParser)
 }

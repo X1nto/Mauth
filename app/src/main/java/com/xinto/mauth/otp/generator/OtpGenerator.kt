@@ -4,22 +4,31 @@ import com.xinto.mauth.otp.OtpDigest
 import java.nio.ByteBuffer
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
+import kotlin.math.floor
 import kotlin.math.pow
 
-interface HotpGenerator {
+interface OtpGenerator {
 
-    fun generate(
+    fun generateHotp(
         secret: ByteArray,
         counter: Long,
         digits: Int = 6,
         digest: OtpDigest = OtpDigest.Sha1
     ): String
 
+    fun generateTotp(
+        secret: ByteArray,
+        interval: Long,
+        seconds: Long,
+        digits: Int = 6,
+        digest: OtpDigest = OtpDigest.Sha1
+    ): String
+
 }
 
-class HotpGeneratorImpl : HotpGenerator {
+class OtpGeneratorImpl : OtpGenerator {
 
-    override fun generate(
+    override fun generateHotp(
         secret: ByteArray,
         counter: Long,
         digits: Int,
@@ -50,5 +59,15 @@ class HotpGeneratorImpl : HotpGenerator {
         }.toString()
     }
 
-}
+    override fun generateTotp(
+        secret: ByteArray,
+        interval: Long,
+        seconds: Long,
+        digits: Int,
+        digest: OtpDigest
+    ): String {
+        val counter = floor((seconds / interval).toDouble()).toLong()
+        return generateHotp(secret, counter, digits, digest)
+    }
 
+}

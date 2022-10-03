@@ -17,7 +17,7 @@ import com.xinto.mauth.Mauth
 import com.xinto.mauth.camera.decoder.ZxingDecoder
 import com.xinto.mauth.domain.model.DomainAccount
 import com.xinto.mauth.domain.repository.HomeRepository
-import com.xinto.mauth.otp.generator.TotpGenerator
+import com.xinto.mauth.otp.generator.OtpGenerator
 import com.xinto.mauth.otp.parser.OtpUriParser
 import com.xinto.mauth.otp.parser.OtpUriParserResult
 import com.xinto.mauth.otp.transformer.KeyTransformer
@@ -31,7 +31,7 @@ import kotlin.concurrent.fixedRateTimer
 
 class HomeViewModel(
     application: Application,
-    private val totpService: TotpGenerator,
+    private val otpGenerator: OtpGenerator,
     private val keyTransformer: KeyTransformer,
     private val otpUriParser: OtpUriParser,
     private val homeRepository: HomeRepository,
@@ -60,7 +60,7 @@ class HomeViewModel(
             accounts.filterIsInstance<DomainAccount.Totp>().forEach {
                 val keyByte = keyBytes[it.secret]
                 if (keyByte != null) {
-                    codes[it.id] = totpService.generate(
+                    codes[it.id] = otpGenerator.generateTotp(
                         secret = keyByte,
                         interval = it.period.toLong(),
                         digits = it.digits,

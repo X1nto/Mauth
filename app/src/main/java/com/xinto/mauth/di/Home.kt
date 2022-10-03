@@ -4,7 +4,7 @@ import android.app.Application
 import com.xinto.mauth.db.dao.AccountsDao
 import com.xinto.mauth.domain.repository.HomeRepository
 import com.xinto.mauth.domain.repository.HomeRepositoryImpl
-import com.xinto.mauth.otp.generator.TotpGenerator
+import com.xinto.mauth.otp.generator.OtpGenerator
 import com.xinto.mauth.otp.parser.OtpUriParser
 import com.xinto.mauth.otp.transformer.KeyTransformer
 import com.xinto.mauth.ui.viewmodel.HomeViewModel
@@ -20,14 +20,14 @@ val homeModule = module {
 
     fun provideHomeViewModel(
         application: Application,
-        totpGenerator: TotpGenerator,
+        otpGenerator: OtpGenerator,
         otpUriParser: OtpUriParser,
         homeRepository: HomeRepository,
         keyTransformer: KeyTransformer
     ): HomeViewModel {
         return HomeViewModel(
             application,
-            totpGenerator,
+            otpGenerator,
             keyTransformer,
             otpUriParser,
             homeRepository

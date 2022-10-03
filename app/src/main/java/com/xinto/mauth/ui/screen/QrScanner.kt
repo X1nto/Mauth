@@ -3,7 +3,6 @@ package com.xinto.mauth.ui.screen
 import android.content.Context
 import android.view.ViewGroup
 import androidx.activity.compose.BackHandler
-import androidx.camera.core.CameraProvider
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
