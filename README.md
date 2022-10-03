@@ -4,6 +4,8 @@ alt="App icon">
 # Mauth
 
 [![CI](https://img.shields.io/github/workflow/status/X1nto/Mauth/Build%20APK?color=blue&style=for-the-badge)](https://github.com/X1nto/Mauth/actions?query=branch%3Amaster)
+[![F-Droid](https://img.shields.io/f-droid/v/com.xinto.mauth.svg?logo=F-Droid&color=green&style=for-the-badge)](https://f-droid.org/en/packages/com.xinto.mauth)
+[![Releases](https://img.shields.io/github/release/X1nto/Mauth.svg?logo=github&color=171515&style=for-the-badge)](https://github.com/X1nto/Mauth/releases)
 
 Mauth (pronounced Moth) is a Two-Factor Authentication app with support for TOTP and HOTP (coming soon) and compatibility with Google Authenticator.
 
@@ -48,6 +50,11 @@ src="github/screenshot_2.png?raw=true">
 src="github/screenshot_3.png?raw=true">
 <img width=200 alt="Screenshot 2"
 src="github/screenshot_4.png?raw=true">
+
+# Download
+Mauth is available on F-Droid and GitHub Releases page.  
+<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="75">
+<img src="github/get_it_on_github.png" height="75">
 
 # License
 ```
