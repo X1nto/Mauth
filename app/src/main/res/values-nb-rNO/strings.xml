@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">Mauth</string>
+
+    <string name="home_dashboard_empty">Ingenting her enda</string>
+    <string name="home_addaccount_title">Legg til en konto</string>
+    <string name="home_addaccount_subtitle">Skann en QR-kode eller skriv inn nøkkelen manuelt</string>
+    <string name="home_addaccount_data_scanqr">Skann en QR-kode</string>
+    <string name="home_addaccount_data_imageqr">Velg et bilde</string>
+    <string name="home_addaccount_data_manual">Skriv inn data manuelt</string>
+
+    <string name="qrscan_title">Skann en QR-kode</string>
+    <string name="qrscan_permissions_title">Manglende tilganger</string>
+    <string name="qrscan_permissions_subtitle">Kameratilgang er ikke innvilget.</string>
+    <string name="qrscan_permissions_subtitle_rationale">Kameratilgang kreves for at programmet skal kunne analysere QR-koden. Uten det kan ikke Mauth skanne og importere kontoene dine.</string>
+    <string name="qrscan_permissions_button_grant">Innvilg</string>
+    <string name="qrscan_permissions_button_cancel">Avbryt</string>
+
+    <string name="addaccount_title">Legg til en konto</string>
+    <string name="addaccount_actions_save">Lagre</string>
+    <string name="addaccount_data_label">Etikett</string>
+    <string name="addaccount_data_label_placeholder">Discord</string>
+    <string name="addaccount_data_issuer">Utsteder</string>
+    <string name="addaccount_data_issuer_placeholder">Ola Nordmann</string>
+    <string name="addaccount_data_secret">Hemmelighet</string>
+    <string name="addaccount_data_type">Type</string>
+    <string name="addaccount_data_algorithm">Algoritme</string>
+    <string name="addaccount_data_digits">Siffer</string>
+    <string name="addaccount_data_counter">Teller</string>
+    <string name="addaccount_data_period">Periode</string>
+    <string name="addaccount_discard_title">Forkast endringer?</string>
+    <string name="addaccount_discard_subtitle">Endringene dine vil ikke bli lagret.</string>
+    <string name="addaccount_discard_buttons_discard">Forkast</string>
+    <string name="addaccount_discard_buttons_cancel">Avbryt</string>
+</resources>
