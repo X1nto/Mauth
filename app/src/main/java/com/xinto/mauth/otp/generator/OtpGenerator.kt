@@ -70,4 +70,13 @@ class OtpGeneratorImpl : OtpGenerator {
         return generateHotp(secret, counter, digits, digest)
     }
 
+    private val OtpDigest.algorithmName: String
+        get() {
+            return when (this) {
+                OtpDigest.Sha1 -> "HmacSHA1"
+                OtpDigest.Sha256 -> "HmacSHA256"
+                OtpDigest.Sha512 -> "HmacSHA512"
+            }
+        }
+
 }
