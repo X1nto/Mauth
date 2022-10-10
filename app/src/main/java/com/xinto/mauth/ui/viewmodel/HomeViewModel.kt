@@ -54,6 +54,8 @@ class HomeViewModel(
 
     val accounts = mutableStateListOf<DomainAccount>()
 
+    val selectedAccounts = mutableStateListOf<String>()
+
     private val totpTimer = fixedRateTimer(name = "totp-timer", daemon = false, period = 1000L) {
         val seconds = System.currentTimeMillis() / 1000
         viewModelScope.launch(Dispatchers.Main) {
@@ -138,6 +140,18 @@ class HomeViewModel(
                 null
             }
         }
+    }
+
+    fun selectUnselectAccount(accountId: String) {
+        if (selectedAccounts.contains(accountId)) {
+            selectedAccounts.remove(accountId)
+        } else {
+            selectedAccounts.add((accountId))
+        }
+    }
+
+    fun deleteSelectedAccounts() {
+
     }
 
     override fun onCleared() {
