@@ -6,6 +6,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -57,23 +58,56 @@ fun HomeScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            imageVector = Icons.Rounded.MoreVert,
-                            contentDescription = null
-                        )
-                    }
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            imageVector = Icons.Rounded.Search,
-                            contentDescription = null
-                        )
-                    }
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            imageVector = Icons.Rounded.Sort,
-                            contentDescription = null
-                        )
+                    AnimatedContent(
+                        targetState = viewModel.selectedAccounts.isEmpty(),
+                        transitionSpec = {
+                            if (true isTransitioningTo false) {
+                                slideIntoContainer(AnimatedContentScope.SlideDirection.Up) + fadeIn() with
+                                    scaleOut() + fadeOut()
+                            } else {
+                                scaleIn() + fadeIn() with
+                                    slideOutOfContainer(AnimatedContentScope.SlideDirection.Down) + fadeOut()
+
+                            }
+                        }
+                    ) { selectedAcountsEmpty ->
+                        Row {
+                            when (selectedAcountsEmpty) {
+                                true -> {
+                                    IconButton(onClick = { /*TODO*/ }) {
+                                        Icon(
+                                            imageVector = Icons.Rounded.MoreVert,
+                                            contentDescription = null
+                                        )
+                                    }
+                                    IconButton(onClick = { /*TODO*/ }) {
+                                        Icon(
+                                            imageVector = Icons.Rounded.Search,
+                                            contentDescription = null
+                                        )
+                                    }
+                                    IconButton(onClick = { /*TODO*/ }) {
+                                        Icon(
+                                            imageVector = Icons.Rounded.Sort,
+                                            contentDescription = null
+                                        )
+                                    }
+                                }
+                                false -> {
+                                    IconButton(
+                                        onClick = { /*TODO*/ },
+                                        colors = IconButtonDefaults.iconButtonColors(
+                                            contentColor = MaterialTheme.colorScheme.error
+                                        )
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Rounded.Delete,
+                                            contentDescription = null
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     }
                 },
             )
@@ -95,6 +129,9 @@ fun HomeScreen(
                             viewModel.copyCodeToClipboard(account.label, code)
                         },
                         onEditClick = {},
+                        onLongClick = {
+                            viewModel.selectUnselectAccount(account.id)
+                        },
                         onVisibleChange = {
                             visible = !visible
                         },
@@ -264,6 +301,7 @@ fun HomeScreen(
 private fun Account(
     onCopyClick: () -> Unit,
     onEditClick: () -> Unit,
+    onLongClick: () -> Unit,
     onVisibleChange: (Boolean) -> Unit,
     visible: Boolean,
     modifier: Modifier = Modifier,
@@ -273,9 +311,13 @@ private fun Account(
     timer: (@Composable () -> Unit)?,
     code: @Composable () -> Unit,
 ) {
-    ElevatedCard(modifier = modifier) {
+    ElevatedCard(
+        modifier = modifier,
+    ) {
         Column(
-            modifier = Modifier.padding(12.dp),
+            modifier = Modifier
+                .combinedClickable(onClick = {}, onLongClick = onLongClick)
+                .padding(12.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
