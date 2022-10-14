@@ -44,8 +44,14 @@ class HomeViewModel(
         object Loaded : State
         object Failed : State
     }
+    sealed interface BottomBarState {
+        object Normal : BottomBarState
+        object Selection : BottomBarState
+    }
 
     var state by mutableStateOf<State>(State.Loading)
+        private set
+    var bottomBarState by mutableStateOf<BottomBarState>(BottomBarState.Normal)
         private set
 
     val codes = mutableStateMapOf<String, String>()
@@ -148,10 +154,12 @@ class HomeViewModel(
         } else {
             selectedAccounts.add((accountId))
         }
-    }
 
-    fun deleteSelectedAccounts() {
-
+        bottomBarState = if (selectedAccounts.isEmpty()) {
+            BottomBarState.Normal
+        } else {
+            BottomBarState.Selection
+        }
     }
 
     override fun onCleared() {

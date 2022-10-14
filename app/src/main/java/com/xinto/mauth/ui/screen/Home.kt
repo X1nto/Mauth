@@ -4,12 +4,14 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
@@ -17,7 +19,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.xinto.mauth.R
@@ -59,21 +63,20 @@ fun HomeScreen(
                 },
                 actions = {
                     AnimatedContent(
-                        targetState = viewModel.selectedAccounts.isEmpty(),
+                        targetState = viewModel.bottomBarState,
                         transitionSpec = {
-                            if (true isTransitioningTo false) {
+                            if (HomeViewModel.BottomBarState.Normal isTransitioningTo HomeViewModel.BottomBarState.Selection) {
                                 slideIntoContainer(AnimatedContentScope.SlideDirection.Up) + fadeIn() with
                                     scaleOut() + fadeOut()
                             } else {
                                 scaleIn() + fadeIn() with
                                     slideOutOfContainer(AnimatedContentScope.SlideDirection.Down) + fadeOut()
-
                             }
                         }
-                    ) { selectedAcountsEmpty ->
+                    ) { bottomBarState ->
                         Row {
-                            when (selectedAcountsEmpty) {
-                                true -> {
+                            when (bottomBarState) {
+                                HomeViewModel.BottomBarState.Normal -> {
                                     IconButton(onClick = { /*TODO*/ }) {
                                         Icon(
                                             imageVector = Icons.Rounded.MoreVert,
@@ -93,7 +96,7 @@ fun HomeScreen(
                                         )
                                     }
                                 }
-                                false -> {
+                                HomeViewModel.BottomBarState.Selection -> {
                                     IconButton(
                                         onClick = { /*TODO*/ },
                                         colors = IconButtonDefaults.iconButtonColors(
@@ -132,6 +135,13 @@ fun HomeScreen(
                         onLongClick = {
                             viewModel.selectUnselectAccount(account.id)
                         },
+                        onClick = {
+                            //don't require long clicks if one of the accounts is already selected
+                            if (viewModel.selectedAccounts.isNotEmpty()) {
+                                viewModel.selectUnselectAccount(account.id)
+                            }
+                        },
+                        selected = viewModel.selectedAccounts.contains(account.id),
                         onVisibleChange = {
                             visible = !visible
                         },
@@ -302,6 +312,8 @@ private fun Account(
     onCopyClick: () -> Unit,
     onEditClick: () -> Unit,
     onLongClick: () -> Unit,
+    onClick: () -> Unit,
+    selected: Boolean,
     onVisibleChange: (Boolean) -> Unit,
     visible: Boolean,
     modifier: Modifier = Modifier,
@@ -311,12 +323,35 @@ private fun Account(
     timer: (@Composable () -> Unit)?,
     code: @Composable () -> Unit,
 ) {
+    val localDensity = LocalDensity.current
+    val shape by animateValueAsState(
+        targetValue = if (selected) MaterialTheme.shapes.small else MaterialTheme.shapes.large,
+        typeConverter = TwoWayConverter(
+            convertToVector = {
+                AnimationVector(
+                    v1 = it.topStart.toPx(Size.Unspecified, localDensity),
+                    v2 = it.topEnd.toPx(Size.Unspecified, localDensity),
+                    v3 = it.bottomStart.toPx(Size.Unspecified, localDensity),
+                    v4 = it.bottomEnd.toPx(Size.Unspecified, localDensity)
+                )
+            },
+            convertFromVector = {
+                RoundedCornerShape(
+                    topStart = it.v1,
+                    topEnd = it.v2,
+                    bottomStart = it.v3,
+                    bottomEnd = it.v4
+                )
+            }
+        )
+    )
     ElevatedCard(
         modifier = modifier,
+        shape = shape
     ) {
         Column(
             modifier = Modifier
-                .combinedClickable(onClick = {}, onLongClick = onLongClick)
+                .combinedClickable(onClick = onClick, onLongClick = onLongClick)
                 .padding(12.dp),
         ) {
             Row(
@@ -351,46 +386,70 @@ private fun Account(
                     }
                 }
                 Spacer(Modifier.weight(1f))
-                IconButton(onClick = onEditClick) {
-                    Icon(
-                        imageVector = Icons.Rounded.Edit,
-                        contentDescription = null
-                    )
+                when (selected) {
+                    true -> {
+                        Box(
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.primary)
+                                .padding(4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.Check,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                    }
+                    false -> {
+                        IconButton(onClick = onEditClick) {
+                            Icon(
+                                imageVector = Icons.Rounded.Edit,
+                                contentDescription = null
+                            )
+                        }
+                    }
                 }
             }
-            Divider(Modifier.padding(vertical = 12.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            AnimatedVisibility(
+                visible = !selected,
             ) {
-                if (timer != null) {
-                    ProvideTextStyle(MaterialTheme.typography.labelLarge) {
-                        timer()
-                    }
-                }
-                ProvideTextStyle(MaterialTheme.typography.titleLarge) {
-                    code()
-                }
-                Spacer(Modifier.weight(1f))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    FilledTonalIconToggleButton(
-                        checked = visible,
-                        onCheckedChange = onVisibleChange
+                Column {
+                    Divider(Modifier.padding(vertical = 12.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Icon(
-                            imageVector = if (visible) Icons.Rounded.Visibility else Icons.Rounded.VisibilityOff,
-                            contentDescription = null
-                        )
-                    }
-                    FilledTonalIconButton(onClick = onCopyClick) {
-                        Icon(
-                            imageVector = Icons.Rounded.CopyAll,
-                            contentDescription = null
-                        )
+                        if (timer != null) {
+                            ProvideTextStyle(MaterialTheme.typography.labelLarge) {
+                                timer()
+                            }
+                        }
+                        ProvideTextStyle(MaterialTheme.typography.titleLarge) {
+                            code()
+                        }
+                        Spacer(Modifier.weight(1f))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            FilledTonalIconToggleButton(
+                                checked = visible,
+                                onCheckedChange = onVisibleChange
+                            ) {
+                                Icon(
+                                    imageVector = if (visible) Icons.Rounded.Visibility else Icons.Rounded.VisibilityOff,
+                                    contentDescription = null
+                                )
+                            }
+                            FilledTonalIconButton(onClick = onCopyClick) {
+                                Icon(
+                                    imageVector = Icons.Rounded.CopyAll,
+                                    contentDescription = null
+                                )
+                            }
+                        }
                     }
                 }
             }
