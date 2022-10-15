@@ -1,4 +1,5 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation">
     <string name="app_name">Mauth</string>
 
     <string name="home_dashboard_empty">Nothing here yet</string>
@@ -7,6 +8,10 @@
     <string name="home_addaccount_data_scanqr">Scan a QR code</string>
     <string name="home_addaccount_data_imageqr">Choose an image</string>
     <string name="home_addaccount_data_manual">Enter data manually</string>
+    <string name="home_delete_title">Delete accounts?</string>
+    <string name="home_delete_subtitle">Selected accounts will be permanently deleted.</string>
+    <string name="home_delete_button_delete">Delete</string>
+    <string name="home_delete_button_cancel">Cancel</string>
 
     <string name="qrscan_title">Scan a QR code</string>
     <string name="qrscan_permissions_title">Missing permissions</string>

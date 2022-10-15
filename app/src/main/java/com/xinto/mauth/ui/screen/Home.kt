@@ -319,17 +319,29 @@ fun HomeScreen(
     if (showDeleteAccounts) {
         AlertDialog(
             onDismissRequest = { showDeleteAccounts = false },
+            icon = {
+                Icon(
+                    imageVector = Icons.Rounded.DeleteForever,
+                    contentDescription = null
+                )
+            },
+            title = {
+                Text(stringResource(R.string.home_delete_title))
+            },
+            text = {
+                Text(stringResource(R.string.home_delete_subtitle))
+            },
             confirmButton = {
                 FilledTonalButton(onClick = {
                     showDeleteAccounts = false
                     viewModel.deleteSelected()
                 }) {
-                    Text("Delete")
+                    Text(stringResource(R.string.home_delete_button_delete))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteAccounts = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.home_delete_button_cancel))
                 }
             }
         )
