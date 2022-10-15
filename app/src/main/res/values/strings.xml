@@ -23,9 +23,7 @@
     <string name="addaccount_title">Add an account</string>
     <string name="addaccount_actions_save">Save</string>
     <string name="addaccount_data_label">Label</string>
-    <string name="addaccount_data_label_placeholder">Discord</string>
     <string name="addaccount_data_issuer">Issuer</string>
-    <string name="addaccount_data_issuer_placeholder">John Doe</string>
     <string name="addaccount_data_secret">Secret</string>
     <string name="addaccount_data_type">Type</string>
     <string name="addaccount_data_algorithm">Algorithm</string>

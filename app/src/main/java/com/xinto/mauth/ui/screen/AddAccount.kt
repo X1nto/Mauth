@@ -125,9 +125,6 @@ fun AddAccountScreen(
                     label = {
                         Text(stringResource(R.string.addaccount_data_label))
                     },
-                    placeholder = {
-                        Text(stringResource(R.string.addaccount_data_label_placeholder))
-                    },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Rounded.Label,
@@ -145,9 +142,6 @@ fun AddAccountScreen(
                     onValueChange = viewModel::updateIssuer,
                     label = {
                         Text(stringResource(R.string.addaccount_data_issuer))
-                    },
-                    placeholder = {
-                        Text(stringResource(R.string.addaccount_data_issuer_placeholder))
                     },
                     leadingIcon = {
                         Icon(

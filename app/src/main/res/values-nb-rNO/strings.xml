@@ -18,9 +18,7 @@
     <string name="addaccount_title">Legg til en konto</string>
     <string name="addaccount_actions_save">Lagre</string>
     <string name="addaccount_data_label">Etikett</string>
-    <string name="addaccount_data_label_placeholder">Discord</string>
     <string name="addaccount_data_issuer">Utsteder</string>
-    <string name="addaccount_data_issuer_placeholder">Ola Nordmann</string>
     <string name="addaccount_data_secret">Hemmelighet</string>
     <string name="addaccount_data_type">Type</string>
     <string name="addaccount_data_algorithm">Algoritme</string>
