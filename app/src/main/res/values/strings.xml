@@ -1,5 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="MissingTranslation">
+<resources>
     <string name="app_name">Mauth</string>
 
     <string name="home_dashboard_empty">Nothing here yet</string>

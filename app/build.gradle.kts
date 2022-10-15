@@ -64,6 +64,11 @@ android {
             }
         }
     }
+
+    lint {
+        disable += "MissingTranslation"
+        disable += "ExtraTranslation"
+    }
 }
 
 ksp {
