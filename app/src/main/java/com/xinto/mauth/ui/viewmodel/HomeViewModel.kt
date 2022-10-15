@@ -40,8 +40,8 @@ class HomeViewModel(
     private val keyBytes = mutableMapOf<String, ByteArray>()
 
     sealed interface State {
+        object Normal : State
         object Loading : State
-        object Loaded : State
         object Failed : State
     }
     sealed interface BottomBarState {
@@ -162,6 +162,19 @@ class HomeViewModel(
         }
     }
 
+    fun clearSelection() {
+        selectedAccounts.clear()
+        bottomBarState = BottomBarState.Normal
+    }
+
+    fun deleteSelected() {
+        val accounts = selectedAccounts.toList()
+        clearSelection()
+        viewModelScope.launch {
+            homeRepository.deleteAccounts(accounts)
+        }
+    }
+
     override fun onCleared() {
         totpTimer.cancel()
     }
@@ -180,7 +193,7 @@ class HomeViewModel(
                         keyBytes[it.secret] = keyTransformer.transformToBytes(it.secret)
                     }
 
-                    state = State.Loaded
+                    state = State.Normal
                 }
                 .catch {
                     state = State.Failed

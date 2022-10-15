@@ -6,12 +6,15 @@ import com.xinto.mauth.domain.model.DomainAccount
 import com.xinto.mauth.otp.OtpType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.util.*
 
 interface HomeRepository {
 
     suspend fun getAccounts(): List<DomainAccount>
 
     suspend fun observeAccounts(): Flow<List<DomainAccount>>
+
+    suspend fun deleteAccounts(accounts: List<String>)
 
 }
 
@@ -31,6 +34,10 @@ class HomeRepositoryImpl(
                 it.toDomain()
             }
         }
+    }
+
+    override suspend fun deleteAccounts(accounts: List<String>) {
+        accountsDao.delete(accounts.map { UUID.fromString(it) })
     }
 
     private fun EntityAccount.toDomain(): DomainAccount {

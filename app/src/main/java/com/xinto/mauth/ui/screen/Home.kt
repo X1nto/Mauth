@@ -40,6 +40,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = getViewModel(),
 ) {
     var showAddAccount by remember { mutableStateOf(false) }
+    var showDeleteAccounts by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -98,13 +99,21 @@ fun HomeScreen(
                                 }
                                 HomeViewModel.BottomBarState.Selection -> {
                                     IconButton(
-                                        onClick = { /*TODO*/ },
+                                        onClick = { showDeleteAccounts = true },
                                         colors = IconButtonDefaults.iconButtonColors(
                                             contentColor = MaterialTheme.colorScheme.error
                                         )
                                     ) {
                                         Icon(
                                             imageVector = Icons.Rounded.Delete,
+                                            contentDescription = null
+                                        )
+                                    }
+                                    IconButton(
+                                        onClick = viewModel::clearSelection,
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Rounded.Clear,
                                             contentDescription = null
                                         )
                                     }
@@ -142,6 +151,7 @@ fun HomeScreen(
                             }
                         },
                         selected = viewModel.selectedAccounts.contains(account.id),
+                        selectable = viewModel.selectedAccounts.isNotEmpty(),
                         onVisibleChange = {
                             visible = !visible
                         },
@@ -305,6 +315,25 @@ fun HomeScreen(
             }
         }
     }
+
+    if (showDeleteAccounts) {
+        AlertDialog(
+            onDismissRequest = { showDeleteAccounts = false },
+            confirmButton = {
+                FilledTonalButton(onClick = {
+                    showDeleteAccounts = false
+                    viewModel.deleteSelected()
+                }) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteAccounts = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 }
 
 @Composable
@@ -314,6 +343,7 @@ private fun Account(
     onLongClick: () -> Unit,
     onClick: () -> Unit,
     selected: Boolean,
+    selectable: Boolean,
     onVisibleChange: (Boolean) -> Unit,
     visible: Boolean,
     modifier: Modifier = Modifier,
@@ -386,8 +416,8 @@ private fun Account(
                     }
                 }
                 Spacer(Modifier.weight(1f))
-                when (selected) {
-                    true -> {
+                if (selectable) {
+                    if (selected) {
                         Box(
                             modifier = Modifier
                                 .clip(CircleShape)
@@ -401,18 +431,17 @@ private fun Account(
                             )
                         }
                     }
-                    false -> {
-                        IconButton(onClick = onEditClick) {
-                            Icon(
-                                imageVector = Icons.Rounded.Edit,
-                                contentDescription = null
-                            )
-                        }
+                } else {
+                    IconButton(onClick = onEditClick) {
+                        Icon(
+                            imageVector = Icons.Rounded.Edit,
+                            contentDescription = null
+                        )
                     }
                 }
             }
             AnimatedVisibility(
-                visible = !selected,
+                visible = !selectable,
             ) {
                 Column {
                     Divider(Modifier.padding(vertical = 12.dp))
