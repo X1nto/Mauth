@@ -21,7 +21,7 @@ class Mauth : Application() {
                 qrScanModule,
                 dbModule,
                 otpModule,
-                datastoreModule,
+                preferencesModule,
             )
         }
     }
