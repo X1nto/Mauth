@@ -1,0 +1,4 @@
+v0.3.0:
+- Added an ability to select and delete accounts.
+- Added Norwegian Bokmål language.
+- Removed the placeholders from the text fields in the account add screen.
