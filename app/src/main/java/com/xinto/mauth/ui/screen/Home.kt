@@ -172,25 +172,36 @@ fun HomeScreen(
                                 Text(account.shortLabel)
                             }
                         },
-                        timer = if (account is DomainAccount.Totp) { ->
-                            Box(
-                                modifier = Modifier.size(36.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                val timerProgress = viewModel.timerProgresses[account.id]
-                                val timerValue = viewModel.timerValues[account.id]
-                                if (timerProgress != null) {
-                                    val animatedTimerProgress by animateFloatAsState(
-                                        targetValue = timerProgress,
-                                        animationSpec = tween(durationMillis = 500)
-                                    )
-                                    CircularProgressIndicator(progress = animatedTimerProgress)
+                        indicator = {
+                            when (account) {
+                                is DomainAccount.Totp -> {
+                                    Box(
+                                        modifier = Modifier.size(48.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        val timerProgress = viewModel.timerProgresses[account.id]
+                                        val timerValue = viewModel.timerValues[account.id]
+                                        if (timerProgress != null) {
+                                            val animatedTimerProgress by animateFloatAsState(
+                                                targetValue = timerProgress,
+                                                animationSpec = tween(durationMillis = 500)
+                                            )
+                                            CircularProgressIndicator(progress = animatedTimerProgress)
+                                        }
+                                        if (timerValue != null) {
+                                            Text(timerValue.toString())
+                                        }
+                                    }
                                 }
-                                if (timerValue != null) {
-                                    Text(timerValue.toString())
+                                is DomainAccount.Hotp -> {
+                                    FilledIconButton(onClick = {
+                                        viewModel.incrementAccountCounter(account.id)
+                                    }) {
+                                        Text(account.counter.toString())
+                                    }
                                 }
                             }
-                        } else null,
+                        },
                         code = {
                             AnimatedContent(
                                 targetState = code,
@@ -364,7 +375,7 @@ private fun Account(
     issuer: (@Composable () -> Unit)?,
     label: @Composable () -> Unit,
     icon: @Composable () -> Unit,
-    timer: (@Composable () -> Unit)?,
+    indicator: @Composable () -> Unit,
     code: @Composable () -> Unit,
 ) {
     val localDensity = LocalDensity.current
@@ -465,11 +476,7 @@ private fun Account(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        if (timer != null) {
-                            ProvideTextStyle(MaterialTheme.typography.labelLarge) {
-                                timer()
-                            }
-                        }
+                        indicator()
                         ProvideTextStyle(MaterialTheme.typography.titleLarge) {
                             code()
                         }

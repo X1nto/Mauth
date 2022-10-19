@@ -27,7 +27,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.util.UUID
+import java.util.*
 import kotlin.concurrent.fixedRateTimer
 
 class HomeViewModel(
@@ -64,22 +64,9 @@ class HomeViewModel(
     val selectedAccounts = mutableStateListOf<UUID>()
 
     private val totpTimer = fixedRateTimer(name = "totp-timer", daemon = false, period = 1000L) {
-        val seconds = System.currentTimeMillis() / 1000
         viewModelScope.launch(Dispatchers.Main) {
             accounts.filterIsInstance<DomainAccount.Totp>().forEach {
-                val keyByte = keyBytes[it.secret]
-                if (keyByte != null) {
-                    codes[it.id] = otpGenerator.generateTotp(
-                        secret = keyByte,
-                        interval = it.period.toLong(),
-                        digits = it.digits,
-                        seconds = seconds,
-                        digest = it.algorithm
-                    )
-                }
-                val diff = seconds % it.period
-                timerProgresses[it.id] = 1f - (diff / it.period.toFloat())
-                timerValues[it.id] = it.period - diff
+                generateTotp(it)
             }
         }
     }
@@ -176,8 +163,43 @@ class HomeViewModel(
         }
     }
 
+    fun incrementAccountCounter(id: UUID) {
+        viewModelScope.launch {
+            homeRepository.incrementAccountCounter(id)
+        }
+    }
+
     override fun onCleared() {
         totpTimer.cancel()
+    }
+
+    private fun generateTotp(domainAccount: DomainAccount.Totp) {
+        val seconds = System.currentTimeMillis() / 1000
+        val keyByte = keyBytes[domainAccount.secret]
+        if (keyByte != null) {
+            codes[domainAccount.id] = otpGenerator.generateTotp(
+                secret = keyByte,
+                interval = domainAccount.period.toLong(),
+                digits = domainAccount.digits,
+                seconds = seconds,
+                digest = domainAccount.algorithm
+            )
+        }
+        val diff = seconds % domainAccount.period
+        timerProgresses[domainAccount.id] = 1f - (diff / domainAccount.period.toFloat())
+        timerValues[domainAccount.id] = domainAccount.period - diff
+    }
+
+    private fun generateHotp(domainAccount: DomainAccount.Hotp) {
+        val keyByte = keyBytes[domainAccount.secret]
+        if (keyByte != null) {
+            codes[domainAccount.id] = otpGenerator.generateHotp(
+                secret = keyByte,
+                counter = domainAccount.counter.toLong(),
+                digits = domainAccount.digits,
+                digest = domainAccount.algorithm
+            )
+        }
     }
 
     init {
@@ -192,6 +214,13 @@ class HomeViewModel(
                     keyBytes.clear()
                     domainAccounts.forEach {
                         keyBytes[it.secret] = keyTransformer.transformToBytes(it.secret)
+                    }
+
+                    accounts.filterIsInstance<DomainAccount.Totp>().forEach {
+                        generateTotp(it)
+                    }
+                    accounts.filterIsInstance<DomainAccount.Hotp>().forEach {
+                        generateHotp(it)
                     }
 
                     state = State.Normal
