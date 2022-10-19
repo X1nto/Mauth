@@ -16,6 +16,8 @@ interface HomeRepository {
 
     suspend fun deleteAccounts(accounts: List<UUID>)
 
+    suspend fun incrementAccountCounter(id: UUID)
+
 }
 
 class HomeRepositoryImpl(
@@ -38,6 +40,13 @@ class HomeRepositoryImpl(
 
     override suspend fun deleteAccounts(accounts: List<UUID>) {
         accountsDao.delete(accounts)
+    }
+
+    override suspend fun incrementAccountCounter(id: UUID) {
+        val account = accountsDao.getById(id) ?: return
+        accountsDao.update(
+            account.copy(counter = account.counter + 1)
+        )
     }
 
     private fun EntityAccount.toDomain(): DomainAccount {

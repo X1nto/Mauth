@@ -194,6 +194,7 @@ fun AddEditAccountScreen(
                     onExpandedChange = setExpanded
                 ) {
                     OutlinedTextField(
+                        modifier = Modifier.menuAnchor(),
                         value = viewModel.type.name,
                         onValueChange = {},
                         readOnly = true,
@@ -234,6 +235,7 @@ fun AddEditAccountScreen(
                     onExpandedChange = setExpanded
                 ) {
                     OutlinedTextField(
+                        modifier = Modifier.menuAnchor(),
                         value = viewModel.algorithm.name,
                         onValueChange = {},
                         readOnly = true,
