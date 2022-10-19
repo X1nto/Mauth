@@ -15,11 +15,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.xinto.mauth.ui.navigation.MauthDestination
-import com.xinto.mauth.ui.screen.AddAccountScreen
+import com.xinto.mauth.ui.screen.AddEditAccountScreen
 import com.xinto.mauth.ui.screen.HomeScreen
 import com.xinto.mauth.ui.screen.QrScannerScreen
 import com.xinto.mauth.ui.theme.MauthTheme
-import com.xinto.mauth.ui.viewmodel.AddAccountViewModel
+import com.xinto.mauth.ui.viewmodel.AddEditAccountViewModel
 import com.xinto.taxi.Taxi
 import com.xinto.taxi.rememberBackstackNavigator
 import org.koin.androidx.compose.getViewModel
@@ -79,9 +79,17 @@ fun Main() {
 
             }
             is MauthDestination.AddAccount -> {
-                val viewModel: AddAccountViewModel = getViewModel()
-                viewModel.update(screen.params)
-                AddAccountScreen(
+                val viewModel: AddEditAccountViewModel = getViewModel()
+                viewModel.fromParams(screen.params)
+                AddEditAccountScreen(
+                    navigator = navigator,
+                    viewModel = viewModel
+                )
+            }
+            is MauthDestination.EditAccount -> {
+                val viewModel: AddEditAccountViewModel = getViewModel()
+                viewModel.fromId(screen.id)
+                AddEditAccountScreen(
                     navigator = navigator,
                     viewModel = viewModel
                 )

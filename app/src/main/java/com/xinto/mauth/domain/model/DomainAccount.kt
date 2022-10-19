@@ -2,9 +2,10 @@ package com.xinto.mauth.domain.model
 
 import android.net.Uri
 import com.xinto.mauth.otp.OtpDigest
+import java.util.*
 
 sealed class DomainAccount {
-    abstract val id: String
+    abstract val id: UUID
     abstract val icon: Uri?
     abstract val secret: String
     abstract val label: String
@@ -19,7 +20,7 @@ sealed class DomainAccount {
     }
 
     data class Totp(
-        override val id: String,
+        override val id: UUID,
         override val icon: Uri?,
         override val secret: String,
         override val label: String,
@@ -30,7 +31,7 @@ sealed class DomainAccount {
     ) : DomainAccount()
 
     data class Hotp(
-        override val id: String,
+        override val id: UUID,
         override val icon: Uri?,
         override val secret: String,
         override val label: String,

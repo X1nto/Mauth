@@ -15,8 +15,10 @@ import com.xinto.mauth.otp.OtpDigest
 import com.xinto.mauth.otp.OtpType
 import com.xinto.mauth.ui.navigation.AddAccountParams
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import java.util.UUID
 
-class AddAccountViewModel(
+class AddEditAccountViewModel(
     application: Application,
     private val accountsDao: AccountsDao
 ) : AndroidViewModel(application) {
@@ -103,7 +105,30 @@ class AddAccountViewModel(
         this.period = period
     }
 
-    fun update(params: AddAccountParams) {
+    var id by mutableStateOf<UUID?>(null)
+        private set
+
+    fun fromId(id: UUID) {
+        val account = runBlocking {
+            accountsDao.getById(id)
+        } ?: return
+        errorLabel = false
+        errorDigits = false
+        errorCounter = false
+        errorPeriod = false
+        imageUri = account.icon
+        label = account.label
+        issuer = account.issuer
+        secret = account.secret
+        algorithm = account.algorithm
+        type = account.type
+        digits = account.digits.toString()
+        counter = account.counter.toString()
+        period = account.period.toString()
+        this.id = id
+    }
+
+    fun fromParams(params: AddAccountParams) {
         errorLabel = false
         errorDigits = false
         errorCounter = false
@@ -116,6 +141,7 @@ class AddAccountViewModel(
         digits = params.digits.toString()
         counter = params.counter.toString()
         period = params.period.toString()
+        id = null
     }
 
     fun save(): Boolean {
@@ -148,19 +174,24 @@ class AddAccountViewModel(
         errorPeriod = false
 
         viewModelScope.launch {
-            accountsDao.insert(
-                EntityAccount(
-                    secret = secret,
-                    icon = imageUri,
-                    label = label,
-                    issuer = issuer,
-                    algorithm = algorithm,
-                    type = type,
-                    digits = digits,
-                    counter = counter,
-                    period = period
-                )
+            val account = EntityAccount(
+                id = id ?: UUID.randomUUID(),
+                secret = secret,
+                icon = imageUri,
+                label = label,
+                issuer = issuer,
+                algorithm = algorithm,
+                type = type,
+                digits = digits,
+                counter = counter,
+                period = period
             )
+
+            if (id != null) {
+                accountsDao.update(account)
+            } else {
+                accountsDao.insert(account)
+            }
         }
         return true
     }
