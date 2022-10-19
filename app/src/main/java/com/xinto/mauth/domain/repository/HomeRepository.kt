@@ -14,7 +14,7 @@ interface HomeRepository {
 
     suspend fun observeAccounts(): Flow<List<DomainAccount>>
 
-    suspend fun deleteAccounts(accounts: List<String>)
+    suspend fun deleteAccounts(accounts: List<UUID>)
 
 }
 
@@ -36,16 +36,15 @@ class HomeRepositoryImpl(
         }
     }
 
-    override suspend fun deleteAccounts(accounts: List<String>) {
-        accountsDao.delete(accounts.map { UUID.fromString(it) })
+    override suspend fun deleteAccounts(accounts: List<UUID>) {
+        accountsDao.delete(accounts)
     }
 
     private fun EntityAccount.toDomain(): DomainAccount {
-        val idString = id.toString()
         return when (type) {
             OtpType.Totp -> {
                 DomainAccount.Totp(
-                    id = idString,
+                    id = id,
                     icon = icon,
                     secret = secret,
                     label = label,
@@ -57,7 +56,7 @@ class HomeRepositoryImpl(
             }
             OtpType.Hotp -> {
                 DomainAccount.Hotp(
-                    id = idString,
+                    id = id,
                     secret = secret,
                     icon = icon,
                     label = label,

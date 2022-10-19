@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.util.UUID
 import kotlin.concurrent.fixedRateTimer
 
 class HomeViewModel(
@@ -54,13 +55,13 @@ class HomeViewModel(
     var bottomBarState by mutableStateOf<BottomBarState>(BottomBarState.Normal)
         private set
 
-    val codes = mutableStateMapOf<String, String>()
-    val timerProgresses = mutableStateMapOf<String, Float>()
-    val timerValues = mutableStateMapOf<String, Long>()
+    val codes = mutableStateMapOf<UUID, String>()
+    val timerProgresses = mutableStateMapOf<UUID, Float>()
+    val timerValues = mutableStateMapOf<UUID, Long>()
 
     val accounts = mutableStateListOf<DomainAccount>()
 
-    val selectedAccounts = mutableStateListOf<String>()
+    val selectedAccounts = mutableStateListOf<UUID>()
 
     private val totpTimer = fixedRateTimer(name = "totp-timer", daemon = false, period = 1000L) {
         val seconds = System.currentTimeMillis() / 1000
@@ -148,7 +149,7 @@ class HomeViewModel(
         }
     }
 
-    fun selectUnselectAccount(accountId: String) {
+    fun selectUnselectAccount(accountId: UUID) {
         if (selectedAccounts.contains(accountId)) {
             selectedAccounts.remove(accountId)
         } else {

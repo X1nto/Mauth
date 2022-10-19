@@ -3,6 +3,7 @@ package com.xinto.mauth.ui.navigation
 import com.xinto.taxi.BackstackNavigator
 import com.xinto.taxi.Destination
 import kotlinx.parcelize.Parcelize
+import java.util.*
 
 typealias MauthNavigator = BackstackNavigator<MauthDestination>
 
@@ -16,6 +17,11 @@ sealed class MauthDestination(val isFullscreenDialog: Boolean = false) : Destina
     @Parcelize
     class AddAccount(
         val params: AddAccountParams
+    ) : MauthDestination(isFullscreenDialog = true)
+
+    @Parcelize
+    class EditAccount(
+        val id: UUID,
     ) : MauthDestination(isFullscreenDialog = true)
 
     @Parcelize

@@ -33,13 +33,13 @@ import com.xinto.mauth.otp.OtpType
 import com.xinto.mauth.ui.component.UriImage
 import com.xinto.mauth.ui.component.singleItem
 import com.xinto.mauth.ui.navigation.MauthNavigator
-import com.xinto.mauth.ui.viewmodel.AddAccountViewModel
+import com.xinto.mauth.ui.viewmodel.AddEditAccountViewModel
 import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun AddAccountScreen(
+fun AddEditAccountScreen(
     navigator: MauthNavigator,
-    viewModel: AddAccountViewModel = getViewModel()
+    viewModel: AddEditAccountViewModel = getViewModel()
 ) {
     var showExitDialog by remember { mutableStateOf(false) }
     val imageSelectLauncher = rememberLauncherForActivityResult(PickVisualMediaPersistent()) {
@@ -52,7 +52,11 @@ fun AddAccountScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(stringResource(R.string.addaccount_title))
+                    if (viewModel.id != null) {
+                        Text(stringResource(R.string.addeditaccount_title_edit))
+                    } else {
+                        Text(stringResource(R.string.addeditaccount_title_add))
+                    }
                 },
                 navigationIcon = {
                     IconButton(onClick = { showExitDialog = true }) {
@@ -68,7 +72,7 @@ fun AddAccountScreen(
                             navigator.pop()
                         }
                     }) {
-                        Text(stringResource(R.string.addaccount_actions_save))
+                        Text(stringResource(R.string.addeditaccount_actions_save))
                     }
                 }
             )
@@ -123,7 +127,7 @@ fun AddAccountScreen(
                     value = viewModel.label,
                     onValueChange = viewModel::updateLabel,
                     label = {
-                        Text(stringResource(R.string.addaccount_data_label))
+                        Text(stringResource(R.string.addeditaccount_data_label))
                     },
                     leadingIcon = {
                         Icon(
@@ -141,7 +145,7 @@ fun AddAccountScreen(
                     value = viewModel.issuer,
                     onValueChange = viewModel::updateIssuer,
                     label = {
-                        Text(stringResource(R.string.addaccount_data_issuer))
+                        Text(stringResource(R.string.addeditaccount_data_issuer))
                     },
                     leadingIcon = {
                         Icon(
@@ -162,7 +166,7 @@ fun AddAccountScreen(
                     value = viewModel.secret,
                     onValueChange = viewModel::updateSecret,
                     label = {
-                        Text(stringResource(R.string.addaccount_data_secret))
+                        Text(stringResource(R.string.addeditaccount_data_secret))
                     },
                     leadingIcon = {
                         Icon(
@@ -194,7 +198,7 @@ fun AddAccountScreen(
                         onValueChange = {},
                         readOnly = true,
                         label = {
-                            Text(stringResource(R.string.addaccount_data_type))
+                            Text(stringResource(R.string.addeditaccount_data_type))
                         },
                         trailingIcon = {
                             val iconRotation by animateFloatAsState(if (expanded) 180f else 0f)
@@ -234,7 +238,7 @@ fun AddAccountScreen(
                         onValueChange = {},
                         readOnly = true,
                         label = {
-                            Text(stringResource(R.string.addaccount_data_algorithm))
+                            Text(stringResource(R.string.addeditaccount_data_algorithm))
                         },
                         trailingIcon = {
                             val iconRotation by animateFloatAsState(if (expanded) 180f else 0f)
@@ -271,7 +275,7 @@ fun AddAccountScreen(
                     value = viewModel.digits,
                     onValueChange = viewModel::updateDigits,
                     label = {
-                        Text(stringResource(R.string.addaccount_data_digits))
+                        Text(stringResource(R.string.addeditaccount_data_digits))
                     },
                     keyboardOptions = keyboardOptions,
                     isError = viewModel.errorDigits
@@ -294,7 +298,7 @@ fun AddAccountScreen(
                                 value = viewModel.counter,
                                 onValueChange = viewModel::updateCounter,
                                 label = {
-                                    Text(stringResource(R.string.addaccount_data_counter))
+                                    Text(stringResource(R.string.addeditaccount_data_counter))
                                 },
                                 keyboardOptions = keyboardOptions,
                                 isError = viewModel.errorCounter
@@ -305,13 +309,22 @@ fun AddAccountScreen(
                                 value = viewModel.period,
                                 onValueChange = viewModel::updatePeriod,
                                 label = {
-                                    Text(stringResource(R.string.addaccount_data_period))
+                                    Text(stringResource(R.string.addeditaccount_data_period))
                                 },
                                 keyboardOptions = keyboardOptions,
                                 isError = viewModel.errorPeriod
                             )
                         }
                     }
+                }
+            }
+            if (viewModel.id != null) {
+                singleItem {
+                    Text(
+                        text = viewModel.id.toString(),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = LocalContentColor.current.copy(alpha = 0.7f)
+                    )
                 }
             }
         }
@@ -322,22 +335,22 @@ fun AddAccountScreen(
                 showExitDialog = false
             },
             title = {
-                Text(stringResource(R.string.addaccount_discard_title))
+                Text(stringResource(R.string.addeditaccount_discard_title))
             },
             text = {
-                Text(stringResource(R.string.addaccount_discard_subtitle))
+                Text(stringResource(R.string.addeditaccount_discard_subtitle))
             },
             confirmButton = {
                 TextButton(onClick = {
                     showExitDialog = false
                     navigator.pop()
                 }) {
-                    Text(stringResource(R.string.addaccount_discard_buttons_discard))
+                    Text(stringResource(R.string.addeditaccount_discard_buttons_discard))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showExitDialog = false }) {
-                    Text(stringResource(R.string.addaccount_discard_buttons_cancel))
+                    Text(stringResource(R.string.addeditaccount_discard_buttons_cancel))
                 }
             }
         )

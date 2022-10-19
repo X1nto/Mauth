@@ -140,7 +140,9 @@ fun HomeScreen(
                         onCopyClick = {
                             viewModel.copyCodeToClipboard(account.label, code)
                         },
-                        onEditClick = {},
+                        onEditClick = {
+                            navigator.push(MauthDestination.EditAccount(account.id))
+                        },
                         onLongClick = {
                             viewModel.selectUnselectAccount(account.id)
                         },
