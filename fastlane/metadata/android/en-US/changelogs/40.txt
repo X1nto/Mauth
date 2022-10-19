@@ -1,0 +1,5 @@
+v0.4.0:
+- Add account editing
+- Add HOTP support
+- Fix dropdown menus in the account add/edit menu
+- Fix account icon not resetting after re-entering the account add/edit menu

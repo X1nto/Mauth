@@ -4,8 +4,8 @@ Features:
 - Compatible with Google Authenticator
 - Secure (coming soon)
 - Many ways to add your accounts
-- Algorithms (Currently, only TOTP is supported)
-- Organization (coming soon)
+- Algorithms (TOTP, HOTP)
+- Organization (incomplete)
 - Export/Import (coming soon)
 
 Mauth uses latest Android technology (Jetpack Compose, CameraX, Room DB and more) to provide the best user experience with the least amount of bugs possible. It is in an active development but is nowhere near ready for daily usage. Use it at your own risk.
