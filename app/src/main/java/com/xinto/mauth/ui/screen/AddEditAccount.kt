@@ -1,6 +1,5 @@
 package com.xinto.mauth.ui.screen
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -195,6 +194,7 @@ fun AddEditAccountScreen(
                     onExpandedChange = setExpanded
                 ) {
                     OutlinedTextField(
+                        modifier = Modifier.menuAnchor(),
                         value = viewModel.type.name,
                         onValueChange = {},
                         readOnly = true,
@@ -235,6 +235,7 @@ fun AddEditAccountScreen(
                     onExpandedChange = setExpanded
                 ) {
                     OutlinedTextField(
+                        modifier = Modifier.menuAnchor(),
                         value = viewModel.algorithm.name,
                         onValueChange = {},
                         readOnly = true,
