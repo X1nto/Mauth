@@ -127,6 +127,7 @@ class AddEditAccountViewModel(
 
     fun fromParams(params: AddAccountParams) {
         resetErrors()
+        imageUri = null
         label = params.label
         issuer = params.issuer
         secret = params.secret
