@@ -112,10 +112,7 @@ class AddEditAccountViewModel(
         val account = runBlocking {
             accountsDao.getById(id)
         } ?: return
-        errorLabel = false
-        errorDigits = false
-        errorCounter = false
-        errorPeriod = false
+        resetErrors()
         imageUri = account.icon
         label = account.label
         issuer = account.issuer
@@ -129,10 +126,7 @@ class AddEditAccountViewModel(
     }
 
     fun fromParams(params: AddAccountParams) {
-        errorLabel = false
-        errorDigits = false
-        errorCounter = false
-        errorPeriod = false
+        resetErrors()
         label = params.label
         issuer = params.issuer
         secret = params.secret
@@ -168,10 +162,7 @@ class AddEditAccountViewModel(
             return false
         }
 
-        errorLabel = false
-        errorDigits = false
-        errorCounter = false
-        errorPeriod = false
+        resetErrors()
 
         viewModelScope.launch {
             val account = EntityAccount(
@@ -194,5 +185,12 @@ class AddEditAccountViewModel(
             }
         }
         return true
+    }
+
+    private fun resetErrors() {
+        errorLabel = false
+        errorDigits = false
+        errorCounter = false
+        errorPeriod = false
     }
 }
