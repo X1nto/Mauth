@@ -31,7 +31,7 @@ While there are many 2FA authenticator apps out there, most of them come with an
   - [ ] Search
   - [ ] Sorting
   - [ ] Grouping
-  - [ ] Editing
+  - [x] Editing
   - [x] Deletion
 - Exporting
   - [ ] Plain text
@@ -55,6 +55,8 @@ src="github/screenshot_4.png?raw=true">
 src="github/screenshot_5.png?raw=true">
 <img width=200 alt="Screenshot 6" 
 src="github/screenshot_6.png?raw=true">
+<img width=200 alt="Screenshot 7" 
+src="github/screenshot_7.png?raw=true">
 
 # Download
 Mauth is available on F-Droid and GitHub Releases page.  
