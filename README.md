@@ -26,7 +26,7 @@ While there are many 2FA authenticator apps out there, most of them come with an
   - [x] Manually
 - Algorithms
   - [x] TOTP
-  - [ ] HOTP
+  - [x] HOTP
 - Organization
   - [ ] Search
   - [ ] Sorting
