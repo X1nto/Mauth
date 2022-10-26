@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Mauth</string>
+
+    <string name="home_dashboard_empty">Burada henüz bir şey yok</string>
+    <string name="home_addaccount_title">Bir hesap ekle</string>
+    <string name="home_addaccount_subtitle">QR kodunu tarayın veya anahtarı manuel olarak girin</string>
+    <string name="home_addaccount_data_scanqr">QR kodunu tarayın</string>
+    <string name="home_addaccount_data_imageqr">Bir resim seçin</string>
+    <string name="home_addaccount_data_manual">Verileri manuel olarak girin</string>
+    <string name="home_delete_title">Hesaplar silinsin mi?</string>
+    <string name="home_delete_subtitle">Seçilen hesaplar kalıcı olarak silinecek.</string>
+    <string name="home_delete_button_delete">Sil</string>
+    <string name="home_delete_button_cancel">İptal</string>
+
+    <string name="qrscan_title">QR kodunu tarayın</string>
+    <string name="qrscan_permissions_title">Eksik izinler</string>
+    <string name="qrscan_permissions_subtitle">Kamera izni verilmedi.</string>
+    <string name="qrscan_permissions_subtitle_rationale">Bu uygulamanın QR kodunu taraması ve analiz etmesi için kamera izni gerekir, Kamera izni olmadan Mauth hesaplarınızı tarayamaz ve içe aktaramaz.</string>
+    <string name="qrscan_permissions_button_grant">İzin Ver</string>
+    <string name="qrscan_permissions_button_cancel">İptal Et</string>
+
+    <string name="addeditaccount_title_add">Bir hesap ekle</string>
+    <string name="addeditaccount_title_edit">Bir hesabı düzenleyin</string>
+    <string name="addeditaccount_actions_save">Kaydet</string>
+    <string name="addeditaccount_data_label">Etiket</string>
+    <string name="addeditaccount_data_issuer">Issuer</string>
+    <string name="addeditaccount_data_secret">Secret</string>
+    <string name="addeditaccount_data_type">Type</string>
+    <string name="addeditaccount_data_algorithm">Algoritma</string>
+    <string name="addeditaccount_data_digits">Rakamlar</string>
+    <string name="addeditaccount_data_counter">Counter</string>
+    <string name="addeditaccount_data_period">Period</string>
+    <string name="addeditaccount_discard_title">Değişiklikleri iptal Et</string>
+    <string name="addeditaccount_discard_subtitle">Değişiklikleriniz kaydedilmeyecek.</string>
+    <string name="addeditaccount_discard_buttons_discard">Discard</string>
+    <string name="addeditaccount_discard_buttons_cancel">İptal Et</string>
+</resources>
