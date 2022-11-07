@@ -48,7 +48,7 @@ fun CameraPreview(
     state: CameraState = rememberCameraState(LocalContext.current),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(Unit) {
+    DisposableEffect(state, lifecycleOwner) {
         state.cameraProvider.unbindAll()
         state.cameraProvider.bindToLifecycle(
             lifecycleOwner,
