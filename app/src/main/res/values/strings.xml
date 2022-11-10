@@ -11,6 +11,7 @@
     <string name="home_delete_subtitle">Selected accounts will be permanently deleted.</string>
     <string name="home_delete_button_delete">Delete</string>
     <string name="home_delete_button_cancel">Cancel</string>
+    <string name="home_more_settings">Settings</string>
 
     <string name="qrscan_title">Scan a QR code</string>
     <string name="qrscan_permissions_title">Missing permissions</string>
@@ -34,4 +35,8 @@
     <string name="addeditaccount_discard_subtitle">Your changes will not be saved.</string>
     <string name="addeditaccount_discard_buttons_discard">Discard</string>
     <string name="addeditaccount_discard_buttons_cancel">Cancel</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="settings_prefs_securemode">Secure mode</string>
+    <string name="settings_prefs_securemode_description">Prevents screenshots in the app</string>
 </resources>

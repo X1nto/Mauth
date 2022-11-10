@@ -6,7 +6,7 @@ import com.xinto.mauth.ui.viewmodel.AddEditAccountViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 
-val addAccountModel = module {
+val addAccountModule = module {
     fun provideAddAccountViewModel(
         application: Application,
         accountsDao: AccountsDao
