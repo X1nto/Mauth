@@ -85,8 +85,17 @@ fun HomeScreen(
                                             onDismissRequest = { moreMenuExpanded = false }
                                         ) {
                                             DropdownMenuItem(
+                                                onClick = {
+                                                    moreMenuExpanded = false
+                                                    navigator.push(MauthDestination.Settings)
+                                                },
                                                 text = { Text(stringResource(R.string.home_more_settings)) },
-                                                onClick = { navigator.push(MauthDestination.Settings) }
+                                                leadingIcon = {
+                                                    Icon(
+                                                        imageVector = Icons.Rounded.Settings,
+                                                        contentDescription = null
+                                                    )
+                                                }
                                             )
                                         }
                                         Icon(
