@@ -45,6 +45,7 @@ class HomeViewModel(
         object Loading : State
         object Failed : State
     }
+
     sealed interface BottomBarState {
         object Normal : BottomBarState
         object Selection : BottomBarState

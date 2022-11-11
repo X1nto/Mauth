@@ -16,7 +16,7 @@ import com.xinto.mauth.otp.OtpType
 import com.xinto.mauth.ui.navigation.AddAccountParams
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.util.UUID
+import java.util.*
 
 class AddEditAccountViewModel(
     application: Application,
@@ -77,7 +77,7 @@ class AddEditAccountViewModel(
 
     var digits by mutableStateOf("6")
         private set
-    
+
     var errorDigits by mutableStateOf(false)
         private set
 
@@ -87,7 +87,7 @@ class AddEditAccountViewModel(
 
     var counter by mutableStateOf("0")
         private set
-    
+
     var errorCounter by mutableStateOf(false)
         private set
 
@@ -97,7 +97,7 @@ class AddEditAccountViewModel(
 
     var period by mutableStateOf("30")
         private set
-    
+
     var errorPeriod by mutableStateOf(false)
         private set
 

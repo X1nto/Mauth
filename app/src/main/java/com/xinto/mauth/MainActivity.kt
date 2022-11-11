@@ -30,7 +30,6 @@ import com.xinto.taxi.Taxi
 import com.xinto.taxi.rememberBackstackNavigator
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -40,17 +39,21 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycleScope.launch {
-            viewModel.privateMode
-                .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-                .collect {
-                    if (it) {
-                        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
-                    } else {
-                        window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
-                    }
+
+        viewModel.privateMode
+            .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+            .onEach {
+                if (it) {
+                    window.setFlags(
+                        WindowManager.LayoutParams.FLAG_SECURE,
+                        WindowManager.LayoutParams.FLAG_SECURE
+                    )
+                } else {
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
                 }
-        }
+            }
+            .launchIn(lifecycleScope)
+
         setContent {
             MauthTheme {
                 Surface(
