@@ -55,28 +55,35 @@ fun SettingsItem(
 
 @Composable
 fun SwitchSettingsItem(
-    onCheckedChange: (Boolean) -> Unit,
+    onCheckedChange: ((Boolean) -> Unit)?,
     checked: Boolean,
     title: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     description: (@Composable () -> Unit)? = null,
     icon: (@Composable () -> Unit)? = null,
+    thumbContent: (@Composable () -> Unit)? = null
 ) {
+    val toggleableModifier = if (onCheckedChange != null) {
+        Modifier.toggleable(
+            value = checked,
+            enabled = enabled,
+            onValueChange = onCheckedChange
+        )
+    } else Modifier
+
     SettingsItem(
         modifier = modifier
-            .toggleable(
-                value = checked,
-                enabled = enabled,
-                onValueChange = onCheckedChange
-            ),
+            .then(toggleableModifier),
         icon = icon,
         description = description,
         title = title,
         trailing = {
             Switch(
                 checked = checked,
-                onCheckedChange = onCheckedChange
+                onCheckedChange = onCheckedChange,
+                enabled = enabled,
+                thumbContent = thumbContent
             )
         }
     )
