@@ -1,6 +1,7 @@
 package com.xinto.mauth
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContentScope
@@ -14,19 +15,45 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import com.xinto.mauth.ui.navigation.MauthDestination
 import com.xinto.mauth.ui.screen.AddEditAccountScreen
 import com.xinto.mauth.ui.screen.HomeScreen
 import com.xinto.mauth.ui.screen.QrScannerScreen
+import com.xinto.mauth.ui.screen.SettingsScreen
 import com.xinto.mauth.ui.theme.MauthTheme
 import com.xinto.mauth.ui.viewmodel.AddEditAccountViewModel
+import com.xinto.mauth.ui.viewmodel.MainViewModel
 import com.xinto.taxi.Taxi
 import com.xinto.taxi.rememberBackstackNavigator
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
+
+    private val viewModel: MainViewModel by viewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        viewModel.privateMode
+            .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+            .onEach {
+                if (it) {
+                    window.setFlags(
+                        WindowManager.LayoutParams.FLAG_SECURE,
+                        WindowManager.LayoutParams.FLAG_SECURE
+                    )
+                } else {
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+                }
+            }
+            .launchIn(lifecycleScope)
+
         setContent {
             MauthTheme {
                 Surface(
@@ -76,7 +103,7 @@ fun Main() {
                 QrScannerScreen(navigator)
             }
             is MauthDestination.Settings -> {
-
+                SettingsScreen(navigator)
             }
             is MauthDestination.AddAccount -> {
                 val viewModel: AddEditAccountViewModel = getViewModel()

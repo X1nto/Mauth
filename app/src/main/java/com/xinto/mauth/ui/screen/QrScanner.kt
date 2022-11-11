@@ -91,7 +91,11 @@ fun QrScannerScreen(
                                                     onSuccess = {
                                                         val params = viewModel.parseOtpUri(it.text)
                                                         if (params != null) {
-                                                            navigator.replace(MauthDestination.AddAccount(params))
+                                                            navigator.replace(
+                                                                MauthDestination.AddAccount(
+                                                                    params
+                                                                )
+                                                            )
                                                         }
                                                     },
                                                     onFail = {}

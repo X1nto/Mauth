@@ -78,7 +78,26 @@ fun HomeScreen(
                         Row {
                             when (bottomBarState) {
                                 HomeViewModel.BottomBarState.Normal -> {
-                                    IconButton(onClick = { /*TODO*/ }) {
+                                    var moreMenuExpanded by remember { mutableStateOf(false) }
+                                    IconButton(onClick = { moreMenuExpanded = true }) {
+                                        DropdownMenu(
+                                            expanded = moreMenuExpanded,
+                                            onDismissRequest = { moreMenuExpanded = false }
+                                        ) {
+                                            DropdownMenuItem(
+                                                onClick = {
+                                                    moreMenuExpanded = false
+                                                    navigator.push(MauthDestination.Settings)
+                                                },
+                                                text = { Text(stringResource(R.string.home_more_settings)) },
+                                                leadingIcon = {
+                                                    Icon(
+                                                        imageVector = Icons.Rounded.Settings,
+                                                        contentDescription = null
+                                                    )
+                                                }
+                                            )
+                                        }
                                         Icon(
                                             imageVector = Icons.Rounded.MoreVert,
                                             contentDescription = null

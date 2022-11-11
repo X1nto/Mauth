@@ -111,6 +111,8 @@ dependencies {
 
     implementation("io.insert-koin:koin-androidx-compose:3.3.0")
 
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
     val accompanistVersion = "0.27.0"
     implementation("com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion")
     implementation("com.google.accompanist:accompanist-permissions:$accompanistVersion")

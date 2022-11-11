@@ -13,7 +13,16 @@ class Mauth : Application() {
         startKoin {
             androidContext(this@Mauth)
 
-            modules(homeModule, dbModule, otpModule, addAccountModel, qrScanModule)
+            modules(
+                mainModule,
+                homeModule,
+                settingsModule,
+                addAccountModule,
+                qrScanModule,
+                dbModule,
+                otpModule,
+                preferencesModule,
+            )
         }
     }
 }
