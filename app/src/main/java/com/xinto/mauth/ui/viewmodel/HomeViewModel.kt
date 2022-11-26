@@ -23,6 +23,8 @@ import com.xinto.mauth.otp.parser.OtpUriParser
 import com.xinto.mauth.otp.parser.OtpUriParserResult
 import com.xinto.mauth.otp.transformer.KeyTransformer
 import com.xinto.mauth.ui.navigation.AddAccountParams
+import com.xinto.mauth.ui.screen.HomeBottomBarState
+import com.xinto.mauth.ui.screen.HomeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
@@ -41,20 +43,9 @@ class HomeViewModel(
 
     private val keyBytes = mutableMapOf<String, ByteArray>()
 
-    sealed interface State {
-        object Normal : State
-        object Loading : State
-        object Failed : State
-    }
-
-    sealed interface BottomBarState {
-        object Normal : BottomBarState
-        object Selection : BottomBarState
-    }
-
-    var state by mutableStateOf<State>(State.Loading)
+    var state by mutableStateOf<HomeState>(HomeState.Loading)
         private set
-    var bottomBarState by mutableStateOf<BottomBarState>(BottomBarState.Normal)
+    var bottomBarState by mutableStateOf<HomeBottomBarState>(HomeBottomBarState.Normal)
         private set
 
     val codes = mutableStateMapOf<UUID, String>()
@@ -143,15 +134,15 @@ class HomeViewModel(
         }
 
         bottomBarState = if (selectedAccounts.isEmpty()) {
-            BottomBarState.Normal
+            HomeBottomBarState.Normal
         } else {
-            BottomBarState.Selection
+            HomeBottomBarState.Selection
         }
     }
 
     fun clearSelection() {
         selectedAccounts.clear()
-        bottomBarState = BottomBarState.Normal
+        bottomBarState = HomeBottomBarState.Normal
     }
 
     fun deleteSelected() {
@@ -205,7 +196,7 @@ class HomeViewModel(
         viewModelScope.launch {
             homeRepository.observeAccounts()
                 .onEach { domainAccounts ->
-                    state = State.Loading
+                    state = HomeState.Loading
 
                     accounts.clear()
                     accounts.addAll(domainAccounts)
@@ -222,10 +213,10 @@ class HomeViewModel(
                         generateHotp(it)
                     }
 
-                    state = State.Normal
+                    state = HomeState.Loaded
                 }
                 .catch {
-                    state = State.Failed
+                    state = HomeState.Failed
                 }
                 .launchIn(this)
         }

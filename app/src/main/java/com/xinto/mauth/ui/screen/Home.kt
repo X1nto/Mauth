@@ -34,6 +34,17 @@ import com.xinto.mauth.ui.navigation.MauthNavigator
 import com.xinto.mauth.ui.viewmodel.HomeViewModel
 import org.koin.androidx.compose.getViewModel
 
+sealed interface HomeState {
+    object Loading : HomeState
+    object Loaded : HomeState
+    object Failed : HomeState
+}
+
+sealed interface HomeBottomBarState {
+    object Normal : HomeBottomBarState
+    object Selection : HomeBottomBarState
+}
+
 @Composable
 fun HomeScreen(
     navigator: MauthNavigator,
@@ -55,10 +66,10 @@ fun HomeScreen(
                 floatingActionButton = {
                     FloatingActionButton(onClick = {
                         when (viewModel.bottomBarState) {
-                            is HomeViewModel.BottomBarState.Normal -> {
+                            is HomeBottomBarState.Normal -> {
                                 showAddAccount = true
                             }
-                            is HomeViewModel.BottomBarState.Selection -> {
+                            is HomeBottomBarState.Selection -> {
                                 viewModel.clearSelection()
                             }
                         }
@@ -71,13 +82,13 @@ fun HomeScreen(
                             }
                         ) { bottomBarState ->
                             when (bottomBarState) {
-                                is HomeViewModel.BottomBarState.Normal -> {
+                                is HomeBottomBarState.Normal -> {
                                     Icon(
                                         imageVector = Icons.Rounded.Add,
                                         contentDescription = null
                                     )
                                 }
-                                is HomeViewModel.BottomBarState.Selection -> {
+                                is HomeBottomBarState.Selection -> {
                                     Icon(
                                         imageVector = Icons.Rounded.Undo,
                                         contentDescription = null
@@ -91,7 +102,7 @@ fun HomeScreen(
                     AnimatedContent(
                         targetState = viewModel.bottomBarState,
                         transitionSpec = {
-                            if (HomeViewModel.BottomBarState.Normal isTransitioningTo HomeViewModel.BottomBarState.Selection) {
+                            if (HomeBottomBarState.Normal isTransitioningTo HomeBottomBarState.Selection) {
                                 slideIntoContainer(AnimatedContentScope.SlideDirection.Up) + fadeIn() with
                                     scaleOut() + fadeOut()
                             } else {
@@ -102,7 +113,7 @@ fun HomeScreen(
                     ) { bottomBarState ->
                         Row {
                             when (bottomBarState) {
-                                HomeViewModel.BottomBarState.Normal -> {
+                                HomeBottomBarState.Normal -> {
                                     var moreMenuExpanded by remember { mutableStateOf(false) }
                                     IconButton(onClick = { moreMenuExpanded = true }) {
                                         DropdownMenu(
@@ -141,7 +152,7 @@ fun HomeScreen(
                                         )
                                     }
                                 }
-                                HomeViewModel.BottomBarState.Selection -> {
+                                HomeBottomBarState.Selection -> {
                                     IconButton(
                                         onClick = { showDeleteAccounts = true },
                                         colors = IconButtonDefaults.iconButtonColors(
