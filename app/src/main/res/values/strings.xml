@@ -12,6 +12,9 @@
     <string name="home_delete_button_delete">Delete</string>
     <string name="home_delete_button_cancel">Cancel</string>
     <string name="home_more_settings">Settings</string>
+    <string name="home_code_copy_success">Successfully copied the code to clipboard</string>
+    <string name="home_code_copy_success">Successfully copied the code to clipboard</string>
+    <string name="home_code_copy_fail">Failed to copy the code</string>
 
     <string name="qrscan_title">Scan a QR code</string>
     <string name="qrscan_permissions_title">Missing permissions</string>

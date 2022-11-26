@@ -14,6 +14,7 @@ import androidx.core.content.getSystemService
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.xinto.mauth.Mauth
+import com.xinto.mauth.R
 import com.xinto.mauth.camera.decoder.ZxingDecoder
 import com.xinto.mauth.domain.model.DomainAccount
 import com.xinto.mauth.domain.repository.HomeRepository
@@ -76,16 +77,13 @@ class HomeViewModel(
         val application = getApplication<Mauth>()
         if (code != null) {
             val clipboardService = application.getSystemService<ClipboardManager>()
-            clipboardService?.setPrimaryClip(ClipData.newPlainText(label, code))
-            Toast.makeText(
-                application,
-                "Successfully copied the code to clipboard",
-                Toast.LENGTH_LONG
-            ).show()
-        } else {
-            Toast.makeText(application, "Failed to copy: the code is null", Toast.LENGTH_LONG)
-                .show()
+            if (clipboardService != null) {
+                clipboardService.setPrimaryClip(ClipData.newPlainText(label, code))
+                Toast.makeText(application, R.string.home_code_copy_success, Toast.LENGTH_LONG).show()
+            }
         }
+
+        Toast.makeText(application, R.string.home_code_copy_fail, Toast.LENGTH_LONG).show()
     }
 
     fun decodeQrCodeFromImageUri(uri: Uri): String? {
