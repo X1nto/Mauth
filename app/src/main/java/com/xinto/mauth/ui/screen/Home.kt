@@ -54,12 +54,37 @@ fun HomeScreen(
             BottomAppBar(
                 floatingActionButton = {
                     FloatingActionButton(onClick = {
-                        showAddAccount = true
+                        when (viewModel.bottomBarState) {
+                            is HomeViewModel.BottomBarState.Normal -> {
+                                showAddAccount = true
+                            }
+                            is HomeViewModel.BottomBarState.Selection -> {
+                                viewModel.clearSelection()
+                            }
+                        }
                     }) {
-                        Icon(
-                            imageVector = Icons.Rounded.Add,
-                            contentDescription = null
-                        )
+                        AnimatedContent(
+                            targetState = viewModel.bottomBarState,
+                            transitionSpec = {
+                                slideIntoContainer(AnimatedContentScope.SlideDirection.Start) + fadeIn() with
+                                    slideOutOfContainer(AnimatedContentScope.SlideDirection.Start) + fadeOut()
+                            }
+                        ) { bottomBarState ->
+                            when (bottomBarState) {
+                                is HomeViewModel.BottomBarState.Normal -> {
+                                    Icon(
+                                        imageVector = Icons.Rounded.Add,
+                                        contentDescription = null
+                                    )
+                                }
+                                is HomeViewModel.BottomBarState.Selection -> {
+                                    Icon(
+                                        imageVector = Icons.Rounded.Undo,
+                                        contentDescription = null
+                                    )
+                                }
+                            }
+                        }
                     }
                 },
                 actions = {
@@ -125,14 +150,6 @@ fun HomeScreen(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Rounded.Delete,
-                                            contentDescription = null
-                                        )
-                                    }
-                                    IconButton(
-                                        onClick = viewModel::clearSelection,
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Rounded.Clear,
                                             contentDescription = null
                                         )
                                     }
