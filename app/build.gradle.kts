@@ -80,15 +80,15 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
     implementation("androidx.activity:activity-compose:1.6.1")
 
-    val composeVersion = "1.3.0"
+    val composeVersion = "1.3.2"
     implementation("androidx.compose.foundation:foundation:$composeVersion")
     implementation("androidx.compose.material:material-icons-extended:$composeVersion")
-    implementation("androidx.compose.material3:material3:1.1.0-alpha01")
+    implementation("androidx.compose.material3:material3:1.1.0-alpha03")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:$composeVersion")
     debugImplementation("androidx.compose.ui:ui-tooling:$composeVersion")
     debugImplementation("androidx.compose.ui:ui-test-manifest:$composeVersion")
 
-    val cameraxVersion = "1.2.0-beta02"
+    val cameraxVersion = "1.2.0"
     implementation("androidx.camera:camera-core:$cameraxVersion")
     implementation("androidx.camera:camera-camera2:$cameraxVersion")
     implementation("androidx.camera:camera-view:$cameraxVersion")
@@ -99,7 +99,9 @@ dependencies {
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
 
-    implementation("com.github.X1nto:Taxi:1.2.0")
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    implementation("com.github.X1nto.taxi:taxi:1.3.0")
 
     implementation("com.holix.android:bottomsheetdialog-compose:1.0.1")
 
@@ -111,13 +113,11 @@ dependencies {
 
     implementation("io.insert-koin:koin-androidx-compose:3.3.0")
 
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
-
-    val accompanistVersion = "0.27.0"
+    val accompanistVersion = "0.28.0"
     implementation("com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion")
     implementation("com.google.accompanist:accompanist-permissions:$accompanistVersion")
 
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.3")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    androidTestImplementation("androidx.test.ext:junit:1.1.4")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.0")
 }
