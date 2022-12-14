@@ -17,12 +17,12 @@ import com.xinto.mauth.Mauth
 import com.xinto.mauth.R
 import com.xinto.mauth.camera.decoder.ZxingDecoder
 import com.xinto.mauth.domain.model.DomainAccount
+import com.xinto.mauth.domain.model.DomainAccountInfo
 import com.xinto.mauth.domain.repository.HomeRepository
 import com.xinto.mauth.otp.generator.OtpGenerator
 import com.xinto.mauth.otp.parser.OtpUriParser
 import com.xinto.mauth.otp.parser.OtpUriParserResult
 import com.xinto.mauth.otp.transformer.KeyTransformer
-import com.xinto.mauth.ui.navigation.AddAccountParams
 import com.xinto.mauth.ui.screen.HomeBottomBarState
 import com.xinto.mauth.ui.screen.HomeState
 import kotlinx.coroutines.Dispatchers
@@ -104,11 +104,13 @@ class HomeViewModel(
         return null
     }
 
-    fun parseOtpUri(uri: String): AddAccountParams? {
+    fun parseOtpUri(uri: String): DomainAccountInfo? {
         val application = getApplication<Mauth>()
         return when (val result = otpUriParser.parseOtpUri(uri)) {
             is OtpUriParserResult.Success -> {
-                AddAccountParams(
+                DomainAccountInfo(
+                    id = null,
+                    icon = null,
                     label = result.data.label,
                     issuer = result.data.issuer,
                     secret = result.data.secret,

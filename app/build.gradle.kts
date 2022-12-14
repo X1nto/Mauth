@@ -82,7 +82,7 @@ dependencies {
 
     val composeVersion = "1.3.2"
     implementation("androidx.compose.foundation:foundation:$composeVersion")
-    implementation("androidx.compose.material:material-icons-extended:$composeVersion")
+    implementation("androidx.compose.material:material-icons-extended:1.3.1")
     implementation("androidx.compose.material3:material3:1.1.0-alpha03")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:$composeVersion")
     debugImplementation("androidx.compose.ui:ui-tooling:$composeVersion")

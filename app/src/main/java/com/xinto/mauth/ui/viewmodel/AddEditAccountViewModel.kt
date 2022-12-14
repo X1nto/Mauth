@@ -9,19 +9,21 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.xinto.mauth.Mauth
-import com.xinto.mauth.db.dao.AccountsDao
-import com.xinto.mauth.db.entity.EntityAccount
+import com.xinto.mauth.domain.model.DomainAccountInfo
+import com.xinto.mauth.domain.repository.AddEditAccountRepository
 import com.xinto.mauth.otp.OtpDigest
 import com.xinto.mauth.otp.OtpType
-import com.xinto.mauth.ui.navigation.AddAccountParams
+import com.xinto.mauth.ui.screen.AddEditAccountState
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.util.*
 
-class AddEditAccountViewModel(
+open class AddEditAccountViewModel(
     application: Application,
-    private val accountsDao: AccountsDao
+    private val addEditAccountRepository: AddEditAccountRepository
 ) : AndroidViewModel(application) {
+
+    var state by mutableStateOf<AddEditAccountState>(AddEditAccountState.Loading)
+        protected set
 
     var imageUri by mutableStateOf<Uri?>(null)
         private set
@@ -105,41 +107,12 @@ class AddEditAccountViewModel(
         this.period = period
     }
 
-    var id by mutableStateOf<UUID?>(null)
+    var id by mutableStateOf<String?>(null)
         private set
 
-    fun fromId(id: UUID) {
-        val account = runBlocking {
-            accountsDao.getById(id)
-        } ?: return
-        resetErrors()
-        imageUri = account.icon
-        label = account.label
-        issuer = account.issuer
-        secret = account.secret
-        algorithm = account.algorithm
-        type = account.type
-        digits = account.digits.toString()
-        counter = account.counter.toString()
-        period = account.period.toString()
-        this.id = id
-    }
-
-    fun fromParams(params: AddAccountParams) {
-        resetErrors()
-        imageUri = null
-        label = params.label
-        issuer = params.issuer
-        secret = params.secret
-        algorithm = params.algorithm
-        type = params.type
-        digits = params.digits.toString()
-        counter = params.counter.toString()
-        period = params.period.toString()
-        id = null
-    }
-
     fun save(): Boolean {
+        resetErrors()
+
         if (label == "") {
             errorLabel = true
             return false
@@ -163,29 +136,36 @@ class AddEditAccountViewModel(
             return false
         }
 
-        resetErrors()
-
         viewModelScope.launch {
-            val account = EntityAccount(
-                id = id ?: UUID.randomUUID(),
-                secret = secret,
-                icon = imageUri,
-                label = label,
-                issuer = issuer,
-                algorithm = algorithm,
-                type = type,
-                digits = digits,
-                counter = counter,
-                period = period
+            addEditAccountRepository.saveAccount(
+                DomainAccountInfo(
+                    id = id?.let { UUID.fromString(it) },
+                    secret = secret,
+                    icon = imageUri,
+                    label = label,
+                    issuer = issuer,
+                    algorithm = algorithm,
+                    type = type,
+                    digits = digits,
+                    counter = counter,
+                    period = period
+                )
             )
-
-            if (id != null) {
-                accountsDao.update(account)
-            } else {
-                accountsDao.insert(account)
-            }
         }
         return true
+    }
+
+    protected fun updateData(account: DomainAccountInfo) {
+        id = account.id?.toString()
+        imageUri = account.icon
+        label = account.label
+        issuer = account.issuer
+        secret = account.secret
+        algorithm = account.algorithm
+        type = account.type
+        digits = account.digits.toString()
+        counter = account.counter.toString()
+        period = account.period.toString()
     }
 
     private fun resetErrors() {

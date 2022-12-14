@@ -19,18 +19,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.xinto.mauth.ui.navigation.MauthDestination
-import com.xinto.mauth.ui.screen.AddEditAccountScreen
-import com.xinto.mauth.ui.screen.HomeScreen
-import com.xinto.mauth.ui.screen.QrScannerScreen
-import com.xinto.mauth.ui.screen.SettingsScreen
+import com.xinto.mauth.ui.screen.*
 import com.xinto.mauth.ui.theme.MauthTheme
-import com.xinto.mauth.ui.viewmodel.AddEditAccountViewModel
 import com.xinto.mauth.ui.viewmodel.MainViewModel
 import com.xinto.taxi.Taxi
 import com.xinto.taxi.rememberBackstackNavigator
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import org.koin.androidx.compose.getViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
@@ -106,20 +101,10 @@ fun Main() {
                 SettingsScreen(navigator)
             }
             is MauthDestination.AddAccount -> {
-                val viewModel: AddEditAccountViewModel = getViewModel()
-                viewModel.fromParams(screen.params)
-                AddEditAccountScreen(
-                    navigator = navigator,
-                    viewModel = viewModel
-                )
+                AddAccountScreen(navigator = navigator, accountInfo = screen.params)
             }
             is MauthDestination.EditAccount -> {
-                val viewModel: AddEditAccountViewModel = getViewModel()
-                viewModel.fromId(screen.id)
-                AddEditAccountScreen(
-                    navigator = navigator,
-                    viewModel = viewModel
-                )
+                EditAccountScreen(navigator = navigator, accountId = screen.id)
             }
         }
     }
