@@ -1,18 +1,20 @@
 package com.xinto.mauth.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.xinto.mauth.domain.model.DomainAccountInfo
 import com.xinto.mauth.otp.parser.OtpUriParser
 import com.xinto.mauth.otp.parser.OtpUriParserResult
-import com.xinto.mauth.ui.navigation.AddAccountParams
 
 class QrScannerViewModel(
     private val otpUriParser: OtpUriParser
 ) : ViewModel() {
 
-    fun parseOtpUri(uri: String): AddAccountParams? {
+    fun parseOtpUri(uri: String): DomainAccountInfo? {
         return when (val result = otpUriParser.parseOtpUri(uri)) {
             is OtpUriParserResult.Success -> {
-                AddAccountParams(
+                DomainAccountInfo(
+                    id = null,
+                    icon = null,
                     label = result.data.label,
                     issuer = result.data.issuer,
                     secret = result.data.secret,

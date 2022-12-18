@@ -17,7 +17,7 @@ class Mauth : Application() {
                 mainModule,
                 homeModule,
                 settingsModule,
-                addAccountModule,
+                addEditAccountModule,
                 qrScanModule,
                 dbModule,
                 otpModule,

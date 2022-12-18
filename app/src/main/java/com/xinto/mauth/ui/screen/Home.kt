@@ -26,9 +26,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.xinto.mauth.R
 import com.xinto.mauth.domain.model.DomainAccount
+import com.xinto.mauth.domain.model.DomainAccountInfo
 import com.xinto.mauth.ui.component.MaterialBottomSheetDialog
 import com.xinto.mauth.ui.component.UriImage
-import com.xinto.mauth.ui.navigation.AddAccountParams
 import com.xinto.mauth.ui.navigation.MauthDestination
 import com.xinto.mauth.ui.navigation.MauthNavigator
 import com.xinto.mauth.ui.viewmodel.HomeViewModel
@@ -359,7 +359,7 @@ fun HomeScreen(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
                         showAddAccount = false
-                        navigator.push(MauthDestination.AddAccount(AddAccountParams()))
+                        navigator.push(MauthDestination.AddAccount(DomainAccountInfo.DEFAULT))
                     },
                     icon = {
                         Icon(
