@@ -1,5 +1,6 @@
 package com.xinto.mauth.ui.screen
 
+import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -56,6 +57,7 @@ fun AddAccountScreen(
     AddEditAccountScreenImpl(
         navigator = navigator,
         viewModel = viewModel,
+        title = stringResource(R.string.addeditaccount_title_add)
     )
 }
 
@@ -68,6 +70,7 @@ fun EditAccountScreen(
     AddEditAccountScreenImpl(
         navigator = navigator,
         viewModel = viewModel,
+        title = stringResource(R.string.addeditaccount_title_edit)
     )
 }
 
@@ -75,328 +78,465 @@ fun EditAccountScreen(
 private fun AddEditAccountScreenImpl(
     navigator: MauthNavigator,
     viewModel: AddEditAccountViewModel,
+    title: String,
 ) {
     var showExitDialog by remember { mutableStateOf(false) }
-    val imageSelectLauncher = rememberLauncherForActivityResult(PickVisualMediaPersistent()) {
-        viewModel.updateImageUri(it)
-    }
+
     BackHandler {
         navigator.pop()
     }
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    if (viewModel.id != null) {
-                        Text(stringResource(R.string.addeditaccount_title_edit))
-                    } else {
-                        Text(stringResource(R.string.addeditaccount_title_add))
+            AddEditAccountTopbar(
+                title = title,
+                onSave = {
+                    if (viewModel.save()) {
+                        navigator.pop()
                     }
                 },
-                navigationIcon = {
-                    IconButton(onClick = { showExitDialog = true }) {
-                        Icon(
-                            imageVector = Icons.Rounded.Close,
-                            contentDescription = null
-                        )
-                    }
-                },
-                actions = {
-                    TextButton(onClick = {
-                        if (viewModel.save()) {
-                            navigator.pop()
-                        }
-                    }) {
-                        Text(stringResource(R.string.addeditaccount_actions_save))
-                    }
+                onClose = {
+                    showExitDialog = true
                 }
             )
         },
     ) { paddingValues ->
         when (viewModel.state) {
-            is AddEditAccountState.Success -> {
-                LazyVerticalGrid(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = PaddingValues(16.dp),
-                    columns = GridCells.Fixed(2)
-                ) {
-                    singleItem {
-                        Box(contentAlignment = Alignment.Center) {
-                            Surface(
-                                modifier = Modifier.size(96.dp),
-                                color = MaterialTheme.colorScheme.secondaryContainer,
-                                shape = CircleShape,
-                                border = BorderStroke(
-                                    width = 1.dp,
-                                    SolidColor(MaterialTheme.colorScheme.outline)
-                                ),
-                                onClick = {
-                                    imageSelectLauncher.launch(
-                                        PickVisualMediaRequest(
-                                            ActivityResultContracts.PickVisualMedia.ImageOnly
-                                        )
-                                    )
-                                }
-                            ) {
-                                if (viewModel.imageUri != null) {
-                                    UriImage(uri = viewModel.imageUri!!)
-                                } else {
-                                    Box(contentAlignment = Alignment.Center) {
-                                        Icon(
-                                            modifier = Modifier.size(36.dp),
-                                            imageVector = Icons.Rounded.AddAPhoto,
-                                            contentDescription = null
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    singleItem {
-                        Spacer(Modifier.height(8.dp))
-                    }
-                    singleItem {
-                        OutlinedTextField(
-                            value = viewModel.label,
-                            onValueChange = viewModel::updateLabel,
-                            label = {
-                                Text(stringResource(R.string.addeditaccount_data_label))
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Rounded.Label,
-                                    contentDescription = null
-                                )
-                            },
-                            singleLine = true,
-                            isError = viewModel.errorLabel
-                        )
-                    }
-                    singleItem {
-                        OutlinedTextField(
-                            modifier = Modifier,
-                            value = viewModel.issuer,
-                            onValueChange = viewModel::updateIssuer,
-                            label = {
-                                Text(stringResource(R.string.addeditaccount_data_issuer))
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Rounded.Apartment,
-                                    contentDescription = null
-                                )
-                            },
-                            singleLine = true
-                        )
-                    }
-                    singleItem {
-                        var shown by rememberSaveable { mutableStateOf(false) }
-                        val keyboardOptions =
-                            remember { KeyboardOptions(keyboardType = KeyboardType.Password) }
-                        val passwordTransformation = remember { PasswordVisualTransformation() }
-                        OutlinedTextField(
-                            modifier = Modifier,
-                            value = viewModel.secret,
-                            onValueChange = viewModel::updateSecret,
-                            label = {
-                                Text(stringResource(R.string.addeditaccount_data_secret))
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Rounded.Key,
-                                    contentDescription = null
-                                )
-                            },
-                            trailingIcon = {
-                                IconButton(onClick = { shown = !shown }) {
-                                    Icon(
-                                        imageVector = if (shown) Icons.Rounded.Visibility else Icons.Rounded.VisibilityOff,
-                                        contentDescription = null
-                                    )
-                                }
-                            },
-                            singleLine = true,
-                            visualTransformation = if (shown) VisualTransformation.None else passwordTransformation,
-                            keyboardOptions = keyboardOptions
-                        )
-                    }
-                    item {
-                        val (expanded, setExpanded) = remember { mutableStateOf(false) }
-                        ExposedDropdownMenuBox(
-                            expanded = expanded,
-                            onExpandedChange = setExpanded
-                        ) {
-                            OutlinedTextField(
-                                modifier = Modifier.menuAnchor(),
-                                value = viewModel.type.name,
-                                onValueChange = {},
-                                readOnly = true,
-                                label = {
-                                    Text(stringResource(R.string.addeditaccount_data_type))
-                                },
-                                trailingIcon = {
-                                    val iconRotation by animateFloatAsState(if (expanded) 180f else 0f)
-                                    Icon(
-                                        modifier = Modifier.rotate(iconRotation),
-                                        imageVector = Icons.Rounded.KeyboardArrowDown,
-                                        contentDescription = null
-                                    )
-                                }
-                            )
-                            ExposedDropdownMenu(
-                                expanded = expanded,
-                                onDismissRequest = { setExpanded(false) }
-                            ) {
-                                OtpType.values().forEach {
-                                    DropdownMenuItem(
-                                        text = {
-                                            Text(it.name)
-                                        },
-                                        onClick = {
-                                            viewModel.updateType(it)
-                                            setExpanded(false)
-                                        }
-                                    )
-                                }
-                            }
-                        }
-                    }
-                    item {
-                        val (expanded, setExpanded) = remember { mutableStateOf(false) }
-                        ExposedDropdownMenuBox(
-                            expanded = expanded,
-                            onExpandedChange = setExpanded
-                        ) {
-                            OutlinedTextField(
-                                modifier = Modifier.menuAnchor(),
-                                value = viewModel.algorithm.name,
-                                onValueChange = {},
-                                readOnly = true,
-                                label = {
-                                    Text(stringResource(R.string.addeditaccount_data_algorithm))
-                                },
-                                trailingIcon = {
-                                    val iconRotation by animateFloatAsState(if (expanded) 180f else 0f)
-                                    Icon(
-                                        modifier = Modifier.rotate(iconRotation),
-                                        imageVector = Icons.Rounded.KeyboardArrowDown,
-                                        contentDescription = null
-                                    )
-                                }
-                            )
-                            ExposedDropdownMenu(
-                                expanded = expanded,
-                                onDismissRequest = { setExpanded(false) }
-                            ) {
-                                OtpDigest.values().forEach {
-                                    DropdownMenuItem(
-                                        text = {
-                                            Text(it.name)
-                                        },
-                                        onClick = {
-                                            viewModel.updateAlgorithm(it)
-                                            setExpanded(false)
-                                        }
-                                    )
-                                }
-                            }
-                        }
-                    }
-                    item {
-                        val keyboardOptions = remember {
-                            KeyboardOptions(keyboardType = KeyboardType.Number)
-                        }
-                        OutlinedTextField(
-                            value = viewModel.digits,
-                            onValueChange = viewModel::updateDigits,
-                            label = {
-                                Text(stringResource(R.string.addeditaccount_data_digits))
-                            },
-                            keyboardOptions = keyboardOptions,
-                            isError = viewModel.errorDigits
-                        )
-                    }
-                    item {
-                        val keyboardOptions = remember {
-                            KeyboardOptions(keyboardType = KeyboardType.Number)
-                        }
-                        AnimatedContent(
-                            targetState = viewModel.type,
-                            transitionSpec = {
-                                slideIntoContainer(AnimatedContentScope.SlideDirection.Up) + fadeIn() with
-                                    slideOutOfContainer(AnimatedContentScope.SlideDirection.Up) + fadeOut()
-                            }
-                        ) { animatedType ->
-                            when (animatedType) {
-                                OtpType.Hotp -> {
-                                    OutlinedTextField(
-                                        value = viewModel.counter,
-                                        onValueChange = viewModel::updateCounter,
-                                        label = {
-                                            Text(stringResource(R.string.addeditaccount_data_counter))
-                                        },
-                                        keyboardOptions = keyboardOptions,
-                                        isError = viewModel.errorCounter
-                                    )
-                                }
-                                OtpType.Totp -> {
-                                    OutlinedTextField(
-                                        value = viewModel.period,
-                                        onValueChange = viewModel::updatePeriod,
-                                        label = {
-                                            Text(stringResource(R.string.addeditaccount_data_period))
-                                        },
-                                        keyboardOptions = keyboardOptions,
-                                        isError = viewModel.errorPeriod
-                                    )
-                                }
-                            }
-                        }
-                    }
-                    if (viewModel.id != null) {
-                        singleItem {
-                            Text(
-                                text = viewModel.id.toString(),
-                                style = MaterialTheme.typography.labelLarge,
-                                color = LocalContentColor.current.copy(alpha = 0.7f)
-                            )
-                        }
-                    }
-                }
+            is AddEditAccountState.Loading -> {
+
             }
-            else -> {
+            is AddEditAccountState.Success -> {
+                AddEditAccountSuccess(paddingValues, viewModel)
+            }
+            is AddEditAccountState.Error -> {
 
             }
         }
     }
     if (showExitDialog) {
-        AlertDialog(
-            onDismissRequest = {
+        ExitDialog(
+            onConfirm = {
                 showExitDialog = false
+                navigator.pop()
             },
-            title = {
-                Text(stringResource(R.string.addeditaccount_discard_title))
-            },
-            text = {
-                Text(stringResource(R.string.addeditaccount_discard_subtitle))
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    showExitDialog = false
-                    navigator.pop()
-                }) {
-                    Text(stringResource(R.string.addeditaccount_discard_buttons_discard))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showExitDialog = false }) {
-                    Text(stringResource(R.string.addeditaccount_discard_buttons_cancel))
-                }
+            onDismiss = {
+                showExitDialog = false
             }
         )
+    }
+}
+
+@Composable
+private fun ExitDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(stringResource(R.string.addeditaccount_discard_title))
+        },
+        text = {
+            Text(stringResource(R.string.addeditaccount_discard_subtitle))
+        },
+        confirmButton = {
+            TextButton(onConfirm) {
+                Text(stringResource(R.string.addeditaccount_discard_buttons_discard))
+            }
+        },
+        dismissButton = {
+            TextButton(onDismiss) {
+                Text(stringResource(R.string.addeditaccount_discard_buttons_cancel))
+            }
+        }
+    )
+}
+
+@Composable
+private fun AddEditAccountSuccess(
+    paddingValues: PaddingValues,
+    viewModel: AddEditAccountViewModel
+) {
+    LazyVerticalGrid(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(16.dp),
+        columns = GridCells.Fixed(2)
+    ) {
+        singleItem {
+            AccountIcon(
+                uri = viewModel.imageUri,
+                onUriChange = viewModel::updateImageUri
+            )
+        }
+        singleItem {
+            Spacer(Modifier.height(8.dp))
+        }
+        singleItem {
+            AccountLabel(
+                label = viewModel.label,
+                onLabelChange = viewModel::updateLabel,
+                isError = viewModel.errorLabel
+            )
+        }
+        singleItem {
+            AccountIssuer(
+                issuer = viewModel.issuer,
+                onIssuerChange = viewModel::updateIssuer
+            )
+        }
+        singleItem {
+            AccountSecret(
+                secret = viewModel.secret,
+                onSecretChange = viewModel::updateSecret
+            )
+        }
+        item {
+            AccountType(
+                type = viewModel.type,
+                onTypeChange = viewModel::updateType
+            )
+        }
+        item {
+            AccountAlgorithm(
+                algorithm = viewModel.algorithm,
+                onAlgorithmChange = viewModel::updateAlgorithm
+            )
+        }
+        item {
+            AccountDigits(
+                digits = viewModel.digits,
+                onDigitsChange = viewModel::updateDigits,
+                isError = viewModel.errorDigits
+            )
+        }
+        item {
+            AccountPeriodOrCounter(
+                type = viewModel.type,
+                period = viewModel.period,
+                onPeriodChange = viewModel::updatePeriod,
+                periodIsError = viewModel.errorPeriod,
+                counter = viewModel.counter,
+                onCounterChange = viewModel::updateCounter,
+                counterIsError = viewModel.errorPeriod
+            )
+        }
+        if (viewModel.id != null) {
+            singleItem {
+                Text(
+                    text = viewModel.id.toString(),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = LocalContentColor.current.copy(alpha = 0.7f)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun AddEditAccountTopbar(
+    title: String,
+    onClose: () -> Unit,
+    onSave: () -> Unit,
+) {
+    TopAppBar(
+        title = {
+            Text(title)
+        },
+        navigationIcon = {
+            IconButton(onClose) {
+                Icon(
+                    imageVector = Icons.Rounded.Close,
+                    contentDescription = null
+                )
+            }
+        },
+        actions = {
+            TextButton(onSave) {
+                Text(stringResource(R.string.addeditaccount_actions_save))
+            }
+        }
+    )
+}
+
+@Composable
+private fun AccountLabel(
+    label: String,
+    onLabelChange: (String) -> Unit,
+    isError: Boolean,
+) {
+    OutlinedTextField(
+        value = label,
+        onValueChange = onLabelChange,
+        label = {
+            Text(stringResource(R.string.addeditaccount_data_label))
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Rounded.Label,
+                contentDescription = null
+            )
+        },
+        singleLine = true,
+        isError = isError
+    )
+}
+
+@Composable
+private fun AccountIssuer(
+    issuer: String,
+    onIssuerChange: (String) -> Unit,
+) {
+    OutlinedTextField(
+        modifier = Modifier,
+        value = issuer,
+        onValueChange = onIssuerChange,
+        label = {
+            Text(stringResource(R.string.addeditaccount_data_issuer))
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Rounded.Apartment,
+                contentDescription = null
+            )
+        },
+        singleLine = true
+    )
+}
+
+@Composable
+private fun AccountDigits(
+    digits: String,
+    onDigitsChange: (String) -> Unit,
+    isError: Boolean,
+) {
+    val keyboardOptions = remember {
+        KeyboardOptions(keyboardType = KeyboardType.Number)
+    }
+    OutlinedTextField(
+        value = digits,
+        onValueChange = onDigitsChange,
+        label = {
+            Text(stringResource(R.string.addeditaccount_data_digits))
+        },
+        keyboardOptions = keyboardOptions,
+        isError = isError
+    )
+}
+
+@Composable
+private fun AccountPeriodOrCounter(
+    type: OtpType,
+    counter: String,
+    onCounterChange: (String) -> Unit,
+    counterIsError: Boolean,
+    period: String,
+    onPeriodChange: (String) -> Unit,
+    periodIsError: Boolean
+) {
+    val keyboardOptions = remember {
+        KeyboardOptions(keyboardType = KeyboardType.Number)
+    }
+    AnimatedContent(
+        targetState = type,
+        transitionSpec = {
+            slideIntoContainer(AnimatedContentScope.SlideDirection.Up) + fadeIn() with
+                slideOutOfContainer(AnimatedContentScope.SlideDirection.Up) + fadeOut()
+        }
+    ) { animatedType ->
+        when (animatedType) {
+            OtpType.Hotp -> {
+                OutlinedTextField(
+                    value = counter,
+                    onValueChange = onCounterChange,
+                    label = {
+                        Text(stringResource(R.string.addeditaccount_data_counter))
+                    },
+                    keyboardOptions = keyboardOptions,
+                    isError = counterIsError
+                )
+            }
+            OtpType.Totp -> {
+                OutlinedTextField(
+                    value = period,
+                    onValueChange = onPeriodChange,
+                    label = {
+                        Text(stringResource(R.string.addeditaccount_data_period))
+                    },
+                    keyboardOptions = keyboardOptions,
+                    isError = periodIsError
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun AccountAlgorithm(
+    algorithm: OtpDigest,
+    onAlgorithmChange: (OtpDigest) -> Unit,
+) {
+    val (expanded, setExpanded) = remember { mutableStateOf(false) }
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = setExpanded
+    ) {
+        OutlinedTextField(
+            modifier = Modifier.menuAnchor(),
+            value = algorithm.name,
+            onValueChange = {},
+            readOnly = true,
+            label = {
+                Text(stringResource(R.string.addeditaccount_data_algorithm))
+            },
+            trailingIcon = {
+                val iconRotation by animateFloatAsState(if (expanded) 180f else 0f)
+                Icon(
+                    modifier = Modifier.rotate(iconRotation),
+                    imageVector = Icons.Rounded.KeyboardArrowDown,
+                    contentDescription = null
+                )
+            }
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { setExpanded(false) }
+        ) {
+            OtpDigest.values().forEach {
+                DropdownMenuItem(
+                    text = {
+                        Text(it.name)
+                    },
+                    onClick = {
+                        onAlgorithmChange(it)
+                        setExpanded(false)
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun AccountType(
+    type: OtpType,
+    onTypeChange: (OtpType) -> Unit,
+) {
+    val (expanded, setExpanded) = remember { mutableStateOf(false) }
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = setExpanded
+    ) {
+        OutlinedTextField(
+            modifier = Modifier.menuAnchor(),
+            value = type.name,
+            onValueChange = {},
+            readOnly = true,
+            label = {
+                Text(stringResource(R.string.addeditaccount_data_type))
+            },
+            trailingIcon = {
+                val iconRotation by animateFloatAsState(if (expanded) 180f else 0f)
+                Icon(
+                    modifier = Modifier.rotate(iconRotation),
+                    imageVector = Icons.Rounded.KeyboardArrowDown,
+                    contentDescription = null
+                )
+            }
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { setExpanded(false) }
+        ) {
+            OtpType.values().forEach {
+                DropdownMenuItem(
+                    text = {
+                        Text(it.name)
+                    },
+                    onClick = {
+                        onTypeChange(it)
+                        setExpanded(false)
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun AccountSecret(
+    secret: String,
+    onSecretChange: (String) -> Unit,
+) {
+    var shown by rememberSaveable { mutableStateOf(false) }
+    val keyboardOptions =
+        remember { KeyboardOptions(keyboardType = KeyboardType.Password) }
+    val passwordTransformation = remember { PasswordVisualTransformation() }
+    OutlinedTextField(
+        modifier = Modifier,
+        value = secret,
+        onValueChange = onSecretChange,
+        label = {
+            Text(stringResource(R.string.addeditaccount_data_secret))
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Rounded.Key,
+                contentDescription = null
+            )
+        },
+        trailingIcon = {
+            IconButton(onClick = { shown = !shown }) {
+                Icon(
+                    imageVector = if (shown) Icons.Rounded.Visibility else Icons.Rounded.VisibilityOff,
+                    contentDescription = null
+                )
+            }
+        },
+        singleLine = true,
+        visualTransformation = if (shown) VisualTransformation.None else passwordTransformation,
+        keyboardOptions = keyboardOptions
+    )
+}
+
+@Composable
+private fun AccountIcon(
+    uri: Uri?,
+    onUriChange: (Uri?) -> Unit,
+) {
+    val imageSelectLauncher = rememberLauncherForActivityResult(PickVisualMediaPersistent()) {
+        onUriChange(it)
+    }
+    Box(contentAlignment = Alignment.Center) {
+        Surface(
+            modifier = Modifier.size(96.dp),
+            color = MaterialTheme.colorScheme.secondaryContainer,
+            shape = CircleShape,
+            border = BorderStroke(
+                width = 1.dp,
+                SolidColor(MaterialTheme.colorScheme.outline)
+            ),
+            onClick = {
+                imageSelectLauncher.launch(
+                    PickVisualMediaRequest(
+                        ActivityResultContracts.PickVisualMedia.ImageOnly
+                    )
+                )
+            }
+        ) {
+            if (uri != null) {
+                UriImage(uri = uri)
+            } else {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        modifier = Modifier.size(36.dp),
+                        imageVector = Icons.Rounded.AddAPhoto,
+                        contentDescription = null
+                    )
+                }
+            }
+        }
     }
 }
