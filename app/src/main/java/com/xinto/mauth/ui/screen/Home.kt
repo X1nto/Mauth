@@ -1,17 +1,16 @@
 package com.xinto.mauth.ui.screen
 
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
@@ -19,15 +18,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.xinto.mauth.R
+import com.xinto.mauth.contracts.PickVisualMediaPersistent
 import com.xinto.mauth.domain.model.DomainAccount
 import com.xinto.mauth.domain.model.DomainAccountInfo
+import com.xinto.mauth.ui.component.FullWidthButton
 import com.xinto.mauth.ui.component.MaterialBottomSheetDialog
+import com.xinto.mauth.ui.component.TwoPaneCard
 import com.xinto.mauth.ui.component.UriImage
 import com.xinto.mauth.ui.navigation.MauthDestination
 import com.xinto.mauth.ui.navigation.MauthNavigator
@@ -62,113 +61,20 @@ fun HomeScreen(
             )
         },
         bottomBar = {
-            BottomAppBar(
-                floatingActionButton = {
-                    FloatingActionButton(onClick = {
-                        when (viewModel.bottomBarState) {
-                            is HomeBottomBarState.Normal -> {
-                                showAddAccount = true
-                            }
-                            is HomeBottomBarState.Selection -> {
-                                viewModel.clearSelection()
-                            }
-                        }
-                    }) {
-                        AnimatedContent(
-                            targetState = viewModel.bottomBarState,
-                            transitionSpec = {
-                                slideIntoContainer(AnimatedContentScope.SlideDirection.Start) + fadeIn() with
-                                    slideOutOfContainer(AnimatedContentScope.SlideDirection.Start) + fadeOut()
-                            }
-                        ) { bottomBarState ->
-                            when (bottomBarState) {
-                                is HomeBottomBarState.Normal -> {
-                                    Icon(
-                                        imageVector = Icons.Rounded.Add,
-                                        contentDescription = null
-                                    )
-                                }
-                                is HomeBottomBarState.Selection -> {
-                                    Icon(
-                                        imageVector = Icons.Rounded.Undo,
-                                        contentDescription = null
-                                    )
-                                }
-                            }
-                        }
-                    }
+            BottomBar(
+                state = viewModel.bottomBarState,
+                onSettingsClick = {
+                    navigator.push(MauthDestination.Settings)
                 },
-                actions = {
-                    AnimatedContent(
-                        targetState = viewModel.bottomBarState,
-                        transitionSpec = {
-                            if (HomeBottomBarState.Normal isTransitioningTo HomeBottomBarState.Selection) {
-                                slideIntoContainer(AnimatedContentScope.SlideDirection.Up) + fadeIn() with
-                                    scaleOut() + fadeOut()
-                            } else {
-                                scaleIn() + fadeIn() with
-                                    slideOutOfContainer(AnimatedContentScope.SlideDirection.Down) + fadeOut()
-                            }
-                        }
-                    ) { bottomBarState ->
-                        Row {
-                            when (bottomBarState) {
-                                HomeBottomBarState.Normal -> {
-                                    var moreMenuExpanded by remember { mutableStateOf(false) }
-                                    IconButton(onClick = { moreMenuExpanded = true }) {
-                                        DropdownMenu(
-                                            expanded = moreMenuExpanded,
-                                            onDismissRequest = { moreMenuExpanded = false }
-                                        ) {
-                                            DropdownMenuItem(
-                                                onClick = {
-                                                    moreMenuExpanded = false
-                                                    navigator.push(MauthDestination.Settings)
-                                                },
-                                                text = { Text(stringResource(R.string.home_more_settings)) },
-                                                leadingIcon = {
-                                                    Icon(
-                                                        imageVector = Icons.Rounded.Settings,
-                                                        contentDescription = null
-                                                    )
-                                                }
-                                            )
-                                        }
-                                        Icon(
-                                            imageVector = Icons.Rounded.MoreVert,
-                                            contentDescription = null
-                                        )
-                                    }
-                                    IconButton(onClick = { /*TODO*/ }) {
-                                        Icon(
-                                            imageVector = Icons.Rounded.Search,
-                                            contentDescription = null
-                                        )
-                                    }
-                                    IconButton(onClick = { /*TODO*/ }) {
-                                        Icon(
-                                            imageVector = Icons.Rounded.Sort,
-                                            contentDescription = null
-                                        )
-                                    }
-                                }
-                                HomeBottomBarState.Selection -> {
-                                    IconButton(
-                                        onClick = { showDeleteAccounts = true },
-                                        colors = IconButtonDefaults.iconButtonColors(
-                                            contentColor = MaterialTheme.colorScheme.error
-                                        )
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Rounded.Delete,
-                                            contentDescription = null
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
+                onDeleteAccountsClick = {
+                    showDeleteAccounts = true
                 },
+                onAddAccount = {
+                    showAddAccount = true
+                },
+                onClearSelection = {
+                    viewModel.clearSelection()
+                }
             )
         }
     ) { paddingValues ->
@@ -183,7 +89,9 @@ fun HomeScreen(
                 items(viewModel.accounts) { account ->
                     var visible by remember { mutableStateOf(false) }
                     val code = viewModel.codes[account.id]
-                    Account(
+                    AccountCard(
+                        account = account,
+                        code = code,
                         onCopyClick = {
                             viewModel.copyCodeToClipboard(account.label, code)
                         },
@@ -200,24 +108,8 @@ fun HomeScreen(
                             }
                         },
                         selected = viewModel.selectedAccounts.contains(account.id),
-                        selectable = viewModel.selectedAccounts.isNotEmpty(),
-                        onVisibleChange = {
+                        onVisibleToggle = {
                             visible = !visible
-                        },
-                        visible = visible,
-                        issuer = if (account.issuer != "") { ->
-                            Text(account.issuer, maxLines = 1)
-                        } else null,
-                        label = { Text(account.label, maxLines = 1) },
-                        icon = {
-                            if (account.icon != null) {
-                                UriImage(
-                                    modifier = Modifier.fillMaxSize(),
-                                    uri = account.icon!!
-                                )
-                            } else {
-                                Text(account.shortLabel)
-                            }
                         },
                         indicator = {
                             when (account) {
@@ -249,29 +141,7 @@ fun HomeScreen(
                                 }
                             }
                         },
-                        code = {
-                            AnimatedContent(
-                                targetState = code,
-                                transitionSpec = {
-                                    slideIntoContainer(
-                                        towards = AnimatedContentScope.SlideDirection.Up,
-                                        animationSpec = tween(500)
-                                    ) + fadeIn() with
-                                        slideOutOfContainer(
-                                            towards = AnimatedContentScope.SlideDirection.Up,
-                                            animationSpec = tween(500)
-                                        ) + fadeOut()
-                                }
-                            ) { animatedCode ->
-                                if (animatedCode != null) {
-                                    if (visible) {
-                                        Text(animatedCode)
-                                    } else {
-                                        Text("\u2022".repeat(animatedCode.length))
-                                    }
-                                }
-                            }
-                        }
+                        visible = visible,
                     )
                 }
             }
@@ -297,7 +167,7 @@ fun HomeScreen(
 
     if (showAddAccount) {
         val photoPickerLauncher =
-            rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            rememberLauncherForActivityResult(PickVisualMediaPersistent()) { uri ->
                 if (uri != null) {
                     val qrCode = viewModel.decodeQrCodeFromImageUri(uri)
                     if (qrCode != null) {
@@ -308,200 +178,327 @@ fun HomeScreen(
                     }
                 }
             }
-        MaterialBottomSheetDialog(
-            onDismissRequest = {
+        AddAccountDialog(
+            onDismiss = {
                 showAddAccount = false
             },
-            title = {
-                Text(stringResource(R.string.home_addaccount_title))
+            onQrScanClick = {
+                showAddAccount = false
+                navigator.push(MauthDestination.QrScanner)
             },
-            subtitle = {
-                Text(stringResource(R.string.home_addaccount_subtitle))
+            onImageChooseClick = {
+                showAddAccount = false
+                photoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             },
-        ) {
-            Column(
-                modifier = Modifier.clip(MaterialTheme.shapes.large),
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-            ) {
-                AddAccountType(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        navigator.push(MauthDestination.QrScanner)
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Rounded.QrCodeScanner,
-                            contentDescription = null
-                        )
-                    },
-                    text = {
-                        Text(stringResource(R.string.home_addaccount_data_scanqr))
-                    },
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                )
-                AddAccountType(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        photoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Rounded.Image,
-                            contentDescription = null
-                        )
-                    },
-                    text = {
-                        Text(stringResource(R.string.home_addaccount_data_imageqr))
-                    },
-                    color = MaterialTheme.colorScheme.tertiaryContainer,
-                )
-                AddAccountType(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        showAddAccount = false
-                        navigator.push(MauthDestination.AddAccount(DomainAccountInfo.DEFAULT))
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Rounded.Password,
-                            contentDescription = null
-                        )
-                    },
-                    text = {
-                        Text(stringResource(R.string.home_addaccount_data_manual))
-                    },
-                    color = MaterialTheme.colorScheme.secondaryContainer
-                )
+            onManualEnterClick = {
+                showAddAccount = false
+                navigator.push(MauthDestination.AddAccount(DomainAccountInfo.DEFAULT))
             }
-        }
+        )
     }
 
     if (showDeleteAccounts) {
-        AlertDialog(
-            onDismissRequest = { showDeleteAccounts = false },
-            icon = {
-                Icon(
-                    imageVector = Icons.Rounded.DeleteForever,
-                    contentDescription = null
-                )
+        DeleteAccountsDialog(
+            onDismiss = {
+                showDeleteAccounts = false
             },
-            title = {
-                Text(stringResource(R.string.home_delete_title))
-            },
-            text = {
-                Text(stringResource(R.string.home_delete_subtitle))
-            },
-            confirmButton = {
-                FilledTonalButton(onClick = {
-                    showDeleteAccounts = false
-                    viewModel.deleteSelected()
-                }) {
-                    Text(stringResource(R.string.home_delete_button_delete))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDeleteAccounts = false }) {
-                    Text(stringResource(R.string.home_delete_button_cancel))
-                }
+            onConfirm = {
+                showDeleteAccounts = false
+                viewModel.deleteSelected()
             }
         )
     }
 }
 
 @Composable
-private fun Account(
-    onCopyClick: () -> Unit,
-    onEditClick: () -> Unit,
-    onLongClick: () -> Unit,
-    onClick: () -> Unit,
-    selected: Boolean,
-    selectable: Boolean,
-    onVisibleChange: (Boolean) -> Unit,
-    visible: Boolean,
-    modifier: Modifier = Modifier,
-    issuer: (@Composable () -> Unit)?,
-    label: @Composable () -> Unit,
-    icon: @Composable () -> Unit,
-    indicator: @Composable () -> Unit,
-    code: @Composable () -> Unit,
+private fun AddAccountDialog(
+    onDismiss: () -> Unit,
+    onQrScanClick: () -> Unit,
+    onImageChooseClick: () -> Unit,
+    onManualEnterClick: () -> Unit,
 ) {
-    val localDensity = LocalDensity.current
-    val shape by animateValueAsState(
-        targetValue = if (selected) MaterialTheme.shapes.small else MaterialTheme.shapes.large,
-        typeConverter = TwoWayConverter(
-            convertToVector = {
-                AnimationVector(
-                    v1 = it.topStart.toPx(Size.Unspecified, localDensity),
-                    v2 = it.topEnd.toPx(Size.Unspecified, localDensity),
-                    v3 = it.bottomStart.toPx(Size.Unspecified, localDensity),
-                    v4 = it.bottomEnd.toPx(Size.Unspecified, localDensity)
-                )
-            },
-            convertFromVector = {
-                RoundedCornerShape(
-                    topStart = it.v1,
-                    topEnd = it.v2,
-                    bottomStart = it.v3,
-                    bottomEnd = it.v4
-                )
-            }
-        )
-    )
-    ElevatedCard(
-        modifier = modifier,
-        shape = shape
+    MaterialBottomSheetDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(stringResource(R.string.home_addaccount_title))
+        },
+        subtitle = {
+            Text(stringResource(R.string.home_addaccount_subtitle))
+        },
     ) {
         Column(
-            modifier = Modifier
-                .combinedClickable(onClick = onClick, onLongClick = onLongClick)
-                .padding(12.dp),
+            modifier = Modifier.clip(MaterialTheme.shapes.large),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
+            FullWidthButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onQrScanClick,
+                icon = {
+                    Icon(
+                        imageVector = Icons.Rounded.QrCodeScanner,
+                        contentDescription = null
+                    )
+                },
+                text = {
+                    Text(stringResource(R.string.home_addaccount_data_scanqr))
+                },
+                color = MaterialTheme.colorScheme.primaryContainer,
+            )
+            FullWidthButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onImageChooseClick,
+                icon = {
+                    Icon(
+                        imageVector = Icons.Rounded.Image,
+                        contentDescription = null
+                    )
+                },
+                text = {
+                    Text(stringResource(R.string.home_addaccount_data_imageqr))
+                },
+                color = MaterialTheme.colorScheme.tertiaryContainer,
+            )
+            FullWidthButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onManualEnterClick,
+                icon = {
+                    Icon(
+                        imageVector = Icons.Rounded.Password,
+                        contentDescription = null
+                    )
+                },
+                text = {
+                    Text(stringResource(R.string.home_addaccount_data_manual))
+                },
+                color = MaterialTheme.colorScheme.secondaryContainer
+            )
+        }
+    }
+}
+
+@Composable
+private fun DeleteAccountsDialog(
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = {
+            Icon(
+                imageVector = Icons.Rounded.DeleteForever,
+                contentDescription = null
+            )
+        },
+        title = {
+            Text(stringResource(R.string.home_delete_title))
+        },
+        text = {
+            Text(stringResource(R.string.home_delete_subtitle))
+        },
+        confirmButton = {
+            FilledTonalButton(onClick = onConfirm) {
+                Text(stringResource(R.string.home_delete_button_delete))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.home_delete_button_cancel))
+            }
+        }
+    )
+}
+
+@Composable
+private fun BottomBar(
+    state: HomeBottomBarState,
+    onSettingsClick: () -> Unit,
+    onDeleteAccountsClick: () -> Unit,
+    onAddAccount: () -> Unit,
+    onClearSelection: () -> Unit
+) {
+    BottomAppBar(
+        floatingActionButton = {
+            AnimatedContent(
+                targetState = state,
+                transitionSpec = {
+                    slideIntoContainer(AnimatedContentScope.SlideDirection.Start) + fadeIn() with
+                        slideOutOfContainer(AnimatedContentScope.SlideDirection.Start) + fadeOut()
+                }
+            ) { bottomBarState ->
+                when (bottomBarState) {
+                    HomeBottomBarState.Normal -> {
+                        AddAccountFab(onClick = onAddAccount)
+                    }
+                    HomeBottomBarState.Selection -> {
+                        ReturnFab(onClick = onClearSelection)
+                    }
+                }
+            }
+        },
+        actions = {
+            AnimatedContent(
+                targetState = state,
+                transitionSpec = {
+                    if (HomeBottomBarState.Normal isTransitioningTo HomeBottomBarState.Selection) {
+                        slideIntoContainer(AnimatedContentScope.SlideDirection.Up) + fadeIn() with
+                            scaleOut() + fadeOut()
+                    } else {
+                        scaleIn() + fadeIn() with
+                            slideOutOfContainer(AnimatedContentScope.SlideDirection.Down) + fadeOut()
+                    }
+                }
+            ) { bottomBarState ->
+                when (bottomBarState) {
+                    HomeBottomBarState.Normal -> {
+                        BottombarNormalActions(
+                            onSettingsClick = onSettingsClick,
+                            onSearchClick = { /*TODO*/ },
+                            onSortClick = { /*TODO*/ },
+                        )
+                    }
+                    HomeBottomBarState.Selection -> {
+                        BottombarSelectionActions(onDeleteAccountsClick = onDeleteAccountsClick)
+                    }
+                }
+            }
+        },
+    )
+}
+
+@Composable
+fun BottombarNormalActions(
+    onSettingsClick: () -> Unit,
+    onSearchClick: () -> Unit,
+    onSortClick: () -> Unit,
+) {
+    Row {
+        var moreMenuExpanded by remember { mutableStateOf(false) }
+        IconButton(onClick = { moreMenuExpanded = true }) {
+            DropdownMenu(
+                expanded = moreMenuExpanded,
+                onDismissRequest = { moreMenuExpanded = false }
+            ) {
+                DropdownMenuItem(
+                    onClick = {
+                        moreMenuExpanded = false
+                        onSettingsClick()
+                    },
+                    text = { Text(stringResource(R.string.home_more_settings)) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Rounded.Settings,
+                            contentDescription = null
+                        )
+                    }
+                )
+            }
+            Icon(
+                imageVector = Icons.Rounded.MoreVert,
+                contentDescription = null
+            )
+        }
+        IconButton(onClick = onSearchClick) {
+            Icon(
+                imageVector = Icons.Rounded.Search,
+                contentDescription = null
+            )
+        }
+        IconButton(onClick = onSortClick) {
+            Icon(
+                imageVector = Icons.Rounded.Sort,
+                contentDescription = null
+            )
+        }
+    }
+}
+
+@Composable
+private fun BottombarSelectionActions(
+    onDeleteAccountsClick: () -> Unit
+) {
+    IconButton(
+        onClick = onDeleteAccountsClick,
+        colors = IconButtonDefaults.iconButtonColors(
+            contentColor = MaterialTheme.colorScheme.error
+        )
+    ) {
+        Icon(
+            imageVector = Icons.Rounded.Delete,
+            contentDescription = null
+        )
+    }
+}
+
+@Composable
+private fun ReturnFab(onClick: () -> Unit) {
+    FloatingActionButton(onClick = onClick) {
+        Icon(
+            imageVector = Icons.Rounded.Undo,
+            contentDescription = null
+        )
+    }
+}
+
+@Composable
+private fun AddAccountFab(onClick: () -> Unit) {
+    FloatingActionButton(onClick = onClick) {
+        Icon(
+            imageVector = Icons.Rounded.Add,
+            contentDescription = null
+        )
+    }
+}
+
+@Composable
+fun AccountCard(
+    account: DomainAccount,
+    code: String?,
+    onCopyClick: () -> Unit,
+    onEditClick: () -> Unit,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit,
+    selected: Boolean,
+    onVisibleToggle: (Boolean) -> Unit,
+    visible: Boolean,
+    indicator: @Composable () -> Unit,
+) {
+    TwoPaneCard(
+        selected = selected,
+        onClick = onClick,
+        onLongClick = onLongClick,
+        topContent = {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Surface(
-                    color = MaterialTheme.colorScheme.secondaryContainer,
-                    shape = MaterialTheme.shapes.large
-                ) {
-                    Box(
-                        modifier = Modifier.size(48.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        ProvideTextStyle(MaterialTheme.typography.titleLarge) {
-                            icon()
-                        }
-                    }
-                }
+                AccountIcon(
+                    icon = account.icon,
+                    shortLabel = account.shortLabel
+                )
                 Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    if (issuer != null) {
-                        val color = LocalContentColor.current.copy(alpha = 0.7f)
-                        CompositionLocalProvider(LocalContentColor provides color) {
-                            ProvideTextStyle(MaterialTheme.typography.labelMedium) {
-                                issuer()
-                            }
-                        }
+                    if (account.issuer != "") {
+                        Text(
+                            text = account.issuer,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = LocalContentColor.current.copy(alpha = 0.7f)
+                        )
                     }
-                    ProvideTextStyle(MaterialTheme.typography.bodyLarge) {
-                        label()
-                    }
+                    Text(account.label, style = MaterialTheme.typography.bodyLarge)
                 }
                 Spacer(Modifier.weight(1f))
-                if (selectable) {
-                    if (selected) {
-                        Box(
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.primary)
-                                .padding(4.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Rounded.Check,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onPrimary
-                            )
-                        }
+                if (selected) {
+                    Box(
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primary)
+                            .padding(4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Check,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
                     }
                 } else {
                     IconButton(onClick = onEditClick) {
@@ -512,70 +509,90 @@ private fun Account(
                     }
                 }
             }
-            AnimatedVisibility(
-                visible = !selectable,
+        },
+        bottomContent = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Column {
-                    Divider(Modifier.padding(vertical = 12.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                indicator()
+                AccountCode(code, visible, account.digits)
+                Spacer(Modifier.weight(1f))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    FilledTonalIconToggleButton(
+                        checked = visible,
+                        onCheckedChange = onVisibleToggle
                     ) {
-                        indicator()
-                        ProvideTextStyle(MaterialTheme.typography.titleLarge) {
-                            code()
-                        }
-                        Spacer(Modifier.weight(1f))
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            FilledTonalIconToggleButton(
-                                checked = visible,
-                                onCheckedChange = onVisibleChange
-                            ) {
-                                Icon(
-                                    imageVector = if (visible) Icons.Rounded.Visibility else Icons.Rounded.VisibilityOff,
-                                    contentDescription = null
-                                )
-                            }
-                            FilledTonalIconButton(onClick = onCopyClick) {
-                                Icon(
-                                    imageVector = Icons.Rounded.CopyAll,
-                                    contentDescription = null
-                                )
-                            }
-                        }
+                        Icon(
+                            imageVector = if (visible) Icons.Rounded.Visibility else Icons.Rounded.VisibilityOff,
+                            contentDescription = null
+                        )
+                    }
+                    FilledTonalIconButton(onClick = onCopyClick) {
+                        Icon(
+                            imageVector = Icons.Rounded.CopyAll,
+                            contentDescription = null
+                        )
                     }
                 }
             }
+        }
+    )
+}
+
+@Composable
+private fun AccountCode(
+    code: String?,
+    visible: Boolean,
+    digits: Int
+) {
+    AnimatedContent(
+        targetState = code,
+        transitionSpec = {
+            slideIntoContainer(
+                towards = AnimatedContentScope.SlideDirection.Up,
+                animationSpec = tween(500)
+            ) + fadeIn() with
+                slideOutOfContainer(
+                    towards = AnimatedContentScope.SlideDirection.Up,
+                    animationSpec = tween(500)
+                ) + fadeOut()
+        }
+    ) { animatedCode ->
+        if (animatedCode != null && visible) {
+            Text(animatedCode, style = MaterialTheme.typography.titleLarge)
+        } else {
+            Text("\u2022".repeat(digits), style = MaterialTheme.typography.titleLarge)
         }
     }
 }
 
 @Composable
-fun AddAccountType(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.surface,
-    icon: @Composable () -> Unit,
-    text: @Composable () -> Unit,
+private fun AccountIcon(
+    icon: Uri?,
+    shortLabel: String
 ) {
-    Surface(
-        modifier = modifier,
-        onClick = onClick,
-        color = color,
-        shape = MaterialTheme.shapes.extraSmall,
-    ) {
-        Row(
-            modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically
+    if (icon != null) {
+        UriImage(
+            modifier = Modifier
+                .size(48.dp)
+                .clip(MaterialTheme.shapes.medium),
+            uri = icon
+        )
+    } else {
+        Surface(
+            modifier = Modifier.size(48.dp),
+            shape = MaterialTheme.shapes.medium,
+            color = MaterialTheme.colorScheme.secondaryContainer
         ) {
-            icon()
-            ProvideTextStyle(MaterialTheme.typography.bodyLarge) {
-                text()
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(shortLabel, style = MaterialTheme.typography.titleLarge)
             }
         }
     }
