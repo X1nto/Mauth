@@ -95,7 +95,7 @@ class OtpUriParserImpl : OtpUriParser {
     }
 
     private fun getDigestFromUriAlgorithm(algorithm: String): OtpDigest? {
-        return when (algorithm) {
+        return when (algorithm.uppercase()) {
             "SHA1" -> OtpDigest.Sha1
             "SHA256" -> OtpDigest.Sha256
             "SHA512" -> OtpDigest.Sha512
