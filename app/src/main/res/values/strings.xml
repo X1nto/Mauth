@@ -41,4 +41,7 @@
     <string name="settings_title">Settings</string>
     <string name="settings_prefs_securemode">Secure mode</string>
     <string name="settings_prefs_securemode_description">Prevents screenshots in the app</string>
+
+    <string name="urihandler_parseerror_dialog_title">Invalid URI</string>
+    <string name="urihandler_parseerror_dialog_body">The URI supplied to the app could not be understood</string>
 </resources>
