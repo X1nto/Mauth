@@ -13,7 +13,7 @@ object ZxingDecoder {
         )
     }
 
-    inline fun decodeYuvLuminanceSource(
+    inline fun <T> decodeYuvLuminanceSource(
         data: ByteArray,
         dataWidth: Int,
         dataHeight: Int,
@@ -22,9 +22,9 @@ object ZxingDecoder {
         left: Int = 0,
         top: Int = 0,
         reverseHorizontal: Boolean = false,
-        onSuccess: (Result) -> Unit,
-        onError: (NotFoundException) -> Unit
-    ) {
+        onSuccess: (Result) -> T,
+        onError: (NotFoundException) -> T
+    ): T {
         val source = PlanarYUVLuminanceSource(
             /* yuvData = */
             data,
@@ -44,16 +44,16 @@ object ZxingDecoder {
             reverseHorizontal,
         )
 
-        decodeSource(source, onSuccess, onError)
+        return decodeSource(source, onSuccess, onError)
     }
 
-    inline fun decodeRgbLuminanceSource(
+    inline fun <T> decodeRgbLuminanceSource(
         pixels: IntArray,
         width: Int,
         height: Int,
-        onSuccess: (Result) -> Unit,
-        onError: (NotFoundException) -> Unit
-    ) {
+        onSuccess: (Result) -> T,
+        onError: (NotFoundException) -> T
+    ): T {
         val source = RGBLuminanceSource(
             /* width = */
             width,
@@ -63,17 +63,17 @@ object ZxingDecoder {
             pixels,
         )
 
-        decodeSource(source, onSuccess, onError)
+        return decodeSource(source, onSuccess, onError)
     }
 
-    inline fun decodeSource(
+    inline fun <T> decodeSource(
         source: LuminanceSource,
-        onSuccess: (Result) -> Unit,
-        onError: (NotFoundException) -> Unit
-    ) {
+        onSuccess: (Result) -> T,
+        onError: (NotFoundException) -> T
+    ): T {
         val bitmap = BinaryBitmap(HybridBinarizer(source))
 
-        try {
+        return try {
             onSuccess(reader.decodeWithState(bitmap))
         } catch (e: NotFoundException) {
             onError(e)

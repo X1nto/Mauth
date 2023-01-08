@@ -1,9 +1,11 @@
 package com.xinto.mauth.domain.model
 
 import android.net.Uri
+import androidx.compose.runtime.Immutable
 import com.xinto.mauth.otp.OtpDigest
 import java.util.*
 
+@Immutable
 sealed class DomainAccount {
     abstract val id: UUID
     abstract val icon: Uri?
@@ -19,6 +21,7 @@ sealed class DomainAccount {
         }
     }
 
+    @Immutable
     data class Totp(
         override val id: UUID,
         override val icon: Uri?,
@@ -30,6 +33,7 @@ sealed class DomainAccount {
         val period: Int
     ) : DomainAccount()
 
+    @Immutable
     data class Hotp(
         override val id: UUID,
         override val icon: Uri?,

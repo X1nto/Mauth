@@ -28,17 +28,9 @@ fun SettingsScreen(
     }
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(stringResource(R.string.settings_title))
-                },
-                navigationIcon = {
-                    IconButton(onClick = { navigator.pop() }) {
-                        Icon(
-                            imageVector = Icons.Rounded.ArrowBack,
-                            contentDescription = null
-                        )
-                    }
+            TopBar(
+                onBackPress = {
+                    navigator.pop()
                 }
             )
         }
@@ -49,17 +41,47 @@ fun SettingsScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
-                SwitchSettingsItem(
+                SecureModeSwitch(
                     onCheckedChange = viewModel::updatePrivateMode,
                     checked = viewModel.privateMode,
-                    title = {
-                        Text(stringResource(R.string.settings_prefs_securemode))
-                    },
-                    description = {
-                        Text(stringResource(R.string.settings_prefs_securemode_description))
-                    }
                 )
             }
         }
     }
+}
+
+@Composable
+private fun TopBar(
+    onBackPress: () -> Unit,
+) {
+    TopAppBar(
+        title = {
+            Text(stringResource(R.string.settings_title))
+        },
+        navigationIcon = {
+            IconButton(onClick = onBackPress) {
+                Icon(
+                    imageVector = Icons.Rounded.ArrowBack,
+                    contentDescription = null
+                )
+            }
+        }
+    )
+}
+
+@Composable
+fun SecureModeSwitch(
+    onCheckedChange: (Boolean) -> Unit,
+    checked: Boolean,
+) {
+    SwitchSettingsItem(
+        onCheckedChange = onCheckedChange,
+        checked = checked,
+        title = {
+            Text(stringResource(R.string.settings_prefs_securemode))
+        },
+        description = {
+            Text(stringResource(R.string.settings_prefs_securemode_description))
+        }
+    )
 }

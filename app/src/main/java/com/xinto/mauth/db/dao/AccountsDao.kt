@@ -3,6 +3,7 @@ package com.xinto.mauth.db.dao
 import androidx.room.*
 import com.xinto.mauth.db.entity.EntityAccount
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import java.util.*
 
 @Dao
@@ -27,6 +28,6 @@ interface AccountsDao {
     suspend fun delete(entityAccount: EntityAccount)
 
     @Query("DELETE FROM accounts WHERE id in (:ids)")
-    suspend fun delete(ids: List<UUID>)
+    suspend fun delete(ids: Set<UUID>)
 
 }
