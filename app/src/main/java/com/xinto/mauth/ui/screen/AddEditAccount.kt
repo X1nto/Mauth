@@ -83,7 +83,7 @@ private fun AddEditAccountScreenImpl(
     var showExitDialog by remember { mutableStateOf(false) }
 
     BackHandler {
-        navigator.pop()
+        showExitDialog = true
     }
     Scaffold(
         topBar = {
@@ -139,7 +139,7 @@ private fun ExitDialog(
             Text(stringResource(R.string.addeditaccount_discard_subtitle))
         },
         confirmButton = {
-            TextButton(onConfirm) {
+            FilledTonalButton(onConfirm) {
                 Text(stringResource(R.string.addeditaccount_discard_buttons_discard))
             }
         },
