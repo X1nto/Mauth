@@ -9,26 +9,23 @@ class QrScannerViewModel(
     private val otpUriParser: OtpUriParser
 ) : ViewModel() {
 
-    fun parseOtpUri(uri: String): DomainAccountInfo? {
-        return when (val result = otpUriParser.parseOtpUri(uri)) {
+    fun acceptSuccessScan(result: com.google.zxing.Result): DomainAccountInfo? {
+        return when (val parseResult = otpUriParser.parseOtpUri(result.text)) {
             is OtpUriParserResult.Success -> {
                 DomainAccountInfo(
                     id = null,
                     icon = null,
-                    label = result.data.label,
-                    issuer = result.data.issuer,
-                    secret = result.data.secret,
-                    algorithm = result.data.algorithm,
-                    type = result.data.type,
-                    digits = result.data.digits,
-                    counter = result.data.counter ?: 0,
-                    period = result.data.period ?: 30,
+                    label = parseResult.data.label,
+                    issuer = parseResult.data.issuer,
+                    secret = parseResult.data.secret,
+                    algorithm = parseResult.data.algorithm,
+                    type = parseResult.data.type,
+                    digits = parseResult.data.digits,
+                    counter = parseResult.data.counter ?: 0,
+                    period = parseResult.data.period ?: 30,
                 )
             }
-            is OtpUriParserResult.Failure -> {
-                null
-            }
+            is OtpUriParserResult.Failure -> null
         }
     }
-
 }
