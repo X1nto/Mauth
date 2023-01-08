@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun TwoPaneCard(
     selected: Boolean,
+    expanded: Boolean = true,
     topContent: @Composable () -> Unit,
     bottomContent: @Composable () -> Unit,
     onClick: () -> Unit,
@@ -38,7 +39,7 @@ fun TwoPaneCard(
         ) {
             topContent()
             AnimatedVisibility(
-                visible = !selected,
+                visible = expanded,
             ) {
                 Column {
                     Divider(Modifier.padding(vertical = 12.dp))

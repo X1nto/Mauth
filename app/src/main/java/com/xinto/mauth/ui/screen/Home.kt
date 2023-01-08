@@ -108,6 +108,7 @@ fun HomeScreen(
                             }
                         },
                         selected = viewModel.selectedAccounts.contains(account.id),
+                        expanded = viewModel.selectedAccounts.isEmpty(),
                         onVisibleToggle = {
                             visible = !visible
                         },
@@ -168,14 +169,8 @@ fun HomeScreen(
     if (showAddAccount) {
         val photoPickerLauncher =
             rememberLauncherForActivityResult(PickVisualMediaPersistent()) { uri ->
-                if (uri != null) {
-                    val qrCode = viewModel.decodeQrCodeFromImageUri(uri)
-                    if (qrCode != null) {
-                        val params = viewModel.parseOtpUri(qrCode)
-                        if (params != null) {
-                            navigator.push(MauthDestination.AddAccount(params))
-                        }
-                    }
+                viewModel.parseImageUri(uri)?.let {
+                    navigator.push(MauthDestination.AddAccount(it))
                 }
             }
         AddAccountDialog(
@@ -341,9 +336,9 @@ private fun BottomBar(
                 transitionSpec = {
                     if (HomeBottomBarState.Normal isTransitioningTo HomeBottomBarState.Selection) {
                         slideIntoContainer(AnimatedContentScope.SlideDirection.Up) + fadeIn() with
-                            scaleOut() + fadeOut()
+                            slideOutOfContainer(AnimatedContentScope.SlideDirection.Up) + fadeOut()
                     } else {
-                        scaleIn() + fadeIn() with
+                        slideIntoContainer(AnimatedContentScope.SlideDirection.Down) + fadeIn() with
                             slideOutOfContainer(AnimatedContentScope.SlideDirection.Down) + fadeOut()
                     }
                 }
@@ -458,12 +453,14 @@ fun AccountCard(
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     selected: Boolean,
+    expanded: Boolean,
     onVisibleToggle: (Boolean) -> Unit,
     visible: Boolean,
     indicator: @Composable () -> Unit,
 ) {
     TwoPaneCard(
         selected = selected,
+        expanded = expanded,
         onClick = onClick,
         onLongClick = onLongClick,
         topContent = {
