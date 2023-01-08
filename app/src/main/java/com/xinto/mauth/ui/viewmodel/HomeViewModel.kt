@@ -72,9 +72,9 @@ class HomeViewModel(
                 clipboardService.setPrimaryClip(ClipData.newPlainText(label, code))
                 Toast.makeText(application, R.string.home_code_copy_success, Toast.LENGTH_LONG).show()
             }
+        } else {
+            Toast.makeText(application, R.string.home_code_copy_fail, Toast.LENGTH_LONG).show()
         }
-
-        Toast.makeText(application, R.string.home_code_copy_fail, Toast.LENGTH_LONG).show()
     }
 
     fun decodeQrCodeFromImageUri(uri: Uri): String? {
