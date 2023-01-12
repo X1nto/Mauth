@@ -14,11 +14,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.xinto.mauth.ui.navigation.MauthDestination
+import com.xinto.mauth.ui.navigation.MauthNavigator
 import com.xinto.mauth.ui.screen.*
 import com.xinto.mauth.ui.theme.MauthTheme
 import com.xinto.mauth.ui.viewmodel.MainViewModel
@@ -34,6 +38,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (savedInstanceState == null) {
+            // The app is started - wouldn't run after a configuration change
+            viewModel.handleIntentData(intent)
+        }
 
         viewModel.privateMode
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
@@ -55,7 +64,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Main()
+                    val navigator =
+                        rememberBackstackNavigator<MauthDestination>(MauthDestination.Home)
+
+                    Main(navigator)
+
+                    HandleUriResult(viewModel, navigator)
                 }
             }
         }
@@ -63,8 +77,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Main() {
-    val navigator = rememberBackstackNavigator<MauthDestination>(MauthDestination.Home)
+fun Main(navigator: MauthNavigator) {
     Taxi(
         navigator = navigator,
         transitionSpec = {
@@ -106,6 +119,21 @@ fun Main() {
             is MauthDestination.EditAccount -> {
                 EditAccountScreen(navigator = navigator, accountId = screen.id)
             }
+        }
+    }
+}
+
+@Composable
+private fun HandleUriResult(
+    mainViewModel: MainViewModel,
+    navigator: MauthNavigator,
+) {
+    // collect opt URI parse result
+    val uriData by mainViewModel.optUri.collectAsState()
+    LaunchedEffect(uriData) {
+        uriData?.let { data ->
+            navigator.push(MauthDestination.AddAccount(data))
+            mainViewModel.onUriHandled()
         }
     }
 }
