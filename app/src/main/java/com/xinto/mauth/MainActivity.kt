@@ -129,7 +129,7 @@ private fun HandleUriResult(
     navigator: MauthNavigator,
 ) {
     // collect opt URI parse result
-    val uriData by mainViewModel.optUri.collectAsState()
+    val uriData by mainViewModel.optUri
     LaunchedEffect(uriData) {
         uriData?.let { data ->
             navigator.push(MauthDestination.AddAccount(data))

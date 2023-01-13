@@ -1,7 +1,9 @@
 package com.xinto.mauth.ui.viewmodel
 
 import android.content.Intent
-import android.os.Bundle
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.xinto.mauth.domain.model.DomainAccountInfo
@@ -9,8 +11,6 @@ import com.xinto.mauth.domain.repository.MainRepository
 import com.xinto.mauth.otp.parser.OtpUriParser
 import com.xinto.mauth.otp.parser.OtpUriParserResult
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class MainViewModel(
@@ -20,8 +20,8 @@ class MainViewModel(
 
     val privateMode = mainRepository.observeSecureMode()
 
-    private val _optUri = MutableStateFlow<DomainAccountInfo?>(null)
-    val optUri = _optUri.asStateFlow()
+    var optUri by mutableStateOf<DomainAccountInfo?>(null)
+        private set
 
     fun handleIntentData(data: Intent) {
         viewModelScope.launch(Dispatchers.Default) {
@@ -43,14 +43,13 @@ class MainViewModel(
                     }
                     is OtpUriParserResult.Failure -> null
                 }.also {
-                    _optUri.value = it
+                    optUri = it
                 }
             }
         }
     }
 
     fun onUriHandled() {
-        _optUri.value = null
+        optUri = null
     }
-
 }
