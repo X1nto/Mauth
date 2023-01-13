@@ -23,6 +23,12 @@ android {
     }
 
     buildTypes {
+        debug {
+            // Distinguish between debug and release version
+            // Without this they cannot be installed both at the same time
+            applicationIdSuffix = ".debug"
+            isMinifyEnabled = false
+        }
         release {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")

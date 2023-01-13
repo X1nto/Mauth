@@ -24,6 +24,7 @@ While there are many 2FA authenticator apps out there, most of them come with an
     - [x] Using a camera
     - [x] From an image
   - [x] Manually
+  - [x] Deeplinks (otpauth)
 - Algorithms
   - [x] TOTP
   - [x] HOTP
