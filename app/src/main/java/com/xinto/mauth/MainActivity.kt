@@ -15,8 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -129,9 +127,8 @@ private fun HandleUriResult(
     navigator: MauthNavigator,
 ) {
     // collect opt URI parse result
-    val uriData by mainViewModel.optUri
-    LaunchedEffect(uriData) {
-        uriData?.let { data ->
+    LaunchedEffect(mainViewModel.optUri) {
+        mainViewModel.optUri?.let { data ->
             navigator.push(MauthDestination.AddAccount(data))
             mainViewModel.onUriHandled()
         }
