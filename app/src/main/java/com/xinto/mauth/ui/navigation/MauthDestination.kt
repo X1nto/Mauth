@@ -1,12 +1,9 @@
 package com.xinto.mauth.ui.navigation
 
-import com.xinto.mauth.domain.model.DomainAccountInfo
-import com.xinto.taxi.BackstackNavigator
+import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.taxi.Destination
 import kotlinx.parcelize.Parcelize
 import java.util.*
-
-typealias MauthNavigator = BackstackNavigator<MauthDestination>
 
 sealed class MauthDestination(val isFullscreenDialog: Boolean = false) : Destination {
     @Parcelize
