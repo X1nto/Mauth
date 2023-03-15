@@ -11,16 +11,29 @@ import com.xinto.mauth.R
 @Composable
 fun HomeBottomBar(
     isSelectionActive: Boolean = false,
-    onAddClick: () -> Unit,
+    onAdd: () -> Unit,
     onCancelSelection: () -> Unit,
-    onRemoveSelected: () -> Unit,
+    onDeleteSelected: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
     var isMoreActionsVisible by remember { mutableStateOf(false) }
     BottomAppBar(
         actions = {
-            AnimatedContent(targetState = isSelectionActive) {
+            AnimatedContent(
+                targetState = isSelectionActive,
+                transitionSpec = {
+                    slideIntoContainer(AnimatedContentScope.SlideDirection.Up) + fadeIn() with
+                            slideOutOfContainer(AnimatedContentScope.SlideDirection.Up) + fadeOut()
+                }
+            ) { isSelectionActive ->
                 if (isSelectionActive) {
+                    IconButton(onClick = onDeleteSelected) {
+                        Icon(
+                            imageVector = Icons.Rounded.DeleteForever,
+                            contentDescription = null
+                        )
+                    }
+                } else {
                     DropdownMenu(
                         expanded = isMoreActionsVisible,
                         onDismissRequest = {
@@ -48,13 +61,6 @@ fun HomeBottomBar(
                             contentDescription = null
                         )
                     }
-                } else {
-                    IconButton(onClick = onRemoveSelected) {
-                        Icon(
-                            imageVector = Icons.Rounded.DeleteForever,
-                            contentDescription = null
-                        )
-                    }
                 }
             }
         },
@@ -73,7 +79,7 @@ fun HomeBottomBar(
                         )
                     }
                 } else {
-                    FloatingActionButton(onClick = onAddClick) {
+                    FloatingActionButton(onClick = onAdd) {
                         Icon(
                             imageVector = Icons.Rounded.Add,
                             contentDescription = null

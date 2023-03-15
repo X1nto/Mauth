@@ -7,10 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.domain.account.usecase.GetAccountInfoUsecase
+import com.xinto.mauth.domain.account.usecase.PutAccountUsecase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 sealed interface AccountViewModelParams {
@@ -25,6 +27,7 @@ class AccountViewModel(
     params: AccountViewModelParams,
 
     getAccountInfoUsecase: GetAccountInfoUsecase,
+    private val putAccountUsecase: PutAccountUsecase
 ) : ViewModel() {
 
     var state by mutableStateOf<AccountScreenState>(AccountScreenState.Loading)
@@ -33,7 +36,9 @@ class AccountViewModel(
     private var fetchJob: Job? = null
 
     fun saveData(data: DomainAccountInfo) {
-
+        viewModelScope.launch {
+            putAccountUsecase(data)
+        }
     }
 
     override fun onCleared() {

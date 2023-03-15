@@ -86,6 +86,16 @@ fun AccountScreen(
         topBar = {
             TopAppBar(
                 actions = {
+                    Button(
+                        onClick = {
+                            onSave(accountInfo!!)
+                        },
+                        enabled = accountInfo != null
+                    ) {
+                        Text(stringResource(R.string.addeditaccount_actions_save))
+                    }
+                },
+                navigationIcon = {
                     IconButton(onClick = {
                         if (accountInfo != null) {
                             isExitDialogShown = true
@@ -97,16 +107,6 @@ fun AccountScreen(
                             imageVector = Icons.Rounded.Close,
                             contentDescription = null
                         )
-                    }
-                },
-                navigationIcon = {
-                    Button(
-                        onClick = {
-                            onSave(accountInfo!!)
-                        },
-                        enabled = accountInfo != null
-                    ) {
-                        Text(stringResource(R.string.addeditaccount_actions_save))
                     }
                 },
                 title = {

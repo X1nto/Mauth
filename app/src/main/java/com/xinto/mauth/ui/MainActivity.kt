@@ -121,12 +121,16 @@ fun Main() {
                         navigator.pop()
                     },
                     onScan = {
-                        navigator.push(MauthDestination.AddAccount(it))
+                        navigator.replace(MauthDestination.AddAccount(it))
                     }
                 )
             }
             is MauthDestination.Settings -> {
-                SettingsScreen()
+                SettingsScreen(
+                    onBack = {
+                        navigator.pop()
+                    }
+                )
             }
             is MauthDestination.AddAccount -> {
                 AddAccountScreen(

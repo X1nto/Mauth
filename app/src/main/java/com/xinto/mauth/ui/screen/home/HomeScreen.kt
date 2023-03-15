@@ -15,8 +15,9 @@ import androidx.compose.ui.res.stringResource
 import com.xinto.mauth.R
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.domain.otp.model.DomainOtpRealtimeData
-import com.xinto.mauth.ui.screen.home.component.HomeAddAccountDialog
+import com.xinto.mauth.ui.screen.home.component.HomeAddAccountSheet
 import com.xinto.mauth.ui.screen.home.component.HomeBottomBar
+import com.xinto.mauth.ui.screen.home.component.HomeDeleteAccountsDialog
 import com.xinto.mauth.ui.screen.home.state.HomeScreenEmpty
 import com.xinto.mauth.ui.screen.home.state.HomeScreenError
 import com.xinto.mauth.ui.screen.home.state.HomeScreenLoading
@@ -51,7 +52,7 @@ fun HomeScreen(
         onSettingsClick = onSettingsClick,
         onAccountSelect = viewModel::toggleAccountSelection,
         onCancelAccountSelection = viewModel::clearAccountSelection,
-        onRemoveSelectedAccounts = viewModel::deleteSelectedAccounts,
+        onDeleteSelectedAccounts = viewModel::deleteSelectedAccounts,
         onAccountEdit = onAccountEdit,
         onAccountCounterIncrease = viewModel::incrementCounter,
         onAccountCopyCode = viewModel::copyCodeToClipboard,
@@ -69,7 +70,7 @@ fun HomeScreen(
     onSettingsClick: () -> Unit,
     onAccountSelect: (UUID) -> Unit,
     onCancelAccountSelection: () -> Unit,
-    onRemoveSelectedAccounts: () -> Unit,
+    onDeleteSelectedAccounts: () -> Unit,
     onAccountEdit: (UUID) -> Unit,
     onAccountCounterIncrease: (UUID) -> Unit,
     onAccountCopyCode: (String, String) -> Unit,
@@ -77,7 +78,8 @@ fun HomeScreen(
     accountRealtimeData: Map<UUID, DomainOtpRealtimeData>,
     selectedAccounts: List<UUID>,
 ) {
-    var isAddSheetVisible by remember { mutableStateOf(false) }
+    var showAddSheet by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -89,11 +91,13 @@ fun HomeScreen(
         bottomBar = {
             HomeBottomBar(
                 isSelectionActive = selectedAccounts.isNotEmpty(),
-                onAddClick = {
-                    isAddSheetVisible = true
+                onAdd = {
+                    showAddSheet = true
                 },
                 onCancelSelection = onCancelAccountSelection,
-                onRemoveSelected = onRemoveSelectedAccounts,
+                onDeleteSelected = {
+                    showDeleteDialog = true
+                },
                 onSettingsClick = onSettingsClick
             )
         }
@@ -127,23 +131,34 @@ fun HomeScreen(
             }
         }
     }
-    if (isAddSheetVisible) {
-        HomeAddAccountDialog(
+    if (showAddSheet) {
+        HomeAddAccountSheet(
             onDismiss = {
-                isAddSheetVisible = false
+                showAddSheet = false
             },
             onManualEnterClick = {
-                isAddSheetVisible = false
+                showAddSheet = false
                 onAddAccountManually()
             },
             onScanQrClick = {
-                isAddSheetVisible = false
+                showAddSheet = false
                 onAddAccountViaScanning()
             },
             onChooseImage = {
-                isAddSheetVisible = false
+                showAddSheet = false
                 onAddAccountFromImage()
             },
+        )
+    }
+    if (showDeleteDialog) {
+        HomeDeleteAccountsDialog(
+            onConfirm = {
+                showDeleteDialog = false
+                onDeleteSelectedAccounts()
+            },
+            onCancel = {
+                showDeleteDialog = false
+            }
         )
     }
 }

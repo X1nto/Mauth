@@ -1,6 +1,8 @@
 package com.xinto.mauth.db.dao.rtdata
 
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.xinto.mauth.db.dao.rtdata.entity.EntityCountData
 import kotlinx.coroutines.flow.Flow
@@ -18,7 +20,10 @@ interface RtdataDao {
     @Query("SELECT count FROM rtdata WHERE account_id = :accountId")
     suspend fun getAccountCounter(accountId: UUID): Int
 
-    @Query("UPDATE rtdata SET account_id = account_id + 1 WHERE account_id = :accountId")
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCountData(countData: EntityCountData)
+
+    @Query("UPDATE rtdata SET count = count + 1 WHERE account_id = :accountId")
     suspend fun incrementAccountCounter(accountId: UUID)
 
     @Query("UPDATE rtdata SET account_id = :counter WHERE account_id = :accountId")

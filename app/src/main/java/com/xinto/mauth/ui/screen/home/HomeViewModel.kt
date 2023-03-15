@@ -87,6 +87,7 @@ class HomeViewModel(
     fun deleteSelectedAccounts() {
         viewModelScope.launch {
             deleteAccounts(selectedAccounts)
+            selectedAccounts.clear()
         }
     }
 

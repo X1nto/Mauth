@@ -1,15 +1,18 @@
 package com.xinto.mauth.ui.screen.home.component
 
-import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.xinto.mauth.domain.account.model.DomainAccount
 import com.xinto.mauth.domain.account.model.shortLabel
@@ -19,7 +22,8 @@ import com.xinto.mauth.ui.component.UriImage
 
 @Composable
 fun HomeAccountCard(
-    onSelect: () -> Unit,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit,
     onEdit: () -> Unit,
     onCounterClick: () -> Unit,
     onCopyCode: () -> Unit,
@@ -30,13 +34,14 @@ fun HomeAccountCard(
     var showCode by remember { mutableStateOf(false) }
     TwoPaneCard(
         selected = selected,
+        expanded = !selected,
         topContent = {
             AccountInfo(
                 icon = {
                     if (account.icon != null) {
                         UriImage(uri = account.icon!!)
                     } else {
-                        Text(account.shortLabel)
+                        Text(account.shortLabel, style = MaterialTheme.typography.titleLarge)
                     }
                 },
                 name = { Text(account.label) },
@@ -47,7 +52,18 @@ fun HomeAccountCard(
                 },
                 trailing = {
                     if (selected) {
-
+                        Box(
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.primary)
+                                .padding(4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.Check,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
                     } else {
                         IconButton(onClick = onEdit) {
                             Icon(
@@ -76,8 +92,8 @@ fun HomeAccountCard(
                 )
             }
         },
-        onClick = { /*TODO*/ },
-        onLongClick = onSelect
+        onClick = onClick,
+        onLongClick = onLongClick
     )
 }
 
@@ -119,13 +135,17 @@ private fun RealtimeInformation(
     showCode: Boolean,
     onCounterClick: () -> Unit
 ) {
+    val code = remember(showCode, realtimeData.code) {
+        Pair(showCode, realtimeData.code)
+    }
     Row(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+
         when (realtimeData) {
             is DomainOtpRealtimeData.Hotp -> {
-                FilledTonalButton(onClick = onCounterClick) {
+                FilledTonalIconButton(onClick = onCounterClick) {
                     Text(realtimeData.count.toString())
                 }
             }
@@ -139,16 +159,24 @@ private fun RealtimeInformation(
                         animationSpec = tween(500)
                     )
                     CircularProgressIndicator(progress)
-                    Text(realtimeData.countdown.toString(), style = MaterialTheme.typography.labelMedium)
+                    Text(realtimeData.countdown.toString())
                 }
             }
         }
-        AnimatedContent(targetState = realtimeData.code) { code ->
-            if (showCode) {
-                Text(code)
-            } else {
-                Text("•".repeat(code.length))
+        AnimatedContent(
+            targetState = code,
+            transitionSpec = {
+                if (initialState.first == targetState.first) {
+                    slideIntoContainer(AnimatedContentScope.SlideDirection.Up) + fadeIn() with
+                            slideOutOfContainer(AnimatedContentScope.SlideDirection.Up) + fadeOut()
+                } else {
+                    slideIntoContainer(AnimatedContentScope.SlideDirection.Down) + fadeIn() with
+                            slideOutOfContainer(AnimatedContentScope.SlideDirection.Down) + fadeOut()
+                }
             }
+        ) { (show, code) ->
+            val showAwareCode = if (show) code else "•".repeat(code.length)
+            Text(showAwareCode, style = MaterialTheme.typography.titleLarge)
         }
     }
 }
@@ -162,9 +190,8 @@ private fun AccountInfo(
 ) {
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(IntrinsicSize.Min),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Surface(
@@ -179,13 +206,14 @@ private fun AccountInfo(
             }
         }
         Column(
-            modifier = Modifier.fillMaxHeight(),
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             CompositionLocalProvider(
                 LocalTextStyle provides MaterialTheme.typography.labelMedium,
-                content = issuer,
-            )
+                LocalContentColor provides LocalContentColor.current.copy(alpha = 0.7f)
+            ) {
+                issuer()
+            }
             CompositionLocalProvider(
                 LocalTextStyle provides MaterialTheme.typography.titleMedium,
                 content = name,

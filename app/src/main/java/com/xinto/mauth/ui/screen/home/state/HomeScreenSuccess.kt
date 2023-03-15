@@ -32,7 +32,12 @@ fun HomeScreenSuccess(
             val realtimeData = accountRealtimeData[account.id]
             if (realtimeData != null) {
                 HomeAccountCard(
-                    onSelect = {
+                    onClick = {
+                        if (selectedAccounts.isNotEmpty()) {
+                            onAccountSelect(account.id)
+                        }
+                    },
+                    onLongClick = {
                         onAccountSelect(account.id)
                     },
                     onEdit = {

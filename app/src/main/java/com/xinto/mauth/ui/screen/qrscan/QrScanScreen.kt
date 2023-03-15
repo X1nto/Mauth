@@ -98,7 +98,10 @@ fun QrScanScreen(
     if (showPermissionDeniedDialog) {
         QrScanPermissionDeniedDialog(
             shouldShowRationale = showPermissionDeniedDialogRationale,
-            onGrantPermission = onRequestPermission,
+            onGrantPermission = {
+                showPermissionDeniedDialog = false
+                onRequestPermission()
+            },
             onCancel = {
                 showPermissionDeniedDialog = false
             }

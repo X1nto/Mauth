@@ -51,7 +51,7 @@ class DefaultOtpRepository(
                         OtpType.Totp -> {
                             val seconds = System.currentTimeMillis() / 1000
                             val diff = seconds % account.period
-                            val progress = 1f - (diff - account.period.toFloat())
+                            val progress = 1f - (diff / account.period.toFloat())
                             val countdown = account.period - diff
                             DomainOtpRealtimeData.Totp(
                                 code = otpGenerator.generateTotp(

@@ -19,7 +19,7 @@ import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import com.xinto.mauth.R
 
 @Composable
-fun HomeAddAccountDialog(
+fun HomeAddAccountSheet(
     onDismiss: () -> Unit,
     onManualEnterClick: () -> Unit,
     onScanQrClick: () -> Unit,

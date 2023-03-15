@@ -11,6 +11,7 @@ import com.xinto.mauth.di.domain.DomainQrModule
 import com.xinto.mauth.di.domain.DomainSettingsModule
 import com.xinto.mauth.di.ui.UiAccountModule
 import com.xinto.mauth.di.ui.UiHomeModule
+import com.xinto.mauth.di.ui.UiQrscanModule
 import com.xinto.mauth.di.ui.UiSettingsModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -38,6 +39,7 @@ class Mauth : Application() {
                 UiAccountModule,
                 UiHomeModule,
                 UiSettingsModule,
+                UiQrscanModule,
             )
         }
     }

@@ -21,6 +21,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.xinto.mauth.R
 import com.xinto.mauth.core.contracts.PickVisualMediaPersistent
@@ -153,7 +154,13 @@ fun AccountScreenSuccess(
                         )
                     }
                 },
-                visualTransformation = remember { PasswordVisualTransformation() },
+                visualTransformation = remember(secretShown) {
+                    if (secretShown) {
+                        VisualTransformation.None
+                    } else {
+                        PasswordVisualTransformation()
+                    }
+                },
                 keyboardOptions = remember { KeyboardOptions(keyboardType = KeyboardType.Password) }
             )
         }
@@ -272,6 +279,7 @@ private fun <T : Enum<T>> ComboBox(
         onExpandedChange = setExpanded
     ) {
         OutlinedTextField(
+            modifier = Modifier.menuAnchor(),
             value = value.name,
             onValueChange = {},
             singleLine = true,
@@ -293,7 +301,10 @@ private fun <T : Enum<T>> ComboBox(
             values.forEach {
                 DropdownMenuItem(
                     text = { Text(it.name) },
-                    onClick = { onValueChange(it) }
+                    onClick = {
+                        setExpanded(false)
+                        onValueChange(it)
+                    }
                 )
             }
         }

@@ -1,12 +1,14 @@
 package com.xinto.mauth.ui.screen.settings
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -16,9 +18,12 @@ import com.xinto.mauth.ui.screen.settings.component.SettingsSwitch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(
+    onBack: () -> Unit
+) {
     val viewModel: SettingsViewModel = koinViewModel()
     SettingsScreen(
+        onBack = onBack,
         secureMode = viewModel.secureMode,
         onSecureModeChange = viewModel::updateSecureMode
     )
@@ -26,11 +31,28 @@ fun SettingsScreen() {
 
 @Composable
 fun SettingsScreen(
+    onBack: () -> Unit,
     secureMode: Boolean,
-    onSecureModeChange: (Boolean) -> Unit
+    onSecureModeChange: (Boolean) -> Unit,
 ) {
+    BackHandler(onBack = onBack)
     Scaffold(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(stringResource(R.string.settings_title))
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            imageVector = Icons.Rounded.ArrowBack,
+                            contentDescription = null
+                        )
+                    }
+                }
+            )
+        }
     ) {
         LazyColumn(
             modifier = Modifier
