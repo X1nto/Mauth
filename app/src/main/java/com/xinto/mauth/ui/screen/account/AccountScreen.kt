@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import com.xinto.mauth.R
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
@@ -82,6 +83,7 @@ fun AccountScreen(
             onExit()
         }
     }
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -111,7 +113,8 @@ fun AccountScreen(
                 },
                 title = {
                     Text(title)
-                }
+                },
+                scrollBehavior = scrollBehavior
             )
         }
     ) { paddingValues ->
@@ -119,6 +122,7 @@ fun AccountScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
         ) {
             when (state) {
                 is AccountScreenState.Loading -> {

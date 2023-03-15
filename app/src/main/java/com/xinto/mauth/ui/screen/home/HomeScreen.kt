@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import com.xinto.mauth.R
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
@@ -80,12 +82,14 @@ fun HomeScreen(
 ) {
     var showAddSheet by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(stringResource(id = R.string.app_name))
-                }
+                },
+                scrollBehavior = scrollBehavior
             )
         },
         bottomBar = {
@@ -106,6 +110,7 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(it)
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
         ) {
             when (state) {
                 is HomeScreenState.Loading -> {

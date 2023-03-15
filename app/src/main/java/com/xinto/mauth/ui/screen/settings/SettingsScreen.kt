@@ -11,6 +11,7 @@ import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.xinto.mauth.R
@@ -35,6 +36,7 @@ fun SettingsScreen(
     secureMode: Boolean,
     onSecureModeChange: (Boolean) -> Unit,
 ) {
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     BackHandler(onBack = onBack)
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -50,14 +52,16 @@ fun SettingsScreen(
                             contentDescription = null
                         )
                     }
-                }
+                },
+                scrollBehavior = scrollBehavior
             )
         }
     ) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(it),
+                .padding(it)
+                .nestedScroll(scrollBehavior.nestedScrollConnection),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
