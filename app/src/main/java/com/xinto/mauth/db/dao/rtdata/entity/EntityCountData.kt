@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.UUID
 
-@Entity(tableName = "rtdata")
+@Entity(tableName = "countdata")
 data class EntityCountData(
     @PrimaryKey
     @ColumnInfo(name = "account_id")

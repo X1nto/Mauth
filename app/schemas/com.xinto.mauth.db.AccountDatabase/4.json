@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "452d5348f03f24ee08395edaf77967aa",
+    "identityHash": "1c7528a2611f04c8058a4a698425016d",
     "entities": [
       {
         "tableName": "accounts",
@@ -77,7 +77,7 @@
         "foreignKeys": []
       },
       {
-        "tableName": "rtdata",
+        "tableName": "countdata",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`account_id` BLOB NOT NULL, `count` INTEGER NOT NULL, PRIMARY KEY(`account_id`))",
         "fields": [
           {
@@ -106,7 +106,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '452d5348f03f24ee08395edaf77967aa')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1c7528a2611f04c8058a4a698425016d')"
     ]
   }
 }
