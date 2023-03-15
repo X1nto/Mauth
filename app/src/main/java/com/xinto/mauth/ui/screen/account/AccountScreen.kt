@@ -88,7 +88,7 @@ fun AccountScreen(
         topBar = {
             TopAppBar(
                 actions = {
-                    Button(
+                    TextButton(
                         onClick = {
                             onSave(accountInfo!!)
                         },
