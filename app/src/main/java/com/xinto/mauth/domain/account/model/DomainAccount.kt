@@ -11,7 +11,7 @@ val DomainAccount.shortLabel: String
             it.isUpperCase()
         }.ifEmpty {
             label[0].uppercase()
-        }
+        }.take(3)
     }
 
 @Immutable
