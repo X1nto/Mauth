@@ -3,7 +3,7 @@ alt="App icon">
 
 # Mauth
 
-[![CI](https://img.shields.io/github/workflow/status/X1nto/Mauth/Build%20APK?color=blue&style=for-the-badge)](https://github.com/X1nto/Mauth/actions?query=branch%3Amaster)
+[![CI](https://img.shields.io/github/actions/workflow/status/X1nto/Mauth/build.yml?branch=master&color=blue&style=for-the-badge)](https://github.com/X1nto/Mauth/actions?query=branch%3Amaster)
 [![F-Droid](https://img.shields.io/f-droid/v/com.xinto.mauth.svg?logo=F-Droid&color=green&style=for-the-badge)](https://f-droid.org/en/packages/com.xinto.mauth)
 [![Releases](https://img.shields.io/github/release/X1nto/Mauth.svg?logo=github&color=171515&style=for-the-badge)](https://github.com/X1nto/Mauth/releases)
 
