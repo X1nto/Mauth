@@ -15,12 +15,12 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun TwoPaneCard(
     selected: Boolean,
+    modifier: Modifier = Modifier,
     expanded: Boolean = true,
     topContent: @Composable () -> Unit,
     bottomContent: @Composable () -> Unit,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     val shape by animateRoundedCornerShapeAsState(
         targetValue = if (selected) MaterialTheme.shapes.small else MaterialTheme.shapes.large,

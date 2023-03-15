@@ -7,12 +7,14 @@ import androidx.room.TypeConverters
 import com.xinto.mauth.db.converter.OtpConverter
 import com.xinto.mauth.db.converter.UriConverter
 import com.xinto.mauth.db.converter.UuidConverter
-import com.xinto.mauth.db.dao.AccountsDao
-import com.xinto.mauth.db.entity.EntityAccount
+import com.xinto.mauth.db.dao.account.AccountsDao
+import com.xinto.mauth.db.dao.account.entity.EntityAccount
+import com.xinto.mauth.db.dao.rtdata.RtdataDao
+import com.xinto.mauth.db.dao.rtdata.entity.EntityCountData
 
 @Database(
-    entities = [EntityAccount::class],
-    version = 3,
+    entities = [EntityAccount::class, EntityCountData::class],
+    version = 4,
     autoMigrations = [
         AutoMigration(
             from = 1,
@@ -28,5 +30,7 @@ import com.xinto.mauth.db.entity.EntityAccount
 abstract class AccountDatabase : RoomDatabase() {
 
     abstract fun accountsDao(): AccountsDao
+
+    abstract fun rtdataDao(): RtdataDao
 
 }

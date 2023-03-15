@@ -1,8 +1,8 @@
 package com.xinto.mauth.db.converter
 
 import androidx.room.TypeConverter
-import com.xinto.mauth.otp.OtpDigest
-import com.xinto.mauth.otp.OtpType
+import com.xinto.mauth.core.otp.model.OtpDigest
+import com.xinto.mauth.core.otp.model.OtpType
 
 class OtpConverter {
 
