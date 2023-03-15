@@ -14,11 +14,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
+import com.xinto.mauth.domain.otp.usecase.ParseUriToAccountInfoUsecase
 import com.xinto.mauth.domain.settings.usecase.GetSecureModeUsecase
 import com.xinto.mauth.ui.navigation.MauthDestination
 import com.xinto.mauth.ui.screen.account.AddAccountScreen
@@ -27,6 +29,7 @@ import com.xinto.mauth.ui.screen.home.HomeScreen
 import com.xinto.mauth.ui.screen.qrscan.QrScanScreen
 import com.xinto.mauth.ui.screen.settings.SettingsScreen
 import com.xinto.mauth.ui.theme.MauthTheme
+import com.xinto.taxi.BackstackNavigator
 import com.xinto.taxi.Taxi
 import com.xinto.taxi.rememberBackstackNavigator
 import kotlinx.coroutines.flow.launchIn
@@ -36,6 +39,7 @@ import org.koin.android.ext.android.inject
 class MainActivity : ComponentActivity() {
 
     private val secureMode: GetSecureModeUsecase by inject()
+    private val parseUriToAccountInfo: ParseUriToAccountInfoUsecase by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +64,17 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Main()
+                    val navigator =
+                        rememberBackstackNavigator<MauthDestination>(MauthDestination.Home)
+
+                    LaunchedEffect(intent.data) {
+                        val accountInfo = parseUriToAccountInfo(intent.data.toString())
+                        if (accountInfo != null) {
+                            navigator.push(MauthDestination.AddAccount(accountInfo))
+                        }
+                    }
+
+                    Main(navigator)
                 }
             }
         }
@@ -68,8 +82,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Main() {
-    val navigator = rememberBackstackNavigator<MauthDestination>(MauthDestination.Home)
+fun Main(navigator: BackstackNavigator<MauthDestination>) {
     Taxi(
         navigator = navigator,
         transitionSpec = {
