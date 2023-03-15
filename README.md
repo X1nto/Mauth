@@ -45,19 +45,23 @@ While there are many 2FA authenticator apps out there, most of them come with an
 
 # Screenshots
 <img width=200 alt="Screenshot 1" 
-src="github/screenshot_1.png?raw=true">
+src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png?raw=true">
 <img width=200 alt="Screenshot 2" 
-src="github/screenshot_2.png?raw=true">
+src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png?raw=true">
 <img width=200 alt="Screenshot 3" 
-src="github/screenshot_3.png?raw=true">
+src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png?raw=true">
 <img width=200 alt="Screenshot 4" 
-src="github/screenshot_4.png?raw=true">
+src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png?raw=true">
 <img width=200 alt="Screenshot 5" 
-src="github/screenshot_5.png?raw=true">
+src="fastlane/metadata/android/en-US/images/phoneScreenshots/5.png?raw=true">
 <img width=200 alt="Screenshot 6" 
-src="github/screenshot_6.png?raw=true">
+src="fastlane/metadata/android/en-US/images/phoneScreenshots/6.png?raw=true">
 <img width=200 alt="Screenshot 7" 
-src="github/screenshot_7.png?raw=true">
+src="fastlane/metadata/android/en-US/images/phoneScreenshots/7.png?raw=true">
+<img width=200 alt="Screenshot 8"
+src="fastlane/metadata/android/en-US/images/phoneScreenshots/8.png?raw=true">
+<img width=200 alt="Screenshot 9" 
+src="fastlane/metadata/android/en-US/images/phoneScreenshots/9.png?raw=true">
 
 # Download
 Mauth is available on F-Droid and GitHub Releases page.  
