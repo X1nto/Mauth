@@ -22,8 +22,8 @@ fun SettingsItem(
             .then(modifier),
         leadingContent = icon,
         trailingContent = trailing,
-        supportingText = description,
-        headlineText = title,
+        supportingContent = description,
+        headlineContent = title,
         tonalElevation = 1.dp
     )
 }

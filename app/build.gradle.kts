@@ -54,7 +54,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.2"
+        kotlinCompilerExtensionVersion = "1.4.3"
     }
 
     packagingOptions {
@@ -83,18 +83,18 @@ ksp {
 
 dependencies {
     implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0")
     implementation("androidx.activity:activity-compose:1.6.1")
 
-    val composeBom = platform("androidx.compose:compose-bom:2023.01.00")
-    implementation(composeBom)
-    implementation("androidx.compose.foundation:foundation")
-    implementation("androidx.compose.material:material-icons-extended")
-    implementation("androidx.compose.material3:material3")
-    androidTestImplementation(composeBom)
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
+//    val composeBom = platform("androidx.compose:compose-bom:2023.01.00")
+//    implementation(composeBom)
+    implementation("androidx.compose.foundation:foundation:1.4.0-rc01")
+    implementation("androidx.compose.material:material-icons-extended:1.4.0-rc01")
+    implementation("androidx.compose.material3:material3:1.1.0-alpha08")
+//    androidTestImplementation(composeBom)
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.4.0-rc01")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.4.0-rc01")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.4.0-rc01")
 
     val cameraxVersion = "1.2.0"
     implementation("androidx.camera:camera-core:$cameraxVersion")
@@ -119,13 +119,13 @@ dependencies {
 
     implementation("io.coil-kt:coil-compose:2.2.2")
 
-    implementation("io.insert-koin:koin-androidx-compose:3.3.0")
+    implementation("io.insert-koin:koin-androidx-compose:3.4.1")
 
-    val accompanistVersion = "0.28.0"
+    val accompanistVersion = "0.29.2-rc"
     implementation("com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion")
     implementation("com.google.accompanist:accompanist-permissions:$accompanistVersion")
 
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.4")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.0")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }
