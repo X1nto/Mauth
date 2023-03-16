@@ -15,19 +15,19 @@ fun AccountExitDialog(
     AlertDialog(
         onDismissRequest = onCancel,
         title = {
-            Text(stringResource(R.string.addeditaccount_discard_title))
+            Text(stringResource(R.string.account_discard_title))
         },
         text = {
-            Text(stringResource(R.string.addeditaccount_discard_subtitle))
+            Text(stringResource(R.string.account_discard_subtitle))
         },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text(stringResource(R.string.addeditaccount_discard_buttons_discard))
+                Text(stringResource(R.string.account_discard_buttons_discard))
             }
         },
         dismissButton = {
             TextButton(onClick = onCancel) {
-                Text(stringResource(R.string.addeditaccount_discard_buttons_cancel))
+                Text(stringResource(R.string.account_discard_buttons_cancel))
             }
         }
     )

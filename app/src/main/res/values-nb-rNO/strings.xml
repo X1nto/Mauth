@@ -15,18 +15,18 @@
     <string name="qrscan_permissions_button_grant">Innvilg</string>
     <string name="qrscan_permissions_button_cancel">Avbryt</string>
 
-    <string name="addeditaccount_title_add">Legg til en konto</string>
-    <string name="addeditaccount_actions_save">Lagre</string>
-    <string name="addeditaccount_data_label">Etikett</string>
-    <string name="addeditaccount_data_issuer">Utsteder</string>
-    <string name="addeditaccount_data_secret">Hemmelighet</string>
-    <string name="addeditaccount_data_type">Type</string>
-    <string name="addeditaccount_data_algorithm">Algoritme</string>
-    <string name="addeditaccount_data_digits">Siffer</string>
-    <string name="addeditaccount_data_counter">Teller</string>
-    <string name="addeditaccount_data_period">Periode</string>
-    <string name="addeditaccount_discard_title">Forkast endringer?</string>
-    <string name="addeditaccount_discard_subtitle">Endringene dine vil ikke bli lagret.</string>
-    <string name="addeditaccount_discard_buttons_discard">Forkast</string>
-    <string name="addeditaccount_discard_buttons_cancel">Avbryt</string>
+    <string name="account_title_add">Legg til en konto</string>
+    <string name="account_actions_save">Lagre</string>
+    <string name="account_data_label">Etikett</string>
+    <string name="account_data_issuer">Utsteder</string>
+    <string name="account_data_secret">Hemmelighet</string>
+    <string name="account_data_type">Type</string>
+    <string name="account_data_algorithm">Algoritme</string>
+    <string name="account_data_digits">Siffer</string>
+    <string name="account_data_counter">Teller</string>
+    <string name="account_data_period">Periode</string>
+    <string name="account_discard_title">Forkast endringer?</string>
+    <string name="account_discard_subtitle">Endringene dine vil ikke bli lagret.</string>
+    <string name="account_discard_buttons_discard">Forkast</string>
+    <string name="account_discard_buttons_cancel">Avbryt</string>
 </resources>

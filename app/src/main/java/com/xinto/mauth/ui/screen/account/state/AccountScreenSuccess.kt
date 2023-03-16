@@ -105,7 +105,7 @@ fun AccountScreenSuccess(
                 onValueChange = onLabelChange,
                 singleLine = true,
                 label = {
-                    Text(stringResource(R.string.addeditaccount_data_label))
+                    Text(stringResource(R.string.account_data_label))
                 },
                 leadingIcon = {
                     Icon(
@@ -121,7 +121,7 @@ fun AccountScreenSuccess(
                 onValueChange = onIssuerChange,
                 singleLine = true,
                 label = {
-                    Text(stringResource(R.string.addeditaccount_data_issuer))
+                    Text(stringResource(R.string.account_data_issuer))
                 },
                 leadingIcon = {
                     Icon(
@@ -138,7 +138,7 @@ fun AccountScreenSuccess(
                 onValueChange = onSecretChange,
                 singleLine = true,
                 label = {
-                    Text(stringResource(R.string.addeditaccount_data_secret))
+                    Text(stringResource(R.string.account_data_secret))
                 },
                 leadingIcon = {
                     Icon(
@@ -170,7 +170,7 @@ fun AccountScreenSuccess(
                 value = type,
                 onValueChange = onTypeChange,
                 label = {
-                    Text(stringResource(R.string.addeditaccount_data_type))
+                    Text(stringResource(R.string.account_data_type))
                 }
             )
         }
@@ -180,7 +180,7 @@ fun AccountScreenSuccess(
                 value = digest,
                 onValueChange = onDigestChange,
                 label = {
-                    Text(stringResource(R.string.addeditaccount_data_algorithm))
+                    Text(stringResource(R.string.account_data_algorithm))
                 }
             )
         }
@@ -189,7 +189,7 @@ fun AccountScreenSuccess(
                 value = digits,
                 onValueChange = onDigitsChange,
                 label = {
-                    Text(stringResource(R.string.addeditaccount_data_digits))
+                    Text(stringResource(R.string.account_data_digits))
                 }
             )
         }
@@ -201,7 +201,7 @@ fun AccountScreenSuccess(
                             value = period,
                             onValueChange = onPeriodChange,
                             label = {
-                                Text(stringResource(R.string.addeditaccount_data_period))
+                                Text(stringResource(R.string.account_data_period))
                             }
                         )
                     }
@@ -210,7 +210,7 @@ fun AccountScreenSuccess(
                             value = counter,
                             onValueChange = onCounterChange,
                             label = {
-                                Text(stringResource(R.string.addeditaccount_data_counter))
+                                Text(stringResource(R.string.account_data_counter))
                             }
                         )
                     }

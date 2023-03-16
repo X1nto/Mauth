@@ -11,7 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.xinto.mauth.R
 
 @Composable
 fun HomeScreenError() {
@@ -24,6 +26,6 @@ fun HomeScreenError() {
             imageVector = Icons.Rounded.ErrorOutline,
             contentDescription = null
         )
-        Text("An error occurred while loading the accounts") //TODO string resource
+        Text(stringResource(R.string.home_error))
     }
 }

@@ -15,6 +15,7 @@
     <string name="home_code_copy_success">Successfully copied the code to clipboard</string>
     <string name="home_code_copy_fail">Failed to copy the code</string>
     <string name="home_image_parse_fail">Failed to parse the QR code</string>
+    <string name="home_error">Failed to load accounts</string>
 
     <string name="qrscan_title">Scan a QR code</string>
     <string name="qrscan_permissions_title">Missing permissions</string>
@@ -22,22 +23,24 @@
     <string name="qrscan_permissions_subtitle_rationale">The camera permission is required for this app to scan and analyze the QR code, without it, Mauth cannot scan and import your accounts.</string>
     <string name="qrscan_permissions_button_grant">Grant</string>
     <string name="qrscan_permissions_button_cancel">Cancel</string>
+    <string name="qrscan_error">Insufficient permissions</string>
 
-    <string name="addeditaccount_title_add">Add an account</string>
-    <string name="addeditaccount_title_edit">Edit an account</string>
-    <string name="addeditaccount_actions_save">Save</string>
-    <string name="addeditaccount_data_label">Label</string>
-    <string name="addeditaccount_data_issuer">Issuer</string>
-    <string name="addeditaccount_data_secret">Secret</string>
-    <string name="addeditaccount_data_type">Type</string>
-    <string name="addeditaccount_data_algorithm">Algorithm</string>
-    <string name="addeditaccount_data_digits">Digits</string>
-    <string name="addeditaccount_data_counter">Counter</string>
-    <string name="addeditaccount_data_period">Period</string>
-    <string name="addeditaccount_discard_title">Discard changes?</string>
-    <string name="addeditaccount_discard_subtitle">Your changes will not be saved.</string>
-    <string name="addeditaccount_discard_buttons_discard">Discard</string>
-    <string name="addeditaccount_discard_buttons_cancel">Cancel</string>
+    <string name="account_title_add">Add an account</string>
+    <string name="account_title_edit">Edit an account</string>
+    <string name="account_actions_save">Save</string>
+    <string name="account_data_label">Label</string>
+    <string name="account_data_issuer">Issuer</string>
+    <string name="account_data_secret">Secret</string>
+    <string name="account_data_type">Type</string>
+    <string name="account_data_algorithm">Algorithm</string>
+    <string name="account_data_digits">Digits</string>
+    <string name="account_data_counter">Counter</string>
+    <string name="account_data_period">Period</string>
+    <string name="account_discard_title">Discard changes?</string>
+    <string name="account_discard_subtitle">Your changes will not be saved.</string>
+    <string name="account_discard_buttons_discard">Discard</string>
+    <string name="account_discard_buttons_cancel">Cancel</string>
+    <string name="account_error">An error occurred while loading the account</string>
 
     <string name="settings_title">Settings</string>
     <string name="settings_prefs_securemode">Secure mode</string>

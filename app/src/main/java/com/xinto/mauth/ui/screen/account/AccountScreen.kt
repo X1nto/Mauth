@@ -31,7 +31,7 @@ fun AddAccountScreen(
         parametersOf(AccountViewModelParams.Prefilled(prefilled))
     }
     AccountScreen(
-        title = stringResource(R.string.addeditaccount_title_add),
+        title = stringResource(R.string.account_title_add),
         state = viewModel.state,
         onSave = {
             viewModel.saveData(it)
@@ -50,7 +50,7 @@ fun EditAccountScreen(
         parametersOf(AccountViewModelParams.Id(id))
     }
     AccountScreen(
-        title = stringResource(R.string.addeditaccount_title_edit),
+        title = stringResource(R.string.account_title_edit),
         state = viewModel.state,
         onSave = {
             viewModel.saveData(it)
@@ -94,7 +94,7 @@ fun AccountScreen(
                         },
                         enabled = accountInfo != null
                     ) {
-                        Text(stringResource(R.string.addeditaccount_actions_save))
+                        Text(stringResource(R.string.account_actions_save))
                     }
                 },
                 navigationIcon = {
