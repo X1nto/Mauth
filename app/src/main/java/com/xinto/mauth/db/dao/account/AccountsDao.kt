@@ -17,11 +17,8 @@ interface AccountsDao {
     @Query("SELECT * FROM accounts WHERE id = :id")
     suspend fun getById(id: UUID): EntityAccount?
 
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    suspend fun insert(entityAccount: EntityAccount)
-
-    @Update
-    suspend fun update(entityAccount: EntityAccount)
+    @Upsert
+    suspend fun upsert(entityAccount: EntityAccount)
 
     @Delete
     suspend fun delete(entityAccount: EntityAccount)

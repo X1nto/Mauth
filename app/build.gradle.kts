@@ -103,7 +103,7 @@ dependencies {
     implementation("androidx.camera:camera-view:$cameraxVersion")
     implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
 
-    val roomVersion = "2.4.3"
+    val roomVersion = "2.5.0"
     implementation("androidx.room:room-common:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
