@@ -82,9 +82,9 @@ class DefaultOtpRepository(
                     secret = parseResult.data.secret,
                     algorithm = parseResult.data.algorithm,
                     type = parseResult.data.type,
-                    digits = parseResult.data.digits,
-                    counter = parseResult.data.counter ?: DomainAccountInfo.DEFAULT.counter,
-                    period = parseResult.data.period ?: DomainAccountInfo.DEFAULT.period,
+                    digits = parseResult.data.digits.toString(),
+                    counter = parseResult.data.counter?.toString() ?: DomainAccountInfo.DEFAULT.counter,
+                    period = parseResult.data.period?.toString() ?: DomainAccountInfo.DEFAULT.period,
                 )
             }
             is OtpUriParserResult.Failure -> null

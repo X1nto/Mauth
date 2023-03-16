@@ -37,8 +37,8 @@ class DefaultAccountRepository(
 
     override suspend fun putAccount(domainAccountInfo: DomainAccountInfo) {
         val entityAccount = domainAccountInfo.toEntityAccount()
-        rtdataDao.insertCountData(EntityCountData(entityAccount.id, domainAccountInfo.counter))
-        accountsDao.insert(entityAccount)
+        rtdataDao.upsertCountData(EntityCountData(entityAccount.id, domainAccountInfo.counter.toInt()))
+        accountsDao.upsert(entityAccount)
     }
 
     override suspend fun incrementAccountCounter(id: UUID) {
@@ -86,9 +86,9 @@ class DefaultAccountRepository(
             secret = secret,
             algorithm = algorithm,
             type = type,
-            digits = digits,
-            period = period,
-            counter = counter
+            digits = digits.toString(),
+            period = period.toString(),
+            counter = counter.toString()
         )
     }
 
@@ -101,8 +101,8 @@ class DefaultAccountRepository(
             issuer = issuer,
             algorithm = algorithm,
             type = type,
-            digits = digits,
-            period = period
+            digits = digits.toInt(),
+            period = period.toInt()
         )
     }
 

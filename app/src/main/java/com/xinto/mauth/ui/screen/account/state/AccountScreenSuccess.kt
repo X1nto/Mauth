@@ -45,12 +45,12 @@ fun AccountScreenSuccess(
     onTypeChange: (OtpType) -> Unit,
     digest: OtpDigest,
     onDigestChange: (OtpDigest) -> Unit,
-    digits: Int,
-    onDigitsChange: (Int) -> Unit,
-    counter: Int,
-    onCounterChange: (Int) -> Unit,
-    period: Int,
-    onPeriodChange: (Int) -> Unit,
+    digits: String,
+    onDigitsChange: (String) -> Unit,
+    counter: String,
+    onCounterChange: (String) -> Unit,
+    period: String,
+    onPeriodChange: (String) -> Unit,
 ) {
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
@@ -100,10 +100,9 @@ fun AccountScreenSuccess(
             }
         }
         singleItem {
-            OutlinedTextField(
+            DataField(
                 value = label,
                 onValueChange = onLabelChange,
-                singleLine = true,
                 label = {
                     Text(stringResource(R.string.account_data_label))
                 },
@@ -113,13 +112,13 @@ fun AccountScreenSuccess(
                         contentDescription = null
                     )
                 },
+                required = true
             )
         }
         singleItem {
-            OutlinedTextField(
+            DataField(
                 value = issuer,
                 onValueChange = onIssuerChange,
-                singleLine = true,
                 label = {
                     Text(stringResource(R.string.account_data_issuer))
                 },
@@ -133,10 +132,9 @@ fun AccountScreenSuccess(
         }
         singleItem {
             var secretShown by remember { mutableStateOf(false) }
-            OutlinedTextField(
+            DataField(
                 value = secret,
                 onValueChange = onSecretChange,
-                singleLine = true,
                 label = {
                     Text(stringResource(R.string.account_data_secret))
                 },
@@ -161,7 +159,8 @@ fun AccountScreenSuccess(
                         PasswordVisualTransformation()
                     }
                 },
-                keyboardOptions = remember { KeyboardOptions(keyboardType = KeyboardType.Password) }
+                keyboardOptions = remember { KeyboardOptions(keyboardType = KeyboardType.Password) },
+                required = true
             )
         }
         item {
@@ -246,21 +245,46 @@ private fun <S> SlideAnimatable(
 }
 
 @Composable
+private fun DataField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    required: Boolean = false,
+    label: (@Composable () -> Unit)? = null,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        singleLine = true,
+        label = label,
+        leadingIcon = leadingIcon,
+        trailingIcon = trailingIcon,
+        supportingText = if (required) { ->
+            Text(stringResource(R.string.account_data_status_required))
+        } else null,
+        visualTransformation = visualTransformation,
+        keyboardOptions = keyboardOptions,
+    )
+}
+
+@Composable
 private fun NumberField(
-    value: Int,
-    onValueChange: (Int) -> Unit,
+    value: String,
+    onValueChange: (String) -> Unit,
     label: (@Composable () -> Unit)? = null,
 ) {
     OutlinedTextField(
-        value = value.toString(),
-        onValueChange = { newValue ->
-            onValueChange(newValue.filter { it.isDigit() }.toInt())
-        },
+        value = value,
+        onValueChange = onValueChange,
         singleLine = true,
         keyboardOptions = remember {
             KeyboardOptions(keyboardType = KeyboardType.Number)
         },
-        label = label
+        label = label,
+        isError = value.toIntOrNull() == null
     )
 }
 

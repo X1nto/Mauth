@@ -18,9 +18,9 @@ data class DomainAccountInfo(
     val secret: String,
     val algorithm: OtpDigest,
     val type: OtpType,
-    val digits: Int,
-    val counter: Int,
-    val period: Int,
+    val digits: String,
+    val counter: String,
+    val period: String,
 ) : Parcelable {
 
     companion object {
@@ -32,9 +32,9 @@ data class DomainAccountInfo(
             secret = "",
             algorithm = OtpDigest.Sha1,
             type = OtpType.Totp,
-            digits = 6,
-            counter = 0,
-            period = 30
+            digits = "6",
+            counter = "0",
+            period = "30"
         )
     }
 

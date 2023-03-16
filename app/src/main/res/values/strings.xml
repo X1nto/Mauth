@@ -41,6 +41,7 @@
     <string name="account_discard_buttons_discard">Discard</string>
     <string name="account_discard_buttons_cancel">Cancel</string>
     <string name="account_error">An error occurred while loading the account</string>
+    <string name="account_data_status_required">required</string>
 
     <string name="settings_title">Settings</string>
     <string name="settings_prefs_securemode">Secure mode</string>

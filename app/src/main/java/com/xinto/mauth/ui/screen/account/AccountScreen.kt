@@ -88,11 +88,19 @@ fun AccountScreen(
         topBar = {
             TopAppBar(
                 actions = {
+                    val enabled by remember(accountInfo) {
+                        derivedStateOf {
+                            accountInfo != null &&
+                                    accountInfo!!.label.isNotEmpty() &&
+                                    accountInfo!!.secret.isNotEmpty() &&
+                                    accountInfo!!.digits.toIntOrNull() != null &&
+                                    accountInfo!!.counter.toIntOrNull() != null &&
+                                    accountInfo!!.period.toIntOrNull() != null
+                        }
+                    }
                     TextButton(
-                        onClick = {
-                            onSave(accountInfo!!)
-                        },
-                        enabled = accountInfo != null
+                        onClick = { onSave(accountInfo!!) },
+                        enabled = enabled
                     ) {
                         Text(stringResource(R.string.account_actions_save))
                     }
