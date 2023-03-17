@@ -25,10 +25,10 @@ data class DomainAccountInfo(
 
     fun isValid(): Boolean {
         val labelValid = label.isNotEmpty()
-        val secretValid = label.isNotEmpty()
+        val secretValid = secret.isNotEmpty()
         val digitsValid = digits.toIntOrNull() != null && digits.toInt() <= 10 && digits.toInt() > 0
-        val counterValid = digits.toIntOrNull() != null
-        val periodValid = digits.toIntOrNull() != null && period.toInt() > 1 && period.toInt() < Int.MAX_VALUE / 1000
+        val counterValid = counter.toIntOrNull() != null
+        val periodValid = period.toIntOrNull() != null && period.toInt() > 1 && period.toInt() < Int.MAX_VALUE / 1000
         return labelValid && secretValid && digitsValid && counterValid && periodValid
     }
 
