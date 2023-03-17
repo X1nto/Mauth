@@ -7,7 +7,7 @@ alt="App icon">
 [![F-Droid](https://img.shields.io/f-droid/v/com.xinto.mauth.svg?logo=F-Droid&color=green&style=for-the-badge)](https://f-droid.org/en/packages/com.xinto.mauth)
 [![Releases](https://img.shields.io/github/release/X1nto/Mauth.svg?logo=github&color=171515&style=for-the-badge)](https://github.com/X1nto/Mauth/releases)
 
-Mauth (pronounced Moth) is a Two-Factor Authentication app with support for TOTP and HOTP (coming soon) and compatibility with Google Authenticator.
+Mauth (pronounced Moth) is a Two-Factor Authentication app with support for TOTP and HOTP. It is also fully compatible with Google Authenticator.
 
 Logo by @wingio
 
@@ -24,7 +24,7 @@ While there are many 2FA authenticator apps out there, most of them come with an
     - [x] Using a camera
     - [x] From an image
   - [x] Manually
-  - [x] Deeplinks (otpauth)
+  - [x] Deeplinks
 - Algorithms
   - [x] TOTP
   - [x] HOTP
