@@ -189,6 +189,11 @@ fun AccountScreenSuccess(
                 onValueChange = onDigitsChange,
                 label = {
                     Text(stringResource(R.string.account_data_digits))
+                },
+                min = 1,
+                max = 10,
+                supportingText = {
+                    Text(stringResource(R.string.account_data_status_range, "1", "10"))
                 }
             )
         }
@@ -201,7 +206,8 @@ fun AccountScreenSuccess(
                             onValueChange = onPeriodChange,
                             label = {
                                 Text(stringResource(R.string.account_data_period))
-                            }
+                            },
+                            max = Int.MAX_VALUE / 1000
                         )
                     }
                     OtpType.Hotp -> {
@@ -275,6 +281,9 @@ private fun NumberField(
     value: String,
     onValueChange: (String) -> Unit,
     label: (@Composable () -> Unit)? = null,
+    supportingText: (@Composable () -> Unit)? = null,
+    min: Int = 0,
+    max: Int = Int.MAX_VALUE
 ) {
     OutlinedTextField(
         value = value,
@@ -283,8 +292,9 @@ private fun NumberField(
         keyboardOptions = remember {
             KeyboardOptions(keyboardType = KeyboardType.Number)
         },
+        supportingText = supportingText,
         label = label,
-        isError = value.toIntOrNull() == null
+        isError = value.toIntOrNull() == null || (min < value.toInt() && value.toInt() > max)
     )
 }
 
