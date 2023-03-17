@@ -5,7 +5,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
@@ -17,7 +16,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -28,6 +26,9 @@ import com.xinto.mauth.core.contracts.PickVisualMediaPersistent
 import com.xinto.mauth.core.otp.model.OtpDigest
 import com.xinto.mauth.core.otp.model.OtpType
 import com.xinto.mauth.ui.component.UriImage
+import com.xinto.mauth.ui.screen.account.component.AccountComboBox
+import com.xinto.mauth.ui.screen.account.component.AccountDataField
+import com.xinto.mauth.ui.screen.account.component.AccountNumberField
 import java.util.*
 
 @Composable
@@ -52,6 +53,11 @@ fun AccountScreenSuccess(
     period: String,
     onPeriodChange: (String) -> Unit,
 ) {
+    val imageSelectLauncher = rememberLauncherForActivityResult(
+        PickVisualMediaPersistent()
+    ) {
+        onIconChange(it)
+    }
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -60,11 +66,6 @@ fun AccountScreenSuccess(
         columns = GridCells.Fixed(2)
     ) {
         singleItem {
-            val imageSelectLauncher = rememberLauncherForActivityResult(
-                PickVisualMediaPersistent()
-            ) {
-                onIconChange(it)
-            }
             Box(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
@@ -100,7 +101,7 @@ fun AccountScreenSuccess(
             }
         }
         singleItem {
-            DataField(
+            AccountDataField(
                 value = label,
                 onValueChange = onLabelChange,
                 label = {
@@ -116,7 +117,7 @@ fun AccountScreenSuccess(
             )
         }
         singleItem {
-            DataField(
+            AccountDataField(
                 value = issuer,
                 onValueChange = onIssuerChange,
                 label = {
@@ -132,7 +133,7 @@ fun AccountScreenSuccess(
         }
         singleItem {
             var secretShown by remember { mutableStateOf(false) }
-            DataField(
+            AccountDataField(
                 value = secret,
                 onValueChange = onSecretChange,
                 label = {
@@ -164,7 +165,7 @@ fun AccountScreenSuccess(
             )
         }
         item {
-            ComboBox(
+            AccountComboBox(
                 values = OtpType.values(),
                 value = type,
                 onValueChange = onTypeChange,
@@ -174,7 +175,7 @@ fun AccountScreenSuccess(
             )
         }
         item {
-            ComboBox(
+            AccountComboBox(
                 values = OtpDigest.values(),
                 value = digest,
                 onValueChange = onDigestChange,
@@ -184,7 +185,7 @@ fun AccountScreenSuccess(
             )
         }
         item {
-            NumberField(
+            AccountNumberField(
                 value = digits,
                 onValueChange = onDigitsChange,
                 label = {
@@ -198,20 +199,27 @@ fun AccountScreenSuccess(
             )
         }
         item {
-            SlideAnimatable(targetState = type) {
+            AnimatedContent(
+                targetState = type,
+                transitionSpec = {
+                    slideIntoContainer(AnimatedContentScope.SlideDirection.Up) + fadeIn() with
+                            slideOutOfContainer(AnimatedContentScope.SlideDirection.Up) + fadeOut()
+                }
+            ) {
                 when (it) {
                     OtpType.Totp -> {
-                        NumberField(
+                        AccountNumberField(
                             value = period,
                             onValueChange = onPeriodChange,
                             label = {
                                 Text(stringResource(R.string.account_data_period))
                             },
+                            min = 1,
                             max = Int.MAX_VALUE / 1000
                         )
                     }
                     OtpType.Hotp -> {
-                        NumberField(
+                        AccountNumberField(
                             value = counter,
                             onValueChange = onCounterChange,
                             label = {
@@ -228,117 +236,6 @@ fun AccountScreenSuccess(
                     text = id.toString(),
                     style = MaterialTheme.typography.labelLarge,
                     color = LocalContentColor.current.copy(alpha = 0.7f)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun <S> SlideAnimatable(
-    targetState: S,
-    content: @Composable (S) -> Unit
-) {
-    AnimatedContent(
-        targetState = targetState,
-        transitionSpec = {
-            slideIntoContainer(AnimatedContentScope.SlideDirection.Up) + fadeIn() with
-                    slideOutOfContainer(AnimatedContentScope.SlideDirection.Up) + fadeOut()
-        }
-    ) {
-        content(it)
-    }
-}
-
-@Composable
-private fun DataField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    required: Boolean = false,
-    label: (@Composable () -> Unit)? = null,
-    leadingIcon: (@Composable () -> Unit)? = null,
-    trailingIcon: (@Composable () -> Unit)? = null,
-    visualTransformation: VisualTransformation = VisualTransformation.None,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        singleLine = true,
-        label = label,
-        leadingIcon = leadingIcon,
-        trailingIcon = trailingIcon,
-        supportingText = if (required) { ->
-            Text(stringResource(R.string.account_data_status_required))
-        } else null,
-        visualTransformation = visualTransformation,
-        keyboardOptions = keyboardOptions,
-    )
-}
-
-@Composable
-private fun NumberField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: (@Composable () -> Unit)? = null,
-    supportingText: (@Composable () -> Unit)? = null,
-    min: Int = 0,
-    max: Int = Int.MAX_VALUE
-) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        singleLine = true,
-        keyboardOptions = remember {
-            KeyboardOptions(keyboardType = KeyboardType.Number)
-        },
-        supportingText = supportingText,
-        label = label,
-        isError = value.toIntOrNull() == null || (min < value.toInt() && value.toInt() > max)
-    )
-}
-
-@Composable
-private fun <T : Enum<T>> ComboBox(
-    values: Array<T>,
-    value: T,
-    onValueChange: (T) -> Unit,
-    label: (@Composable () -> Unit)? = null
-) {
-    val (expanded, setExpanded) = remember {
-        mutableStateOf(false)
-    }
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = setExpanded
-    ) {
-        OutlinedTextField(
-            modifier = Modifier.menuAnchor(),
-            value = value.name,
-            onValueChange = {},
-            singleLine = true,
-            label = label,
-            readOnly = true,
-            trailingIcon = {
-                val iconRotation by animateFloatAsState(if (expanded) 180f else 0f)
-                Icon(
-                    modifier = Modifier.rotate(iconRotation),
-                    imageVector = Icons.Rounded.KeyboardArrowDown,
-                    contentDescription = null
-                )
-            }
-        )
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { setExpanded(false) }
-        ) {
-            values.forEach {
-                DropdownMenuItem(
-                    text = { Text(it.name) },
-                    onClick = {
-                        setExpanded(false)
-                        onValueChange(it)
-                    }
                 )
             }
         }
