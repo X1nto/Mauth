@@ -54,7 +54,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.4.4"
     }
 
     packagingOptions {
@@ -84,20 +84,20 @@ ksp {
 dependencies {
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.core:core-splashscreen:1.0.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0")
-    implementation("androidx.activity:activity-compose:1.6.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
+    implementation("androidx.activity:activity-compose:1.7.0")
 
 //    val composeBom = platform("androidx.compose:compose-bom:2023.01.00")
 //    implementation(composeBom)
-    implementation("androidx.compose.foundation:foundation:1.4.0-rc01")
-    implementation("androidx.compose.material:material-icons-extended:1.4.0-rc01")
-    implementation("androidx.compose.material3:material3:1.1.0-alpha08")
+    implementation("androidx.compose.foundation:foundation:1.4.1")
+    implementation("androidx.compose.material:material-icons-extended:1.4.1")
+    implementation("androidx.compose.material3:material3:1.1.0-beta02")
 //    androidTestImplementation(composeBom)
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.4.0-rc01")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.4.0-rc01")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.4.0-rc01")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.4.1")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.4.1")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.4.1")
 
-    val cameraxVersion = "1.2.0"
+    val cameraxVersion = "1.2.2"
     implementation("androidx.camera:camera-core:$cameraxVersion")
     implementation("androidx.camera:camera-camera2:$cameraxVersion")
     implementation("androidx.camera:camera-view:$cameraxVersion")
@@ -112,17 +112,15 @@ dependencies {
 
     implementation("com.github.X1nto.taxi:taxi:1.3.0")
 
-    implementation("com.holix.android:bottomsheetdialog-compose:1.0.1")
-
     implementation("commons-codec:commons-codec:1.15")
 
     implementation("com.google.zxing:core:3.5.0")
 
     implementation("io.coil-kt:coil-compose:2.2.2")
 
-    implementation("io.insert-koin:koin-androidx-compose:3.4.1")
+    implementation("io.insert-koin:koin-androidx-compose:3.4.3")
 
-    val accompanistVersion = "0.29.2-rc"
+    val accompanistVersion = "0.30.1"
     implementation("com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion")
     implementation("com.google.accompanist:accompanist-permissions:$accompanistVersion")
 
