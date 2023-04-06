@@ -1,22 +1,22 @@
 package com.xinto.mauth.ui.screen.home.component
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Image
 import androidx.compose.material.icons.rounded.Password
 import androidx.compose.material.icons.rounded.QrCodeScanner
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
-import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import com.xinto.mauth.R
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeAddAccountSheet(
@@ -114,37 +114,45 @@ private fun FullWidthButton(
 @Composable
 private fun MaterialBottomSheetDialog(
     onDismissRequest: () -> Unit,
-    properties: BottomSheetDialogProperties = BottomSheetDialogProperties(),
     title: @Composable () -> Unit,
     subtitle: @Composable () -> Unit,
     body: @Composable () -> Unit,
 ) {
-    BottomSheetDialog(
-        onDismissRequest = onDismissRequest,
-        properties = properties
+    val state = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
+    val coroutine = rememberCoroutineScope()
+    DisposableEffect(Unit) {
+        coroutine.launch {
+            state.show()
+        }
+        onDispose {
+            coroutine.launch {
+                state.hide()
+            }
+        }
+    }
+    ModalBottomSheet(
+        sheetState = state,
+        onDismissRequest = onDismissRequest
     ) {
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.extraLarge.copy(
-                bottomStart = CornerSize(0.dp),
-                bottomEnd = CornerSize(0.dp)
-            )
+        Column(
+            modifier = Modifier.padding(
+                start = 24.dp,
+                end = 24.dp,
+                bottom = 24.dp
+            ),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(24.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                ProvideTextStyle(value = MaterialTheme.typography.headlineMedium) {
-                    title()
-                }
-                ProvideTextStyle(MaterialTheme.typography.titleSmall) {
-                    subtitle()
-                }
-                Box(modifier = Modifier.padding(top = 12.dp)) {
-                    body()
-                }
+            ProvideTextStyle(value = MaterialTheme.typography.headlineMedium) {
+                title()
+            }
+            ProvideTextStyle(MaterialTheme.typography.titleSmall) {
+                subtitle()
+            }
+            Box(modifier = Modifier.padding(top = 12.dp)) {
+                body()
             }
         }
     }
