@@ -7,10 +7,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.res.stringResource
 import com.xinto.mauth.R
+import com.xinto.mauth.domain.settings.model.SortSetting
 
 @Composable
 fun HomeBottomBar(
     isSelectionActive: Boolean = false,
+    activeSortSetting: SortSetting,
+    onActiveSortChange: (SortSetting) -> Unit,
     onAdd: () -> Unit,
     onCancelSelection: () -> Unit,
     onDeleteSelected: () -> Unit,
@@ -32,6 +35,28 @@ fun HomeBottomBar(
                             imageVector = Icons.Rounded.DeleteForever,
                             contentDescription = null
                         )
+                    }
+                    var isSortVisible by remember { mutableStateOf(false) }
+                    DropdownMenu(
+                        expanded = isSortVisible,
+                        onDismissRequest = {
+                            isSortVisible = false
+                        }
+                    ) {
+                        SortSetting.values().forEach {
+                            DropdownMenuItem(
+                                text = { /*TODO*/ },
+                                onClick = { onActiveSortChange(it) },
+                                trailingIcon = {
+                                    if (activeSortSetting == it) {
+                                        Icon(
+                                            imageVector = Icons.Rounded.Check,
+                                            contentDescription = null
+                                        )
+                                    }
+                                }
+                            )
+                        }
                     }
                 } else {
                     DropdownMenu(

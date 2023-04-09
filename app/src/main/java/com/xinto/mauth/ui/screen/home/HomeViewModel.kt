@@ -23,6 +23,9 @@ import com.xinto.mauth.domain.otp.model.DomainOtpRealtimeData
 import com.xinto.mauth.domain.otp.usecase.GetOtpRealtimeDataUsecase
 import com.xinto.mauth.domain.otp.usecase.ParseUriToAccountInfoUsecase
 import com.xinto.mauth.domain.qr.usecase.DecodeQrImageUsecase
+import com.xinto.mauth.domain.settings.model.SortSetting
+import com.xinto.mauth.domain.settings.usecase.GetSortModeUsecase
+import com.xinto.mauth.domain.settings.usecase.SetSortModeUsecase
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -37,7 +40,10 @@ class HomeViewModel(
     private val incrementAccountCounter: IncrementAccountCounterUsecase,
     private val parseUriToAccountInfo: ParseUriToAccountInfoUsecase,
     private val deleteAccounts: DeleteAccountsUsecase,
-    private val decodeQrImage: DecodeQrImageUsecase
+    private val decodeQrImage: DecodeQrImageUsecase,
+
+    getSortModeUsecase: GetSortModeUsecase,
+    private val setSortModeUsecase: SetSortModeUsecase,
 ) : AndroidViewModel(application) {
 
     var state by mutableStateOf<HomeScreenState>(HomeScreenState.Loading)
@@ -45,6 +51,9 @@ class HomeViewModel(
 
     val selectedAccounts = mutableStateListOf<UUID>()
     val realtimeData = mutableStateMapOf<UUID, DomainOtpRealtimeData>()
+
+    var activeSortSetting by mutableStateOf(SortSetting.DEFAULT)
+        private set
 
     private val stateJob = getAccounts()
         .catch {
@@ -61,6 +70,11 @@ class HomeViewModel(
     private val rtdataJob = getOtpRealtimeData()
         .onEach {
             realtimeData.putAll(it)
+        }.launchIn(viewModelScope)
+
+    private val sortModeJob = getSortModeUsecase()
+        .onEach {
+            activeSortSetting = it
         }.launchIn(viewModelScope)
 
     fun copyCodeToClipboard(label: String, code: String) {
@@ -120,9 +134,16 @@ class HomeViewModel(
         return null
     }
 
+    fun setActiveSort(value: SortSetting) {
+        viewModelScope.launch {
+            setSortModeUsecase(value)
+        }
+    }
+
     override fun onCleared() {
         stateJob.cancel()
         rtdataJob.cancel()
+        sortModeJob.cancel()
     }
 
 }

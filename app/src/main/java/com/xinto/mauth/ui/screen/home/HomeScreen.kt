@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import com.xinto.mauth.R
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.domain.otp.model.DomainOtpRealtimeData
+import com.xinto.mauth.domain.settings.model.SortSetting
 import com.xinto.mauth.ui.screen.home.component.HomeAddAccountSheet
 import com.xinto.mauth.ui.screen.home.component.HomeBottomBar
 import com.xinto.mauth.ui.screen.home.component.HomeDeleteAccountsDialog
@@ -57,7 +58,9 @@ fun HomeScreen(
         onAccountCopyCode = viewModel::copyCodeToClipboard,
         state = viewModel.state,
         accountRealtimeData = viewModel.realtimeData,
-        selectedAccounts = viewModel.selectedAccounts
+        selectedAccounts = viewModel.selectedAccounts,
+        activeSortSetting = viewModel.activeSortSetting,
+        onActiveSortChange = viewModel::setActiveSort,
     )
 }
 
@@ -76,6 +79,8 @@ fun HomeScreen(
     state: HomeScreenState,
     accountRealtimeData: Map<UUID, DomainOtpRealtimeData>,
     selectedAccounts: List<UUID>,
+    activeSortSetting: SortSetting,
+    onActiveSortChange: (SortSetting) -> Unit
 ) {
     var showAddSheet by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -99,7 +104,9 @@ fun HomeScreen(
                 onDeleteSelected = {
                     showDeleteDialog = true
                 },
-                onSettingsClick = onSettingsClick
+                onSettingsClick = onSettingsClick,
+                activeSortSetting = activeSortSetting,
+                onActiveSortChange = onActiveSortChange
             )
         }
     ) {
