@@ -36,12 +36,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
         freeCompilerArgs = freeCompilerArgs +
             "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi" +
             "-opt-in=androidx.compose.animation.ExperimentalAnimationApi" +
@@ -54,10 +54,10 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.4"
+        kotlinCompilerExtensionVersion = "1.4.7"
     }
 
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
@@ -82,20 +82,20 @@ ksp {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.core:core-splashscreen:1.0.0")
+    implementation("androidx.core:core-ktx:1.10.1")
+    implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
-    implementation("androidx.activity:activity-compose:1.7.0")
+    implementation("androidx.activity:activity-compose:1.7.2")
 
-//    val composeBom = platform("androidx.compose:compose-bom:2023.01.00")
-//    implementation(composeBom)
-    implementation("androidx.compose.foundation:foundation:1.4.1")
-    implementation("androidx.compose.material:material-icons-extended:1.4.1")
-    implementation("androidx.compose.material3:material3:1.1.0-beta02")
-//    androidTestImplementation(composeBom)
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.4.1")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.4.1")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.4.1")
+    val composeBom = platform("androidx.compose:compose-bom:2023.05.01")
+    implementation(composeBom)
+    implementation("androidx.compose.foundation:foundation")
+    implementation("androidx.compose.material:material-icons-extended")
+    implementation("androidx.compose.material3:material3")
+    androidTestImplementation(composeBom)
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     val cameraxVersion = "1.2.2"
     implementation("androidx.camera:camera-core:$cameraxVersion")
@@ -116,7 +116,7 @@ dependencies {
 
     implementation("com.google.zxing:core:3.5.0")
 
-    implementation("io.coil-kt:coil-compose:2.2.2")
+    implementation("io.coil-kt:coil-compose:2.3.0")
 
     implementation("io.insert-koin:koin-androidx-compose:3.4.3")
 
