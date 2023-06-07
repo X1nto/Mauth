@@ -4,6 +4,7 @@ import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
 import com.xinto.mauth.db.converter.OtpConverter
 import com.xinto.mauth.db.converter.UriConverter
 import com.xinto.mauth.db.converter.UuidConverter

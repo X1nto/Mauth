@@ -102,7 +102,8 @@ class DefaultAccountRepository(
             algorithm = algorithm,
             type = type,
             digits = digits.toInt(),
-            period = period.toInt()
+            period = period.toInt(),
+            createDateMillis = 0
         )
     }
 
