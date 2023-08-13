@@ -1,11 +1,13 @@
 package com.xinto.mauth.ui.screen.home.component
 
 import androidx.compose.animation.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
 import com.xinto.mauth.R
 import com.xinto.mauth.core.settings.model.SortSetting
@@ -25,7 +27,7 @@ fun HomeBottomBar(
             AnimatedContent(
                 targetState = isSelectionActive,
                 transitionSpec = {
-                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Up) + fadeIn() with
+                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Up) + fadeIn() togetherWith
                             slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Up) + fadeOut()
                 },
                 label = "Actions"
@@ -38,7 +40,10 @@ fun HomeBottomBar(
                         )
                     }
                 } else {
-                    Row {
+                    Row(
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
                         var isMoreActionsVisible by remember { mutableStateOf(false) }
                         IconButton(onClick = {
                             isMoreActionsVisible = true
@@ -63,7 +68,10 @@ fun HomeBottomBar(
                                             contentDescription = null
                                         )
                                     },
-                                    onClick = onSettingsClick
+                                    onClick = {
+                                        isMoreActionsVisible = false
+                                        onSettingsClick()
+                                    }
                                 )
                             }
                         }
@@ -84,7 +92,10 @@ fun HomeBottomBar(
                             ) {
                                 SortSetting.values().forEach {
                                     DropdownMenuItem(
-                                        onClick = { onActiveSortChange(it) },
+                                        onClick = {
+                                            isSortVisible = false
+                                            onActiveSortChange(it)
+                                        },
                                         text = {
                                             val resource = remember(it) {
                                                 when (it) {
@@ -127,7 +138,8 @@ fun HomeBottomBar(
             AnimatedContent(
                 targetState = isSelectionActive,
                 transitionSpec = {
-                    scaleIn() + fadeIn() with scaleOut() + fadeOut()
+                    scaleIn() + fadeIn() togetherWith
+                            scaleOut() + fadeOut()
                 },
                 label = "FAB"
             ) { isSelectionActive ->
