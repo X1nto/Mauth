@@ -54,7 +54,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.7"
+        kotlinCompilerExtensionVersion = "1.5.0"
     }
 
     packaging {
@@ -87,7 +87,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
     implementation("androidx.activity:activity-compose:1.7.2")
 
-    val composeBom = platform("androidx.compose:compose-bom:2023.05.01")
+    val composeBom = platform("androidx.compose:compose-bom:2023.08.00")
     implementation(composeBom)
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.material:material-icons-extended")
@@ -97,28 +97,39 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    val cameraxVersion = "1.2.2"
+    implementation("androidx.emoji2:emoji2-views-helper") {
+        version {
+            strictly("1.4.0-beta05")
+        }
+    }
+    implementation("androidx.emoji2:emoji2") {
+        version {
+            strictly("1.4.0-beta05")
+        }
+    }
+
+    val cameraxVersion = "1.2.3"
     implementation("androidx.camera:camera-core:$cameraxVersion")
     implementation("androidx.camera:camera-camera2:$cameraxVersion")
     implementation("androidx.camera:camera-view:$cameraxVersion")
     implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
 
-    val roomVersion = "2.5.0"
+    val roomVersion = "2.5.2"
     implementation("androidx.room:room-common:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
-    implementation("com.github.X1nto.taxi:taxi:1.3.0")
+    implementation("dev.olshevski.navigation:reimagined:1.5.0-beta01")
 
     implementation("commons-codec:commons-codec:1.15")
 
     implementation("com.google.zxing:core:3.5.0")
 
-    implementation("io.coil-kt:coil-compose:2.3.0")
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
-    implementation("io.insert-koin:koin-androidx-compose:3.4.3")
+    implementation("io.insert-koin:koin-androidx-compose:3.4.5")
 
     val accompanistVersion = "0.30.1"
     implementation("com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion")

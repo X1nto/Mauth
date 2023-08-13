@@ -1,27 +1,27 @@
 package com.xinto.mauth.ui.navigation
 
+import android.os.Parcelable
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
-import com.xinto.taxi.Destination
 import kotlinx.parcelize.Parcelize
-import java.util.*
+import java.util.UUID
 
-sealed class MauthDestination(val isFullscreenDialog: Boolean = false) : Destination {
+sealed class MauthDestination(val isFullscreenDialog: Boolean = false) : Parcelable {
     @Parcelize
-    object Home : MauthDestination()
-
-    @Parcelize
-    object QrScanner : MauthDestination()
+    data object Home : MauthDestination()
 
     @Parcelize
-    class AddAccount(
+    data object QrScanner : MauthDestination()
+
+    @Parcelize
+    data class AddAccount(
         val params: DomainAccountInfo
     ) : MauthDestination(isFullscreenDialog = true)
 
     @Parcelize
-    class EditAccount(
+    data class EditAccount(
         val id: UUID,
     ) : MauthDestination(isFullscreenDialog = true)
 
     @Parcelize
-    object Settings : MauthDestination()
+    data object Settings : MauthDestination()
 }

@@ -25,8 +25,8 @@ fun HomeBottomBar(
             AnimatedContent(
                 targetState = isSelectionActive,
                 transitionSpec = {
-                    slideIntoContainer(AnimatedContentScope.SlideDirection.Up) + fadeIn() with
-                            slideOutOfContainer(AnimatedContentScope.SlideDirection.Up) + fadeOut()
+                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Up) + fadeIn() with
+                            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Up) + fadeOut()
                 },
                 label = "Actions"
             ) { isSelectionActive ->

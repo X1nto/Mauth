@@ -167,13 +167,14 @@ private fun RealtimeInformation(
             targetState = code,
             transitionSpec = {
                 if (initialState.first == targetState.first) {
-                    slideIntoContainer(AnimatedContentScope.SlideDirection.Up) + fadeIn() with
-                            slideOutOfContainer(AnimatedContentScope.SlideDirection.Up) + fadeOut()
+                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Up) + fadeIn() with
+                            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Up) + fadeOut()
                 } else {
-                    slideIntoContainer(AnimatedContentScope.SlideDirection.Down) + fadeIn() with
-                            slideOutOfContainer(AnimatedContentScope.SlideDirection.Down) + fadeOut()
+                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Down) + fadeIn() with
+                            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Down) + fadeOut()
                 }
-            }
+            },
+            label = "Code"
         ) { (show, code) ->
             val showAwareCode = if (show) code else "•".repeat(code.length)
             Text(showAwareCode, style = MaterialTheme.typography.titleLarge)

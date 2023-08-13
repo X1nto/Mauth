@@ -202,9 +202,10 @@ fun AccountScreenSuccess(
             AnimatedContent(
                 targetState = type,
                 transitionSpec = {
-                    slideIntoContainer(AnimatedContentScope.SlideDirection.Up) + fadeIn() with
-                            slideOutOfContainer(AnimatedContentScope.SlideDirection.Up) + fadeOut()
-                }
+                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Up) + fadeIn() with
+                            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Up) + fadeOut()
+                },
+                label = "HOTP/TOTP"
             ) {
                 when (it) {
                     OtpType.Totp -> {
