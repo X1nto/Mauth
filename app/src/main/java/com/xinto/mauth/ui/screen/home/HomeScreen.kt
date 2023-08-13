@@ -11,10 +11,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
-import com.xinto.mauth.domain.account.model.DomainAccountInfo
-import com.xinto.mauth.domain.otp.model.DomainOtpRealtimeData
-import com.xinto.mauth.domain.settings.model.SortSetting
+import com.xinto.mauth.domain.model.DomainAccountInfo
+import com.xinto.mauth.domain.model.DomainOtpRealtimeData
+import com.xinto.mauth.core.settings.model.SortSetting
 import com.xinto.mauth.ui.screen.home.component.HomeAddAccountSheet
 import com.xinto.mauth.ui.screen.home.component.HomeBottomBar
 import com.xinto.mauth.ui.screen.home.component.HomeDeleteAccountsDialog
@@ -39,6 +40,10 @@ fun HomeScreen(
             onAddAccountFromImage(it)
         }
     }
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val realTimeData by viewModel.realTimeData.collectAsStateWithLifecycle()
+    val selectedAccounts by viewModel.selectedAccounts.collectAsStateWithLifecycle()
+    val activeSortSetting by viewModel.activeSortSetting.collectAsStateWithLifecycle()
     HomeScreen(
         onAddAccountManually = onAddAccountManually,
         onAddAccountViaScanning = onAddAccountViaScanning,
@@ -56,10 +61,10 @@ fun HomeScreen(
         onAccountEdit = onAccountEdit,
         onAccountCounterIncrease = viewModel::incrementCounter,
         onAccountCopyCode = viewModel::copyCodeToClipboard,
-        state = viewModel.state,
-        accountRealtimeData = viewModel.realtimeData,
-        selectedAccounts = viewModel.selectedAccounts,
-        activeSortSetting = viewModel.activeSortSetting,
+        state = state,
+        accountRealtimeData = realTimeData,
+        selectedAccounts = selectedAccounts,
+        activeSortSetting = activeSortSetting,
         onActiveSortChange = viewModel::setActiveSort,
     )
 }

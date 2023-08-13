@@ -8,8 +8,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.xinto.mauth.domain.account.model.DomainAccount
-import com.xinto.mauth.domain.otp.model.DomainOtpRealtimeData
+import com.xinto.mauth.domain.model.DomainAccount
+import com.xinto.mauth.domain.model.DomainOtpRealtimeData
 import com.xinto.mauth.ui.screen.home.component.HomeAccountCard
 import java.util.UUID
 

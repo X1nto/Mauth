@@ -1,6 +1,4 @@
 <resources>
-    <string name="app_name">Mauth</string>
-
     <string name="home_dashboard_empty">Ingenting her enda</string>
     <string name="home_addaccount_title">Legg til en konto</string>
     <string name="home_addaccount_subtitle">Skann en QR-kode eller skriv inn nøkkelen manuelt</string>

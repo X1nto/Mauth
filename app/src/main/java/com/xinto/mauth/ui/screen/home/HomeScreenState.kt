@@ -1,16 +1,16 @@
 package com.xinto.mauth.ui.screen.home
 
 import androidx.compose.runtime.Immutable
-import com.xinto.mauth.domain.account.model.DomainAccount
+import com.xinto.mauth.domain.model.DomainAccount
 
 @Immutable
 sealed interface HomeScreenState {
 
     @Immutable
-    object Loading : HomeScreenState
+    data object Loading : HomeScreenState
 
     @Immutable
-    object Empty : HomeScreenState
+    data object Empty : HomeScreenState
 
     @Immutable
     @JvmInline

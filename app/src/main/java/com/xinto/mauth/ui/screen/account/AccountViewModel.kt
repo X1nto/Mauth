@@ -1,17 +1,14 @@
 package com.xinto.mauth.ui.screen.account
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.xinto.mauth.domain.account.model.DomainAccountInfo
-import com.xinto.mauth.domain.account.usecase.GetAccountInfoUsecase
-import com.xinto.mauth.domain.account.usecase.PutAccountUsecase
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import com.xinto.mauth.domain.AccountRepository
+import com.xinto.mauth.domain.model.DomainAccountInfo
+import com.xinto.mauth.util.catchMap
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -25,41 +22,30 @@ sealed interface AccountViewModelParams {
 
 class AccountViewModel(
     params: AccountViewModelParams,
-
-    getAccountInfoUsecase: GetAccountInfoUsecase,
-    private val putAccountUsecase: PutAccountUsecase
+    private val accounts: AccountRepository
 ) : ViewModel() {
 
-    var state by mutableStateOf<AccountScreenState>(AccountScreenState.Loading)
-        private set
-
-    private var fetchJob: Job? = null
+    val state = when (params) {
+        is AccountViewModelParams.Id -> {
+            accounts.getAccountInfo(params.id)
+                .map {
+                    AccountScreenState.Success(it)
+                }.catchMap {
+                    AccountScreenState.Error(it.localizedMessage ?: it.message ?: it.stackTraceToString())
+                }
+        }
+        is AccountViewModelParams.Prefilled -> {
+            flowOf(AccountScreenState.Success(params.accountInfo))
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = AccountScreenState.Loading
+    )
 
     fun saveData(data: DomainAccountInfo) {
         viewModelScope.launch {
-            putAccountUsecase(data)
-        }
-    }
-
-    override fun onCleared() {
-        fetchJob?.cancel()
-    }
-
-    init {
-        when (params) {
-            is AccountViewModelParams.Id -> {
-                fetchJob = getAccountInfoUsecase(params.id)
-                    .catch {
-                        state = AccountScreenState.Error(it.localizedMessage ?: it.message ?: it.stackTraceToString())
-                    }
-                    .onEach {
-                        state = AccountScreenState.Success(it)
-                    }
-                    .launchIn(viewModelScope)
-            }
-            is AccountViewModelParams.Prefilled -> {
-                state = AccountScreenState.Success(params.accountInfo)
-            }
+            accounts.putAccount(data)
         }
     }
 }

@@ -1,11 +1,11 @@
-package com.xinto.mauth.domain.qr
+package com.xinto.mauth.domain
 
 import android.graphics.Bitmap
 import com.xinto.mauth.core.camera.ZxingDecoder
 
-class DefaultQrRepository : QrRepository {
+class QrRepository {
 
-    override fun decodeQrImage(image: Bitmap): String? {
+    fun decodeQrImage(image: Bitmap): String? {
         val pixels = IntArray(image.width * image.height)
         image.getPixels(pixels, 0, image.width, 0, 0, image.width, image.height)
         return ZxingDecoder.decodeRgbLuminanceSource(
@@ -20,5 +20,4 @@ class DefaultQrRepository : QrRepository {
             }
         )
     }
-
 }

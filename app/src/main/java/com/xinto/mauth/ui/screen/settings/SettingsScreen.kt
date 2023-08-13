@@ -10,10 +10,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
 import com.xinto.mauth.ui.screen.settings.component.SettingsSwitch
 import org.koin.androidx.compose.koinViewModel
@@ -23,9 +25,10 @@ fun SettingsScreen(
     onBack: () -> Unit
 ) {
     val viewModel: SettingsViewModel = koinViewModel()
+    val secureMode by viewModel.secureMode.collectAsStateWithLifecycle()
     SettingsScreen(
         onBack = onBack,
-        secureMode = viewModel.secureMode,
+        secureMode = secureMode,
         onSecureModeChange = viewModel::updateSecureMode
     )
 }

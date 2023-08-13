@@ -12,8 +12,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
-import com.xinto.mauth.domain.account.model.DomainAccountInfo
+import com.xinto.mauth.domain.model.DomainAccountInfo
 import com.xinto.mauth.ui.screen.account.component.AccountExitDialog
 import com.xinto.mauth.ui.screen.account.state.AccountScreenError
 import com.xinto.mauth.ui.screen.account.state.AccountScreenLoading
@@ -30,9 +31,10 @@ fun AddAccountScreen(
     val viewModel: AccountViewModel = koinViewModel {
         parametersOf(AccountViewModelParams.Prefilled(prefilled))
     }
+    val state by viewModel.state.collectAsStateWithLifecycle()
     AccountScreen(
         title = stringResource(R.string.account_title_add),
-        state = viewModel.state,
+        state = state,
         onSave = {
             viewModel.saveData(it)
             onExit()
@@ -49,9 +51,10 @@ fun EditAccountScreen(
     val viewModel: AccountViewModel = koinViewModel {
         parametersOf(AccountViewModelParams.Id(id))
     }
+    val state by viewModel.state.collectAsStateWithLifecycle()
     AccountScreen(
         title = stringResource(R.string.account_title_edit),
-        state = viewModel.state,
+        state = state,
         onSave = {
             viewModel.saveData(it)
             onExit()

@@ -1,4 +1,4 @@
-package com.xinto.mauth.domain.otp
+package com.xinto.mauth.domain
 
 import com.xinto.mauth.core.otp.generator.OtpGenerator
 import com.xinto.mauth.core.otp.model.OtpType
@@ -7,8 +7,8 @@ import com.xinto.mauth.core.otp.parser.OtpUriParserResult
 import com.xinto.mauth.core.otp.transformer.KeyTransformer
 import com.xinto.mauth.db.dao.account.AccountsDao
 import com.xinto.mauth.db.dao.rtdata.RtdataDao
-import com.xinto.mauth.domain.account.model.DomainAccountInfo
-import com.xinto.mauth.domain.otp.model.DomainOtpRealtimeData
+import com.xinto.mauth.domain.model.DomainAccountInfo
+import com.xinto.mauth.domain.model.DomainOtpRealtimeData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -16,16 +16,16 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.transformLatest
 import java.util.*
 
-class DefaultOtpRepository(
+class OtpRepository(
     private val accountsDao: AccountsDao,
     private val rtdataDao: RtdataDao,
     private val otpGenerator: OtpGenerator,
     private val otpKeyTransformer: KeyTransformer,
     private val otpUriParser: OtpUriParser
-) : OtpRepository {
+) {
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun getOtpRealtimeData(): Flow<Map<UUID, DomainOtpRealtimeData>> {
+    fun getOtpRealtimeData(): Flow<Map<UUID, DomainOtpRealtimeData>> {
         return combine(accountsDao.observeAll(), rtdataDao.observeCountData()) { one, two ->
             Pair(
                 one.associateBy { it.id },
@@ -73,7 +73,7 @@ class DefaultOtpRepository(
         }
     }
 
-    override fun parseUriToAccountInfo(uri: String): DomainAccountInfo? {
+    fun parseUriToAccountInfo(uri: String): DomainAccountInfo? {
         return when (val parseResult = otpUriParser.parseOtpUri(uri)) {
             is OtpUriParserResult.Success -> {
                 DomainAccountInfo.DEFAULT.copy(

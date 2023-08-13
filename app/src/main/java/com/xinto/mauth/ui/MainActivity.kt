@@ -20,9 +20,9 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import com.xinto.mauth.domain.account.model.DomainAccountInfo
-import com.xinto.mauth.domain.otp.usecase.ParseUriToAccountInfoUsecase
-import com.xinto.mauth.domain.settings.usecase.GetSecureModeUsecase
+import com.xinto.mauth.domain.OtpRepository
+import com.xinto.mauth.domain.SettingsRepository
+import com.xinto.mauth.domain.model.DomainAccountInfo
 import com.xinto.mauth.ui.navigation.MauthDestination
 import com.xinto.mauth.ui.screen.account.AddAccountScreen
 import com.xinto.mauth.ui.screen.account.EditAccountScreen
@@ -41,15 +41,15 @@ import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
 
-    private val secureMode: GetSecureModeUsecase by inject()
-    private val parseUriToAccountInfo: ParseUriToAccountInfoUsecase by inject()
+    private val settings: SettingsRepository by inject()
+    private val otp: OtpRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        secureMode()
+        settings.getSecureMode()
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .onEach {
                 if (it) {
@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
                     val navigator = rememberNavController<MauthDestination>(MauthDestination.Home)
 
                     LaunchedEffect(intent.data) {
-                        val accountInfo = parseUriToAccountInfo(intent.data.toString())
+                        val accountInfo = otp.parseUriToAccountInfo(intent.data.toString())
                         if (accountInfo != null) {
                             navigator.navigate(MauthDestination.AddAccount(accountInfo))
                         }
@@ -107,7 +107,8 @@ class MainActivity : ComponentActivity() {
                             is MauthDestination.Home -> {
                                 HomeScreen(
                                     onAddAccountManually = {
-                                        navigator.navigate(MauthDestination.AddAccount(DomainAccountInfo.DEFAULT))
+                                        navigator.navigate(MauthDestination.AddAccount(
+                                            DomainAccountInfo.DEFAULT))
                                     },
                                     onAddAccountViaScanning = {
                                         navigator.navigate(MauthDestination.QrScanner)

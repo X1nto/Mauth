@@ -8,7 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.res.stringResource
 import com.xinto.mauth.R
-import com.xinto.mauth.domain.settings.model.SortSetting
+import com.xinto.mauth.core.settings.model.SortSetting
 
 @Composable
 fun HomeBottomBar(

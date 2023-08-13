@@ -1,4 +1,4 @@
-package com.xinto.mauth.domain.account.model
+package com.xinto.mauth.domain.model
 
 import android.net.Uri
 import android.os.Parcelable

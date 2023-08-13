@@ -1,7 +1,8 @@
 <resources>
-    <string name="app_name">Mauth</string>
+    <string name="app_name" translatable="false">Mauth</string>
 
     <string name="home_dashboard_empty">Nothing here yet</string>
+    <string name="home_dashboard_error">Failed to load accounts</string>
     <string name="home_addaccount_title">Add an account</string>
     <string name="home_addaccount_subtitle">Scan a QR code or enter the key manually</string>
     <string name="home_addaccount_data_scanqr">Scan a QR code</string>
@@ -15,7 +16,6 @@
     <string name="home_code_copy_success">Successfully copied the code to clipboard</string>
     <string name="home_code_copy_fail">Failed to copy the code</string>
     <string name="home_image_parse_fail">Failed to parse the QR code</string>
-    <string name="home_error">Failed to load accounts</string>
     <string name="home_sort_label">Label</string>
     <string name="home_sort_issuer">Issuer</string>
     <string name="home_sort_date">Date</string>

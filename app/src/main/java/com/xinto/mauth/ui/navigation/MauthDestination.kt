@@ -1,7 +1,7 @@
 package com.xinto.mauth.ui.navigation
 
 import android.os.Parcelable
-import com.xinto.mauth.domain.account.model.DomainAccountInfo
+import com.xinto.mauth.domain.model.DomainAccountInfo
 import kotlinx.parcelize.Parcelize
 import java.util.UUID
 

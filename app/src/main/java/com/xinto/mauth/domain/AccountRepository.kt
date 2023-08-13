@@ -1,25 +1,24 @@
-package com.xinto.mauth.domain.account
+package com.xinto.mauth.domain
 
 import com.xinto.mauth.db.dao.account.AccountsDao
 import com.xinto.mauth.db.dao.account.entity.EntityAccount
-import com.xinto.mauth.domain.account.model.DomainAccount
-import com.xinto.mauth.domain.account.model.DomainAccountInfo
+import com.xinto.mauth.domain.model.DomainAccount
+import com.xinto.mauth.domain.model.DomainAccountInfo
 import com.xinto.mauth.core.otp.model.OtpType
 import com.xinto.mauth.db.dao.rtdata.RtdataDao
 import com.xinto.mauth.db.dao.rtdata.entity.EntityCountData
-import com.xinto.mauth.domain.settings.SettingsRepository
-import com.xinto.mauth.domain.settings.model.SortSetting
+import com.xinto.mauth.core.settings.model.SortSetting
 import kotlinx.coroutines.flow.*
 import java.util.*
 import kotlin.NoSuchElementException
 
-class DefaultAccountRepository(
+class AccountRepository(
     private val accountsDao: AccountsDao,
     private val rtdataDao: RtdataDao,
     private val settingsRepository: SettingsRepository
-) : AccountRepository {
+) {
 
-    override fun getAccounts(): Flow<List<DomainAccount>> {
+    fun getAccounts(): Flow<List<DomainAccount>> {
         return combine(
             accountsDao.observeAll(),
             settingsRepository.getSortMode()
@@ -38,7 +37,7 @@ class DefaultAccountRepository(
         }
     }
 
-    override fun getAccountInfo(id: UUID): Flow<DomainAccountInfo> {
+    fun getAccountInfo(id: UUID): Flow<DomainAccountInfo> {
         return flow {
             val account = accountsDao.getById(id)
             if (account != null) {
@@ -50,17 +49,17 @@ class DefaultAccountRepository(
         }
     }
 
-    override suspend fun putAccount(domainAccountInfo: DomainAccountInfo) {
+    suspend fun putAccount(domainAccountInfo: DomainAccountInfo) {
         val entityAccount = domainAccountInfo.toEntityAccount()
         rtdataDao.upsertCountData(EntityCountData(entityAccount.id, domainAccountInfo.counter.toInt()))
         accountsDao.upsert(entityAccount)
     }
 
-    override suspend fun incrementAccountCounter(id: UUID) {
+    suspend fun incrementAccountCounter(id: UUID) {
         rtdataDao.incrementAccountCounter(id)
     }
 
-    override suspend fun deleteAccounts(ids: List<UUID>) {
+    suspend fun deleteAccounts(ids: List<UUID>) {
         accountsDao.delete(ids.toSet())
     }
 

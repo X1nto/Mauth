@@ -9,73 +9,66 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.widget.Toast
-import androidx.compose.runtime.*
 import androidx.core.content.getSystemService
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.xinto.mauth.R
 import com.xinto.mauth.Mauth
-import com.xinto.mauth.domain.account.model.DomainAccountInfo
-import com.xinto.mauth.domain.account.usecase.DeleteAccountsUsecase
-import com.xinto.mauth.domain.account.usecase.GetAccountsUsecase
-import com.xinto.mauth.domain.account.usecase.IncrementAccountCounterUsecase
-import com.xinto.mauth.domain.otp.model.DomainOtpRealtimeData
-import com.xinto.mauth.domain.otp.usecase.GetOtpRealtimeDataUsecase
-import com.xinto.mauth.domain.otp.usecase.ParseUriToAccountInfoUsecase
-import com.xinto.mauth.domain.qr.usecase.DecodeQrImageUsecase
-import com.xinto.mauth.domain.settings.model.SortSetting
-import com.xinto.mauth.domain.settings.usecase.GetSortModeUsecase
-import com.xinto.mauth.domain.settings.usecase.SetSortModeUsecase
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import com.xinto.mauth.domain.AccountRepository
+import com.xinto.mauth.domain.model.DomainAccountInfo
+import com.xinto.mauth.domain.OtpRepository
+import com.xinto.mauth.domain.QrRepository
+import com.xinto.mauth.core.settings.model.SortSetting
+import com.xinto.mauth.core.settings.Settings
+import com.xinto.mauth.util.catchMap
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.*
 
 class HomeViewModel(
     application: Application,
 
-    getAccounts: GetAccountsUsecase,
-    getOtpRealtimeData: GetOtpRealtimeDataUsecase,
-    private val incrementAccountCounter: IncrementAccountCounterUsecase,
-    private val parseUriToAccountInfo: ParseUriToAccountInfoUsecase,
-    private val deleteAccounts: DeleteAccountsUsecase,
-    private val decodeQrImage: DecodeQrImageUsecase,
-
-    getSortModeUsecase: GetSortModeUsecase,
-    private val setSortModeUsecase: SetSortModeUsecase,
+    private val settings: Settings,
+    private val accounts: AccountRepository,
+    private val otp: OtpRepository,
+    private val qr: QrRepository
 ) : AndroidViewModel(application) {
 
-    var state by mutableStateOf<HomeScreenState>(HomeScreenState.Loading)
-        private set
-
-    val selectedAccounts = mutableStateListOf<UUID>()
-    val realtimeData = mutableStateMapOf<UUID, DomainOtpRealtimeData>()
-
-    var activeSortSetting by mutableStateOf(SortSetting.DEFAULT)
-        private set
-
-    private val stateJob = getAccounts()
-        .catch {
-            state = HomeScreenState.Error(
-                it.localizedMessage ?: it.message ?: it.stackTraceToString()
-            )
-        }.onEach {
-            state = when (it.isNotEmpty()) {
+    val state = accounts.getAccounts()
+        .map {
+            when (it.isNotEmpty()) {
                 true -> HomeScreenState.Success(it)
                 false -> HomeScreenState.Empty
             }
-        }.launchIn(viewModelScope)
+        }.catchMap {
+            HomeScreenState.Error(it.localizedMessage ?: it.message ?: it.stackTraceToString())
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = HomeScreenState.Loading
+        )
 
-    private val rtdataJob = getOtpRealtimeData()
-        .onEach {
-            realtimeData.putAll(it)
-        }.launchIn(viewModelScope)
+    private val _selectedAccounts = MutableStateFlow(listOf<UUID>())
+    val selectedAccounts = _selectedAccounts.asStateFlow()
 
-    private val sortModeJob = getSortModeUsecase()
-        .onEach {
-            activeSortSetting = it
-        }.launchIn(viewModelScope)
+    val realTimeData = otp.getOtpRealtimeData()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyMap()
+        )
+
+    val activeSortSetting = settings.getSortMode()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = SortSetting.DEFAULT
+        )
 
     fun copyCodeToClipboard(label: String, code: String) {
         val application = getApplication<Mauth>()
@@ -87,27 +80,31 @@ class HomeViewModel(
     }
 
     fun toggleAccountSelection(id: UUID) {
-        if (selectedAccounts.contains(id)) {
-            selectedAccounts.remove(id)
-        } else {
-            selectedAccounts.add(id)
+        _selectedAccounts.update {
+            if (it.contains(id)) {
+                it - id
+            } else {
+                it + id
+            }
         }
     }
 
     fun clearAccountSelection() {
-        selectedAccounts.clear()
+        _selectedAccounts.update {
+            emptyList()
+        }
     }
 
     fun deleteSelectedAccounts() {
         viewModelScope.launch {
-            deleteAccounts(selectedAccounts)
-            selectedAccounts.clear()
+            accounts.deleteAccounts(selectedAccounts.value)
+            clearAccountSelection()
         }
     }
 
     fun incrementCounter(accountId: UUID) {
         viewModelScope.launch {
-            incrementAccountCounter(accountId)
+            accounts.incrementAccountCounter(accountId)
         }
     }
 
@@ -123,9 +120,9 @@ class HomeViewModel(
                 ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.ARGB_8888, false)
             }
 
-            val text = decodeQrImage(bitmap)
+            val text = qr.decodeQrImage(bitmap)
             if (text != null) {
-                return parseUriToAccountInfo(text)
+                return otp.parseUriToAccountInfo(text)
             }
         }
 
@@ -136,14 +133,8 @@ class HomeViewModel(
 
     fun setActiveSort(value: SortSetting) {
         viewModelScope.launch {
-            setSortModeUsecase(value)
+            settings.setSortMode(value)
         }
-    }
-
-    override fun onCleared() {
-        stateJob.cancel()
-        rtdataJob.cancel()
-        sortModeJob.cancel()
     }
 
 }

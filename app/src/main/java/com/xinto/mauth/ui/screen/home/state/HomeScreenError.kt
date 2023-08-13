@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.rounded.ErrorOutline
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -26,6 +25,6 @@ fun HomeScreenError() {
             imageVector = Icons.Rounded.ErrorOutline,
             contentDescription = null
         )
-        Text(stringResource(R.string.home_error))
+        Text(stringResource(R.string.home_dashboard_error))
     }
 }

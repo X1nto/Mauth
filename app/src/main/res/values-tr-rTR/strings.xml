@@ -1,6 +1,4 @@
 <resources>
-    <string name="app_name">Mauth</string>
-
     <string name="home_dashboard_empty">Burada henüz bir şey yok</string>
     <string name="home_addaccount_title">Bir hesap ekle</string>
     <string name="home_addaccount_subtitle">QR kodunu tarayın veya anahtarı manuel olarak girin</string>

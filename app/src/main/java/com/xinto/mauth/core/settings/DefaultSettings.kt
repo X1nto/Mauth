@@ -1,15 +1,15 @@
-package com.xinto.mauth.domain.settings
+package com.xinto.mauth.core.settings
 
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.xinto.mauth.domain.settings.model.SortSetting
+import com.xinto.mauth.core.settings.model.SortSetting
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class DefaultSettingsRepository(context: Context) : SettingsRepository {
+class DefaultSettings(context: Context) : Settings {
 
     private val Context.preferences by preferencesDataStore("preferences")
     private val preferences = context.preferences
