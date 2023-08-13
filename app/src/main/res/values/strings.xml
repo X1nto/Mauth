@@ -16,6 +16,9 @@
     <string name="home_code_copy_fail">Failed to copy the code</string>
     <string name="home_image_parse_fail">Failed to parse the QR code</string>
     <string name="home_error">Failed to load accounts</string>
+    <string name="home_sort_name">Name</string>
+    <string name="home_sort_issuer">Issuer</string>
+    <string name="home_sort_date">Date</string>
 
     <string name="qrscan_title">Scan a QR code</string>
     <string name="qrscan_permissions_title">Missing permissions</string>
