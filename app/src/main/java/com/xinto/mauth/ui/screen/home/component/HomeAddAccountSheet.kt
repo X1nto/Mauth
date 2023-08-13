@@ -134,7 +134,8 @@ private fun MaterialBottomSheetDialog(
     }
     ModalBottomSheet(
         sheetState = state,
-        onDismissRequest = onDismissRequest
+        onDismissRequest = onDismissRequest,
+        windowInsets = WindowInsets(0)
     ) {
         Column(
             modifier = Modifier.padding(
