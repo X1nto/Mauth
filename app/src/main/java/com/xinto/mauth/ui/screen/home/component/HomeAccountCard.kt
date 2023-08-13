@@ -26,7 +26,7 @@ fun HomeAccountCard(
     onLongClick: () -> Unit,
     onEdit: () -> Unit,
     onCounterClick: () -> Unit,
-    onCopyCode: () -> Unit,
+    onCopyCode: (visible: Boolean) -> Unit,
     account: DomainAccount,
     realtimeData: DomainOtpRealtimeData,
     selected: Boolean,
@@ -88,7 +88,9 @@ fun HomeAccountCard(
                     onShowCodeChange = {
                         showCode = it
                     },
-                    onCopyCode = onCopyCode
+                    onCopyCode = {
+                        onCopyCode(showCode)
+                    }
                 )
             }
         },

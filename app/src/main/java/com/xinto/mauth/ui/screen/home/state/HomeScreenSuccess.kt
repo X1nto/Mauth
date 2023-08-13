@@ -18,7 +18,7 @@ fun HomeScreenSuccess(
     onAccountSelect: (UUID) -> Unit,
     onAccountEdit: (UUID) -> Unit,
     onAccountCounterIncrease: (UUID) -> Unit,
-    onAccountCopyCode: (String, String) -> Unit,
+    onAccountCopyCode: (String, String, Boolean) -> Unit,
     accounts: List<DomainAccount>,
     selectedAccounts: List<UUID>,
     accountRealtimeData: Map<UUID, DomainOtpRealtimeData>,
@@ -47,7 +47,7 @@ fun HomeScreenSuccess(
                         onAccountCounterIncrease(account.id)
                     },
                     onCopyCode = {
-                        onAccountCopyCode(account.label, realtimeData.code)
+                        onAccountCopyCode(account.label, realtimeData.code, it)
                     },
                     account = account,
                     realtimeData = realtimeData,

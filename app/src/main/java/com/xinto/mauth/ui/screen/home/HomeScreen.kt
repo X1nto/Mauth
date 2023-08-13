@@ -80,7 +80,7 @@ fun HomeScreen(
     onDeleteSelectedAccounts: () -> Unit,
     onAccountEdit: (UUID) -> Unit,
     onAccountCounterIncrease: (UUID) -> Unit,
-    onAccountCopyCode: (String, String) -> Unit,
+    onAccountCopyCode: (String, String, Boolean) -> Unit,
     state: HomeScreenState,
     accountRealtimeData: Map<UUID, DomainOtpRealtimeData>,
     selectedAccounts: List<UUID>,

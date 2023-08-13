@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
+import android.os.PersistableBundle
 import android.provider.MediaStore
 import android.widget.Toast
 import androidx.core.content.getSystemService
@@ -70,11 +71,20 @@ class HomeViewModel(
             initialValue = SortSetting.DEFAULT
         )
 
-    fun copyCodeToClipboard(label: String, code: String) {
+    fun copyCodeToClipboard(label: String, code: String, visible: Boolean) {
         val application = getApplication<Mauth>()
         val clipboardService = application.getSystemService<ClipboardManager>()
         if (clipboardService != null) {
-            clipboardService.setPrimaryClip(ClipData.newPlainText(label, code))
+            clipboardService.setPrimaryClip(
+                ClipData.newPlainText(label, code)
+                    .apply {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            description.extras = PersistableBundle().apply {
+                                putBoolean("android.content.extra.IS_SENSITIVE", !visible)
+                            }
+                        }
+                    }
+            )
             Toast.makeText(application, R.string.home_code_copy_success, Toast.LENGTH_LONG).show()
         }
     }
