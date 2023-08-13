@@ -89,7 +89,7 @@ fun HomeBottomBar(
                                             val resource = remember(it) {
                                                 when (it) {
                                                     SortSetting.DateAsc, SortSetting.DateDesc -> R.string.home_sort_date
-                                                    SortSetting.NameAsc, SortSetting.NameDesc -> R.string.home_sort_name
+                                                    SortSetting.LabelAsc, SortSetting.LabelDesc -> R.string.home_sort_label
                                                     SortSetting.IssuerAsc, SortSetting.IssuerDesc -> R.string.home_sort_issuer
                                                 }
                                             }
@@ -98,8 +98,8 @@ fun HomeBottomBar(
                                         leadingIcon = {
                                             val drawable = remember(it) {
                                                 when (it) {
-                                                    SortSetting.DateAsc, SortSetting.NameAsc, SortSetting.IssuerAsc -> Icons.Rounded.ArrowUpward
-                                                    SortSetting.DateDesc, SortSetting.NameDesc, SortSetting.IssuerDesc -> Icons.Rounded.ArrowDownward
+                                                    SortSetting.DateAsc, SortSetting.LabelAsc, SortSetting.IssuerAsc -> Icons.Rounded.ArrowUpward
+                                                    SortSetting.DateDesc, SortSetting.LabelDesc, SortSetting.IssuerDesc -> Icons.Rounded.ArrowDownward
                                                 }
                                             }
                                             Icon(

@@ -7,20 +7,35 @@ import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.core.otp.model.OtpType
 import com.xinto.mauth.db.dao.rtdata.RtdataDao
 import com.xinto.mauth.db.dao.rtdata.entity.EntityCountData
+import com.xinto.mauth.domain.settings.SettingsRepository
+import com.xinto.mauth.domain.settings.model.SortSetting
 import kotlinx.coroutines.flow.*
 import java.util.*
 import kotlin.NoSuchElementException
 
 class DefaultAccountRepository(
     private val accountsDao: AccountsDao,
-    private val rtdataDao: RtdataDao
+    private val rtdataDao: RtdataDao,
+    private val settingsRepository: SettingsRepository
 ) : AccountRepository {
 
     override fun getAccounts(): Flow<List<DomainAccount>> {
-        return accountsDao.observeAll()
-            .map { entityAccounts ->
-                entityAccounts.map { it.toDomain() }
+        return combine(
+            accountsDao.observeAll(),
+            settingsRepository.getSortMode()
+        ) { accounts, sort ->
+            val mapped = accounts.map {
+                it.toDomain()
             }
+            return@combine when (sort) {
+                SortSetting.IssuerAsc -> mapped.sortedBy { it.issuer }
+                SortSetting.IssuerDesc -> mapped.sortedByDescending { it.issuer }
+                SortSetting.DateAsc -> mapped.sortedBy { it.createdMillis }
+                SortSetting.DateDesc -> mapped.sortedByDescending { it.createdMillis }
+                SortSetting.LabelAsc -> mapped.sortedBy { it.label }
+                SortSetting.LabelDesc -> mapped.sortedByDescending { it.label }
+            }
+        }
     }
 
     override fun getAccountInfo(id: UUID): Flow<DomainAccountInfo> {
@@ -60,7 +75,8 @@ class DefaultAccountRepository(
                     issuer = issuer,
                     algorithm = algorithm,
                     digits = digits,
-                    period = period
+                    period = period,
+                    createdMillis = createDateMillis
                 )
             }
             OtpType.Hotp -> {
@@ -72,6 +88,7 @@ class DefaultAccountRepository(
                     issuer = issuer,
                     algorithm = algorithm,
                     digits = digits,
+                    createdMillis = createDateMillis
                 )
             }
         }
@@ -88,7 +105,8 @@ class DefaultAccountRepository(
             type = type,
             digits = digits.toString(),
             period = period.toString(),
-            counter = counter.toString()
+            counter = counter.toString(),
+            createdMillis = createDateMillis
         )
     }
 
@@ -103,7 +121,7 @@ class DefaultAccountRepository(
             type = type,
             digits = digits.toInt(),
             period = period.toInt(),
-            createDateMillis = 0
+            createDateMillis = createdMillis ?: System.currentTimeMillis()
         )
     }
 
