@@ -18,10 +18,18 @@ private val Migrate3to4 = object : Migration(3, 4) {
     }
 }
 
+private val Migrate4To5 = object : Migration(4, 5) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE accounts ADD COLUMN create_date INTEGER NOT NULL DEFAULT 0")
+        database.execSQL("UPDATE accounts SET create_date = strftime('%s','now') + ROWID")
+    }
+}
+
 val DbModule = module {
    single {
        Room.databaseBuilder(androidContext(), AccountDatabase::class.java, "accounts")
            .addMigrations(Migrate3to4)
+           .addMigrations(Migrate4To5)
            .build()
    }
 }

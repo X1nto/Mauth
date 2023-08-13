@@ -23,6 +23,7 @@ sealed interface DomainAccount {
     val issuer: String
     val algorithm: OtpDigest
     val digits: Int
+    val createdMillis: Long
 
     @Immutable
     data class Totp(
@@ -33,6 +34,7 @@ sealed interface DomainAccount {
         override val issuer: String,
         override val algorithm: OtpDigest,
         override val digits: Int,
+        override val createdMillis: Long,
         val period: Int
     ) : DomainAccount
 
@@ -45,6 +47,7 @@ sealed interface DomainAccount {
         override val issuer: String,
         override val algorithm: OtpDigest,
         override val digits: Int,
+        override val createdMillis: Long,
     ) : DomainAccount
 
 }

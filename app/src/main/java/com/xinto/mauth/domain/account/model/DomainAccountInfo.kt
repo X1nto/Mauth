@@ -21,6 +21,7 @@ data class DomainAccountInfo(
     val digits: String,
     val counter: String,
     val period: String,
+    val createdMillis: Long?
 ) : Parcelable {
 
     fun isValid(): Boolean {
@@ -43,7 +44,8 @@ data class DomainAccountInfo(
             type = OtpType.Totp,
             digits = "6",
             counter = "0",
-            period = "30"
+            period = "30",
+            createdMillis = null
         )
     }
 

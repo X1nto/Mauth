@@ -37,4 +37,7 @@ data class EntityAccount(
 
     @ColumnInfo(name = "period", defaultValue = "30")
     val period: Int,
+
+    @ColumnInfo(name = "create_date", defaultValue = "0")
+    val createDateMillis: Long
 )
