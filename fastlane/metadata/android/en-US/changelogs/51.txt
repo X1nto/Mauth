@@ -1,0 +1,13 @@
+v0.5.1
+
+Changes
+=======
+- Updated the account screen
+  - The number fields will now turn red when an incorrect number is entered
+  - Required fields are now marked
+  - The save button will be greyed out until you satisfy all the requirements
+
+Fixes
+=====
+- Fixed a crash when editing number fields in the account screen
+- Fixed a crash when saving the edited account in the account screen

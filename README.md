@@ -30,7 +30,7 @@ While there are many 2FA authenticator apps out there, most of them come with an
   - [x] HOTP
 - Organization
   - [ ] Search
-  - [ ] Sorting
+  - [x] Sorting
   - [ ] Grouping
   - [x] Editing
   - [x] Deletion
@@ -60,8 +60,6 @@ src="fastlane/metadata/android/en-US/images/phoneScreenshots/6.png?raw=true">
 src="fastlane/metadata/android/en-US/images/phoneScreenshots/7.png?raw=true">
 <img width=200 alt="Screenshot 8"
 src="fastlane/metadata/android/en-US/images/phoneScreenshots/8.png?raw=true">
-<img width=200 alt="Screenshot 9" 
-src="fastlane/metadata/android/en-US/images/phoneScreenshots/9.png?raw=true">
 
 # Download
 Mauth is available on F-Droid and GitHub Releases page.  

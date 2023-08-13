@@ -1,0 +1,25 @@
+v0.5.0
+
+New features
+============
+- Added a settings page
+  - Includes a "Secure Mode" switch that protects you from exposing data via screenshots
+- `otpauth://` deeplink support
+- Added a splash screen for devices running on Android 11 and below
+- Turkish translation
+
+Changes
+=======
+- Small UI updates
+	- "Full-screen" immersive navigation and top bars
+	- Animated code display
+	- Remove placeholder icon buttons in home bottom bar
+	- Updates to account card
+- 90% of the app was rewritten from scratch! This should result in a better performance and will make subsequent updates much easier
+
+Bug fixes
+=========
+- Fixed a bug where camera would not properly close after exiting the QR Scan screen
+- Fixed many possible crashes
+
+*Note: due to changes to the app's database, a complex migration was written to convert from the old schema to the new one. Please report issues if Mauth starts crashing or accounts disappear after updating to v0.5.0*

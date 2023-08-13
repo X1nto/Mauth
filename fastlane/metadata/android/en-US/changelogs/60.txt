@@ -1,0 +1,14 @@
+v0.6.0
+
+New Features
+============
+- You can now sort your accounts by label, issuer and addition date (both ascending and descending)
+- The app's icon now supports Material You colors
+- The accounts now store their addition/creation date
+
+Fixes
+=====
+- Fixed a bug where Android's clipboard preview would show the account code, even if it was hidden
+- Updated the Add Account bottom sheet for consistency with the Material 3 guidelines
+- Minor bottom bar menu fixes
+- Refactored and optimized some parts of the code

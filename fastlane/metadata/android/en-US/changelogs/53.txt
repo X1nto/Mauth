@@ -1,0 +1,5 @@
+v0.5.3
+
+Fixes
+=====
+- Fixed the form validation in the account screen. Again!

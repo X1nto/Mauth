@@ -1,0 +1,11 @@
+v0.5.2
+
+Changes
+=======
+- Implement form validation for number fields in the account screen
+  - Fields are now coerced to a specific range
+    - Digits field's ranges are annotated
+
+Fixes
+=====
+- Fixed a bug where Mauth would accept any value for number fields in the Account screen, rendering the app unusable
