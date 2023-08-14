@@ -138,11 +138,13 @@ private fun MaterialBottomSheetDialog(
         windowInsets = WindowInsets(0)
     ) {
         Column(
-            modifier = Modifier.padding(
-                start = 24.dp,
-                end = 24.dp,
-                bottom = 24.dp
-            ),
+            modifier = Modifier
+                .padding(
+                    start = 24.dp,
+                    end = 24.dp,
+                    bottom = 24.dp
+                )
+                .navigationBarsPadding(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
