@@ -1,0 +1,53 @@
+<resources>
+    <string name="app_name" translatable="false">Mauth</string>
+
+    <string name="home_dashboard_empty">空空如也</string>
+    <string name="home_dashboard_error">加载账户出错</string>
+    <string name="home_addaccount_title">添加新账户</string>
+    <string name="home_addaccount_subtitle">扫描二维码或手动输入</string>
+    <string name="home_addaccount_data_scanqr">扫描二维码</string>
+    <string name="home_addaccount_data_imageqr">从相册选择二维码图片</string>
+    <string name="home_addaccount_data_manual">手动输入数据</string>
+    <string name="home_delete_title">确定删除账户?</string>
+    <string name="home_delete_subtitle">所选帐户将被永久删除</string>
+    <string name="home_delete_button_delete">确认删除</string>
+    <string name="home_delete_button_cancel">下次再说</string>
+    <string name="home_more_settings">设置</string>
+    <string name="home_code_copy_success">已复制</string>
+    <string name="home_code_copy_fail">复制到剪切板失败</string>
+    <string name="home_image_parse_fail">解析二维码失败</string>
+    <string name="home_sort_label">用户名</string>
+    <string name="home_sort_issuer">发行方</string>
+    <string name="home_sort_date">日期</string>
+
+    <string name="qrscan_title">扫描二维码</string>
+    <string name="qrscan_permissions_title">权限未授予</string>
+    <string name="qrscan_permissions_subtitle">未授予相机权限</string>
+    <string name="qrscan_permissions_subtitle_rationale">此应用程序需要相机权限才能扫描和解析二维码</string>
+    <string name="qrscan_permissions_button_grant">授权</string>
+    <string name="qrscan_permissions_button_cancel">下次一定</string>
+    <string name="qrscan_error">没有足够的权限</string>
+
+    <string name="account_title_add">添加新账户</string>
+    <string name="account_title_edit">编辑账户</string>
+    <string name="account_actions_save">保存</string>
+    <string name="account_data_label">用户名</string>
+    <string name="account_data_issuer">发行方</string>
+    <string name="account_data_secret">密钥</string>
+    <string name="account_data_type">类型</string>
+    <string name="account_data_algorithm">算法</string>
+    <string name="account_data_digits">验证码位数</string>
+    <string name="account_data_counter">刷新周期</string>
+    <string name="account_data_period">周期</string>
+    <string name="account_discard_title">放弃更改？</string>
+    <string name="account_discard_subtitle">更改将不会被保存</string>
+    <string name="account_discard_buttons_discard">放弃更改</string>
+    <string name="account_discard_buttons_cancel">返回编辑</string>
+    <string name="account_error">加载账户时出错</string>
+    <string name="account_data_status_required">此处为必填项</string>
+    <string name="account_data_status_range">允许范围从 %1$s 至 %2$s</string>
+
+    <string name="settings_title">设置</string>
+    <string name="settings_prefs_securemode">截屏保护</string>
+    <string name="settings_prefs_securemode_description">阻止应用内截图并模糊后台预览图</string>
+</resources>
