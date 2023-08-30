@@ -1,0 +1,53 @@
+<resources>
+    <string name="app_name" translatable="false">Mauth</string>
+
+    <string name="home_dashboard_empty">Nada aqui ainda</string>
+    <string name="home_dashboard_error">Falha ao carregar contas</string>
+    <string name="home_addaccount_title">Adicionar uma conta</string>
+    <string name="home_addaccount_subtitle">Escanear um código QR ou inserir a chave manualmente</string>
+    <string name="home_addaccount_data_scanqr">Escanear um código QR</string>
+    <string name="home_addaccount_data_imageqr">Escolher uma imagem</string>
+    <string name="home_addaccount_data_manual">Inserir dados manualmente</string>
+    <string name="home_delete_title">Excluir contas?</string>
+    <string name="home_delete_subtitle">As contas selecionadas serão excluídas permanentemente.</string>
+    <string name="home_delete_button_delete">Excluir</string>
+    <string name="home_delete_button_cancel">Cancelar</string>
+    <string name="home_more_settings">Configurações</string>
+    <string name="home_code_copy_success">Código copiado com sucesso para a área de transferência</string>
+    <string name="home_code_copy_fail">Falha ao copiar o código</string>
+    <string name="home_image_parse_fail">Falha ao analisar o código QR</string>
+    <string name="home_sort_label">Rótulo</string>
+    <string name="home_sort_issuer">Emissor</string>
+    <string name="home_sort_date">Data</string>
+
+    <string name="qrscan_title">Escanear um código QR</string>
+    <string name="qrscan_permissions_title">Permissões ausentes</string>
+    <string name="qrscan_permissions_subtitle">Permissão para a câmera não concedida.</string>
+    <string name="qrscan_permissions_subtitle_rationale">A permissão para a câmera é necessária para que este aplicativo escaneie e analise o código QR. Sem ela, o Mauth não pode escanear e importar suas contas.</string>
+    <string name="qrscan_permissions_button_grant">Conceder</string>
+    <string name="qrscan_permissions_button_cancel">Cancelar</string>
+    <string name="qrscan_error">Permissões insuficientes</string>
+
+    <string name="account_title_add">Adicionar uma conta</string>
+    <string name="account_title_edit">Editar uma conta</string>
+    <string name="account_actions_save">Salvar</string>
+    <string name="account_data_label">Rótulo</string>
+    <string name="account_data_issuer">Emissor</string>
+    <string name="account_data_secret">Segredo</string>
+    <string name="account_data_type">Tipo</string>
+    <string name="account_data_algorithm">Algoritmo</string>
+    <string name="account_data_digits">Dígitos</string>
+    <string name="account_data_counter">Contador</string>
+    <string name="account_data_period">Período</string>
+    <string name="account_discard_title">Descartar alterações?</string>
+    <string name="account_discard_subtitle">Suas alterações não serão salvas.</string>
+    <string name="account_discard_buttons_discard">Descartar</string>
+    <string name="account_discard_buttons_cancel">Cancelar</string>
+    <string name="account_error">Ocorreu um erro ao carregar a conta</string>
+    <string name="account_data_status_required">Obrigatório</string>
+    <string name="account_data_status_range">Intervalo %1$s-%2$s</string>
+
+    <string name="settings_title">Configurações</string>
+    <string name="settings_prefs_securemode">Modo seguro</string>
+    <string name="settings_prefs_securemode_description">Impede capturas de tela no aplicativo</string>
+</resources>
