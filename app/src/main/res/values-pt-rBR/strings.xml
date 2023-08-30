@@ -50,5 +50,4 @@
     <string name="settings_title">Configurações</string>
     <string name="settings_prefs_securemode">Modo seguro</string>
     <string name="settings_prefs_securemode_description">Impede capturas de tela no aplicativo</string>
-
 </resources>
