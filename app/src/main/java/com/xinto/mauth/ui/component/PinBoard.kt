@@ -2,18 +2,13 @@ package com.xinto.mauth.ui.component
 
 import android.content.res.Configuration
 import androidx.compose.animation.Animatable
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationResult
 import androidx.compose.animation.core.AnimationVector
-import androidx.compose.animation.core.TargetBasedAnimation
-import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -25,11 +20,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
@@ -39,11 +38,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -54,20 +54,19 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
-import okhttp3.internal.wait
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 private fun PinBoardPreview_Plain() {
     MauthTheme {
-        PinBoard(
-            state = rememberPinBoardState(),
-            onNumberClick = {},
-            onBackspaceClick = {},
-        )
+        Surface(color = MaterialTheme.colorScheme.background) {
+            PinBoard(
+                state = rememberPinBoardState(),
+                onNumberClick = {},
+                onBackspaceClick = {},
+            )
+        }
     }
 }
 
@@ -76,11 +75,13 @@ private fun PinBoardPreview_Plain() {
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 private fun PinBoardPreview_WithFingerprint() {
     MauthTheme {
-        PinBoard(
-            state = rememberPinBoardState(showFingerprint = true),
-            onNumberClick = {},
-            onBackspaceClick = {},
-        )
+        Surface(color = MaterialTheme.colorScheme.background) {
+            PinBoard(
+                state = rememberPinBoardState(showFingerprint = true),
+                onNumberClick = {},
+                onBackspaceClick = {},
+            )
+        }
     }
 }
 
@@ -89,11 +90,13 @@ private fun PinBoardPreview_WithFingerprint() {
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 private fun PinBoardPreview_WithEnter() {
     MauthTheme {
-        PinBoard(
-            state = rememberPinBoardState(showEnter = true),
-            onNumberClick = {},
-            onBackspaceClick = {},
-        )
+        Surface(color = MaterialTheme.colorScheme.background) {
+            PinBoard(
+                state = rememberPinBoardState(showEnter = true),
+                onNumberClick = {},
+                onBackspaceClick = {},
+            )
+        }
     }
 }
 
@@ -102,14 +105,16 @@ private fun PinBoardPreview_WithEnter() {
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 private fun PinBoardPreview_WithFingerprintAndEnter() {
     MauthTheme {
-        PinBoard(
-            state = rememberPinBoardState(
-                showFingerprint = true,
-                showEnter = true,
-            ),
-            onNumberClick = {},
-            onBackspaceClick = {},
-        )
+        Surface(color = MaterialTheme.colorScheme.background) {
+            PinBoard(
+                state = rememberPinBoardState(
+                    showFingerprint = true,
+                    showEnter = true,
+                ),
+                onNumberClick = {},
+                onBackspaceClick = {},
+            )
+        }
     }
 }
 
@@ -262,31 +267,31 @@ private fun PinButton(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val shape by shapes.getButtonShape(interactionSource)
-    val color by colors.getBackgroundColor(interactionSource)
+    val backgroundColor by colors.getBackgroundColor(interactionSource)
     val contentColor by colors.getForegroundColor(interactionSource)
-    Surface(
+    Box(
         modifier = modifier
             .requiredSize(PinButtonDefaults.PinButtonSize)
+            .graphicsLayer {
+                clip = true
+                this.shape = shape
+            }
+            .drawBehind {
+                drawRect(backgroundColor)
+            }
             .clickable(
                 onClick = onClick,
                 enabled = enabled,
                 indication = null,
                 interactionSource = interactionSource
             ),
-        shape = shape,
-        color = color,
-        contentColor = contentColor,
-        tonalElevation = 3.dp
+        contentAlignment = Alignment.Center
     ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            propagateMinConstraints = false,
-            contentAlignment = Alignment.Center
-        ) {
-            ProvideTextStyle(value = MaterialTheme.typography.headlineSmall) {
-                content()
-            }
-        }
+        CompositionLocalProvider(
+            LocalTextStyle provides MaterialTheme.typography.headlineSmall,
+            LocalContentColor provides contentColor,
+            content = content
+        )
     }
 }
 
@@ -299,7 +304,7 @@ object PinButtonDefaults {
     @Composable
     fun plainPinButtonColors(): PinButtonColors {
         return PinButtonColors(
-            backgroundColor = MaterialTheme.colorScheme.surface,
+            backgroundColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp),
             backgroundColorPressed = MaterialTheme.colorScheme.primary,
             foregroundColor = MaterialTheme.colorScheme.onSurface,
             foregroundColorPressed = MaterialTheme.colorScheme.onPrimary
@@ -335,7 +340,6 @@ data class PinButtonColors(
 ) {
     @Composable
     fun getBackgroundColor(interactionSource: InteractionSource): State<Color> {
-
         val animatable = remember { Animatable(backgroundColor) }
         return animatePressValue(
             animatable = animatable,
