@@ -1,5 +1,6 @@
 package com.xinto.mauth.ui.component
 
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.AnimationVector
 import androidx.compose.animation.core.AnimationVector4D
@@ -76,3 +77,12 @@ inline fun <S> Transition<S>.animateRoundedCornerShape(
         targetValueByState = targetValueByState
     )
 }
+
+fun Animatable(
+    initialValue: CornerBasedShape,
+    density: Density,
+    size: Size
+): Animatable<CornerBasedShape, AnimationVector4D> = Animatable(
+    initialValue = initialValue,
+    typeConverter = getShapeConverter(size, density)
+)
