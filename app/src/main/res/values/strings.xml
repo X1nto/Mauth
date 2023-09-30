@@ -50,4 +50,9 @@
     <string name="settings_title">Settings</string>
     <string name="settings_prefs_securemode">Secure mode</string>
     <string name="settings_prefs_securemode_description">Prevents screenshots in the app</string>
+    <string name="settings_prefs_pincode">PIN Lock</string>
+    <string name="settings_prefs_pincode_description">Require authentication on startup</string>
+    
+    <string name="pinsetup_description_create">Set a PIN</string>
+    <string name="pinsetup_description_confirm">Confirm your PIN</string>
 </resources>

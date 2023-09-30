@@ -22,14 +22,24 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SettingsScreen(
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onSetupPinCode: () -> Unit,
+    onDisablePinCode: () -> Unit,
 ) {
     val viewModel: SettingsViewModel = koinViewModel()
     val secureMode by viewModel.secureMode.collectAsStateWithLifecycle()
     SettingsScreen(
         onBack = onBack,
         secureMode = secureMode,
-        onSecureModeChange = viewModel::updateSecureMode
+        onSecureModeChange = viewModel::updateSecureMode,
+        pinCode = false,
+        onPinCodeChange = {
+            if (it) {
+                onSetupPinCode()
+            } else {
+                onDisablePinCode()
+            }
+        }
     )
 }
 
@@ -38,6 +48,8 @@ fun SettingsScreen(
     onBack: () -> Unit,
     secureMode: Boolean,
     onSecureModeChange: (Boolean) -> Unit,
+    pinCode: Boolean,
+    onPinCodeChange: (Boolean) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     BackHandler(onBack = onBack)
@@ -77,6 +89,18 @@ fun SettingsScreen(
                     },
                     description = {
                         Text(stringResource(R.string.settings_prefs_securemode_description))
+                    }
+                )
+            }
+            item {
+                SettingsSwitch(
+                    onCheckedChange = onPinCodeChange,
+                    checked = pinCode,
+                    title = {
+                        Text(stringResource(R.string.settings_prefs_pincode))
+                    },
+                    description = {
+                        Text(stringResource(R.string.settings_prefs_pincode_description))
                     }
                 )
             }

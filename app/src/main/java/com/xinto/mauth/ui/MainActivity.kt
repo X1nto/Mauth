@@ -27,6 +27,7 @@ import com.xinto.mauth.ui.navigation.MauthDestination
 import com.xinto.mauth.ui.screen.account.AddAccountScreen
 import com.xinto.mauth.ui.screen.account.EditAccountScreen
 import com.xinto.mauth.ui.screen.home.HomeScreen
+import com.xinto.mauth.ui.screen.pinsetup.PinSetupScreen
 import com.xinto.mauth.ui.screen.qrscan.QrScanScreen
 import com.xinto.mauth.ui.screen.settings.SettingsScreen
 import com.xinto.mauth.ui.theme.MauthTheme
@@ -138,6 +139,11 @@ class MainActivity : ComponentActivity() {
                                 SettingsScreen(
                                     onBack = {
                                         navigator.pop()
+                                    },
+                                    onSetupPinCode = {
+                                        navigator.navigate(MauthDestination.PinSetup)
+                                    },
+                                    onDisablePinCode = {
                                     }
                                 )
                             }
@@ -152,6 +158,13 @@ class MainActivity : ComponentActivity() {
                             is MauthDestination.EditAccount -> {
                                 EditAccountScreen(
                                     id = screen.id,
+                                    onExit = {
+                                        navigator.pop()
+                                    }
+                                )
+                            }
+                            is MauthDestination.PinSetup -> {
+                                PinSetupScreen(
                                     onExit = {
                                         navigator.pop()
                                     }

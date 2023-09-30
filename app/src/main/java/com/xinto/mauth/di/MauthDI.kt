@@ -16,6 +16,7 @@ import com.xinto.mauth.core.settings.DefaultSettings
 import com.xinto.mauth.core.settings.Settings
 import com.xinto.mauth.ui.screen.account.AccountViewModel
 import com.xinto.mauth.ui.screen.home.HomeViewModel
+import com.xinto.mauth.ui.screen.pinsetup.PinSetupViewModel
 import com.xinto.mauth.ui.screen.qrscan.QrScanViewModel
 import com.xinto.mauth.ui.screen.settings.SettingsViewModel
 import org.apache.commons.codec.binary.Base32
@@ -66,6 +67,7 @@ object MauthDI {
         viewModelOf(::AccountViewModel)
         viewModelOf(::SettingsViewModel)
         viewModelOf(::QrScanViewModel)
+        viewModelOf(::PinSetupViewModel)
         viewModelOf(::HomeViewModel)
     }
 
