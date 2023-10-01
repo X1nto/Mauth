@@ -121,6 +121,8 @@ dependencies {
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
 
+    implementation("androidx.biometric:biometric:1.1.0")
+
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
     implementation("dev.olshevski.navigation:reimagined:1.5.0-beta01")

@@ -6,6 +6,10 @@ import kotlinx.parcelize.Parcelize
 import java.util.UUID
 
 sealed class MauthDestination(val isFullscreenDialog: Boolean = false) : Parcelable {
+
+    @Parcelize
+    data object Auth : MauthDestination()
+
     @Parcelize
     data object Home : MauthDestination()
 

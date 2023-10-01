@@ -17,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -26,6 +27,7 @@ import com.xinto.mauth.domain.model.DomainAccountInfo
 import com.xinto.mauth.ui.navigation.MauthDestination
 import com.xinto.mauth.ui.screen.account.AddAccountScreen
 import com.xinto.mauth.ui.screen.account.EditAccountScreen
+import com.xinto.mauth.ui.screen.auth.AuthScreen
 import com.xinto.mauth.ui.screen.home.HomeScreen
 import com.xinto.mauth.ui.screen.pinsetup.PinSetupScreen
 import com.xinto.mauth.ui.screen.qrscan.QrScanScreen
@@ -40,7 +42,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.android.ext.android.inject
 
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
 
     private val settings: SettingsRepository by inject()
     private val otp: OtpRepository by inject()
@@ -70,7 +72,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val navigator = rememberNavController<MauthDestination>(MauthDestination.Home)
+                    val navigator = rememberNavController<MauthDestination>(MauthDestination.Auth)
 
                     LaunchedEffect(intent.data) {
                         val accountInfo = otp.parseUriToAccountInfo(intent.data.toString())
@@ -105,6 +107,9 @@ class MainActivity : ComponentActivity() {
                         }
                     ) { screen ->
                         when (screen) {
+                            is MauthDestination.Auth -> {
+                                AuthScreen()
+                            }
                             is MauthDestination.Home -> {
                                 HomeScreen(
                                     onAddAccountManually = {

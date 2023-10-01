@@ -15,6 +15,7 @@ import com.xinto.mauth.domain.SettingsRepository
 import com.xinto.mauth.core.settings.DefaultSettings
 import com.xinto.mauth.core.settings.Settings
 import com.xinto.mauth.ui.screen.account.AccountViewModel
+import com.xinto.mauth.ui.screen.auth.AuthViewModel
 import com.xinto.mauth.ui.screen.home.HomeViewModel
 import com.xinto.mauth.ui.screen.pinsetup.PinSetupViewModel
 import com.xinto.mauth.ui.screen.qrscan.QrScanViewModel
@@ -69,6 +70,7 @@ object MauthDI {
         viewModelOf(::QrScanViewModel)
         viewModelOf(::PinSetupViewModel)
         viewModelOf(::HomeViewModel)
+        viewModelOf(::AuthViewModel)
     }
 
     val all = listOf(CoreModule, DbModule, DomainModule, UiModule)
