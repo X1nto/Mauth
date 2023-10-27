@@ -52,7 +52,7 @@
 
     <string name="settings_title">Settings</string>
     <string name="settings_prefs_securemode">Secure mode</string>
-    <string name="settings_prefs_securemode_description">Prevents screenshots in the app</string>
+    <string name="settings_prefs_securemode_description">Prevent screenshots within the app</string>
     <string name="settings_prefs_pincode">PIN Lock</string>
     <string name="settings_prefs_pincode_description">Require authentication on startup</string>
     <string name="settings_prefs_biometrics">Biometric Authentication</string>
