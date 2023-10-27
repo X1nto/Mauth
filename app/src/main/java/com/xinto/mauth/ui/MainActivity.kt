@@ -10,12 +10,14 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.IntOffset
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
@@ -103,12 +105,19 @@ class MainActivity : FragmentActivity() {
                                     ) togetherWith fadeOut()
                                 }
                                 initial.isFullscreenDialog -> {
-                                    fadeIn() togetherWith  slideOutOfContainer(
+                                    fadeIn() togetherWith slideOutOfContainer(
                                         towards = AnimatedContentTransitionScope.SlideDirection.Down,
                                         animationSpec = spring(
                                             stiffness = Spring.StiffnessVeryLow
                                         )
                                     )
+                                }
+                                initial is MauthDestination.Auth -> {
+                                    fadeIn() + scaleIn(
+                                        initialScale = 0.9f
+                                    ) togetherWith fadeOut() + slideOut {
+                                        IntOffset(0, -100)
+                                    }
                                 }
                                 else -> when (action) {
                                     NavAction.Navigate -> {
