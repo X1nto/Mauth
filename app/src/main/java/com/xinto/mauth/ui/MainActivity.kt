@@ -1,11 +1,8 @@
 package com.xinto.mauth.ui
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.WindowManager
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -15,8 +12,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.layout.safeGesturesPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
@@ -28,9 +23,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.xinto.mauth.domain.AuthRepository
-import com.xinto.mauth.domain.otp.OtpRepository
 import com.xinto.mauth.domain.SettingsRepository
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
+import com.xinto.mauth.domain.otp.OtpRepository
 import com.xinto.mauth.ui.navigation.MauthDestination
 import com.xinto.mauth.ui.screen.account.AddAccountScreen
 import com.xinto.mauth.ui.screen.account.EditAccountScreen

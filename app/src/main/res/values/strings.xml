@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">Mauth</string>
 
+    <string name="auth_title">Enter your PIN</string>
     <string name="auth_biometrics_title">Biometric Authentication</string>
     <string name="auth_biometrics_cancel">Cancel</string>
 

@@ -91,12 +91,8 @@ fun AuthScreen(
     )
     PinScaffold(
         modifier = modifier,
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(stringResource(R.string.app_name))
-                }
-            )
+        description = {
+            Text(stringResource(R.string.auth_title))
         },
         codeLength = code.length,
         state = pinBoardState
