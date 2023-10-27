@@ -93,6 +93,7 @@ dependencies {
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.ui:ui-tooling-preview")
     androidTestImplementation(composeBom)
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
@@ -119,6 +120,9 @@ dependencies {
     implementation("androidx.room:room-common:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
+
+    implementation("androidx.biometric:biometric:1.1.0")
+    implementation("androidx.security:security-crypto-ktx:1.1.0-alpha06")
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 

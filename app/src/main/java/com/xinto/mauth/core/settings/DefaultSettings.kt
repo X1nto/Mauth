@@ -28,6 +28,12 @@ class DefaultSettings(context: Context) : Settings {
         }
     }
 
+    override fun getUseBiometrics(): Flow<Boolean> {
+        return preferences.data.map {
+            it[KEY_USE_BIOMETRICS] ?: false
+        }
+    }
+
     override suspend fun setSecureMode(value: Boolean) {
         preferences.edit {
             it[KEY_SECURE_MODE] = value
@@ -40,9 +46,16 @@ class DefaultSettings(context: Context) : Settings {
         }
     }
 
+    override suspend fun setUseBiometrics(value: Boolean) {
+        preferences.edit {
+            it[KEY_USE_BIOMETRICS] = value
+        }
+    }
+
     private companion object {
         val KEY_SECURE_MODE = booleanPreferencesKey("private_mode")
         val KEY_SORT_MODE = stringPreferencesKey("sort_mode")
+        val KEY_USE_BIOMETRICS = booleanPreferencesKey("use_biometrics")
     }
 
 }
