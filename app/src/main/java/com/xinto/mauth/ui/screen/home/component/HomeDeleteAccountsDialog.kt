@@ -1,9 +1,12 @@
 package com.xinto.mauth.ui.screen.home.component
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.DeleteForever
-import androidx.compose.material3.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.xinto.mauth.R
 
@@ -16,7 +19,7 @@ fun HomeDeleteAccountsDialog(
         onDismissRequest = onCancel,
         icon = {
             Icon(
-                imageVector = Icons.Rounded.DeleteForever,
+                painter = painterResource(R.drawable.ic_delete_forever),
                 contentDescription = null
             )
         },

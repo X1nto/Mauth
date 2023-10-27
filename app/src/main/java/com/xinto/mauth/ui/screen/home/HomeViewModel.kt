@@ -13,14 +13,14 @@ import android.widget.Toast
 import androidx.core.content.getSystemService
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.xinto.mauth.R
 import com.xinto.mauth.Mauth
+import com.xinto.mauth.R
+import com.xinto.mauth.core.settings.Settings
+import com.xinto.mauth.core.settings.model.SortSetting
+import com.xinto.mauth.domain.QrRepository
 import com.xinto.mauth.domain.account.AccountRepository
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.domain.otp.OtpRepository
-import com.xinto.mauth.domain.QrRepository
-import com.xinto.mauth.core.settings.model.SortSetting
-import com.xinto.mauth.core.settings.Settings
 import com.xinto.mauth.util.catchMap
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -29,7 +29,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.UUID
 
 class HomeViewModel(
     application: Application,

@@ -1,17 +1,18 @@
 package com.xinto.mauth.domain.account
 
+import com.xinto.mauth.core.otp.model.OtpType
+import com.xinto.mauth.core.settings.model.SortSetting
 import com.xinto.mauth.db.dao.account.AccountsDao
 import com.xinto.mauth.db.dao.account.entity.EntityAccount
-import com.xinto.mauth.domain.account.model.DomainAccount
-import com.xinto.mauth.domain.account.model.DomainAccountInfo
-import com.xinto.mauth.core.otp.model.OtpType
 import com.xinto.mauth.db.dao.rtdata.RtdataDao
 import com.xinto.mauth.db.dao.rtdata.entity.EntityCountData
-import com.xinto.mauth.core.settings.model.SortSetting
 import com.xinto.mauth.domain.SettingsRepository
-import kotlinx.coroutines.flow.*
-import java.util.*
-import kotlin.NoSuchElementException
+import com.xinto.mauth.domain.account.model.DomainAccount
+import com.xinto.mauth.domain.account.model.DomainAccountInfo
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
+import java.util.UUID
 
 class AccountRepository(
     private val accountsDao: AccountsDao,

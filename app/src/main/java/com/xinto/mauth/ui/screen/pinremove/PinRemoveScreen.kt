@@ -1,14 +1,13 @@
 package com.xinto.mauth.ui.screen.pinremove
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
@@ -57,7 +56,7 @@ fun PinRemoveScreen(
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
-                            imageVector = Icons.Rounded.ArrowBack,
+                            painter = painterResource(R.drawable.ic_arrow_back),
                             contentDescription = null
                         )
                     }

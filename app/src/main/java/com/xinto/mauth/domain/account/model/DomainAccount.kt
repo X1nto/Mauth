@@ -3,7 +3,7 @@ package com.xinto.mauth.domain.account.model
 import android.net.Uri
 import androidx.compose.runtime.Immutable
 import com.xinto.mauth.core.otp.model.OtpDigest
-import java.util.*
+import java.util.UUID
 
 val DomainAccount.shortLabel: String
     get() {

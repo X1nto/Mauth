@@ -6,16 +6,23 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
+import com.xinto.mauth.core.settings.model.SortSetting
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.domain.otp.model.DomainOtpRealtimeData
-import com.xinto.mauth.core.settings.model.SortSetting
 import com.xinto.mauth.ui.screen.home.component.HomeAddAccountSheet
 import com.xinto.mauth.ui.screen.home.component.HomeBottomBar
 import com.xinto.mauth.ui.screen.home.component.HomeDeleteAccountsDialog
@@ -24,7 +31,7 @@ import com.xinto.mauth.ui.screen.home.state.HomeScreenError
 import com.xinto.mauth.ui.screen.home.state.HomeScreenLoading
 import com.xinto.mauth.ui.screen.home.state.HomeScreenSuccess
 import org.koin.androidx.compose.koinViewModel
-import java.util.*
+import java.util.UUID
 
 @Composable
 fun HomeScreen(

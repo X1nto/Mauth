@@ -1,13 +1,28 @@
 package com.xinto.mauth.ui.screen.home.component
 
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.xinto.mauth.R
 import com.xinto.mauth.core.settings.model.SortSetting
@@ -35,7 +50,7 @@ fun HomeBottomBar(
                 if (isSelectionActive) {
                     IconButton(onClick = onDeleteSelected) {
                         Icon(
-                            imageVector = Icons.Rounded.DeleteForever,
+                            painter = painterResource(R.drawable.ic_delete_forever),
                             contentDescription = null
                         )
                     }
@@ -49,7 +64,7 @@ fun HomeBottomBar(
                             isMoreActionsVisible = true
                         }) {
                             Icon(
-                                imageVector = Icons.Rounded.MoreVert,
+                                painter = painterResource(R.drawable.ic_more_vert),
                                 contentDescription = null
                             )
                             DropdownMenu(
@@ -64,7 +79,7 @@ fun HomeBottomBar(
                                     },
                                     leadingIcon = {
                                         Icon(
-                                            imageVector = Icons.Rounded.Settings,
+                                            painter = painterResource(R.drawable.ic_settings),
                                             contentDescription = null
                                         )
                                     },
@@ -81,7 +96,7 @@ fun HomeBottomBar(
                             isSortVisible = true
                         }) {
                             Icon(
-                                imageVector = Icons.Rounded.Sort,
+                                painter = painterResource(R.drawable.ic_sort),
                                 contentDescription = null
                             )
                             DropdownMenu(
@@ -109,19 +124,19 @@ fun HomeBottomBar(
                                         leadingIcon = {
                                             val drawable = remember(it) {
                                                 when (it) {
-                                                    SortSetting.DateAsc, SortSetting.LabelAsc, SortSetting.IssuerAsc -> Icons.Rounded.ArrowUpward
-                                                    SortSetting.DateDesc, SortSetting.LabelDesc, SortSetting.IssuerDesc -> Icons.Rounded.ArrowDownward
+                                                    SortSetting.DateAsc, SortSetting.LabelAsc, SortSetting.IssuerAsc -> R.drawable.ic_arrow_upward
+                                                    SortSetting.DateDesc, SortSetting.LabelDesc, SortSetting.IssuerDesc -> R.drawable.ic_arrow_downward
                                                 }
                                             }
                                             Icon(
-                                                imageVector = drawable,
+                                                painter = painterResource(drawable),
                                                 contentDescription = null
                                             )
                                         },
                                         trailingIcon = {
                                             if (activeSortSetting == it) {
                                                 Icon(
-                                                    imageVector = Icons.Rounded.Check,
+                                                    painter = painterResource(R.drawable.ic_check),
                                                     contentDescription = null
                                                 )
                                             }
@@ -146,14 +161,14 @@ fun HomeBottomBar(
                 if (isSelectionActive) {
                     FloatingActionButton(onClick = onCancelSelection) {
                         Icon(
-                            imageVector = Icons.Rounded.Undo,
+                            painter = painterResource(R.drawable.ic_undo),
                             contentDescription = null
                         )
                     }
                 } else {
                     FloatingActionButton(onClick = onAdd) {
                         Icon(
-                            imageVector = Icons.Rounded.Add,
+                            painter = painterResource(R.drawable.ic_add),
                             contentDescription = null
                         )
                     }

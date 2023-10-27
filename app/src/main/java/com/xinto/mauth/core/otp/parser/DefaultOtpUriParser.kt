@@ -1,11 +1,9 @@
 package com.xinto.mauth.core.otp.parser
 
 import android.net.Uri
-import androidx.compose.ui.text.toUpperCase
 import com.xinto.mauth.core.otp.model.OtpData
 import com.xinto.mauth.core.otp.model.OtpDigest
 import com.xinto.mauth.core.otp.model.OtpType
-import java.util.Locale
 
 
 class DefaultOtpUriParser : OtpUriParser {

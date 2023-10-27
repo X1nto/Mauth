@@ -1,11 +1,6 @@
 package com.xinto.mauth.core.otp.generator
 
 import com.xinto.mauth.core.otp.model.OtpDigest
-import java.nio.ByteBuffer
-import javax.crypto.Mac
-import javax.crypto.spec.SecretKeySpec
-import kotlin.math.floor
-import kotlin.math.pow
 
 interface OtpGenerator {
 

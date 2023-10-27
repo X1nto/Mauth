@@ -3,7 +3,6 @@ package com.xinto.mauth.domain
 import com.xinto.mauth.core.auth.AuthManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
 
 class AuthRepository(

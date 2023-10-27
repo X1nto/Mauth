@@ -4,18 +4,39 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.with
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridItemScope
+import androidx.compose.foundation.lazy.grid.LazyGridScope
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -29,7 +50,7 @@ import com.xinto.mauth.ui.component.UriImage
 import com.xinto.mauth.ui.screen.account.component.AccountComboBox
 import com.xinto.mauth.ui.screen.account.component.AccountDataField
 import com.xinto.mauth.ui.screen.account.component.AccountNumberField
-import java.util.*
+import java.util.UUID
 
 @Composable
 fun AccountScreenSuccess(
@@ -92,7 +113,7 @@ fun AccountScreenSuccess(
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
                                 modifier = Modifier.size(36.dp),
-                                imageVector = Icons.Rounded.AddAPhoto,
+                                painter = painterResource(R.drawable.ic_add_a_photo),
                                 contentDescription = null
                             )
                         }
@@ -109,7 +130,7 @@ fun AccountScreenSuccess(
                 },
                 leadingIcon = {
                     Icon(
-                        imageVector = Icons.Rounded.Label,
+                        painter = painterResource(R.drawable.ic_label),
                         contentDescription = null
                     )
                 },
@@ -125,7 +146,7 @@ fun AccountScreenSuccess(
                 },
                 leadingIcon = {
                     Icon(
-                        imageVector = Icons.Rounded.Apartment,
+                        painter = painterResource(R.drawable.ic_apartment),
                         contentDescription = null
                     )
                 },
@@ -141,14 +162,16 @@ fun AccountScreenSuccess(
                 },
                 leadingIcon = {
                     Icon(
-                        imageVector = Icons.Rounded.Key,
+                        painter = painterResource(R.drawable.ic_key),
                         contentDescription = null
                     )
                 },
                 trailingIcon = {
                     IconButton(onClick = { secretShown = !secretShown }) {
+                        val visible = painterResource(R.drawable.ic_visibility)
+                        val notVisible = painterResource(R.drawable.ic_visibility_off)
                         Icon(
-                            imageVector = if (secretShown) Icons.Rounded.Visibility else Icons.Rounded.VisibilityOff,
+                            painter = if (secretShown) visible else notVisible,
                             contentDescription = null
                         )
                     }

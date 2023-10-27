@@ -6,7 +6,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.xinto.mauth.core.otp.model.OtpDigest
 import com.xinto.mauth.core.otp.model.OtpType
-import java.util.*
+import java.util.UUID
 
 @Entity(tableName = "accounts")
 data class EntityAccount(

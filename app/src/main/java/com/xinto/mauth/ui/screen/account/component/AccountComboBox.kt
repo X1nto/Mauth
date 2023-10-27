@@ -1,15 +1,19 @@
 package com.xinto.mauth.ui.screen.account.component
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.KeyboardArrowDown
-import androidx.compose.material3.*
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.res.painterResource
+import com.xinto.mauth.R
 
 @Composable
 fun <T : Enum<T>> AccountComboBox(
@@ -36,7 +40,7 @@ fun <T : Enum<T>> AccountComboBox(
                 val iconRotation by animateFloatAsState(if (expanded) 180f else 0f)
                 Icon(
                     modifier = Modifier.rotate(iconRotation),
-                    imageVector = Icons.Rounded.KeyboardArrowDown,
+                    painter = painterResource(R.drawable.ic_keyboard_arrow_down),
                     contentDescription = null
                 )
             }

@@ -7,7 +7,6 @@ import com.xinto.mauth.domain.SettingsRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import okhttp3.internal.wait
 
 class SettingsViewModel(
     private val settings: SettingsRepository,

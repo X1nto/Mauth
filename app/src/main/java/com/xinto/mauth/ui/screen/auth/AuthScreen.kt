@@ -1,6 +1,5 @@
 package com.xinto.mauth.ui.screen.auth
 
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -12,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
-import com.xinto.mauth.ui.component.BiometricHandler
 import com.xinto.mauth.ui.component.pinboard.PinScaffold
 import com.xinto.mauth.ui.component.pinboard.rememberPinBoardState
 import com.xinto.mauth.ui.component.rememberBiometricHandler
