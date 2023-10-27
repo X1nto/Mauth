@@ -9,7 +9,7 @@ alt="App icon">
 
 Mauth (pronounced Moth) is a Two-Factor Authentication app with support for TOTP and HOTP. It is also fully compatible with Google Authenticator.
 
-Logo by @wingio
+Logo by [@wingio](https://github.com/wingio)
 
 # Inspiration
 While there are many 2FA authenticator apps out there, most of them come with an outdated UI/UX and functionality. Mauth aims to be as intuitive and feature-rich as possible, while also providing a beautiful Material You UI.
@@ -17,8 +17,8 @@ While there are many 2FA authenticator apps out there, most of them come with an
 # Features
 - [x] Compatibility with Google Authenticator
 - Security
-  - [ ] Biometrics
-  - [ ] Password
+  - [x] Biometrics
+  - [x] PIN
 - Ways to add your accounts
   - [x] Scanning a QR code
     - [x] Using a camera
@@ -44,22 +44,24 @@ While there are many 2FA authenticator apps out there, most of them come with an
   - [ ] Microsoft Authenticator
 
 # Screenshots
-<img width=200 alt="Screenshot 1" 
+<img width=200 alt="Auth screen" 
 src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png?raw=true">
-<img width=200 alt="Screenshot 2" 
+<img width=200 alt="Home screen empty" 
 src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png?raw=true">
-<img width=200 alt="Screenshot 3" 
+<img width=200 alt="Add account dialog" 
 src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png?raw=true">
-<img width=200 alt="Screenshot 4" 
+<img width=200 alt="Add account screen" 
 src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png?raw=true">
-<img width=200 alt="Screenshot 5" 
+<img width=200 alt="Home screen with accounts" 
 src="fastlane/metadata/android/en-US/images/phoneScreenshots/5.png?raw=true">
-<img width=200 alt="Screenshot 6" 
+<img width=200 alt="Edit account screen" 
 src="fastlane/metadata/android/en-US/images/phoneScreenshots/6.png?raw=true">
-<img width=200 alt="Screenshot 7" 
+<img width=200 alt="Sort options" 
 src="fastlane/metadata/android/en-US/images/phoneScreenshots/7.png?raw=true">
-<img width=200 alt="Screenshot 8"
+<img width=200 alt="Account selection"
 src="fastlane/metadata/android/en-US/images/phoneScreenshots/8.png?raw=true">
+<img width=200 alt="Settings"
+src="fastlane/metadata/android/en-US/images/phoneScreenshots/9.png?raw=true">
 
 # Download
 Mauth is available on F-Droid and GitHub Releases page.  
