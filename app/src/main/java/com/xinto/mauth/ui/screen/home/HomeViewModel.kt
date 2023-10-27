@@ -15,9 +15,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.xinto.mauth.R
 import com.xinto.mauth.Mauth
-import com.xinto.mauth.domain.AccountRepository
-import com.xinto.mauth.domain.model.DomainAccountInfo
-import com.xinto.mauth.domain.OtpRepository
+import com.xinto.mauth.domain.account.AccountRepository
+import com.xinto.mauth.domain.account.model.DomainAccountInfo
+import com.xinto.mauth.domain.otp.OtpRepository
 import com.xinto.mauth.domain.QrRepository
 import com.xinto.mauth.core.settings.model.SortSetting
 import com.xinto.mauth.core.settings.Settings

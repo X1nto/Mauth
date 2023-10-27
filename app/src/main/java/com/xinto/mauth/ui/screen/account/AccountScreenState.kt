@@ -1,7 +1,7 @@
 package com.xinto.mauth.ui.screen.account
 
 import androidx.compose.runtime.Immutable
-import com.xinto.mauth.domain.model.DomainAccountInfo
+import com.xinto.mauth.domain.account.model.DomainAccountInfo
 
 @Immutable
 sealed interface AccountScreenState {

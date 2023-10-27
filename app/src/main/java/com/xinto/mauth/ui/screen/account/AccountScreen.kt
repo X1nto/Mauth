@@ -14,7 +14,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
-import com.xinto.mauth.domain.model.DomainAccountInfo
+import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.ui.screen.account.component.AccountExitDialog
 import com.xinto.mauth.ui.screen.account.state.AccountScreenError
 import com.xinto.mauth.ui.screen.account.state.AccountScreenLoading

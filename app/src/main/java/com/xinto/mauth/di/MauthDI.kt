@@ -10,8 +10,8 @@ import com.xinto.mauth.core.otp.parser.OtpUriParser
 import com.xinto.mauth.core.otp.transformer.DefaultKeyTransformer
 import com.xinto.mauth.core.otp.transformer.KeyTransformer
 import com.xinto.mauth.db.AccountDatabase
-import com.xinto.mauth.domain.AccountRepository
-import com.xinto.mauth.domain.OtpRepository
+import com.xinto.mauth.domain.account.AccountRepository
+import com.xinto.mauth.domain.otp.OtpRepository
 import com.xinto.mauth.domain.QrRepository
 import com.xinto.mauth.domain.SettingsRepository
 import com.xinto.mauth.core.settings.DefaultSettings

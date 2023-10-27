@@ -2,8 +2,8 @@ package com.xinto.mauth.ui.screen.account
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.xinto.mauth.domain.AccountRepository
-import com.xinto.mauth.domain.model.DomainAccountInfo
+import com.xinto.mauth.domain.account.AccountRepository
+import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.util.catchMap
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flowOf

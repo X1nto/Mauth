@@ -1,4 +1,4 @@
-package com.xinto.mauth.domain.model
+package com.xinto.mauth.domain.otp.model
 
 import androidx.compose.runtime.Immutable
 

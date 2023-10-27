@@ -1,4 +1,4 @@
-package com.xinto.mauth.domain
+package com.xinto.mauth.domain.otp
 
 import com.xinto.mauth.core.otp.generator.OtpGenerator
 import com.xinto.mauth.core.otp.model.OtpType
@@ -7,8 +7,8 @@ import com.xinto.mauth.core.otp.parser.OtpUriParserResult
 import com.xinto.mauth.core.otp.transformer.KeyTransformer
 import com.xinto.mauth.db.dao.account.AccountsDao
 import com.xinto.mauth.db.dao.rtdata.RtdataDao
-import com.xinto.mauth.domain.model.DomainAccountInfo
-import com.xinto.mauth.domain.model.DomainOtpRealtimeData
+import com.xinto.mauth.domain.account.model.DomainAccountInfo
+import com.xinto.mauth.domain.otp.model.DomainOtpRealtimeData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow

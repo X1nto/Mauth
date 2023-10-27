@@ -15,7 +15,7 @@ import androidx.compose.ui.res.stringResource
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
 import com.xinto.mauth.R
-import com.xinto.mauth.domain.model.DomainAccountInfo
+import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.ui.screen.qrscan.component.QrScanPermissionDeniedDialog
 import com.xinto.mauth.ui.screen.qrscan.state.QrScanPermissionDenied
 import com.xinto.mauth.ui.screen.qrscan.state.QrScanPermissionGranted

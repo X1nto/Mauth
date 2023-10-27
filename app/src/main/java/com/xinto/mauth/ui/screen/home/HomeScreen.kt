@@ -13,8 +13,8 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
-import com.xinto.mauth.domain.model.DomainAccountInfo
-import com.xinto.mauth.domain.model.DomainOtpRealtimeData
+import com.xinto.mauth.domain.account.model.DomainAccountInfo
+import com.xinto.mauth.domain.otp.model.DomainOtpRealtimeData
 import com.xinto.mauth.core.settings.model.SortSetting
 import com.xinto.mauth.ui.screen.home.component.HomeAddAccountSheet
 import com.xinto.mauth.ui.screen.home.component.HomeBottomBar

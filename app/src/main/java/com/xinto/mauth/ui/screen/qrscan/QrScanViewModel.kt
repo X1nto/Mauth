@@ -1,8 +1,8 @@
 package com.xinto.mauth.ui.screen.qrscan
 
 import androidx.lifecycle.ViewModel
-import com.xinto.mauth.domain.model.DomainAccountInfo
-import com.xinto.mauth.domain.OtpRepository
+import com.xinto.mauth.domain.account.model.DomainAccountInfo
+import com.xinto.mauth.domain.otp.OtpRepository
 
 class QrScanViewModel(
     private val repository: OtpRepository

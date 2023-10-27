@@ -1,4 +1,4 @@
-package com.xinto.mauth.domain.model
+package com.xinto.mauth.domain.account.model
 
 import android.net.Uri
 import androidx.compose.runtime.Immutable
