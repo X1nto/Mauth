@@ -19,9 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
-import androidx.lifecycle.lifecycleScope
 import com.xinto.mauth.domain.AuthRepository
 import com.xinto.mauth.domain.SettingsRepository
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
@@ -36,14 +33,13 @@ import com.xinto.mauth.ui.screen.pinsetup.PinSetupScreen
 import com.xinto.mauth.ui.screen.qrscan.QrScanScreen
 import com.xinto.mauth.ui.screen.settings.SettingsScreen
 import com.xinto.mauth.ui.theme.MauthTheme
+import com.xinto.mauth.util.launchInLifecycle
 import dev.olshevski.navigation.reimagined.AnimatedNavHost
 import dev.olshevski.navigation.reimagined.NavAction
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop
 import dev.olshevski.navigation.reimagined.rememberNavController
 import dev.olshevski.navigation.reimagined.replaceAll
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 
@@ -59,8 +55,7 @@ class MainActivity : FragmentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         settings.getSecureMode()
-            .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-            .onEach {
+            .launchInLifecycle(lifecycle) {
                 if (it) {
                     window.setFlags(
                         WindowManager.LayoutParams.FLAG_SECURE,
@@ -70,7 +65,6 @@ class MainActivity : FragmentActivity() {
                     window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
                 }
             }
-            .launchIn(lifecycleScope)
 
         val initialScreen = runBlocking {
             if (auth.isProtected()) {
@@ -166,9 +160,7 @@ class MainActivity : FragmentActivity() {
                             }
                             is MauthDestination.QrScanner -> {
                                 QrScanScreen(
-                                    onBack = {
-                                        navigator.pop()
-                                    },
+                                    onBack = navigator::pop,
                                     onScan = {
                                         navigator.replaceAll(MauthDestination.AddAccount(it))
                                     }
@@ -176,9 +168,7 @@ class MainActivity : FragmentActivity() {
                             }
                             is MauthDestination.Settings -> {
                                 SettingsScreen(
-                                    onBack = {
-                                        navigator.pop()
-                                    },
+                                    onBack = navigator::pop,
                                     onSetupPinCode = {
                                         navigator.navigate(MauthDestination.PinSetup)
                                     },
@@ -190,32 +180,20 @@ class MainActivity : FragmentActivity() {
                             is MauthDestination.AddAccount -> {
                                 AddAccountScreen(
                                     prefilled = screen.params,
-                                    onExit = {
-                                        navigator.pop()
-                                    }
+                                    onExit = navigator::pop
                                 )
                             }
                             is MauthDestination.EditAccount -> {
                                 EditAccountScreen(
                                     id = screen.id,
-                                    onExit = {
-                                        navigator.pop()
-                                    }
+                                    onExit = navigator::pop
                                 )
                             }
                             is MauthDestination.PinSetup -> {
-                                PinSetupScreen(
-                                    onExit = {
-                                        navigator.pop()
-                                    }
-                                )
+                                PinSetupScreen(onExit = navigator::pop)
                             }
                             is MauthDestination.PinRemove -> {
-                                PinRemoveScreen(
-                                    onExit = {
-                                        navigator.pop()
-                                    }
-                                )
+                                PinRemoveScreen(onExit = navigator::pop)
                             }
                         }
                     }
