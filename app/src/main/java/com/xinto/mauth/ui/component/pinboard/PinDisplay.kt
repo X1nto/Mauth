@@ -29,11 +29,16 @@ import com.xinto.mauth.ui.theme.MauthTheme
 fun PinDisplay(
     length: Int,
     modifier: Modifier = Modifier,
+    error: Boolean = false,
 ) {
     val inspectionMode = LocalInspectionMode.current
+    val color = when (error) {
+        true -> MaterialTheme.colorScheme.errorContainer
+        false -> MaterialTheme.colorScheme.secondaryContainer
+    }
     Surface(
         modifier = modifier,
-        color = MaterialTheme.colorScheme.secondaryContainer,
+        color = color,
         shape = CircleShape
     ) {
         Row(

@@ -39,6 +39,7 @@ fun PinScaffold(
     contentColor: Color = contentColorFor(containerColor),
     contentWindowInsets: WindowInsets = ScaffoldDefaults.contentWindowInsets,
     description: (@Composable () -> Unit)? = null,
+    error: Boolean = false,
     codeLength: Int,
 ) {
     Scaffold(
@@ -80,7 +81,8 @@ fun PinScaffold(
             PinDisplay(
                 modifier = Modifier
                     .fillMaxWidth(),
-                length = codeLength
+                length = codeLength,
+                error = error,
             )
             PinBoard(
                 modifier = Modifier

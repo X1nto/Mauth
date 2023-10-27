@@ -1,6 +1,8 @@
 package com.xinto.mauth.di
 
 import androidx.room.Room
+import com.xinto.mauth.core.auth.AuthManager
+import com.xinto.mauth.core.auth.DefaultAuthManager
 import com.xinto.mauth.core.otp.generator.DefaultOtpGenerator
 import com.xinto.mauth.core.otp.generator.OtpGenerator
 import com.xinto.mauth.core.otp.parser.DefaultOtpUriParser
@@ -14,9 +16,11 @@ import com.xinto.mauth.domain.QrRepository
 import com.xinto.mauth.domain.SettingsRepository
 import com.xinto.mauth.core.settings.DefaultSettings
 import com.xinto.mauth.core.settings.Settings
+import com.xinto.mauth.domain.AuthRepository
 import com.xinto.mauth.ui.screen.account.AccountViewModel
 import com.xinto.mauth.ui.screen.auth.AuthViewModel
 import com.xinto.mauth.ui.screen.home.HomeViewModel
+import com.xinto.mauth.ui.screen.pinremove.PinRemoveViewModel
 import com.xinto.mauth.ui.screen.pinsetup.PinSetupViewModel
 import com.xinto.mauth.ui.screen.qrscan.QrScanViewModel
 import com.xinto.mauth.ui.screen.settings.SettingsViewModel
@@ -36,6 +40,7 @@ object MauthDI {
             DefaultKeyTransformer(Base32())
         } bind KeyTransformer::class
         singleOf(::DefaultSettings) bind Settings::class
+        singleOf(::DefaultAuthManager) bind AuthManager::class
     }
 
     val DbModule = module {
@@ -62,6 +67,7 @@ object MauthDI {
         singleOf(::OtpRepository)
         singleOf(::QrRepository)
         singleOf(::SettingsRepository)
+        singleOf(::AuthRepository)
     }
 
     val UiModule = module {
@@ -69,6 +75,7 @@ object MauthDI {
         viewModelOf(::SettingsViewModel)
         viewModelOf(::QrScanViewModel)
         viewModelOf(::PinSetupViewModel)
+        viewModelOf(::PinRemoveViewModel)
         viewModelOf(::HomeViewModel)
         viewModelOf(::AuthViewModel)
     }

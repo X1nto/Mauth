@@ -1,10 +1,6 @@
-package com.xinto.mauth.ui.screen.pinsetup
+package com.xinto.mauth.ui.screen.pinremove
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.Icon
@@ -21,28 +17,20 @@ import com.xinto.mauth.ui.component.pinboard.rememberPinBoardState
 import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun PinSetupScreen(
+fun PinRemoveScreen(
     onExit: () -> Unit
 ) {
-    val viewModel: PinSetupViewModel = getViewModel()
-    val code by viewModel.code.collectAsStateWithLifecycle()
+    val viewModel: PinRemoveViewModel = getViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val error by viewModel.error.collectAsStateWithLifecycle()
     BackHandler(onBack = onExit)
-    PinSetupScreen(
-        code = code,
+    PinRemoveScreen(
         state = state,
-        error = error,
-        onNext = {
-            if (viewModel.next()) {
+        onEnter = {
+            if (viewModel.removePin()) {
                 onExit()
             }
         },
-        onPrevious = {
-            if (viewModel.previous()) {
-                onExit()
-            }
-        },
+        onBack = onExit,
         onNumberEnter = viewModel::addNumber,
         onNumberDelete = viewModel::deleteLast,
         onAllDelete = viewModel::clear
@@ -50,38 +38,24 @@ fun PinSetupScreen(
 }
 
 @Composable
-fun PinSetupScreen(
-    code: String,
-    state: PinSetupScreenState,
-    error: Boolean,
-    onNext: () -> Unit,
-    onPrevious: () -> Unit,
+fun PinRemoveScreen(
+    state: PinRemoveScreenState,
+    onEnter: () -> Unit,
+    onBack: () -> Unit,
     onNumberEnter: (Char) -> Unit,
     onNumberDelete: () -> Unit,
     onAllDelete: () -> Unit,
 ) {
     PinScaffold(
-        codeLength = code.length,
-        error = error,
+        codeLength = state.code.length,
+        error = state is PinRemoveScreenState.Error,
         topBar = {
             LargeTopAppBar(
                 title = {
-                    AnimatedContent(
-                        targetState = state,
-                        label = "PinSetupDescription",
-                        transitionSpec = {
-                            fadeIn() togetherWith fadeOut()
-                        }
-                    ) {
-                        val resource = when (it) {
-                            is PinSetupScreenState.Initial -> R.string.pinsetup_title_create
-                            is PinSetupScreenState.Confirm -> R.string.pinsetup_title_confirm
-                        }
-                        Text(stringResource(resource))
-                    }
+                    Text(stringResource(R.string.pinremove_title))
                 },
                 navigationIcon = {
-                    IconButton(onClick = onPrevious) {
+                    IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.Rounded.ArrowBack,
                             contentDescription = null
@@ -95,7 +69,7 @@ fun PinSetupScreen(
             showEnter = true,
             onNumberClick = onNumberEnter,
             onBackspaceClick = onNumberDelete,
-            onEnterClick = onNext,
+            onEnterClick = onEnter,
             onBackspaceLongClick = onAllDelete
         )
     )

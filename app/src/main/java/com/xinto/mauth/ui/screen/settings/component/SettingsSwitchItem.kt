@@ -6,15 +6,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun SettingsSwitch(
+fun SettingsSwitchItem(
+    modifier: Modifier = Modifier,
     onCheckedChange: ((Boolean) -> Unit)?,
     checked: Boolean,
     title: @Composable () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
     description: (@Composable () -> Unit)? = null,
     icon: (@Composable () -> Unit)? = null,
-    thumbContent: (@Composable () -> Unit)? = null
+    thumbContent: (@Composable () -> Unit)? = null,
+    enabled: Boolean = true,
 ) {
     val toggleableModifier = if (onCheckedChange != null) {
         Modifier.toggleable(

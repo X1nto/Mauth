@@ -17,7 +17,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
-import com.xinto.mauth.ui.screen.settings.component.SettingsSwitch
+import com.xinto.mauth.ui.component.rememberBiometricHandler
+import com.xinto.mauth.ui.component.rememberBiometricPromptData
+import com.xinto.mauth.ui.screen.settings.component.SettingsSwitchItem
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -28,17 +30,39 @@ fun SettingsScreen(
 ) {
     val viewModel: SettingsViewModel = koinViewModel()
     val secureMode by viewModel.secureMode.collectAsStateWithLifecycle()
+    val pinLock by viewModel.pinLock.collectAsStateWithLifecycle()
+    val biometrics by viewModel.biometrics.collectAsStateWithLifecycle()
+
+    val biometricHandler = rememberBiometricHandler(
+        onAuthSuccess = viewModel::toggleBiometrics
+    )
+    val setupPromptData = rememberBiometricPromptData(
+        title = stringResource(R.string.settings_biometrics_setup_title),
+        negativeButtonText = stringResource(R.string.settings_biometrics_setup_cancel)
+    )
+    val disablePromptData = rememberBiometricPromptData(
+        title = stringResource(R.string.settings_biometrics_disable_title),
+        negativeButtonText = stringResource(R.string.settings_biometrics_disable_cancel)
+    )
+
+    BackHandler(onBack = onBack)
     SettingsScreen(
         onBack = onBack,
         secureMode = secureMode,
         onSecureModeChange = viewModel::updateSecureMode,
-        pinCode = false,
+        pinCode = pinLock,
         onPinCodeChange = {
             if (it) {
                 onSetupPinCode()
             } else {
                 onDisablePinCode()
             }
+        },
+        showBiometrics = biometricHandler.canUseBiometrics(),
+        biometrics = biometrics,
+        onBiometricsChange = {
+            val promptData = if (it) setupPromptData else disablePromptData
+            biometricHandler.requestBiometrics(promptData)
         }
     )
 }
@@ -50,9 +74,11 @@ fun SettingsScreen(
     onSecureModeChange: (Boolean) -> Unit,
     pinCode: Boolean,
     onPinCodeChange: (Boolean) -> Unit,
+    showBiometrics: Boolean,
+    biometrics: Boolean,
+    onBiometricsChange: (Boolean) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    BackHandler(onBack = onBack)
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -81,7 +107,7 @@ fun SettingsScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             item {
-                SettingsSwitch(
+                SettingsSwitchItem(
                     onCheckedChange = onSecureModeChange,
                     checked = secureMode,
                     title = {
@@ -93,7 +119,7 @@ fun SettingsScreen(
                 )
             }
             item {
-                SettingsSwitch(
+                SettingsSwitchItem(
                     onCheckedChange = onPinCodeChange,
                     checked = pinCode,
                     title = {
@@ -103,6 +129,18 @@ fun SettingsScreen(
                         Text(stringResource(R.string.settings_prefs_pincode_description))
                     }
                 )
+            }
+            if (showBiometrics) {
+                item {
+                    SettingsSwitchItem(
+                        onCheckedChange = onBiometricsChange,
+                        checked = biometrics,
+                        title = {
+                            Text(stringResource(R.string.settings_prefs_biometrics))
+                        },
+                        enabled = pinCode
+                    )
+                }
             }
         }
     }

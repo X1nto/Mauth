@@ -122,6 +122,7 @@ dependencies {
     ksp("androidx.room:room-compiler:$roomVersion")
 
     implementation("androidx.biometric:biometric:1.1.0")
+    implementation("androidx.security:security-crypto-ktx:1.1.0-alpha06")
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 

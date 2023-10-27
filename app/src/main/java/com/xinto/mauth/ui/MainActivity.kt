@@ -21,6 +21,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import com.xinto.mauth.domain.AuthRepository
 import com.xinto.mauth.domain.OtpRepository
 import com.xinto.mauth.domain.SettingsRepository
 import com.xinto.mauth.domain.model.DomainAccountInfo
@@ -29,6 +30,7 @@ import com.xinto.mauth.ui.screen.account.AddAccountScreen
 import com.xinto.mauth.ui.screen.account.EditAccountScreen
 import com.xinto.mauth.ui.screen.auth.AuthScreen
 import com.xinto.mauth.ui.screen.home.HomeScreen
+import com.xinto.mauth.ui.screen.pinremove.PinRemoveScreen
 import com.xinto.mauth.ui.screen.pinsetup.PinSetupScreen
 import com.xinto.mauth.ui.screen.qrscan.QrScanScreen
 import com.xinto.mauth.ui.screen.settings.SettingsScreen
@@ -40,12 +42,14 @@ import dev.olshevski.navigation.reimagined.rememberNavController
 import dev.olshevski.navigation.reimagined.replaceAll
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 
 class MainActivity : FragmentActivity() {
 
     private val settings: SettingsRepository by inject()
     private val otp: OtpRepository by inject()
+    private val auth: AuthRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -66,13 +70,21 @@ class MainActivity : FragmentActivity() {
             }
             .launchIn(lifecycleScope)
 
+        val initialScreen = runBlocking {
+            if (auth.isProtected()) {
+                MauthDestination.Auth
+            } else {
+                MauthDestination.Home
+            }
+        }
+
         setContent {
             MauthTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val navigator = rememberNavController<MauthDestination>(MauthDestination.Auth)
+                    val navigator = rememberNavController(initialScreen)
 
                     LaunchedEffect(intent.data) {
                         val accountInfo = otp.parseUriToAccountInfo(intent.data.toString())
@@ -108,7 +120,11 @@ class MainActivity : FragmentActivity() {
                     ) { screen ->
                         when (screen) {
                             is MauthDestination.Auth -> {
-                                AuthScreen()
+                                AuthScreen(
+                                    onAuthSuccess = {
+                                        navigator.replaceAll(MauthDestination.Home)
+                                    }
+                                )
                             }
                             is MauthDestination.Home -> {
                                 HomeScreen(
@@ -149,6 +165,7 @@ class MainActivity : FragmentActivity() {
                                         navigator.navigate(MauthDestination.PinSetup)
                                     },
                                     onDisablePinCode = {
+                                        navigator.navigate(MauthDestination.PinRemove)
                                     }
                                 )
                             }
@@ -170,6 +187,13 @@ class MainActivity : FragmentActivity() {
                             }
                             is MauthDestination.PinSetup -> {
                                 PinSetupScreen(
+                                    onExit = {
+                                        navigator.pop()
+                                    }
+                                )
+                            }
+                            is MauthDestination.PinRemove -> {
+                                PinRemoveScreen(
                                     onExit = {
                                         navigator.pop()
                                     }

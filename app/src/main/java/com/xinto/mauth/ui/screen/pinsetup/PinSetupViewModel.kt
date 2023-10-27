@@ -1,13 +1,21 @@
 package com.xinto.mauth.ui.screen.pinsetup
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.xinto.mauth.domain.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class PinSetupViewModel : ViewModel() {
+class PinSetupViewModel(
+    private val authRepository: AuthRepository
+) : ViewModel() {
 
     private var initialCode: String? = null
+
+    private val _error = MutableStateFlow(false)
+    val error = _error.asStateFlow()
 
     private val _code = MutableStateFlow("")
     val code = _code.asStateFlow()
@@ -20,7 +28,14 @@ class PinSetupViewModel : ViewModel() {
      */
     fun next(): Boolean {
         if (state.value is PinSetupScreenState.Confirm) {
-            return initialCode == code.value
+            val matches = initialCode == code.value
+            if (matches) {
+                authRepository.updateCode(code.value)
+            } else {
+                _error.value = true
+                clear()
+            }
+            return matches
         }
 
         _state.value = PinSetupScreenState.Confirm
@@ -45,6 +60,7 @@ class PinSetupViewModel : ViewModel() {
     }
 
     fun addNumber(number: Char) {
+        _error.value = false
         _code.update { it + number }
     }
 

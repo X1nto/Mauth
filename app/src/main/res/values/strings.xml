@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name" translatable="false">Mauth</string>
 
+    <string name="auth_biometrics_title">Biometric Authentication</string>
+    <string name="auth_biometrics_cancel">Cancel</string>
+
     <string name="home_dashboard_empty">Nothing here yet</string>
     <string name="home_dashboard_error">Failed to load accounts</string>
     <string name="home_addaccount_title">Add an account</string>
@@ -52,7 +55,14 @@
     <string name="settings_prefs_securemode_description">Prevents screenshots in the app</string>
     <string name="settings_prefs_pincode">PIN Lock</string>
     <string name="settings_prefs_pincode_description">Require authentication on startup</string>
-    
-    <string name="pinsetup_description_create">Set a PIN</string>
-    <string name="pinsetup_description_confirm">Confirm your PIN</string>
+    <string name="settings_prefs_biometrics">Biometric Authentication</string>
+    <string name="settings_biometrics_setup_title">Setup Biometrics</string>
+    <string name="settings_biometrics_setup_cancel">Cancel</string>
+    <string name="settings_biometrics_disable_title">Disable Biometrics</string>
+    <string name="settings_biometrics_disable_cancel">Cancel</string>
+
+    <string name="pinsetup_title_create">Set a PIN</string>
+    <string name="pinsetup_title_confirm">Confirm your PIN</string>
+
+    <string name="pinremove_title">Enter your PIN</string>
 </resources>
