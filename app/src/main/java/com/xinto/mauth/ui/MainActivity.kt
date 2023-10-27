@@ -11,6 +11,8 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeDrawingPadding
@@ -40,6 +42,7 @@ import com.xinto.mauth.ui.screen.qrscan.QrScanScreen
 import com.xinto.mauth.ui.screen.settings.SettingsScreen
 import com.xinto.mauth.ui.theme.MauthTheme
 import dev.olshevski.navigation.reimagined.AnimatedNavHost
+import dev.olshevski.navigation.reimagined.NavAction
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop
 import dev.olshevski.navigation.reimagined.rememberNavController
@@ -118,7 +121,23 @@ class MainActivity : FragmentActivity() {
                                         )
                                     )
                                 }
-                                else -> fadeIn() togetherWith fadeOut()
+                                else -> when (action) {
+                                    NavAction.Navigate -> {
+                                        fadeIn() + scaleIn(
+                                            initialScale = 0.9f
+                                        ) togetherWith fadeOut() + scaleOut(
+                                            targetScale = 1.1f
+                                        )
+                                    }
+                                    NavAction.Pop -> {
+                                        fadeIn() + scaleIn(
+                                            initialScale = 1.1f
+                                        ) togetherWith fadeOut() + scaleOut(
+                                            targetScale = 0.9f
+                                        )
+                                    }
+                                    else -> fadeIn() togetherWith fadeOut()
+                                }
                             }
                         }
                     ) { screen ->
