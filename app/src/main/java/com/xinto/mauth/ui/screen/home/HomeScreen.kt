@@ -39,18 +39,20 @@ fun HomeScreen(
     onAddAccountViaScanning: () -> Unit,
     onAddAccountFromImage: (DomainAccountInfo) -> Unit,
     onSettingsClick: () -> Unit,
+    onAboutClick: () -> Unit,
     onAccountEdit: (UUID) -> Unit
 ) {
     val viewModel: HomeViewModel = koinViewModel()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val realTimeData by viewModel.realTimeData.collectAsStateWithLifecycle()
+    val selectedAccounts by viewModel.selectedAccounts.collectAsStateWithLifecycle()
+    val activeSortSetting by viewModel.activeSortSetting.collectAsStateWithLifecycle()
+
     val photoPickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         viewModel.getAccountInfoFromQrUri(uri)?.let {
             onAddAccountFromImage(it)
         }
     }
-    val state by viewModel.state.collectAsStateWithLifecycle()
-    val realTimeData by viewModel.realTimeData.collectAsStateWithLifecycle()
-    val selectedAccounts by viewModel.selectedAccounts.collectAsStateWithLifecycle()
-    val activeSortSetting by viewModel.activeSortSetting.collectAsStateWithLifecycle()
     HomeScreen(
         onAddAccountManually = onAddAccountManually,
         onAddAccountViaScanning = onAddAccountViaScanning,
@@ -62,6 +64,7 @@ fun HomeScreen(
             )
         },
         onSettingsClick = onSettingsClick,
+        onAboutClick = onAboutClick,
         onAccountSelect = viewModel::toggleAccountSelection,
         onCancelAccountSelection = viewModel::clearAccountSelection,
         onDeleteSelectedAccounts = viewModel::deleteSelectedAccounts,
@@ -82,6 +85,7 @@ fun HomeScreen(
     onAddAccountViaScanning: () -> Unit,
     onAddAccountFromImage: () -> Unit,
     onSettingsClick: () -> Unit,
+    onAboutClick: () -> Unit,
     onAccountSelect: (UUID) -> Unit,
     onCancelAccountSelection: () -> Unit,
     onDeleteSelectedAccounts: () -> Unit,
@@ -117,6 +121,7 @@ fun HomeScreen(
                     showDeleteDialog = true
                 },
                 onSettingsClick = onSettingsClick,
+                onAboutClick = onAboutClick,
                 activeSortSetting = activeSortSetting,
                 onActiveSortChange = onActiveSortChange
             )

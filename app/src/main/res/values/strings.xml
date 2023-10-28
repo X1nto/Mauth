@@ -66,4 +66,7 @@
     <string name="pinsetup_title_confirm">Confirm your PIN</string>
 
     <string name="pinremove_title">Enter your PIN</string>
+
+    <string name="about_title">About</string>
+    <string name="about_version">Version v%1$s</string>
 </resources>

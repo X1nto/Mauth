@@ -35,7 +35,8 @@ fun HomeBottomBar(
     onAdd: () -> Unit,
     onCancelSelection: () -> Unit,
     onDeleteSelected: () -> Unit,
-    onSettingsClick: () -> Unit
+    onSettingsClick: () -> Unit,
+    onAboutClick: () -> Unit,
 ) {
     BottomAppBar(
         actions = {
@@ -75,7 +76,7 @@ fun HomeBottomBar(
                             ) {
                                 DropdownMenuItem(
                                     text = {
-                                        Text(stringResource(R.string.home_more_settings))
+                                        Text(stringResource(R.string.settings_title))
                                     },
                                     leadingIcon = {
                                         Icon(
@@ -86,6 +87,21 @@ fun HomeBottomBar(
                                     onClick = {
                                         isMoreActionsVisible = false
                                         onSettingsClick()
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(stringResource(R.string.about_title))
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.ic_info),
+                                            contentDescription = null
+                                        )
+                                    },
+                                    onClick = {
+                                        isMoreActionsVisible = false
+                                        onAboutClick()
                                     }
                                 )
                             }
