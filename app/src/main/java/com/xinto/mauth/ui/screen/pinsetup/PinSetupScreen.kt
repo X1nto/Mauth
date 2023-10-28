@@ -27,7 +27,11 @@ fun PinSetupScreen(
     val code by viewModel.code.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val error by viewModel.error.collectAsStateWithLifecycle()
-    BackHandler(onBack = onExit)
+    BackHandler(onBack = {
+        if (viewModel.previous()) {
+            onExit()
+        }
+    })
     PinSetupScreen(
         code = code,
         state = state,

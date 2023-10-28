@@ -58,7 +58,8 @@ fun PinScaffold(
                 .fillMaxWidth()
                 .fillMaxHeight()
                 .padding(it)
-                .padding(32.dp),
+                .padding(40.dp)
+                .padding(bottom = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Bottom),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -69,7 +70,7 @@ fun PinScaffold(
                     contentAlignment = Alignment.Center
                 ) {
                     CompositionLocalProvider(
-                        LocalTextStyle provides MaterialTheme.typography.headlineSmall.copy(
+                        LocalTextStyle provides MaterialTheme.typography.headlineLarge.copy(
                             textAlign = TextAlign.Center
                         )
                     ) {
