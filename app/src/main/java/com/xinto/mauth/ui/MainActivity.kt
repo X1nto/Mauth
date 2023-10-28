@@ -26,6 +26,7 @@ import com.xinto.mauth.domain.SettingsRepository
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.domain.otp.OtpRepository
 import com.xinto.mauth.ui.navigation.MauthDestination
+import com.xinto.mauth.ui.screen.about.AboutScreen
 import com.xinto.mauth.ui.screen.account.AddAccountScreen
 import com.xinto.mauth.ui.screen.account.EditAccountScreen
 import com.xinto.mauth.ui.screen.auth.AuthScreen
@@ -162,6 +163,9 @@ class MainActivity : FragmentActivity() {
                                     onSettingsClick = {
                                         navigator.navigate(MauthDestination.Settings)
                                     },
+                                    onAboutClick = {
+                                        navigator.navigate(MauthDestination.About)
+                                    },
                                     onAccountEdit = {
                                         navigator.navigate(MauthDestination.EditAccount(it))
                                     }
@@ -185,6 +189,9 @@ class MainActivity : FragmentActivity() {
                                         navigator.navigate(MauthDestination.PinRemove)
                                     }
                                 )
+                            }
+                            is MauthDestination.About -> {
+                                AboutScreen(onBack = navigator::pop)
                             }
                             is MauthDestination.AddAccount -> {
                                 AddAccountScreen(
