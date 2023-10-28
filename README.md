@@ -60,8 +60,10 @@ src="fastlane/metadata/android/en-US/images/phoneScreenshots/6.png?raw=true">
 src="fastlane/metadata/android/en-US/images/phoneScreenshots/7.png?raw=true">
 <img width=200 alt="Account selection"
 src="fastlane/metadata/android/en-US/images/phoneScreenshots/8.png?raw=true">
-<img width=200 alt="Settings"
+<img width=200 alt="Settings screen"
 src="fastlane/metadata/android/en-US/images/phoneScreenshots/9.png?raw=true">
+<img width=200 alt="About screen"
+src="fastlane/metadata/android/en-US/images/phoneScreenshots/10.png?raw=true">
 
 # Download
 Mauth is available on F-Droid and GitHub Releases page.  
