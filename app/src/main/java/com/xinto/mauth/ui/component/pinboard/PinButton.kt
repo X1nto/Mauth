@@ -94,7 +94,7 @@ fun PinButton(
         contentAlignment = Alignment.Center
     ) {
         CompositionLocalProvider(
-            LocalTextStyle provides MaterialTheme.typography.headlineMedium,
+            LocalTextStyle provides MaterialTheme.typography.headlineLarge,
             LocalContentColor provides contentColor,
             content = content
         )

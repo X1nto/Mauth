@@ -70,7 +70,7 @@ fun PinScaffold(
                     contentAlignment = Alignment.Center
                 ) {
                     CompositionLocalProvider(
-                        LocalTextStyle provides MaterialTheme.typography.headlineLarge.copy(
+                        LocalTextStyle provides MaterialTheme.typography.headlineMedium.copy(
                             textAlign = TextAlign.Center
                         )
                     ) {
