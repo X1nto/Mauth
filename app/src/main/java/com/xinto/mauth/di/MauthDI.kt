@@ -24,7 +24,6 @@ import com.xinto.mauth.ui.screen.pinremove.PinRemoveViewModel
 import com.xinto.mauth.ui.screen.pinsetup.PinSetupViewModel
 import com.xinto.mauth.ui.screen.qrscan.QrScanViewModel
 import com.xinto.mauth.ui.screen.settings.SettingsViewModel
-import org.apache.commons.codec.binary.Base32
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.singleOf
@@ -36,9 +35,7 @@ object MauthDI {
     val CoreModule = module {
         singleOf(::DefaultOtpGenerator) bind OtpGenerator::class
         singleOf(::DefaultOtpUriParser) bind OtpUriParser::class
-        single {
-            DefaultKeyTransformer(Base32())
-        } bind KeyTransformer::class
+        singleOf(::DefaultKeyTransformer) bind KeyTransformer::class
         singleOf(::DefaultSettings) bind Settings::class
         singleOf(::DefaultAuthManager) bind AuthManager::class
     }
