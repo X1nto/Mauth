@@ -202,9 +202,7 @@ private fun <T, V : AnimationVector> animatePressValue(
     interactionSource: InteractionSource
 ): State<T> {
     LaunchedEffect(interactionSource, initialValue, targetValue) {
-        val channel = Channel<Unit>(1, onBufferOverflow = BufferOverflow.DROP_LATEST) {
-            println(it)
-        }
+        val channel = Channel<Unit>(1, onBufferOverflow = BufferOverflow.DROP_LATEST)
         launch {
             interactionSource.interactions.collect {
                 if (it is PressInteraction.Press) {
