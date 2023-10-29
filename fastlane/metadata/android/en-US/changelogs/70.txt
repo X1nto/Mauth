@@ -1,0 +1,16 @@
+New Features
+============
+- Added Chinese (Simplified) translation
+- Added Portuguese translation
+- Implemented authentication methods
+  - PIN Authentication
+  - Biometric Authentication (requires PIN auth to be enabled)
+- Added the About screen
+  - The About screen includes a shortcut that navigates you to the repository's feedback (issues) page
+
+Changes
+=======
+- Updated navigation transitions to be more fluid
+- Other small UI tweaks
+
+Note: Please consider reporting any bugs regarding the new pin and biometric authentication on Mauth's feedback page. The more security issues I fix before v1.0.0, the safer it'll be for people to use Mauth.
