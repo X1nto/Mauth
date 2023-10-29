@@ -37,6 +37,7 @@ fun SettingsSwitchItem(
                 enabled = enabled,
                 thumbContent = thumbContent
             )
-        }
+        },
+        enabled = enabled
     )
 }
