@@ -1,10 +1,14 @@
 <resources>
     <string name="app_name" translatable="false">Mauth</string>
 
+    <string name="auth_title">Digite o seu PIN</string>
+    <string name="auth_biometrics_title">Autenticação biométrica</string>
+    <string name="auth_biometrics_cancel">Cancelar</string>
+
     <string name="home_dashboard_empty">Nada aqui ainda</string>
     <string name="home_dashboard_error">Falha ao carregar contas</string>
     <string name="home_addaccount_title">Adicionar uma conta</string>
-    <string name="home_addaccount_subtitle">Escanear um código QR ou inserir a chave manualmente</string>
+    <string name="home_addaccount_subtitle">Escaneie um código QR ou insira a chave manualmente.</string>
     <string name="home_addaccount_data_scanqr">Escanear um código QR</string>
     <string name="home_addaccount_data_imageqr">Escolher uma imagem</string>
     <string name="home_addaccount_data_manual">Inserir dados manualmente</string>
@@ -38,7 +42,7 @@
     <string name="account_data_algorithm">Algoritmo</string>
     <string name="account_data_digits">Dígitos</string>
     <string name="account_data_counter">Contador</string>
-    <string name="account_data_period">Período</string>
+    <string name="account_data_period">Duração</string>
     <string name="account_discard_title">Descartar alterações?</string>
     <string name="account_discard_subtitle">Suas alterações não serão salvas.</string>
     <string name="account_discard_buttons_discard">Descartar</string>
@@ -50,4 +54,21 @@
     <string name="settings_title">Configurações</string>
     <string name="settings_prefs_securemode">Modo seguro</string>
     <string name="settings_prefs_securemode_description">Impede capturas de tela no aplicativo</string>
+    <string name="settings_prefs_pincode">Bloqueio com PIN</string>
+    <string name="settings_prefs_pincode_description">Exigir autenticação na inicialização</string>
+    <string name="settings_prefs_biometrics">Autenticação biométrica</string>
+    <string name="settings_biometrics_setup_title">Configurar biometria</string>
+    <string name="settings_biometrics_setup_cancel">Cancelar</string>
+    <string name="settings_biometrics_disable_title">Desativar biometria</string>
+    <string name="settings_biometrics_disable_cancel">Cancelar</string>
+
+    <string name="pinsetup_title_create">Defina um PIN</string>
+    <string name="pinsetup_title_confirm">Confirme o seu PIN</string>
+
+    <string name="pinremove_title">Digite o seu PIN</string>
+
+    <string name="about_title">Sobre</string>
+    <string name="about_version">Versão v%1$s</string>
+    <string name="about_links_source">Código fonte</string>
+    <string name="about_links_feedback">Feedback</string>
 </resources>
