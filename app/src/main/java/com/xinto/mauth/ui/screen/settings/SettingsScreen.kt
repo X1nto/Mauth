@@ -1,7 +1,6 @@
 package com.xinto.mauth.ui.screen.settings
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -21,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
+import com.xinto.mauth.ui.component.lazygroup.itemGrouped
 import com.xinto.mauth.ui.component.rememberBiometricHandler
 import com.xinto.mauth.ui.component.rememberBiometricPromptData
 import com.xinto.mauth.ui.screen.settings.component.SettingsSwitchItem
@@ -108,9 +108,8 @@ fun SettingsScreen(
                 .padding(it)
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
             contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            item {
+            itemGrouped(header = { Text(stringResource(R.string.settings_category_security)) }) {
                 SettingsSwitchItem(
                     onCheckedChange = onSecureModeChange,
                     checked = secureMode,
@@ -121,8 +120,6 @@ fun SettingsScreen(
                         Text(stringResource(R.string.settings_prefs_securemode_description))
                     }
                 )
-            }
-            item {
                 SettingsSwitchItem(
                     onCheckedChange = onPinCodeChange,
                     checked = pinCode,
@@ -133,9 +130,7 @@ fun SettingsScreen(
                         Text(stringResource(R.string.settings_prefs_pincode_description))
                     }
                 )
-            }
-            if (showBiometrics) {
-                item {
+                if (showBiometrics) {
                     SettingsSwitchItem(
                         onCheckedChange = onBiometricsChange,
                         checked = biometrics,

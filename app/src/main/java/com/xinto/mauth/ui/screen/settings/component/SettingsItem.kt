@@ -1,13 +1,12 @@
 package com.xinto.mauth.ui.screen.settings.component
 
 import androidx.compose.foundation.clickable
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.xinto.mauth.ui.component.lazygroup.GroupedListItem
 
 @Composable
 fun SettingsItem(
@@ -29,10 +28,8 @@ fun SettingsItem(
             if (!enabled) it.copy(alpha = 0.38f) else it
         },
     )
-    ListItem(
-        modifier = Modifier
-            .clip(MaterialTheme.shapes.medium)
-            .then(modifier),
+    GroupedListItem(
+        modifier = modifier,
         leadingContent = icon,
         trailingContent = trailing,
         supportingContent = description,

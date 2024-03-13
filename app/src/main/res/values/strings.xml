@@ -52,6 +52,7 @@
     <string name="account_data_status_range">range %1$s-%2$s</string>
 
     <string name="settings_title">Settings</string>
+    <string name="settings_category_security">Security</string>
     <string name="settings_prefs_securemode">Secure mode</string>
     <string name="settings_prefs_securemode_description">Prevent screenshots within the app</string>
     <string name="settings_prefs_pincode">PIN Lock</string>
