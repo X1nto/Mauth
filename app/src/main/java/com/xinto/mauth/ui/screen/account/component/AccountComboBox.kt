@@ -14,12 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
 import com.xinto.mauth.R
+import kotlin.enums.EnumEntries
 
 @Composable
-fun <T : Enum<T>> AccountComboBox(
-    values: Array<T>,
-    value: T,
-    onValueChange: (T) -> Unit,
+fun <E : Enum<E>> AccountComboBox(
+    values: EnumEntries<E>,
+    value: E,
+    onValueChange: (E) -> Unit,
     label: (@Composable () -> Unit)? = null
 ) {
     val (expanded, setExpanded) = remember {

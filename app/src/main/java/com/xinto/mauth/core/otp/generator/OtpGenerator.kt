@@ -8,7 +8,7 @@ interface OtpGenerator {
         secret: ByteArray,
         counter: Long,
         digits: Int = 6,
-        digest: OtpDigest = OtpDigest.Sha1
+        digest: OtpDigest = OtpDigest.SHA1
     ): String
 
     fun generateTotp(
@@ -16,7 +16,7 @@ interface OtpGenerator {
         interval: Long,
         seconds: Long,
         digits: Int = 6,
-        digest: OtpDigest = OtpDigest.Sha1
+        digest: OtpDigest = OtpDigest.SHA1
     ): String
 
 }

@@ -190,7 +190,7 @@ fun AccountScreenSuccess(
         }
         item {
             AccountComboBox(
-                values = OtpType.values(),
+                values = OtpType.entries,
                 value = type,
                 onValueChange = onTypeChange,
                 label = {
@@ -200,7 +200,7 @@ fun AccountScreenSuccess(
         }
         item {
             AccountComboBox(
-                values = OtpDigest.values(),
+                values = OtpDigest.entries,
                 value = digest,
                 onValueChange = onDigestChange,
                 label = {
@@ -232,7 +232,7 @@ fun AccountScreenSuccess(
                 label = "HOTP/TOTP"
             ) {
                 when (it) {
-                    OtpType.Totp -> {
+                    OtpType.TOTP -> {
                         AccountNumberField(
                             value = period,
                             onValueChange = onPeriodChange,
@@ -243,7 +243,7 @@ fun AccountScreenSuccess(
                             max = Int.MAX_VALUE / 1000
                         )
                     }
-                    OtpType.Hotp -> {
+                    OtpType.HOTP -> {
                         AccountNumberField(
                             value = counter,
                             onValueChange = onCounterChange,

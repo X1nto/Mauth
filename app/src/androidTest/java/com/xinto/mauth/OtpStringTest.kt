@@ -23,7 +23,7 @@ class OtpStringTest {
         Assert.assertTrue(castResult.data.label == "account")
         Assert.assertTrue(castResult.data.secret == "secret")
         Assert.assertTrue(castResult.data.issuer == "issuer")
-        Assert.assertTrue(castResult.data.algorithm == OtpDigest.Sha1)
+        Assert.assertTrue(castResult.data.algorithm == OtpDigest.SHA1)
         Assert.assertTrue(castResult.data.digits ==6)
         Assert.assertTrue(castResult.data.period ==30)
     }

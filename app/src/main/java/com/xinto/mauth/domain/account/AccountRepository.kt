@@ -67,7 +67,7 @@ class AccountRepository(
 
     private fun EntityAccount.toDomain(): DomainAccount {
         return when (type) {
-            OtpType.Totp -> {
+            OtpType.TOTP -> {
                 DomainAccount.Totp(
                     id = id,
                     icon = icon,
@@ -80,7 +80,7 @@ class AccountRepository(
                     createdMillis = createDateMillis
                 )
             }
-            OtpType.Hotp -> {
+            OtpType.HOTP -> {
                 DomainAccount.Hotp(
                     id = id,
                     secret = secret,

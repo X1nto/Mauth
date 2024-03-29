@@ -54,9 +54,9 @@ class DefaultOtpGenerator : OtpGenerator {
     private val OtpDigest.algorithmName: String
         get() {
             return when (this) {
-                OtpDigest.Sha1 -> "HmacSHA1"
-                OtpDigest.Sha256 -> "HmacSHA256"
-                OtpDigest.Sha512 -> "HmacSHA512"
+                OtpDigest.SHA1 -> "HmacSHA1"
+                OtpDigest.SHA256 -> "HmacSHA256"
+                OtpDigest.SHA512 -> "HmacSHA512"
             }
         }
 

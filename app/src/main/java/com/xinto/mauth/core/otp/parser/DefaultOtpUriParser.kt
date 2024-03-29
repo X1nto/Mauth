@@ -17,8 +17,8 @@ class DefaultOtpUriParser : OtpUriParser {
         }
 
         val type = when (uri.host) {
-            "hotp" -> OtpType.Hotp
-            "totp" -> OtpType.Totp
+            "hotp" -> OtpType.HOTP
+            "totp" -> OtpType.TOTP
             else -> return OtpUriParserResult.Failure(OtpUriParserError.ERROR_INVALID_TYPE)
         }
 
@@ -43,13 +43,13 @@ class DefaultOtpUriParser : OtpUriParser {
 
         val paramPeriod = uri.getQueryParameter("period") ?: "30"
         val period = try {
-            if (type == OtpType.Hotp) null else paramPeriod.toInt()
+            if (type == OtpType.HOTP) null else paramPeriod.toInt()
         } catch (e: NumberFormatException) {
             return OtpUriParserResult.Failure(OtpUriParserError.ERROR_INVALID_PERIOD)
         }
 
         val paramCounter = uri.getQueryParameter("counter")
-        if (type == OtpType.Hotp && paramCounter == null) {
+        if (type == OtpType.HOTP && paramCounter == null) {
             return OtpUriParserResult.Failure(OtpUriParserError.ERROR_MISSING_COUNTER)
         }
         val counter = try {
@@ -74,9 +74,9 @@ class DefaultOtpUriParser : OtpUriParser {
 
     private fun getDigestFromUriAlgorithm(algorithm: String): OtpDigest? {
         return when (algorithm.uppercase()) {
-            "SHA1" -> OtpDigest.Sha1
-            "SHA256" -> OtpDigest.Sha256
-            "SHA512" -> OtpDigest.Sha512
+            "SHA1" -> OtpDigest.SHA1
+            "SHA256" -> OtpDigest.SHA256
+            "SHA512" -> OtpDigest.SHA512
             else -> null
         }
     }

@@ -36,7 +36,7 @@ class OtpRepository(
                 val realtimeData = accounts.mapValues { (id, account) ->
                     val bytes = otpKeyTransformer.transformToBytes(account.secret)
                     when (account.type) {
-                        OtpType.Hotp -> {
+                        OtpType.HOTP -> {
                             val count = counters[id]!!.count
                             DomainOtpRealtimeData.Hotp(
                                 code = otpGenerator.generateHotp(
@@ -48,7 +48,7 @@ class OtpRepository(
                                 count = count
                             )
                         }
-                        OtpType.Totp -> {
+                        OtpType.TOTP -> {
                             val seconds = System.currentTimeMillis() / 1000
                             val diff = seconds % account.period
                             val progress = 1f - (diff / account.period.toFloat())
