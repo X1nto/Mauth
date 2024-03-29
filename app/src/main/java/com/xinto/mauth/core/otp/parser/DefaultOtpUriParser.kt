@@ -11,12 +11,12 @@ class DefaultOtpUriParser : OtpUriParser {
     override fun parseOtpUri(keyUri: String): OtpUriParserResult {
         val uri = Uri.parse(keyUri)
 
-        val protocol = uri.scheme
+        val protocol = uri.scheme?.lowercase()
         if (protocol != "otpauth") {
             return OtpUriParserResult.Failure(OtpUriParserError.ERROR_INVALID_PROTOCOL)
         }
 
-        val type = when (uri.host) {
+        val type = when (uri.host?.lowercase()) {
             "hotp" -> OtpType.HOTP
             "totp" -> OtpType.TOTP
             else -> return OtpUriParserResult.Failure(OtpUriParserError.ERROR_INVALID_TYPE)
