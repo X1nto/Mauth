@@ -36,6 +36,8 @@ import com.xinto.mauth.ui.component.Animatable
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 @Composable
@@ -202,7 +204,7 @@ private fun <T, V : AnimationVector> animatePressValue(
     interactionSource: InteractionSource
 ): State<T> {
     LaunchedEffect(interactionSource, initialValue, targetValue) {
-        val channel = Channel<Unit>(1, onBufferOverflow = BufferOverflow.DROP_LATEST)
+        val channel = Channel<Boolean>(1, onBufferOverflow = BufferOverflow.DROP_LATEST)
         launch {
             interactionSource.interactions.collect {
                 if (it is PressInteraction.Press) {
@@ -212,15 +214,15 @@ private fun <T, V : AnimationVector> animatePressValue(
                             animationSpec = tween(PinButtonDefaults.AnimationDurationPress),
                         )
                     }
-                    channel.send(Unit)
                 }
+
+                channel.send(it is PressInteraction.Cancel || it is PressInteraction.Release)
             }
         }
         launch {
-            interactionSource.interactions.collect {
-                if (it is PressInteraction.Release || it is PressInteraction.Cancel) {
+            channel.receiveAsFlow().collectLatest { shouldReset ->
+                if (shouldReset) {
                     try {
-                        channel.receive()
                         animatable.animateTo(
                             targetValue = initialValue,
                             animationSpec = tween(PinButtonDefaults.AnimationDurationRelease)
