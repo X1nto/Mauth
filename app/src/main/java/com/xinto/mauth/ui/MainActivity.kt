@@ -1,8 +1,11 @@
 package com.xinto.mauth.ui
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.WindowManager
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -16,11 +19,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.xinto.mauth.core.settings.model.ColorSetting
+import com.xinto.mauth.core.settings.model.ThemeSetting
 import com.xinto.mauth.domain.AuthRepository
 import com.xinto.mauth.domain.SettingsRepository
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
@@ -35,6 +41,7 @@ import com.xinto.mauth.ui.screen.pinremove.PinRemoveScreen
 import com.xinto.mauth.ui.screen.pinsetup.PinSetupScreen
 import com.xinto.mauth.ui.screen.qrscan.QrScanScreen
 import com.xinto.mauth.ui.screen.settings.SettingsScreen
+import com.xinto.mauth.ui.screen.theme.ThemeScreen
 import com.xinto.mauth.ui.theme.MauthTheme
 import com.xinto.mauth.util.launchInLifecycle
 import dev.olshevski.navigation.reimagined.AnimatedNavHost
@@ -55,7 +62,16 @@ class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        settings.getTheme()
+            .launchInLifecycle(lifecycle) {
+                val systemBarStyle = when (it) {
+                    ThemeSetting.System -> SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT)
+                    ThemeSetting.Dark -> SystemBarStyle.dark(Color.TRANSPARENT)
+                    ThemeSetting.Light -> SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+                }
+                enableEdgeToEdge(systemBarStyle, systemBarStyle)
+            }
 
         settings.getSecureMode()
             .launchInLifecycle(lifecycle) {
@@ -69,6 +85,7 @@ class MainActivity : FragmentActivity() {
                 }
             }
 
+
         val initialScreen = runBlocking {
             if (auth.isProtected()) {
                 MauthDestination.Auth
@@ -78,7 +95,12 @@ class MainActivity : FragmentActivity() {
         }
 
         setContent {
-            MauthTheme {
+            val theme by settings.getTheme().collectAsStateWithLifecycle(initialValue = ThemeSetting.DEFAULT)
+            val color by settings.getColor().collectAsStateWithLifecycle(initialValue = ColorSetting.DEFAULT)
+            MauthTheme(
+                theme = theme,
+                color = color
+            ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -187,6 +209,9 @@ class MainActivity : FragmentActivity() {
                                     },
                                     onDisablePinCode = {
                                         navigator.navigate(MauthDestination.PinRemove)
+                                    },
+                                    onThemeNavigate = {
+                                        navigator.navigate(MauthDestination.Theme)
                                     }
                                 )
                             }
@@ -210,6 +235,9 @@ class MainActivity : FragmentActivity() {
                             }
                             is MauthDestination.PinRemove -> {
                                 PinRemoveScreen(onExit = navigator::pop)
+                            }
+                            is MauthDestination.Theme -> {
+                                ThemeScreen(onExit = navigator::pop)
                             }
                         }
                     }

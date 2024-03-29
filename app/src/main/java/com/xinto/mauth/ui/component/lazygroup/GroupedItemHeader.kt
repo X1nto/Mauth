@@ -1,9 +1,11 @@
 package com.xinto.mauth.ui.component.lazygroup
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.LocalTextStyle
@@ -20,16 +22,15 @@ inline fun LazyListScope.group(
     content: LazyListScope.() -> Unit
 ) {
     item {
-        CompositionLocalProvider(LocalTextStyle provides MaterialTheme.typography.headlineMedium) {
-            header()
+        Box(modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)) {
+            CompositionLocalProvider(LocalTextStyle provides MaterialTheme.typography.headlineMedium) {
+                header()
+            }
         }
-    }
-    item {
-        Spacer(modifier = Modifier.height(8.dp))
     }
     content()
     item {
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 

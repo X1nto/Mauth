@@ -24,6 +24,7 @@ import com.xinto.mauth.ui.screen.pinremove.PinRemoveViewModel
 import com.xinto.mauth.ui.screen.pinsetup.PinSetupViewModel
 import com.xinto.mauth.ui.screen.qrscan.QrScanViewModel
 import com.xinto.mauth.ui.screen.settings.SettingsViewModel
+import com.xinto.mauth.ui.screen.theme.ThemeViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.singleOf
@@ -75,6 +76,7 @@ object MauthDI {
         viewModelOf(::PinRemoveViewModel)
         viewModelOf(::HomeViewModel)
         viewModelOf(::AuthViewModel)
+        viewModelOf(::ThemeViewModel)
     }
 
     val all = listOf(CoreModule, DbModule, DomainModule, UiModule)

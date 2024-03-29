@@ -30,11 +30,14 @@ sealed class MauthDestination(val isFullscreenDialog: Boolean = false) : Parcela
     data object Settings : MauthDestination()
 
     @Parcelize
-    data object About : MauthDestination()
-
-    @Parcelize
     data object PinSetup : MauthDestination()
 
     @Parcelize
     data object PinRemove : MauthDestination()
+
+    @Parcelize
+    data object Theme : MauthDestination()
+
+    @Parcelize
+    data object About : MauthDestination()
 }

@@ -62,11 +62,18 @@
     <string name="settings_biometrics_setup_cancel">Cancel</string>
     <string name="settings_biometrics_disable_title">Disable Biometrics</string>
     <string name="settings_biometrics_disable_cancel">Cancel</string>
+    <string name="settings_category_appearance">Appearance</string>
+    <string name="settings_prefs_theme">Theme</string>
 
     <string name="pinsetup_title_create">Set a PIN</string>
     <string name="pinsetup_title_confirm">Confirm your PIN</string>
 
     <string name="pinremove_title">Enter your PIN</string>
+
+    <string name="theme_title">Theme</string>
+    <string name="theme_theme_system">System</string>
+    <string name="theme_theme_dark">Dark</string>
+    <string name="theme_theme_light">Light</string>
 
     <string name="about_title">About</string>
     <string name="about_version">Version v%1$s</string>

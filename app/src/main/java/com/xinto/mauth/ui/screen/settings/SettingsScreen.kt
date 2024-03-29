@@ -23,6 +23,7 @@ import com.xinto.mauth.R
 import com.xinto.mauth.ui.component.lazygroup.itemGrouped
 import com.xinto.mauth.ui.component.rememberBiometricHandler
 import com.xinto.mauth.ui.component.rememberBiometricPromptData
+import com.xinto.mauth.ui.screen.settings.component.SettingsNavigateItem
 import com.xinto.mauth.ui.screen.settings.component.SettingsSwitchItem
 import org.koin.androidx.compose.koinViewModel
 
@@ -31,6 +32,7 @@ fun SettingsScreen(
     onBack: () -> Unit,
     onSetupPinCode: () -> Unit,
     onDisablePinCode: () -> Unit,
+    onThemeNavigate: () -> Unit,
 ) {
     val viewModel: SettingsViewModel = koinViewModel()
     val secureMode by viewModel.secureMode.collectAsStateWithLifecycle()
@@ -67,7 +69,8 @@ fun SettingsScreen(
         onBiometricsChange = {
             val promptData = if (it) setupPromptData else disablePromptData
             biometricHandler.requestBiometrics(promptData)
-        }
+        },
+        onThemeNavigate = onThemeNavigate
     )
 }
 
@@ -80,7 +83,8 @@ fun SettingsScreen(
     onPinCodeChange: (Boolean) -> Unit,
     showBiometrics: Boolean,
     biometrics: Boolean,
-    onBiometricsChange: (Boolean) -> Unit
+    onBiometricsChange: (Boolean) -> Unit,
+    onThemeNavigate: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
@@ -140,6 +144,14 @@ fun SettingsScreen(
                         enabled = pinCode
                     )
                 }
+            }
+            itemGrouped(header = { Text(stringResource(R.string.settings_category_appearance)) }) {
+                SettingsNavigateItem(
+                    onClick = onThemeNavigate,
+                    title = {
+                        Text(stringResource(R.string.settings_prefs_theme))
+                    },
+                )
             }
         }
     }
