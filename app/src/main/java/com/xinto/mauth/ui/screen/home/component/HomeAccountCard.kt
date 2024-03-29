@@ -6,7 +6,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -192,7 +192,9 @@ private fun RealtimeInformation(
                         targetValue = realtimeData.progress,
                         animationSpec = tween(500)
                     )
-                    CircularProgressIndicator(progress)
+                    CircularProgressIndicator(
+                        progress = { progress },
+                    )
                     Text(realtimeData.countdown.toString())
                 }
             }
@@ -201,10 +203,10 @@ private fun RealtimeInformation(
             targetState = code,
             transitionSpec = {
                 if (initialState.first == targetState.first) {
-                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Up) + fadeIn() with
+                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Up) + fadeIn() togetherWith
                             slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Up) + fadeOut()
                 } else {
-                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Down) + fadeIn() with
+                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Down) + fadeIn() togetherWith
                             slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Down) + fadeOut()
                 }
             },
