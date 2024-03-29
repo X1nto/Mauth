@@ -20,9 +20,12 @@
     <string name="home_code_copy_success">Successfully copied the code to clipboard</string>
     <string name="home_code_copy_fail">Failed to copy the code</string>
     <string name="home_image_parse_fail">Failed to parse the QR code</string>
-    <string name="home_sort_label">Label</string>
-    <string name="home_sort_issuer">Issuer</string>
-    <string name="home_sort_date">Date</string>
+    <string name="home_sort_label_ascending">Label (A-Z)</string>
+    <string name="home_sort_label_descending">Label (Z-A)</string>
+    <string name="home_sort_issuer_ascending">Issuer (A-Z)</string>
+    <string name="home_sort_issuer_descending">Issuer (Z-A)</string>
+    <string name="home_sort_date_ascending">Oldest date first</string>
+    <string name="home_sort_date_descending">Newest date first</string>
 
     <string name="qrscan_title">Scan a QR code</string>
     <string name="qrscan_permissions_title">Missing permissions</string>

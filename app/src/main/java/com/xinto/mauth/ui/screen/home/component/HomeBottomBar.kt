@@ -121,7 +121,7 @@ fun HomeBottomBar(
                                     isSortVisible = false
                                 }
                             ) {
-                                SortSetting.values().forEach {
+                                SortSetting.entries.forEach {
                                     DropdownMenuItem(
                                         onClick = {
                                             isSortVisible = false
@@ -130,24 +130,15 @@ fun HomeBottomBar(
                                         text = {
                                             val resource = remember(it) {
                                                 when (it) {
-                                                    SortSetting.DateAsc, SortSetting.DateDesc -> R.string.home_sort_date
-                                                    SortSetting.LabelAsc, SortSetting.LabelDesc -> R.string.home_sort_label
-                                                    SortSetting.IssuerAsc, SortSetting.IssuerDesc -> R.string.home_sort_issuer
+                                                    SortSetting.DateAsc -> R.string.home_sort_date_ascending
+                                                    SortSetting.DateDesc -> R.string.home_sort_date_descending
+                                                    SortSetting.LabelAsc -> R.string.home_sort_label_ascending
+                                                    SortSetting.LabelDesc -> R.string.home_sort_label_descending
+                                                    SortSetting.IssuerAsc -> R.string.home_sort_issuer_ascending
+                                                    SortSetting.IssuerDesc -> R.string.home_sort_issuer_descending
                                                 }
                                             }
                                             Text(stringResource(resource))
-                                        },
-                                        leadingIcon = {
-                                            val drawable = remember(it) {
-                                                when (it) {
-                                                    SortSetting.DateAsc, SortSetting.LabelAsc, SortSetting.IssuerAsc -> R.drawable.ic_arrow_upward
-                                                    SortSetting.DateDesc, SortSetting.LabelDesc, SortSetting.IssuerDesc -> R.drawable.ic_arrow_downward
-                                                }
-                                            }
-                                            Icon(
-                                                painter = painterResource(drawable),
-                                                contentDescription = null
-                                            )
                                         },
                                         trailingIcon = {
                                             if (activeSortSetting == it) {
