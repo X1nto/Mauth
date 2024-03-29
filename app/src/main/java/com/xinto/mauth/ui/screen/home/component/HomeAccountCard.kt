@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.xinto.mauth.R
 import com.xinto.mauth.domain.account.model.DomainAccount
@@ -69,7 +70,13 @@ fun HomeAccountCard(
                         Text(account.shortLabel, style = MaterialTheme.typography.titleLarge)
                     }
                 },
-                name = { Text(account.label) },
+                name = {
+                    Text(
+                        text = account.label,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
+                    )
+                },
                 issuer = {
                     if (account.issuer != "") {
                         Text(account.issuer)
@@ -234,6 +241,7 @@ private fun AccountInfo(
             }
         }
         Column(
+            modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             CompositionLocalProvider(
@@ -247,7 +255,6 @@ private fun AccountInfo(
                 content = name,
             )
         }
-        Spacer(modifier = Modifier.weight(1f))
         trailing()
     }
 }
