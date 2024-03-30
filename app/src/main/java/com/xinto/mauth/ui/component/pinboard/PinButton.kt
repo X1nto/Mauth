@@ -58,6 +58,7 @@ fun PrimaryPinButton(
     shapes = shapes,
     content = content
 )
+
 @Composable
 fun PinButton(
     onClick: () -> Unit,
@@ -110,30 +111,43 @@ object PinButtonDefaults {
     const val AnimationDurationRelease = 150
 
     @Composable
-    fun plainPinButtonColors(): PinButtonColors {
+    fun plainPinButtonColors(
+        backgroundColor: Color = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp),
+        backgroundColorPressed: Color = MaterialTheme.colorScheme.primary,
+        foregroundColor: Color = MaterialTheme.colorScheme.onSurface,
+        foregroundColorPressed: Color = MaterialTheme.colorScheme.onPrimary
+    ): PinButtonColors {
         return PinButtonColors(
-            backgroundColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp),
-            backgroundColorPressed = MaterialTheme.colorScheme.primary,
-            foregroundColor = MaterialTheme.colorScheme.onSurface,
-            foregroundColorPressed = MaterialTheme.colorScheme.onPrimary
+            backgroundColor = backgroundColor,
+            backgroundColorPressed = backgroundColorPressed,
+            foregroundColor = foregroundColor,
+            foregroundColorPressed = foregroundColorPressed
         )
     }
 
     @Composable
-    fun primaryPinButtonColors(): PinButtonColors {
+    fun primaryPinButtonColors(
+        backgroundColor: Color = MaterialTheme.colorScheme.secondary,
+        backgroundColorPressed: Color = MaterialTheme.colorScheme.primary,
+        foregroundColor: Color = MaterialTheme.colorScheme.onSecondary,
+        foregroundColorPressed: Color = MaterialTheme.colorScheme.onPrimary
+    ): PinButtonColors {
         return PinButtonColors(
-            backgroundColor = MaterialTheme.colorScheme.secondary,
-            backgroundColorPressed = MaterialTheme.colorScheme.primary,
-            foregroundColor = MaterialTheme.colorScheme.onSecondary,
-            foregroundColorPressed = MaterialTheme.colorScheme.onPrimary
+            backgroundColor = backgroundColor,
+            backgroundColorPressed = backgroundColorPressed,
+            foregroundColor = foregroundColor,
+            foregroundColorPressed = foregroundColorPressed
         )
     }
 
     @Composable
-    fun plainPinButtonShapes(): PinButtonShapes {
+    fun plainPinButtonShapes(
+        shape: CornerBasedShape = RoundedCornerShape(50),
+        shapePressed: CornerBasedShape = MaterialTheme.shapes.large
+    ): PinButtonShapes {
         return PinButtonShapes(
-            shape = RoundedCornerShape(50),
-            shapePressed = MaterialTheme.shapes.large
+            shape = shape,
+            shapePressed = shapePressed
         )
     }
 
@@ -148,7 +162,7 @@ data class PinButtonColors(
 ) {
     @Composable
     fun getBackgroundColor(interactionSource: InteractionSource): State<Color> {
-        val animatable = remember { Animatable(backgroundColor) }
+        val animatable = remember(backgroundColor) { Animatable(backgroundColor) }
         return animatePressValue(
             animatable = animatable,
             initialValue = backgroundColor,
@@ -159,7 +173,7 @@ data class PinButtonColors(
 
     @Composable
     fun getForegroundColor(interactionSource: InteractionSource): State<Color> {
-        val animatable = remember { Animatable(foregroundColor) }
+        val animatable = remember(foregroundColor) { Animatable(foregroundColor) }
         return animatePressValue(
             animatable = animatable,
             initialValue = foregroundColor,
