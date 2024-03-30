@@ -64,7 +64,7 @@ fun ThemeColorCard(
                         Box(
                             modifier = Modifier
                                 .clip(MaterialTheme.shapes.small)
-                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                                .background(MaterialTheme.colorScheme.secondaryContainer)
                                 .size(24.dp)
                         )
                         Box(
