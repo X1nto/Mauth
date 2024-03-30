@@ -1,0 +1,18 @@
+New Features
+============
+- Added theme settings, allowing you to customize how Mauth looks like
+
+Changes
+=========
+- Updated pt-BR translation
+- Updated Chinese (Simplified) translation
+- The "Add account" buttons now have the same color
+- Rephrased the sorting option labels
+
+Fixes
+=====
+- Fixed auth pin button colors and behavior
+- Fixed a bug that allowed empty PINs to be set
+- The edit button should no longer disappear when the label is too long
+- More fixes to the buttons in the "Add account" sheet
+- Improved the OTP URI parser
