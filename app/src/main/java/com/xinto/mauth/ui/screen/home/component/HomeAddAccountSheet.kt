@@ -3,11 +3,13 @@ package com.xinto.mauth.ui.screen.home.component
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -37,19 +39,14 @@ fun HomeAddAccountSheet(
 ) {
     MaterialBottomSheetDialog(
         onDismissRequest = onDismiss,
-        title = {
-            Text(stringResource(R.string.home_addaccount_title))
-        },
-        subtitle = {
-            Text(stringResource(R.string.home_addaccount_subtitle))
-        },
+        title = { Text(stringResource(R.string.home_addaccount_title)) },
+        subtitle = { Text(stringResource(R.string.home_addaccount_subtitle)) },
     ) {
         Column(
             modifier = Modifier.clip(MaterialTheme.shapes.large),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             FullWidthButton(
-                modifier = Modifier.fillMaxWidth(),
                 onClick = onScanQrClick,
                 icon = {
                     Icon(
@@ -57,13 +54,9 @@ fun HomeAddAccountSheet(
                         contentDescription = null
                     )
                 },
-                text = {
-                    Text(stringResource(R.string.home_addaccount_data_scanqr))
-                },
-                color = MaterialTheme.colorScheme.primaryContainer,
+                text = { Text(stringResource(R.string.home_addaccount_data_scanqr)) }
             )
             FullWidthButton(
-                modifier = Modifier.fillMaxWidth(),
                 onClick = onChooseImage,
                 icon = {
                     Icon(
@@ -71,13 +64,9 @@ fun HomeAddAccountSheet(
                         contentDescription = null
                     )
                 },
-                text = {
-                    Text(stringResource(R.string.home_addaccount_data_imageqr))
-                },
-                color = MaterialTheme.colorScheme.tertiaryContainer,
+                text = { Text(stringResource(R.string.home_addaccount_data_imageqr)) }
             )
             FullWidthButton(
-                modifier = Modifier.fillMaxWidth(),
                 onClick = onManualEnterClick,
                 icon = {
                     Icon(
@@ -85,27 +74,23 @@ fun HomeAddAccountSheet(
                         contentDescription = null
                     )
                 },
-                text = {
-                    Text(stringResource(R.string.home_addaccount_data_manual))
-                },
-                color = MaterialTheme.colorScheme.secondaryContainer
+                text = { Text(stringResource(R.string.home_addaccount_data_manual)) }
             )
         }
     }
 }
 
 @Composable
-private fun FullWidthButton(
+private fun ColumnScope.FullWidthButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.surface,
     icon: @Composable () -> Unit,
     text: @Composable () -> Unit,
 ) {
     Surface(
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
         onClick = onClick,
-        color = color,
+        color = MaterialTheme.colorScheme.secondaryContainer,
         shape = MaterialTheme.shapes.extraSmall,
     ) {
         Row(
