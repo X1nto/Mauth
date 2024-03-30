@@ -7,8 +7,9 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -125,6 +126,7 @@ private fun MaterialBottomSheetDialog(
             }
         }
     }
+    val insets = WindowInsets.navigationBars
     ModalBottomSheet(
         sheetState = state,
         onDismissRequest = onDismissRequest,
@@ -137,7 +139,7 @@ private fun MaterialBottomSheetDialog(
                     end = 24.dp,
                     bottom = 24.dp
                 )
-                .navigationBarsPadding(),
+                .windowInsetsPadding(insets),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
