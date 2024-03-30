@@ -75,16 +75,14 @@ class HomeViewModel(
         val application = getApplication<Mauth>()
         val clipboardService = application.getSystemService<ClipboardManager>()
         if (clipboardService != null) {
-            clipboardService.setPrimaryClip(
-                ClipData.newPlainText(label, code)
-                    .apply {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            description.extras = PersistableBundle().apply {
-                                putBoolean("android.content.extra.IS_SENSITIVE", !visible)
-                            }
-                        }
+            val clipData = ClipData.newPlainText(label, code).apply {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    description.extras = PersistableBundle().apply {
+                        putBoolean("android.content.extra.IS_SENSITIVE", !visible)
                     }
-            )
+                }
+            }
+            clipboardService.setPrimaryClip(clipData)
             Toast.makeText(application, R.string.home_code_copy_success, Toast.LENGTH_LONG).show()
         }
     }
@@ -119,26 +117,25 @@ class HomeViewModel(
     }
 
     fun getAccountInfoFromQrUri(uri: Uri?): DomainAccountInfo? {
+        if (uri == null) return null
+
         val application = getApplication<Mauth>()
 
-        if (uri != null) {
-            val contentResolver = application.contentResolver
-            val bitmap = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
-                MediaStore.Images.Media.getBitmap(contentResolver, uri)
-            } else {
-                val source = ImageDecoder.createSource(contentResolver, uri)
-                ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.ARGB_8888, false)
-            }
-
-            val text = qr.decodeQrImage(bitmap)
-            if (text != null) {
-                return otp.parseUriToAccountInfo(text)
-            }
+        val contentResolver = application.contentResolver
+        val bitmap = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+            MediaStore.Images.Media.getBitmap(contentResolver, uri)
+        } else {
+            val source = ImageDecoder.createSource(contentResolver, uri)
+            ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.ARGB_8888, false)
         }
 
-        Toast.makeText(application, "Failed to decode the QR code.", Toast.LENGTH_SHORT)
-            .show()
-        return null
+        val text = qr.decodeQrImage(bitmap)
+        if (text == null) {
+            Toast.makeText(application, R.string.home_image_parse_fail, Toast.LENGTH_SHORT).show()
+            return null
+        }
+
+        return otp.parseUriToAccountInfo(text)
     }
 
     fun setActiveSort(value: SortSetting) {
@@ -146,5 +143,4 @@ class HomeViewModel(
             settings.setSortMode(value)
         }
     }
-
 }
