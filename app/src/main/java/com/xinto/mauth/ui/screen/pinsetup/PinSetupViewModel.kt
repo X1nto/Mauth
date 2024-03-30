@@ -25,6 +25,11 @@ class PinSetupViewModel(
      * @return true if the screen should exit
      */
     fun next(): Boolean {
+        if (_code.value.isEmpty()) {
+            _error.value = true
+            return false
+        }
+
         if (state.value is PinSetupScreenState.Confirm) {
             val matches = initialCode == code.value
             if (matches) {
