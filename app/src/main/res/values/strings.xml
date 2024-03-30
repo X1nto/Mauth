@@ -77,6 +77,13 @@
     <string name="theme_theme_system">System</string>
     <string name="theme_theme_dark">Dark</string>
     <string name="theme_theme_light">Light</string>
+    <string name="theme_colors_dynamic">Dynamic</string>
+    <string name="theme_colors_purple">Moth Purple</string>
+    <string name="theme_colors_blue">Blueberry Blue</string>
+    <string name="theme_colors_yellow">Pickle Yellow</string>
+    <string name="theme_colors_green">Toxic Green</string>
+    <string name="theme_colors_orange">Leather Orange</string>
+    <string name="theme_colors_turquoise">Ocean Turquoise</string>
 
     <string name="about_title">About</string>
     <string name="about_version">Version v%1$s</string>

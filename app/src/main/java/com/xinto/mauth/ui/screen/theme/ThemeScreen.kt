@@ -133,10 +133,18 @@ fun ThemeScreen(
                             onColorChange(colorSetting)
                         },
                         name = {
-                            val name = remember(colorSetting) {
-                                colorSetting.name.split(Regex("(?=[A-Z])")).joinToString(" ")
+                            val nameRes = remember(colorSetting) {
+                                when (colorSetting) {
+                                    ColorSetting.Dynamic -> R.string.theme_colors_dynamic
+                                    ColorSetting.MothPurple -> R.string.theme_colors_purple
+                                    ColorSetting.BlueberryBlue -> R.string.theme_colors_blue
+                                    ColorSetting.PickleYellow -> R.string.theme_colors_yellow
+                                    ColorSetting.ToxicGreen -> R.string.theme_colors_green
+                                    ColorSetting.LeatherOrange -> R.string.theme_colors_orange
+                                    ColorSetting.OceanTurquoise -> R.string.theme_colors_turquoise
+                                }
                             }
-                            Text(name)
+                            Text(stringResource(nameRes))
                         },
                         selected = color == colorSetting
                     )

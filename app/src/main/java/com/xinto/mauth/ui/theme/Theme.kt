@@ -47,19 +47,19 @@ fun MauthTheme(
             true -> DarkBlueberryBlue
             false -> LightBlueberryBlue
         }
-        color == ColorSetting.LemonYellow -> when (isDark) {
+        color == ColorSetting.PickleYellow -> when (isDark) {
             true -> DarkLemonYellow
             false -> LightLemonYellow
         }
-        color == ColorSetting.LimeGreen -> when (isDark) {
+        color == ColorSetting.ToxicGreen -> when (isDark) {
             true -> DarkLimeGreen
             false -> LightLimeGreen
         }
-        color == ColorSetting.OrangeOrange -> when (isDark) {
+        color == ColorSetting.LeatherOrange -> when (isDark) {
             true -> DarkOrangeOrange
             false -> LightOrangeOrange
         }
-        color == ColorSetting.SkyCyan -> when (isDark) {
+        color == ColorSetting.OceanTurquoise -> when (isDark) {
             true -> DarkSkyCyan
             false -> LightSkyCyan
         }

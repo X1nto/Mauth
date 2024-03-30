@@ -6,10 +6,10 @@ enum class ColorSetting {
     Dynamic,
     MothPurple,
     BlueberryBlue,
-    LemonYellow,
-    LimeGreen,
-    OrangeOrange,
-    SkyCyan;
+    PickleYellow,
+    ToxicGreen,
+    LeatherOrange,
+    OceanTurquoise;
 
     companion object {
         val DEFAULT = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) Dynamic else MothPurple
