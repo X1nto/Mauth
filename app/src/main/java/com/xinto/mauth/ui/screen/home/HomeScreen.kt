@@ -6,9 +6,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -17,15 +14,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.xinto.mauth.R
 import com.xinto.mauth.core.settings.model.SortSetting
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.domain.otp.model.DomainOtpRealtimeData
 import com.xinto.mauth.ui.screen.home.component.HomeAddAccountSheet
-import com.xinto.mauth.ui.screen.home.component.HomeBottomBar
 import com.xinto.mauth.ui.screen.home.component.HomeDeleteAccountsDialog
+import com.xinto.mauth.ui.screen.home.component.HomeScaffold
 import com.xinto.mauth.ui.screen.home.state.HomeScreenEmpty
 import com.xinto.mauth.ui.screen.home.state.HomeScreenError
 import com.xinto.mauth.ui.screen.home.state.HomeScreenLoading
@@ -101,31 +96,20 @@ fun HomeScreen(
     var showAddSheet by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(stringResource(id = R.string.app_name))
-                },
-                scrollBehavior = scrollBehavior
-            )
+    HomeScaffold(
+        isSelectionActive = selectedAccounts.isNotEmpty(),
+        onAdd = {
+            showAddSheet = true
         },
-        bottomBar = {
-            HomeBottomBar(
-                isSelectionActive = selectedAccounts.isNotEmpty(),
-                onAdd = {
-                    showAddSheet = true
-                },
-                onCancelSelection = onCancelAccountSelection,
-                onDeleteSelected = {
-                    showDeleteDialog = true
-                },
-                onSettingsClick = onSettingsClick,
-                onAboutClick = onAboutClick,
-                activeSortSetting = activeSortSetting,
-                onActiveSortChange = onActiveSortChange
-            )
-        }
+        onCancelSelection = onCancelAccountSelection,
+        onDeleteSelected = {
+            showDeleteDialog = true
+        },
+        onSettingsClick = onSettingsClick,
+        onAboutClick = onAboutClick,
+        activeSortSetting = activeSortSetting,
+        onActiveSortChange = onActiveSortChange,
+        scrollBehavior = scrollBehavior
     ) {
         Box(
             modifier = Modifier
