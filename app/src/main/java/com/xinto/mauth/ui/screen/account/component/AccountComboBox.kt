@@ -1,6 +1,7 @@
 package com.xinto.mauth.ui.screen.account.component
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
@@ -31,7 +32,7 @@ fun <E : Enum<E>> AccountComboBox(
         onExpandedChange = setExpanded
     ) {
         OutlinedTextField(
-            modifier = Modifier.menuAnchor(),
+            modifier = Modifier.fillMaxWidth().menuAnchor(),
             value = value.name,
             onValueChange = {},
             singleLine = true,
