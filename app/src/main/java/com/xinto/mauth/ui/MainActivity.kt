@@ -50,6 +50,7 @@ import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop
 import dev.olshevski.navigation.reimagined.rememberNavController
 import dev.olshevski.navigation.reimagined.replaceAll
+import dev.olshevski.navigation.reimagined.replaceLast
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 
@@ -197,7 +198,7 @@ class MainActivity : FragmentActivity() {
                                 QrScanScreen(
                                     onBack = navigator::pop,
                                     onScan = {
-                                        navigator.replaceAll(MauthDestination.AddAccount(it))
+                                        navigator.replaceLast(MauthDestination.AddAccount(it))
                                     }
                                 )
                             }
