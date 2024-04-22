@@ -3,7 +3,7 @@
     <string name="auth_biometrics_title">Биометрическая Аутентификация</string>
     <string name="auth_biometrics_cancel">Отмена</string>
 
-    <string name="home_dashboard_empty">Ничего ещё тут</string>
+    <string name="home_dashboard_empty">Тут ничего нет</string>
     <string name="home_dashboard_error">Не удалось загрузить учётные записи</string>
     <string name="home_addaccount_title">Добавить учётную запись</string>
     <string name="home_addaccount_subtitle">Отсканируйте QR код или введите ключ вручную</string>
