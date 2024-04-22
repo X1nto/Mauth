@@ -1,0 +1,90 @@
+<resources>
+    <string name="auth_title">Введите ваш PIN</string>
+    <string name="auth_biometrics_title">Биометрическая Аутентификация</string>
+    <string name="auth_biometrics_cancel">Отмена</string>
+
+    <string name="home_dashboard_empty">Ничего ещё тут</string>
+    <string name="home_dashboard_error">Не удалось загрузить учётные записи</string>
+    <string name="home_addaccount_title">Добавить учётную запись</string>
+    <string name="home_addaccount_subtitle">Отсканируйте QR код или введите ключ вручную</string>
+    <string name="home_addaccount_data_scanqr">Сканировать QR код</string>
+    <string name="home_addaccount_data_imageqr">Выберете изображение</string>
+    <string name="home_addaccount_data_manual">Ввести данные вручную</string>
+    <string name="home_delete_title">Удалить учётные записи?</string>
+    <string name="home_delete_subtitle">Выбранные учётные записи будут навсегда удалены.</string>
+    <string name="home_delete_button_delete">Удалить</string>
+    <string name="home_delete_button_cancel">Отмена</string>
+    <string name="home_more_settings">Настройки</string>
+    <string name="home_code_copy_success">Код скопирован в буфер обмена</string>
+    <string name="home_code_copy_fail">Не удалось скопировать код</string>
+    <string name="home_image_parse_fail">Не удалось разобрать QR код</string>
+    <string name="home_sort_label_ascending">Метка (A-Z)</string>
+    <string name="home_sort_label_descending">Метка (Z-A)</string>
+    <string name="home_sort_issuer_ascending">Эмитент (A-Z)</string>
+    <string name="home_sort_issuer_descending">Эмитент (Z-A)</string>
+    <string name="home_sort_date_ascending">Со старых</string>
+    <string name="home_sort_date_descending">С новых</string>
+
+    <string name="qrscan_title">Сканировать QR код</string>
+    <string name="qrscan_permissions_title">Не хватает разрешений</string>
+    <string name="qrscan_permissions_subtitle">Разрешение на камеру не предоставлено.</string>
+    <string name="qrscan_permissions_subtitle_rationale">Разрешение на камеру требуется, чтобы это приложение сканировало и анализировала QR код, без него Mauth не может сканировать и импортировать ваши учетные записи.</string>
+    <string name="qrscan_permissions_button_grant">Разрешить</string>
+    <string name="qrscan_permissions_button_cancel">Отмена</string>
+    <string name="qrscan_error">Не хватает разрешений</string>
+
+    <string name="account_title_add">Добавить учётную запись</string>
+    <string name="account_title_edit">Изменить учётную запись</string>
+    <string name="account_actions_save">Сохранить</string>
+    <string name="account_data_label">Метка</string>
+    <string name="account_data_issuer">Эмитент</string>
+    <string name="account_data_secret">Секрет</string>
+    <string name="account_data_type">Тип</string>
+    <string name="account_data_algorithm">Алгоритм</string>
+    <string name="account_data_digits">Цифры</string>
+    <string name="account_data_counter">Счётчик</string>
+    <string name="account_data_period">Период</string>
+    <string name="account_discard_title">Отменить изменения?</string>
+    <string name="account_discard_subtitle">Ваши изменения не будут сохранены.</string>
+    <string name="account_discard_buttons_discard">Discard</string>
+    <string name="account_discard_buttons_cancel">Отмена</string>
+    <string name="account_error">Произошла ошибка при загрузке учетной записи</string>
+    <string name="account_data_status_required">требуется</string>
+    <string name="account_data_status_range">в диапазоне %1$s-%2$s</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="settings_category_security">Безопасность</string>
+    <string name="settings_prefs_securemode">Режим безопасности</string>
+    <string name="settings_prefs_securemode_description">Предотвращать скриншоты в приложении</string>
+    <string name="settings_prefs_pincode">Блокировка PIN кодом</string>
+    <string name="settings_prefs_pincode_description">Требовать аутентификация при старте</string>
+    <string name="settings_prefs_biometrics">Биометрическая аутентификация</string>
+    <string name="settings_biometrics_setup_title">Установить биометрию</string>
+    <string name="settings_biometrics_setup_cancel">Отмена</string>
+    <string name="settings_biometrics_disable_title">Отключить биометрию</string>
+    <string name="settings_biometrics_disable_cancel">Отмена</string>
+    <string name="settings_category_appearance">Внешний вид</string>
+    <string name="settings_prefs_theme">Тема</string>
+
+    <string name="pinsetup_title_create">Установить PIN</string>
+    <string name="pinsetup_title_confirm">Подтвердите ваш PIN</string>
+
+    <string name="pinremove_title">Введите ваш PIN</string>
+
+    <string name="theme_title">Тема</string>
+    <string name="theme_theme_system">Система</string>
+    <string name="theme_theme_dark">Тёмная</string>
+    <string name="theme_theme_light">Светлая</string>
+    <string name="theme_colors_dynamic">Динамический</string>
+    <string name="theme_colors_purple">Moth Purple</string>
+    <string name="theme_colors_blue">Blueberry Blue</string>
+    <string name="theme_colors_yellow">Pickle Yellow</string>
+    <string name="theme_colors_green">Toxic Green</string>
+    <string name="theme_colors_orange">Leather Orange</string>
+    <string name="theme_colors_turquoise">Ocean Turquoise</string>
+
+    <string name="about_title">О приложении</string>
+    <string name="about_version">Версия v%1$s</string>
+    <string name="about_links_source">Исходники</string>
+    <string name="about_links_feedback">Обратная связь</string>
+</resources>
