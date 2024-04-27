@@ -33,8 +33,7 @@ fun HomeScreen(
     onAddAccountManually: () -> Unit,
     onAddAccountViaScanning: () -> Unit,
     onAddAccountFromImage: (DomainAccountInfo) -> Unit,
-    onSettingsClick: () -> Unit,
-    onAboutClick: () -> Unit,
+    onMenuNavigate: (HomeMoreMenu) -> Unit,
     onAccountEdit: (UUID) -> Unit
 ) {
     val viewModel: HomeViewModel = koinViewModel()
@@ -49,17 +48,20 @@ fun HomeScreen(
         }
     }
     HomeScreen(
-        onAddAccountManually = onAddAccountManually,
-        onAddAccountViaScanning = onAddAccountViaScanning,
-        onAddAccountFromImage = {
-            photoPickerLauncher.launch(
-                PickVisualMediaRequest(
-                    mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                )
-            )
+        onAddAccountNavigate = {
+            when (it) {
+                HomeAddAccountMenu.ScanQR -> onAddAccountViaScanning()
+                HomeAddAccountMenu.ImageQR -> {
+                    photoPickerLauncher.launch(
+                        PickVisualMediaRequest(
+                            mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                        )
+                    )
+                }
+                HomeAddAccountMenu.Manual -> onAddAccountManually()
+            }
         },
-        onSettingsClick = onSettingsClick,
-        onAboutClick = onAboutClick,
+        onMenuNavigate = onMenuNavigate,
         onAccountSelect = viewModel::toggleAccountSelection,
         onCancelAccountSelection = viewModel::clearAccountSelection,
         onDeleteSelectedAccounts = viewModel::deleteSelectedAccounts,
@@ -76,11 +78,8 @@ fun HomeScreen(
 
 @Composable
 fun HomeScreen(
-    onAddAccountManually: () -> Unit,
-    onAddAccountViaScanning: () -> Unit,
-    onAddAccountFromImage: () -> Unit,
-    onSettingsClick: () -> Unit,
-    onAboutClick: () -> Unit,
+    onAddAccountNavigate: (HomeAddAccountMenu) -> Unit,
+    onMenuNavigate: (HomeMoreMenu) -> Unit,
     onAccountSelect: (UUID) -> Unit,
     onCancelAccountSelection: () -> Unit,
     onDeleteSelectedAccounts: () -> Unit,
@@ -105,8 +104,7 @@ fun HomeScreen(
         onDeleteSelected = {
             showDeleteDialog = true
         },
-        onSettingsClick = onSettingsClick,
-        onAboutClick = onAboutClick,
+        onMenuNavigate = onMenuNavigate,
         activeSortSetting = activeSortSetting,
         onActiveSortChange = onActiveSortChange,
         scrollBehavior = scrollBehavior
@@ -146,18 +144,10 @@ fun HomeScreen(
             onDismiss = {
                 showAddSheet = false
             },
-            onManualEnterClick = {
+            onAddAccountNavigate = {
                 showAddSheet = false
-                onAddAccountManually()
-            },
-            onScanQrClick = {
-                showAddSheet = false
-                onAddAccountViaScanning()
-            },
-            onChooseImage = {
-                showAddSheet = false
-                onAddAccountFromImage()
-            },
+                onAddAccountNavigate(it)
+            }
         )
     }
     if (showDeleteDialog) {

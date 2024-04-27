@@ -36,6 +36,8 @@ import com.xinto.mauth.ui.screen.about.AboutScreen
 import com.xinto.mauth.ui.screen.account.AddAccountScreen
 import com.xinto.mauth.ui.screen.account.EditAccountScreen
 import com.xinto.mauth.ui.screen.auth.AuthScreen
+import com.xinto.mauth.ui.screen.export.ExportScreen
+import com.xinto.mauth.ui.screen.home.HomeMoreMenu
 import com.xinto.mauth.ui.screen.home.HomeScreen
 import com.xinto.mauth.ui.screen.pinremove.PinRemoveScreen
 import com.xinto.mauth.ui.screen.pinsetup.PinSetupScreen
@@ -183,15 +185,17 @@ class MainActivity : FragmentActivity() {
                                     onAddAccountFromImage = {
                                         navigator.navigate(MauthDestination.AddAccount(it))
                                     },
-                                    onSettingsClick = {
-                                        navigator.navigate(MauthDestination.Settings)
-                                    },
-                                    onAboutClick = {
-                                        navigator.navigate(MauthDestination.About)
-                                    },
                                     onAccountEdit = {
                                         navigator.navigate(MauthDestination.EditAccount(it))
-                                    }
+                                    },
+                                    onMenuNavigate = {
+                                        val destination = when (it) {
+                                            HomeMoreMenu.Settings -> MauthDestination.Settings
+                                            HomeMoreMenu.Export -> MauthDestination.Export()
+                                            HomeMoreMenu.About -> MauthDestination.About
+                                        }
+                                        navigator.navigate(destination)
+                                    },
                                 )
                             }
                             is MauthDestination.QrScanner -> {
@@ -239,6 +243,12 @@ class MainActivity : FragmentActivity() {
                             }
                             is MauthDestination.Theme -> {
                                 ThemeScreen(onExit = navigator::pop)
+                            }
+                            is MauthDestination.Export -> {
+                                ExportScreen(
+                                    accounts = screen.accounts,
+                                    onBackNavigate = navigator::pop
+                                )
                             }
                         }
                     }

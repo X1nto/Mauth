@@ -27,14 +27,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.xinto.mauth.R
+import com.xinto.mauth.ui.screen.home.HomeAddAccountMenu
 import kotlinx.coroutines.launch
 
 @Composable
 fun HomeAddAccountSheet(
     onDismiss: () -> Unit,
-    onManualEnterClick: () -> Unit,
-    onScanQrClick: () -> Unit,
-    onChooseImage: () -> Unit,
+    onAddAccountNavigate: (HomeAddAccountMenu) -> Unit
 ) {
     MaterialBottomSheetDialog(
         onDismissRequest = onDismiss,
@@ -45,36 +44,18 @@ fun HomeAddAccountSheet(
             modifier = Modifier.clip(MaterialTheme.shapes.large),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            FullWidthButton(
-                onClick = onScanQrClick,
-                icon = {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_qr_code_scanner),
-                        contentDescription = null
-                    )
-                },
-                text = { Text(stringResource(R.string.home_addaccount_data_scanqr)) }
-            )
-            FullWidthButton(
-                onClick = onChooseImage,
-                icon = {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_qr_code_2),
-                        contentDescription = null
-                    )
-                },
-                text = { Text(stringResource(R.string.home_addaccount_data_imageqr)) }
-            )
-            FullWidthButton(
-                onClick = onManualEnterClick,
-                icon = {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_password),
-                        contentDescription = null
-                    )
-                },
-                text = { Text(stringResource(R.string.home_addaccount_data_manual)) }
-            )
+            HomeAddAccountMenu.entries.forEach { menu ->
+                FullWidthButton(
+                    onClick = { onAddAccountNavigate(menu) },
+                    text = { Text(stringResource(menu.title)) },
+                    icon = {
+                        Icon(
+                            painter = painterResource(menu.icon),
+                            contentDescription = null
+                        )
+                    }
+                )
+            }
         }
     }
 }

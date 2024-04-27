@@ -30,6 +30,12 @@ sealed class MauthDestination(val isFullscreenDialog: Boolean = false) : Parcela
     data object Settings : MauthDestination()
 
     @Parcelize
+    data class Export(
+        // Empty list means export all
+        val accounts: List<UUID> = emptyList()
+    ) : MauthDestination()
+
+    @Parcelize
     data object PinSetup : MauthDestination()
 
     @Parcelize
