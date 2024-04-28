@@ -3,7 +3,6 @@ package com.xinto.mauth.ui.component
 import android.app.Activity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -15,15 +14,10 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 
 /**
  * @param actions Aligned respective to the top appbar (3-dot menu last)
@@ -61,15 +55,6 @@ fun ResponsiveAppBarScaffold(
         },
         bottomBar = {
             if (sizeClass.widthSizeClass != WindowWidthSizeClass.Expanded) {
-                val currentDirection = LocalLayoutDirection.current
-                val newDirection by remember {
-                    derivedStateOf {
-                        when (currentDirection) {
-                            LayoutDirection.Ltr -> LayoutDirection.Rtl
-                            LayoutDirection.Rtl -> LayoutDirection.Ltr
-                        }
-                    }
-                }
                 BottomAppBar(
                     actions = {
                         actions(Arrangement.Reverse)
