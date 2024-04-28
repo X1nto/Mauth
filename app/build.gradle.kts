@@ -47,6 +47,25 @@ android {
             "-opt-in=androidx.compose.animation.ExperimentalAnimationApi" +
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api" +
             "-opt-in=com.google.accompanist.permissions.ExperimentalPermissionsApi"
+
+        freeCompilerArgs += listOf(
+            "-P",
+            "plugin:androidx.compose.compiler.plugins.kotlin:stabilityConfigurationPath=" +
+                    "${projectDir.absolutePath}/compose_stability.conf"
+        )
+
+        if (project.findProperty("composeCompilerReports") == "true") {
+            freeCompilerArgs += listOf(
+                "-P",
+                "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${project.buildDir.absolutePath}/compose_compiler"
+            )
+        }
+        if (project.findProperty("composeCompilerMetrics") == "true") {
+            freeCompilerArgs += listOf(
+                "-P",
+                "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${project.buildDir.absolutePath}/compose_compiler"
+            )
+        }
     }
 
     buildFeatures {
