@@ -8,7 +8,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,9 +44,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.xinto.mauth.R
-import com.xinto.mauth.core.contracts.PickVisualMediaPersistent
 import com.xinto.mauth.core.otp.model.OtpDigest
 import com.xinto.mauth.core.otp.model.OtpType
+import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.ui.component.UriImage
 import com.xinto.mauth.ui.screen.account.component.AccountComboBox
 import com.xinto.mauth.ui.screen.account.component.AccountDataField
@@ -55,31 +55,21 @@ import java.util.UUID
 
 @Composable
 fun AccountScreenSuccess(
-    id: UUID?,
-    icon: Uri?,
+    info: DomainAccountInfo,
     onIconChange: (Uri?) -> Unit,
-    label: String,
     onLabelChange: (String) -> Unit,
-    issuer: String,
     onIssuerChange: (String) -> Unit,
-    secret: String,
     onSecretChange: (String) -> Unit,
-    type: OtpType,
     onTypeChange: (OtpType) -> Unit,
-    digest: OtpDigest,
     onDigestChange: (OtpDigest) -> Unit,
-    digits: String,
     onDigitsChange: (String) -> Unit,
-    counter: String,
     onCounterChange: (String) -> Unit,
-    period: String,
     onPeriodChange: (String) -> Unit,
 ) {
     val imageSelectLauncher = rememberLauncherForActivityResult(
-        PickVisualMediaPersistent()
-    ) {
-        onIconChange(it)
-    }
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = onIconChange
+    )
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -87,7 +77,7 @@ fun AccountScreenSuccess(
         contentPadding = PaddingValues(16.dp),
         columns = GridCells.Fixed(2)
     ) {
-        singleItem {
+        singleItem(key = "icon") {
             Box(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
@@ -108,8 +98,8 @@ fun AccountScreenSuccess(
                         )
                     }
                 ) {
-                    if (icon != null) {
-                        UriImage(uri = icon)
+                    if (info.icon != null) {
+                        UriImage(uri = info.icon)
                     } else {
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
@@ -122,9 +112,9 @@ fun AccountScreenSuccess(
                 }
             }
         }
-        singleItem {
+        singleItem(key = "label") {
             AccountDataField(
-                value = label,
+                value = info.label,
                 onValueChange = onLabelChange,
                 label = {
                     Text(stringResource(R.string.account_data_label))
@@ -138,9 +128,9 @@ fun AccountScreenSuccess(
                 required = true
             )
         }
-        singleItem {
+        singleItem(key = "issuer") {
             AccountDataField(
-                value = issuer,
+                value = info.issuer,
                 onValueChange = onIssuerChange,
                 label = {
                     Text(stringResource(R.string.account_data_issuer))
@@ -153,10 +143,10 @@ fun AccountScreenSuccess(
                 },
             )
         }
-        singleItem {
+        singleItem(key = "secret") {
             var secretShown by remember { mutableStateOf(false) }
             AccountDataField(
-                value = secret,
+                value = info.secret,
                 onValueChange = onSecretChange,
                 label = {
                     Text(stringResource(R.string.account_data_secret))
@@ -188,29 +178,29 @@ fun AccountScreenSuccess(
                 required = true
             )
         }
-        item {
+        item(key = "type") {
             AccountComboBox(
                 values = OtpType.entries,
-                value = type,
+                value = info.type,
                 onValueChange = onTypeChange,
                 label = {
                     Text(stringResource(R.string.account_data_type))
                 }
             )
         }
-        item {
+        item(key = "digest") {
             AccountComboBox(
                 values = OtpDigest.entries,
-                value = digest,
+                value = info.algorithm,
                 onValueChange = onDigestChange,
                 label = {
                     Text(stringResource(R.string.account_data_algorithm))
                 }
             )
         }
-        item {
+        item(key = "digits") {
             AccountNumberField(
-                value = digits,
+                value = info.digits,
                 onValueChange = onDigitsChange,
                 label = {
                     Text(stringResource(R.string.account_data_digits))
@@ -222,11 +212,11 @@ fun AccountScreenSuccess(
                 }
             )
         }
-        item {
+        item(key = "period/counter") {
             AnimatedContent(
-                targetState = type,
+                targetState = info.type,
                 transitionSpec = {
-                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Up) + fadeIn() with
+                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Up) + fadeIn() togetherWith
                             slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Up) + fadeOut()
                 },
                 label = "HOTP/TOTP"
@@ -234,7 +224,7 @@ fun AccountScreenSuccess(
                 when (it) {
                     OtpType.TOTP -> {
                         AccountNumberField(
-                            value = period,
+                            value = info.period,
                             onValueChange = onPeriodChange,
                             label = {
                                 Text(stringResource(R.string.account_data_period))
@@ -245,7 +235,7 @@ fun AccountScreenSuccess(
                     }
                     OtpType.HOTP -> {
                         AccountNumberField(
-                            value = counter,
+                            value = info.counter,
                             onValueChange = onCounterChange,
                             label = {
                                 Text(stringResource(R.string.account_data_counter))
@@ -255,15 +245,13 @@ fun AccountScreenSuccess(
                 }
             }
         }
-        if (id != null) {
-            singleItem {
-                Text(
-                    modifier = Modifier.padding(top = 4.dp),
-                    text = id.toString(),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = LocalContentColor.current.copy(alpha = 0.7f)
-                )
-            }
+        singleItem(key = "id") {
+            Text(
+                modifier = Modifier.padding(top = 4.dp),
+                text = info.id.toString(),
+                style = MaterialTheme.typography.labelLarge,
+                color = LocalContentColor.current.copy(alpha = 0.7f)
+            )
         }
     }
 }

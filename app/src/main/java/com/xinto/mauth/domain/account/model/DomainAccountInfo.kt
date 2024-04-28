@@ -11,7 +11,7 @@ import java.util.UUID
 @Immutable
 @Parcelize
 data class DomainAccountInfo(
-    val id: UUID?,
+    val id: UUID,
     val icon: Uri?,
     val label: String,
     val issuer: String,
@@ -21,7 +21,7 @@ data class DomainAccountInfo(
     val digits: String,
     val counter: String,
     val period: String,
-    val createdMillis: Long?
+    val createdMillis: Long
 ) : Parcelable {
 
     fun isValid(): Boolean {
@@ -34,19 +34,20 @@ data class DomainAccountInfo(
     }
 
     companion object {
-        val DEFAULT = DomainAccountInfo(
-            id = null,
-            icon = null,
-            label = "",
-            issuer = "",
-            secret = "",
-            algorithm = OtpDigest.SHA1,
-            type = OtpType.TOTP,
-            digits = "6",
-            counter = "0",
-            period = "30",
-            createdMillis = null
-        )
+        fun new(): DomainAccountInfo {
+            return DomainAccountInfo(
+                id = UUID.randomUUID(),
+                icon = null,
+                label = "",
+                issuer = "",
+                secret = "",
+                algorithm = OtpDigest.SHA1,
+                type = OtpType.TOTP,
+                digits = "6",
+                counter = "0",
+                period = "30",
+                createdMillis = System.currentTimeMillis()
+            )
+        }
     }
-
 }

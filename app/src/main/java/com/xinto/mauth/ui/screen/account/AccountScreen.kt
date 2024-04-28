@@ -1,5 +1,6 @@
 package com.xinto.mauth.ui.screen.account
 
+import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,11 +13,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -24,6 +23,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
+import com.xinto.mauth.core.otp.model.OtpDigest
+import com.xinto.mauth.core.otp.model.OtpType
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.ui.screen.account.component.AccountExitDialog
 import com.xinto.mauth.ui.screen.account.state.AccountScreenError
@@ -42,11 +43,24 @@ fun AddAccountScreen(
         parametersOf(AccountViewModelParams.Prefilled(prefilled))
     }
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val hasChanges by viewModel.hasChanges.collectAsStateWithLifecycle()
+    val canSave by viewModel.canSave.collectAsStateWithLifecycle()
     AccountScreen(
         title = stringResource(R.string.account_title_add),
         state = state,
+        hasChanges = hasChanges,
+        canSave = canSave,
+        onIconChange = viewModel::updateIcon,
+        onLabelChange = viewModel::updateLabel,
+        onIssuerChange = viewModel::updateIssuer,
+        onSecretChange = viewModel::updateSecret,
+        onTypeChange = viewModel::updateType,
+        onDigestChange = viewModel::updateDigest,
+        onDigitsChange = viewModel::updateDigits,
+        onCounterChange = viewModel::updateCounter,
+        onPeriodChange = viewModel::updatePeriod,
         onSave = {
-            viewModel.saveData(it)
+            viewModel.saveData()
             onExit()
         },
         onExit = onExit
@@ -62,11 +76,24 @@ fun EditAccountScreen(
         parametersOf(AccountViewModelParams.Id(id))
     }
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val hasChanges by viewModel.hasChanges.collectAsStateWithLifecycle()
+    val canSave by viewModel.canSave.collectAsStateWithLifecycle()
     AccountScreen(
         title = stringResource(R.string.account_title_edit),
         state = state,
+        hasChanges = hasChanges,
+        canSave = canSave,
+        onIconChange = viewModel::updateIcon,
+        onLabelChange = viewModel::updateLabel,
+        onIssuerChange = viewModel::updateIssuer,
+        onSecretChange = viewModel::updateSecret,
+        onTypeChange = viewModel::updateType,
+        onDigestChange = viewModel::updateDigest,
+        onDigitsChange = viewModel::updateDigits,
+        onCounterChange = viewModel::updateCounter,
+        onPeriodChange = viewModel::updatePeriod,
         onSave = {
-            viewModel.saveData(it)
+            viewModel.saveData()
             onExit()
         },
         onExit = onExit
@@ -77,20 +104,23 @@ fun EditAccountScreen(
 fun AccountScreen(
     title: String,
     state: AccountScreenState,
-    onSave: (DomainAccountInfo) -> Unit,
+    hasChanges: Boolean,
+    canSave: Boolean,
+    onIconChange: (Uri?) -> Unit,
+    onLabelChange: (String) -> Unit,
+    onIssuerChange: (String) -> Unit,
+    onSecretChange: (String) -> Unit,
+    onTypeChange: (OtpType) -> Unit,
+    onDigestChange: (OtpDigest) -> Unit,
+    onDigitsChange: (String) -> Unit,
+    onCounterChange: (String) -> Unit,
+    onPeriodChange: (String) -> Unit,
+    onSave: () -> Unit,
     onExit: () -> Unit,
 ) {
     var isExitDialogShown by remember { mutableStateOf(false) }
-    var accountInfo: DomainAccountInfo? by rememberSaveable {
-        mutableStateOf(null)
-    }
-    LaunchedEffect(state) {
-        if (state is AccountScreenState.Success) {
-            accountInfo = state.info
-        }
-    }
     BackHandler {
-        if (state is AccountScreenState.Success) {
+        if (hasChanges) {
             isExitDialogShown = true
         } else {
             onExit()
@@ -102,15 +132,15 @@ fun AccountScreen(
             TopAppBar(
                 actions = {
                     TextButton(
-                        onClick = { onSave(accountInfo!!) },
-                        enabled = accountInfo?.isValid() == true
+                        onClick = onSave,
+                        enabled = canSave
                     ) {
                         Text(stringResource(R.string.account_actions_save))
                     }
                 },
                 navigationIcon = {
                     IconButton(onClick = {
-                        if (accountInfo != null) {
+                        if (hasChanges) {
                             isExitDialogShown = true
                         } else {
                             onExit()
@@ -140,29 +170,18 @@ fun AccountScreen(
                     AccountScreenLoading()
                 }
                 is AccountScreenState.Success -> {
-                    accountInfo?.let { info ->
-                        AccountScreenSuccess(
-                            id = info.id,
-                            icon = info.icon,
-                            onIconChange = { accountInfo = info.copy(icon = it) },
-                            label = info.label,
-                            onLabelChange = { accountInfo = info.copy(label = it) },
-                            issuer = info.issuer,
-                            onIssuerChange = { accountInfo = info.copy(issuer = it) },
-                            secret = info.secret,
-                            onSecretChange = { accountInfo = info.copy(secret = it) },
-                            type = info.type,
-                            onTypeChange = { accountInfo = info.copy(type = it) },
-                            digest = info.algorithm,
-                            onDigestChange = { accountInfo = info.copy(algorithm = it) },
-                            digits = info.digits,
-                            onDigitsChange = { accountInfo = info.copy(digits = it) },
-                            counter = info.counter,
-                            onCounterChange = { accountInfo = info.copy(counter = it) },
-                            period = info.period,
-                            onPeriodChange = { accountInfo = info.copy(period = it) }
-                        )
-                    }
+                    AccountScreenSuccess(
+                        info = state.info,
+                        onIconChange = onIconChange,
+                        onLabelChange = onLabelChange,
+                        onIssuerChange = onIssuerChange,
+                        onSecretChange = onSecretChange,
+                        onTypeChange = onTypeChange,
+                        onDigestChange = onDigestChange,
+                        onDigitsChange = onDigitsChange,
+                        onCounterChange = onCounterChange,
+                        onPeriodChange = onPeriodChange
+                    )
                 }
                 is AccountScreenState.Error -> {
                     AccountScreenError()

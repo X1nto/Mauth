@@ -113,7 +113,7 @@ class AccountRepository(
 
     private fun DomainAccountInfo.toEntityAccount(): EntityAccount {
         return EntityAccount(
-            id = id ?: UUID.randomUUID(),
+            id = id,
             icon = icon,
             secret = secret,
             label = label,
@@ -122,7 +122,7 @@ class AccountRepository(
             type = type,
             digits = digits.toInt(),
             period = period.toInt(),
-            createDateMillis = createdMillis ?: System.currentTimeMillis()
+            createDateMillis = createdMillis
         )
     }
 
