@@ -69,52 +69,6 @@ fun HomeScaffold(
                         horizontalArrangement = arrangement,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        var isSortVisible by remember { mutableStateOf(false) }
-                        IconButton(onClick = {
-                            isSortVisible = true
-                        }) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_sort),
-                                contentDescription = null
-                            )
-                            DropdownMenu(
-                                expanded = isSortVisible,
-                                onDismissRequest = {
-                                    isSortVisible = false
-                                }
-                            ) {
-                                SortSetting.entries.forEach {
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            isSortVisible = false
-                                            onActiveSortChange(it)
-                                        },
-                                        text = {
-                                            val resource = remember(it) {
-                                                when (it) {
-                                                    SortSetting.DateAsc -> R.string.home_sort_date_ascending
-                                                    SortSetting.DateDesc -> R.string.home_sort_date_descending
-                                                    SortSetting.LabelAsc -> R.string.home_sort_label_ascending
-                                                    SortSetting.LabelDesc -> R.string.home_sort_label_descending
-                                                    SortSetting.IssuerAsc -> R.string.home_sort_issuer_ascending
-                                                    SortSetting.IssuerDesc -> R.string.home_sort_issuer_descending
-                                                }
-                                            }
-                                            Text(stringResource(resource))
-                                        },
-                                        trailingIcon = {
-                                            if (activeSortSetting == it) {
-                                                Icon(
-                                                    painter = painterResource(R.drawable.ic_check),
-                                                    contentDescription = null
-                                                )
-                                            }
-                                        }
-                                    )
-                                }
-                            }
-                        }
-
                         var isMoreActionsVisible by remember { mutableStateOf(false) }
                         IconButton(onClick = {
                             isMoreActionsVisible = true
@@ -161,6 +115,53 @@ fun HomeScaffold(
                                 )
                             }
                         }
+
+                        var isSortVisible by remember { mutableStateOf(false) }
+                        IconButton(onClick = {
+                            isSortVisible = true
+                        }) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_sort),
+                                contentDescription = null
+                            )
+                            DropdownMenu(
+                                expanded = isSortVisible,
+                                onDismissRequest = {
+                                    isSortVisible = false
+                                }
+                            ) {
+                                SortSetting.entries.forEach {
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            isSortVisible = false
+                                            onActiveSortChange(it)
+                                        },
+                                        text = {
+                                            val resource = remember(it) {
+                                                when (it) {
+                                                    SortSetting.DateAsc -> R.string.home_sort_date_ascending
+                                                    SortSetting.DateDesc -> R.string.home_sort_date_descending
+                                                    SortSetting.LabelAsc -> R.string.home_sort_label_ascending
+                                                    SortSetting.LabelDesc -> R.string.home_sort_label_descending
+                                                    SortSetting.IssuerAsc -> R.string.home_sort_issuer_ascending
+                                                    SortSetting.IssuerDesc -> R.string.home_sort_issuer_descending
+                                                }
+                                            }
+                                            Text(stringResource(resource))
+                                        },
+                                        trailingIcon = {
+                                            if (activeSortSetting == it) {
+                                                Icon(
+                                                    painter = painterResource(R.drawable.ic_check),
+                                                    contentDescription = null
+                                                )
+                                            }
+                                        }
+                                    )
+                                }
+                            }
+                        }
+
                     }
                 }
             }

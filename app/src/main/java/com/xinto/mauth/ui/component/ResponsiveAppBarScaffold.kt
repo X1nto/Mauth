@@ -42,7 +42,7 @@ fun ResponsiveAppBarScaffold(
                 TopAppBar(
                     title = appBarTitle,
                     actions = {
-                        actions(Arrangement.Start)
+                        actions(Arrangement.Reverse)
                     },
                     scrollBehavior = scrollBehavior
                 )
@@ -57,7 +57,7 @@ fun ResponsiveAppBarScaffold(
             if (sizeClass.widthSizeClass != WindowWidthSizeClass.Expanded) {
                 BottomAppBar(
                     actions = {
-                        actions(Arrangement.Reverse)
+                        actions(Arrangement.Start)
                     },
                     floatingActionButton = floatingActionButton
                 )
