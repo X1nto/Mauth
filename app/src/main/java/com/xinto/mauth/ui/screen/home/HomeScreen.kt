@@ -33,7 +33,9 @@ fun HomeScreen(
     onAddAccountManually: () -> Unit,
     onAddAccountViaScanning: () -> Unit,
     onAddAccountFromImage: (DomainAccountInfo) -> Unit,
-    onMenuNavigate: (HomeMoreMenu) -> Unit,
+    onSettingsNavigate: () -> Unit,
+    onExportNavigate: (accounts: List<UUID>) -> Unit,
+    onAboutNavigate: () -> Unit,
     onAccountEdit: (UUID) -> Unit
 ) {
     val viewModel: HomeViewModel = koinViewModel()
@@ -47,6 +49,7 @@ fun HomeScreen(
             onAddAccountFromImage(it)
         }
     }
+
     HomeScreen(
         onAddAccountNavigate = {
             when (it) {
@@ -61,7 +64,13 @@ fun HomeScreen(
                 HomeAddAccountMenu.Manual -> onAddAccountManually()
             }
         },
-        onMenuNavigate = onMenuNavigate,
+        onMenuNavigate = {
+            when (it) {
+                HomeMoreMenu.Settings -> onSettingsNavigate()
+                HomeMoreMenu.Export -> onExportNavigate(selectedAccounts)
+                HomeMoreMenu.About -> onAboutNavigate()
+            }
+        },
         onAccountSelect = viewModel::toggleAccountSelection,
         onCancelAccountSelection = viewModel::clearAccountSelection,
         onDeleteSelectedAccounts = viewModel::deleteSelectedAccounts,

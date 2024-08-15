@@ -7,7 +7,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.DropdownMenu
@@ -57,18 +56,26 @@ fun HomeScaffold(
                 },
                 label = "Actions"
             ) { isSelectionActive ->
-                if (isSelectionActive) {
-                    IconButton(onClick = onDeleteSelected) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_delete_forever),
-                            contentDescription = null
-                        )
-                    }
-                } else {
-                    Row(
-                        horizontalArrangement = arrangement,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
+                Row(
+                    horizontalArrangement = arrangement,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (isSelectionActive) {
+                        IconButton(onClick = {
+                            onMenuNavigate(HomeMoreMenu.Export)
+                        }) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_export),
+                                contentDescription = null
+                            )
+                        }
+                        IconButton(onClick = onDeleteSelected) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_delete_forever),
+                                contentDescription = null
+                            )
+                        }
+                    } else {
                         var isSortVisible by remember { mutableStateOf(false) }
                         IconButton(onClick = {
                             isSortVisible = true

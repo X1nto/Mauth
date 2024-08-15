@@ -37,7 +37,6 @@ import com.xinto.mauth.ui.screen.account.AddAccountScreen
 import com.xinto.mauth.ui.screen.account.EditAccountScreen
 import com.xinto.mauth.ui.screen.auth.AuthScreen
 import com.xinto.mauth.ui.screen.export.ExportScreen
-import com.xinto.mauth.ui.screen.home.HomeMoreMenu
 import com.xinto.mauth.ui.screen.home.HomeScreen
 import com.xinto.mauth.ui.screen.pinremove.PinRemoveScreen
 import com.xinto.mauth.ui.screen.pinsetup.PinSetupScreen
@@ -188,14 +187,15 @@ class MainActivity : FragmentActivity() {
                                     onAccountEdit = {
                                         navigator.navigate(MauthDestination.EditAccount(it))
                                     },
-                                    onMenuNavigate = {
-                                        val destination = when (it) {
-                                            HomeMoreMenu.Settings -> MauthDestination.Settings
-                                            HomeMoreMenu.Export -> MauthDestination.Export()
-                                            HomeMoreMenu.About -> MauthDestination.About
-                                        }
-                                        navigator.navigate(destination)
+                                    onSettingsNavigate = {
+                                        navigator.navigate(MauthDestination.Settings)
                                     },
+                                    onExportNavigate = {
+                                        navigator.navigate(MauthDestination.Export(it))
+                                    },
+                                    onAboutNavigate = {
+                                        navigator.navigate(MauthDestination.About)
+                                    }
                                 )
                             }
                             is MauthDestination.QrScanner -> {

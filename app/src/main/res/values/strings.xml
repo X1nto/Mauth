@@ -86,6 +86,7 @@
     <string name="theme_colors_turquoise">Ocean Turquoise</string>
 
     <string name="export_title">Export</string>
+    <string name="export_url_copy_success">Successfully copied the OTP URL to the clipboard</string>
 
     <string name="about_title">About</string>
     <string name="about_version">Version v%1$s</string>

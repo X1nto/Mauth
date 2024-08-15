@@ -5,25 +5,24 @@ import androidx.compose.runtime.Immutable
 import com.xinto.mauth.core.otp.model.OtpDigest
 import java.util.UUID
 
-val DomainAccount.shortLabel: String
-    get() {
-        return label.filter {
+@Immutable
+sealed class DomainAccount {
+    abstract val id: UUID
+    abstract val icon: Uri?
+    abstract val secret: String
+    abstract val label: String
+    abstract val issuer: String
+    abstract val algorithm: OtpDigest
+    abstract val digits: Int
+    abstract val createdMillis: Long
+
+    val shortLabel by lazy {
+        label.filter {
             it.isUpperCase()
         }.ifEmpty {
             label[0].uppercase()
         }.take(3)
     }
-
-@Immutable
-sealed interface DomainAccount {
-    val id: UUID
-    val icon: Uri?
-    val secret: String
-    val label: String
-    val issuer: String
-    val algorithm: OtpDigest
-    val digits: Int
-    val createdMillis: Long
 
     @Immutable
     data class Totp(
@@ -36,7 +35,7 @@ sealed interface DomainAccount {
         override val digits: Int,
         override val createdMillis: Long,
         val period: Int
-    ) : DomainAccount
+    ) : DomainAccount()
 
     @Immutable
     data class Hotp(
@@ -48,6 +47,6 @@ sealed interface DomainAccount {
         override val algorithm: OtpDigest,
         override val digits: Int,
         override val createdMillis: Long,
-    ) : DomainAccount
+    ) : DomainAccount()
 
 }

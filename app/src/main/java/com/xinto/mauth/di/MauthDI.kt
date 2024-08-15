@@ -3,6 +3,8 @@ package com.xinto.mauth.di
 import androidx.room.Room
 import com.xinto.mauth.core.auth.AuthManager
 import com.xinto.mauth.core.auth.DefaultAuthManager
+import com.xinto.mauth.core.otp.exporter.DefaultOtpExporter
+import com.xinto.mauth.core.otp.exporter.OtpExporter
 import com.xinto.mauth.core.otp.generator.DefaultOtpGenerator
 import com.xinto.mauth.core.otp.generator.OtpGenerator
 import com.xinto.mauth.core.otp.parser.DefaultOtpUriParser
@@ -40,6 +42,7 @@ object MauthDI {
         singleOf(::DefaultKeyTransformer) bind KeyTransformer::class
         singleOf(::DefaultSettings) bind Settings::class
         singleOf(::DefaultAuthManager) bind AuthManager::class
+        singleOf(::DefaultOtpExporter) bind OtpExporter::class
     }
 
     val DbModule = module {

@@ -1,5 +1,7 @@
 package com.xinto.mauth.domain.account
 
+import com.xinto.mauth.core.otp.exporter.OtpExporter
+import com.xinto.mauth.core.otp.model.OtpData
 import com.xinto.mauth.core.otp.model.OtpType
 import com.xinto.mauth.core.settings.model.SortSetting
 import com.xinto.mauth.db.dao.account.AccountsDao
@@ -9,15 +11,19 @@ import com.xinto.mauth.db.dao.rtdata.entity.EntityCountData
 import com.xinto.mauth.domain.SettingsRepository
 import com.xinto.mauth.domain.account.model.DomainAccount
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
+import com.xinto.mauth.domain.account.model.DomainExportAccount
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import java.util.UUID
 
 class AccountRepository(
     private val accountsDao: AccountsDao,
     private val rtdataDao: RtdataDao,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val otpExporter: OtpExporter
 ) {
 
     fun getAccounts(): Flow<List<DomainAccount>> {
@@ -36,7 +42,7 @@ class AccountRepository(
                 SortSetting.LabelAsc -> mapped.sortedBy { it.label }
                 SortSetting.LabelDesc -> mapped.sortedByDescending { it.label }
             }
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
     fun getAccountInfo(id: UUID): Flow<DomainAccountInfo> {
@@ -63,6 +69,46 @@ class AccountRepository(
 
     suspend fun deleteAccounts(ids: List<UUID>) {
         accountsDao.delete(ids.toSet())
+    }
+
+    suspend fun DomainAccount.toExportAccount(): DomainExportAccount {
+        return DomainExportAccount(
+            id = id,
+            label = label,
+            issuer = issuer,
+            icon = icon,
+            url = otpExporter.exportOtp(this.toOtpData())
+        )
+    }
+
+    suspend fun DomainAccount.toOtpData(): OtpData {
+        return when (this) {
+            is DomainAccount.Hotp -> {
+                val counter = rtdataDao.getAccountCounter(id)
+                OtpData(
+                    label = label,
+                    issuer = issuer,
+                    secret = secret,
+                    algorithm = algorithm,
+                    type = OtpType.HOTP,
+                    digits = digits,
+                    counter = counter,
+                    period = null
+                )
+            }
+            is DomainAccount.Totp -> {
+                OtpData(
+                    label = label,
+                    issuer = issuer,
+                    secret = secret,
+                    algorithm = algorithm,
+                    type = OtpType.TOTP,
+                    digits = digits,
+                    counter = null,
+                    period = period
+                )
+            }
+        }
     }
 
     private fun EntityAccount.toDomain(): DomainAccount {

@@ -22,6 +22,5 @@ fun ExportScreenError() {
             painter = painterResource(R.drawable.ic_error),
             contentDescription = null
         )
-//        Text(stringResource(R.string.account_error))
     }
 }
