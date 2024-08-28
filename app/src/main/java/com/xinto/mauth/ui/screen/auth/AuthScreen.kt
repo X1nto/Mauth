@@ -56,11 +56,7 @@ fun AuthScreen(
     AuthScreen(
         modifier = modifier,
         code = code,
-        onNumberAdd = {
-            if (viewModel.insertNumber(it)) {
-                onAuthSuccess()
-            }
-        },
+        onNumberAdd = viewModel::insertNumber,
         onNumberDelete = viewModel::deleteNumber,
         onClear = viewModel::clear,
         showFingerprint = canUseBiometrics,
