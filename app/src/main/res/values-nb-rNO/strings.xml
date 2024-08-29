@@ -30,7 +30,7 @@
     <string name="qrscan_title">Skann en QR-kode</string>
     <string name="qrscan_permissions_title">Manglende tilganger</string>
     <string name="qrscan_permissions_subtitle">Kameratilgang ikke innvilget.</string>
-    <string name="qrscan_permissions_subtitle_rationale">Kameratilgang kreves for å skanne og analysere QR-kodeR.</string>
+    <string name="qrscan_permissions_subtitle_rationale">Kameratilgang kreves for å skanne og analysere QR-koder.</string>
     <string name="qrscan_permissions_button_grant">Innvilg</string>
     <string name="qrscan_permissions_button_cancel">Avbryt</string>
     <string name="qrscan_error">Utilstrekkelig tilgang</string>
