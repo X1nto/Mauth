@@ -110,8 +110,7 @@ private fun MaterialBottomSheetDialog(
     val insets = WindowInsets.navigationBars
     ModalBottomSheet(
         sheetState = state,
-        onDismissRequest = onDismissRequest,
-        windowInsets = WindowInsets(0)
+        onDismissRequest = onDismissRequest
     ) {
         Column(
             modifier = Modifier
