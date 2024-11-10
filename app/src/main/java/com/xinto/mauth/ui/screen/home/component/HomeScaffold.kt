@@ -56,26 +56,50 @@ fun HomeScaffold(
                 },
                 label = "Actions"
             ) { isSelectionActive ->
-                Row(
-                    horizontalArrangement = arrangement,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    if (isSelectionActive) {
+                if (isSelectionActive) {
+                    IconButton(onClick = onDeleteSelected) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_delete_forever),
+                            contentDescription = null
+                        )
+                    }
+                } else {
+                    Row(
+                        horizontalArrangement = arrangement,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        var isMoreActionsVisible by remember { mutableStateOf(false) }
                         IconButton(onClick = {
-                            onMenuNavigate(HomeMoreMenu.Export)
+                            isMoreActionsVisible = true
                         }) {
                             Icon(
-                                painter = painterResource(R.drawable.ic_export),
+                                painter = painterResource(R.drawable.ic_more_vert),
                                 contentDescription = null
                             )
+                            DropdownMenu(
+                                expanded = isMoreActionsVisible,
+                                onDismissRequest = {
+                                    isMoreActionsVisible = false
+                                }
+                            ) {
+                                HomeMoreMenu.entries.forEach { menu ->
+                                    DropdownMenuItem(
+                                        text = { Text(stringResource(menu.title)) },
+                                        leadingIcon = {
+                                            Icon(
+                                                painter = painterResource(menu.icon),
+                                                contentDescription = null
+                                            )
+                                        },
+                                        onClick = {
+                                            isMoreActionsVisible = false
+                                            onMenuNavigate(menu)
+                                        }
+                                    )
+                                }
+                            }
                         }
-                        IconButton(onClick = onDeleteSelected) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_delete_forever),
-                                contentDescription = null
-                            )
-                        }
-                    } else {
+
                         var isSortVisible by remember { mutableStateOf(false) }
                         IconButton(onClick = {
                             isSortVisible = true
@@ -122,37 +146,6 @@ fun HomeScaffold(
                             }
                         }
 
-                        var isMoreActionsVisible by remember { mutableStateOf(false) }
-                        IconButton(onClick = {
-                            isMoreActionsVisible = true
-                        }) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_more_vert),
-                                contentDescription = null
-                            )
-                            DropdownMenu(
-                                expanded = isMoreActionsVisible,
-                                onDismissRequest = {
-                                    isMoreActionsVisible = false
-                                }
-                            ) {
-                                HomeMoreMenu.entries.forEach { menu ->
-                                    DropdownMenuItem(
-                                        text = { Text(stringResource(menu.title)) },
-                                        leadingIcon = {
-                                            Icon(
-                                                painter = painterResource(menu.icon),
-                                                contentDescription = null
-                                            )
-                                        },
-                                        onClick = {
-                                            isMoreActionsVisible = false
-                                            onMenuNavigate(menu)
-                                        }
-                                    )
-                                }
-                            }
-                        }
                     }
                 }
             }

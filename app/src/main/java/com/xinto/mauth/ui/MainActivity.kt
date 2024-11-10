@@ -180,8 +180,9 @@ class MainActivity : FragmentActivity() {
                             is MauthDestination.Home -> {
                                 HomeScreen(
                                     onAddAccountManually = {
-                                        navigator.navigate(MauthDestination.AddAccount(
-                                            DomainAccountInfo.DEFAULT))
+                                        navigator.navigate(
+                                            MauthDestination.AddAccount(DomainAccountInfo.new())
+                                        )
                                     },
                                     onAddAccountViaScanning = {
                                         navigator.navigate(MauthDestination.QrScanner)
