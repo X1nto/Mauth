@@ -8,12 +8,12 @@ plugins {
 
 android {
     namespace = "com.xinto.mauth"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.xinto.mauth"
         minSdk = 21
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 80
         versionName = "0.8.0"
 
