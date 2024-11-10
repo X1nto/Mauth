@@ -138,7 +138,7 @@ class MainActivity : FragmentActivity() {
                                         )
                                     )
                                 }
-                                initial is MauthDestination.Auth -> {
+                                initial is MauthDestination.Auth && action !is NavAction.Pop -> {
                                     fadeIn() + scaleIn(
                                         initialScale = 0.9f
                                     ) togetherWith fadeOut() + slideOut {
@@ -174,6 +174,9 @@ class MainActivity : FragmentActivity() {
                                         } else {
                                             navigator.replaceAll(MauthDestination.Home)
                                         }
+                                    },
+                                    onBackPress = if (screen.nextDestination == null) null else { ->
+                                        navigator.pop()
                                     }
                                 )
                             }
