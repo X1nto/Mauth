@@ -47,6 +47,7 @@ import com.xinto.mauth.ui.theme.MauthTheme
 import com.xinto.mauth.util.launchInLifecycle
 import dev.olshevski.navigation.reimagined.AnimatedNavHost
 import dev.olshevski.navigation.reimagined.NavAction
+import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop
 import dev.olshevski.navigation.reimagined.rememberNavController
@@ -90,7 +91,7 @@ class MainActivity : FragmentActivity() {
 
         val initialScreen = runBlocking {
             if (auth.isProtected()) {
-                MauthDestination.Auth
+                MauthDestination.Auth()
             } else {
                 MauthDestination.Home
             }
@@ -168,7 +169,11 @@ class MainActivity : FragmentActivity() {
                             is MauthDestination.Auth -> {
                                 AuthScreen(
                                     onAuthSuccess = {
-                                        navigator.replaceAll(MauthDestination.Home)
+                                        if (screen.nextDestination != null) {
+                                            navigator.replaceLast(screen.nextDestination)
+                                        } else {
+                                            navigator.replaceAll(MauthDestination.Home)
+                                        }
                                     }
                                 )
                             }
@@ -190,8 +195,8 @@ class MainActivity : FragmentActivity() {
                                     onSettingsNavigate = {
                                         navigator.navigate(MauthDestination.Settings)
                                     },
-                                    onExportNavigate = {
-                                        navigator.navigate(MauthDestination.Export(it))
+                                    onExportNavigate = { accounts ->
+                                        navigator.navigateSecure(MauthDestination.Export(accounts))
                                     },
                                     onAboutNavigate = {
                                         navigator.navigate(MauthDestination.About)
@@ -254,6 +259,15 @@ class MainActivity : FragmentActivity() {
                     }
                 }
             }
+        }
+    }
+
+    private fun NavController<MauthDestination>.navigateSecure(destination: MauthDestination) {
+        val isProtected = runBlocking { auth.isProtected() }
+        if (isProtected) {
+            navigate(MauthDestination.Auth(nextDestination = destination))
+        } else {
+            navigate(destination)
         }
     }
 }

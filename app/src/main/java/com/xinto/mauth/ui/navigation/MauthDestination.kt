@@ -8,7 +8,7 @@ import java.util.UUID
 sealed class MauthDestination(val isFullscreenDialog: Boolean = false) : Parcelable {
 
     @Parcelize
-    data object Auth : MauthDestination()
+    data class Auth(val nextDestination: MauthDestination? = null) : MauthDestination()
 
     @Parcelize
     data object Home : MauthDestination()
