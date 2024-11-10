@@ -14,8 +14,8 @@ android {
         applicationId = "com.xinto.mauth"
         minSdk = 21
         targetSdk = 35
-        versionCode = 80
-        versionName = "0.8.0"
+        versionCode = 90
+        versionName = "0.9.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -144,7 +144,7 @@ dependencies {
 
     implementation("io.insert-koin:koin-androidx-compose:3.4.5")
 
-    val accompanistVersion = "0.32.0"
+    val accompanistVersion = "0.36.0"
     implementation("com.google.accompanist:accompanist-permissions:$accompanistVersion")
 
     testImplementation("junit:junit:4.13.2")
