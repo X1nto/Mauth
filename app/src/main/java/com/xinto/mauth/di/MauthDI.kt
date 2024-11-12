@@ -3,6 +3,8 @@ package com.xinto.mauth.di
 import androidx.room.Room
 import com.xinto.mauth.core.auth.AuthManager
 import com.xinto.mauth.core.auth.DefaultAuthManager
+import com.xinto.mauth.core.otp.exporter.DefaultOtpExporter
+import com.xinto.mauth.core.otp.exporter.OtpExporter
 import com.xinto.mauth.core.otp.generator.DefaultOtpGenerator
 import com.xinto.mauth.core.otp.generator.OtpGenerator
 import com.xinto.mauth.core.otp.parser.DefaultOtpUriParser
@@ -19,6 +21,7 @@ import com.xinto.mauth.domain.account.AccountRepository
 import com.xinto.mauth.domain.otp.OtpRepository
 import com.xinto.mauth.ui.screen.account.AccountViewModel
 import com.xinto.mauth.ui.screen.auth.AuthViewModel
+import com.xinto.mauth.ui.screen.export.ExportViewModel
 import com.xinto.mauth.ui.screen.home.HomeViewModel
 import com.xinto.mauth.ui.screen.pinremove.PinRemoveViewModel
 import com.xinto.mauth.ui.screen.pinsetup.PinSetupViewModel
@@ -39,6 +42,7 @@ object MauthDI {
         singleOf(::DefaultKeyTransformer) bind KeyTransformer::class
         singleOf(::DefaultSettings) bind Settings::class
         singleOf(::DefaultAuthManager) bind AuthManager::class
+        singleOf(::DefaultOtpExporter) bind OtpExporter::class
     }
 
     val DbModule = module {
@@ -77,6 +81,7 @@ object MauthDI {
         viewModelOf(::HomeViewModel)
         viewModelOf(::AuthViewModel)
         viewModelOf(::ThemeViewModel)
+        viewModelOf(::ExportViewModel)
     }
 
     val all = listOf(CoreModule, DbModule, DomainModule, UiModule)

@@ -10,18 +10,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import com.xinto.mauth.core.settings.model.ColorSetting
 import com.xinto.mauth.core.settings.model.ThemeSetting
-import com.xinto.mauth.ui.theme.color.DarkBlueberryBlue
-import com.xinto.mauth.ui.theme.color.DarkLemonYellow
-import com.xinto.mauth.ui.theme.color.DarkLimeGreen
-import com.xinto.mauth.ui.theme.color.DarkMothPurple
-import com.xinto.mauth.ui.theme.color.DarkOrangeOrange
-import com.xinto.mauth.ui.theme.color.DarkSkyCyan
-import com.xinto.mauth.ui.theme.color.LightBlueberryBlue
-import com.xinto.mauth.ui.theme.color.LightLemonYellow
-import com.xinto.mauth.ui.theme.color.LightLimeGreen
-import com.xinto.mauth.ui.theme.color.LightMothPurple
-import com.xinto.mauth.ui.theme.color.LightOrangeOrange
-import com.xinto.mauth.ui.theme.color.LightSkyCyan
+import com.xinto.mauth.ui.theme.color.BlueberryBlueDark
+import com.xinto.mauth.ui.theme.color.LimeGreenDark
+import com.xinto.mauth.ui.theme.color.MothPurpleDark
+import com.xinto.mauth.ui.theme.color.OrangeOrangeDark
+import com.xinto.mauth.ui.theme.color.SkyCyanDark
+import com.xinto.mauth.ui.theme.color.LemonYellowDark
+import com.xinto.mauth.ui.theme.color.BlueberryBlueLight
+import com.xinto.mauth.ui.theme.color.LemonYellowLight
+import com.xinto.mauth.ui.theme.color.LimeGreenLight
+import com.xinto.mauth.ui.theme.color.MothPurpleLight
+import com.xinto.mauth.ui.theme.color.OrangeOrangeLight
+import com.xinto.mauth.ui.theme.color.SkyCyanLight
 
 @Composable
 fun MauthTheme(
@@ -44,28 +44,28 @@ fun MauthTheme(
             }
         }
         color == ColorSetting.BlueberryBlue -> when (isDark) {
-            true -> DarkBlueberryBlue
-            false -> LightBlueberryBlue
+            true -> BlueberryBlueDark
+            false -> BlueberryBlueLight
         }
         color == ColorSetting.PickleYellow -> when (isDark) {
-            true -> DarkLemonYellow
-            false -> LightLemonYellow
+            true -> LemonYellowDark
+            false -> LemonYellowLight
         }
         color == ColorSetting.ToxicGreen -> when (isDark) {
-            true -> DarkLimeGreen
-            false -> LightLimeGreen
+            true -> LimeGreenDark
+            false -> LimeGreenLight
         }
         color == ColorSetting.LeatherOrange -> when (isDark) {
-            true -> DarkOrangeOrange
-            false -> LightOrangeOrange
+            true -> OrangeOrangeDark
+            false -> OrangeOrangeLight
         }
         color == ColorSetting.OceanTurquoise -> when (isDark) {
-            true -> DarkSkyCyan
-            false -> LightSkyCyan
+            true -> SkyCyanDark
+            false -> SkyCyanLight
         }
         else -> when (isDark) {
-            true -> DarkMothPurple
-            false -> LightMothPurple
+            true -> MothPurpleDark
+            false -> MothPurpleLight
         }
     }
     MaterialTheme(

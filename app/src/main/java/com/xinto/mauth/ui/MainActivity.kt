@@ -36,6 +36,7 @@ import com.xinto.mauth.ui.screen.about.AboutScreen
 import com.xinto.mauth.ui.screen.account.AddAccountScreen
 import com.xinto.mauth.ui.screen.account.EditAccountScreen
 import com.xinto.mauth.ui.screen.auth.AuthScreen
+import com.xinto.mauth.ui.screen.export.ExportScreen
 import com.xinto.mauth.ui.screen.home.HomeScreen
 import com.xinto.mauth.ui.screen.pinremove.PinRemoveScreen
 import com.xinto.mauth.ui.screen.pinsetup.PinSetupScreen
@@ -46,6 +47,7 @@ import com.xinto.mauth.ui.theme.MauthTheme
 import com.xinto.mauth.util.launchInLifecycle
 import dev.olshevski.navigation.reimagined.AnimatedNavHost
 import dev.olshevski.navigation.reimagined.NavAction
+import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop
 import dev.olshevski.navigation.reimagined.rememberNavController
@@ -89,7 +91,7 @@ class MainActivity : FragmentActivity() {
 
         val initialScreen = runBlocking {
             if (auth.isProtected()) {
-                MauthDestination.Auth
+                MauthDestination.Auth()
             } else {
                 MauthDestination.Home
             }
@@ -136,7 +138,7 @@ class MainActivity : FragmentActivity() {
                                         )
                                     )
                                 }
-                                initial is MauthDestination.Auth -> {
+                                initial is MauthDestination.Auth && action !is NavAction.Pop -> {
                                     fadeIn() + scaleIn(
                                         initialScale = 0.9f
                                     ) togetherWith fadeOut() + slideOut {
@@ -167,7 +169,14 @@ class MainActivity : FragmentActivity() {
                             is MauthDestination.Auth -> {
                                 AuthScreen(
                                     onAuthSuccess = {
-                                        navigator.replaceAll(MauthDestination.Home)
+                                        if (screen.nextDestination != null) {
+                                            navigator.replaceLast(screen.nextDestination)
+                                        } else {
+                                            navigator.replaceAll(MauthDestination.Home)
+                                        }
+                                    },
+                                    onBackPress = if (screen.nextDestination == null) null else { ->
+                                        navigator.pop()
                                     }
                                 )
                             }
@@ -184,14 +193,17 @@ class MainActivity : FragmentActivity() {
                                     onAddAccountFromImage = {
                                         navigator.navigate(MauthDestination.AddAccount(it))
                                     },
-                                    onSettingsClick = {
-                                        navigator.navigate(MauthDestination.Settings)
-                                    },
-                                    onAboutClick = {
-                                        navigator.navigate(MauthDestination.About)
-                                    },
                                     onAccountEdit = {
                                         navigator.navigate(MauthDestination.EditAccount(it))
+                                    },
+                                    onSettingsNavigate = {
+                                        navigator.navigate(MauthDestination.Settings)
+                                    },
+                                    onExportNavigate = { accounts ->
+                                        navigator.navigateSecure(MauthDestination.Export(accounts))
+                                    },
+                                    onAboutNavigate = {
+                                        navigator.navigate(MauthDestination.About)
                                     }
                                 )
                             }
@@ -241,10 +253,25 @@ class MainActivity : FragmentActivity() {
                             is MauthDestination.Theme -> {
                                 ThemeScreen(onExit = navigator::pop)
                             }
+                            is MauthDestination.Export -> {
+                                ExportScreen(
+                                    accounts = screen.accounts,
+                                    onBackNavigate = navigator::pop
+                                )
+                            }
                         }
                     }
                 }
             }
+        }
+    }
+
+    private fun NavController<MauthDestination>.navigateSecure(destination: MauthDestination) {
+        val isProtected = runBlocking { auth.isProtected() }
+        if (isProtected) {
+            navigate(MauthDestination.Auth(nextDestination = destination))
+        } else {
+            navigate(destination)
         }
     }
 }

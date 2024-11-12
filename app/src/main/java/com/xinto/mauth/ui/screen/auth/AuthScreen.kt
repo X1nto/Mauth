@@ -1,5 +1,9 @@
 package com.xinto.mauth.ui.screen.auth
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -8,6 +12,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
@@ -20,7 +25,8 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun AuthScreen(
     modifier: Modifier = Modifier,
-    onAuthSuccess: () -> Unit
+    onAuthSuccess: () -> Unit,
+    onBackPress: (() -> Unit)? = null
 ) {
     val viewModel: AuthViewModel = getViewModel()
     val code by viewModel.code.collectAsStateWithLifecycle()
@@ -39,6 +45,9 @@ fun AuthScreen(
         }
     }
 
+    BackHandler(enabled = onBackPress != null) {
+        onBackPress?.invoke()
+    }
     LaunchedEffect(code) {
         if (viewModel.validate(code)) {
             onAuthSuccess()
@@ -62,7 +71,8 @@ fun AuthScreen(
         showFingerprint = canUseBiometrics,
         onFingerprintClick = {
             biometricHandler.requestBiometrics(promptData)
-        }
+        },
+        onBackPress = onBackPress
     )
 }
 
@@ -74,6 +84,7 @@ fun AuthScreen(
     onClear: () -> Unit,
     showFingerprint: Boolean,
     onFingerprintClick: () -> Unit,
+    onBackPress: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val pinBoardState = rememberPinBoardState(
@@ -86,7 +97,26 @@ fun AuthScreen(
     PinScaffold(
         modifier = modifier,
         description = {
-            Text(stringResource(R.string.auth_title))
+            if (onBackPress == null) {
+                Text(stringResource(R.string.auth_title))
+            }
+        },
+        topBar = {
+            if (onBackPress != null) {
+                LargeTopAppBar(
+                    title = {
+                        Text(stringResource(R.string.auth_title))
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = onBackPress) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_arrow_back),
+                                contentDescription = null
+                            )
+                        }
+                    }
+                )
+            }
         },
         codeLength = code.length,
         state = pinBoardState
