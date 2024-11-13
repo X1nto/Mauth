@@ -82,7 +82,7 @@ fun ThemeScreen(
             modifier = Modifier
                 .padding(paddingValues)
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
-            columns = GridCells.Adaptive(150.dp),
+            columns = GridCells.Adaptive(175.dp),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
