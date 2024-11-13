@@ -85,6 +85,9 @@
     <string name="theme_colors_orange">Læroransje</string>
     <string name="theme_colors_turquoise">Havturkis</string>
 
+    <string name="export_title">Eksportering</string>
+    <string name="export_url_copy_success">OTP-nettadresse kopiert til utklippstavlen</string>
+
     <string name="about_title">Om</string>
     <string name="about_version">Versjon v%1$s</string>
     <string name="about_links_source">Kildekode</string>
