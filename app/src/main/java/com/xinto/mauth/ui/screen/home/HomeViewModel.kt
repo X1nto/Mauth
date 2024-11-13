@@ -73,18 +73,16 @@ class HomeViewModel(
 
     fun copyCodeToClipboard(label: String, code: String, visible: Boolean) {
         val application = getApplication<Mauth>()
-        val clipboardService = application.getSystemService<ClipboardManager>()
-        if (clipboardService != null) {
-            val clipData = ClipData.newPlainText(label, code).apply {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    description.extras = PersistableBundle().apply {
-                        putBoolean("android.content.extra.IS_SENSITIVE", !visible)
-                    }
+        val clipboardService = application.getSystemService<ClipboardManager>() ?: return
+        val clipData = ClipData.newPlainText(label, code).apply {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                description.extras = PersistableBundle().apply {
+                    putBoolean("android.content.extra.IS_SENSITIVE", !visible)
                 }
             }
-            clipboardService.setPrimaryClip(clipData)
-            Toast.makeText(application, R.string.home_code_copy_success, Toast.LENGTH_LONG).show()
         }
+        clipboardService.setPrimaryClip(clipData)
+        Toast.makeText(application, R.string.home_code_copy_success, Toast.LENGTH_LONG).show()
     }
 
     fun toggleAccountSelection(id: UUID) {

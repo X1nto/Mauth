@@ -33,7 +33,7 @@ jobs:
         run: ./gradlew assembleDebug
 
       - name: Upload the APK
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: mauth
           path: app/build/outputs/apk/debug/app-debug.apk

@@ -41,7 +41,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.xinto.mauth.R
 import com.xinto.mauth.domain.account.model.DomainAccount
-import com.xinto.mauth.domain.account.model.shortLabel
 import com.xinto.mauth.domain.otp.model.DomainOtpRealtimeData
 import com.xinto.mauth.ui.component.TwoPaneCard
 import com.xinto.mauth.ui.component.UriImage

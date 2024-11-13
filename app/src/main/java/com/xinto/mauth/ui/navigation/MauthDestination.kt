@@ -8,7 +8,7 @@ import java.util.UUID
 sealed class MauthDestination(val isFullscreenDialog: Boolean = false) : Parcelable {
 
     @Parcelize
-    data object Auth : MauthDestination()
+    data class Auth(val nextDestination: MauthDestination? = null) : MauthDestination()
 
     @Parcelize
     data object Home : MauthDestination()
@@ -28,6 +28,12 @@ sealed class MauthDestination(val isFullscreenDialog: Boolean = false) : Parcela
 
     @Parcelize
     data object Settings : MauthDestination()
+
+    @Parcelize
+    data class Export(
+        // Empty list means export all
+        val accounts: List<UUID> = emptyList()
+    ) : MauthDestination()
 
     @Parcelize
     data object PinSetup : MauthDestination()

@@ -7,10 +7,8 @@ import com.xinto.mauth.domain.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.runBlocking
 
 class AuthViewModel(
     private val authRepository: AuthRepository,
@@ -27,10 +25,8 @@ class AuthViewModel(
             initialValue = false
         )
 
-    fun insertNumber(number: Char): Boolean {
-        return _code.getAndUpdate {
-            it + number
-        } == "5746"
+    fun insertNumber(number: Char) {
+        _code.update { it + number }
     }
 
     fun deleteNumber() {
@@ -41,9 +37,7 @@ class AuthViewModel(
         _code.value = ""
     }
 
-    fun validate(code: String): Boolean {
-        return runBlocking {
-            authRepository.validate(code)
-        }
+    suspend fun validate(code: String): Boolean {
+        return authRepository.validate(code)
     }
 }

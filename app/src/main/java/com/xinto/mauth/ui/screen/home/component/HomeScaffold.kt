@@ -7,7 +7,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.DropdownMenu
@@ -29,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import com.xinto.mauth.R
 import com.xinto.mauth.core.settings.model.SortSetting
 import com.xinto.mauth.ui.component.ResponsiveAppBarScaffold
+import com.xinto.mauth.ui.screen.home.HomeMoreMenu
 
 @Composable
 fun HomeScaffold(
@@ -40,8 +40,7 @@ fun HomeScaffold(
     onAdd: () -> Unit,
     onCancelSelection: () -> Unit,
     onDeleteSelected: () -> Unit,
-    onSettingsClick: () -> Unit,
-    onAboutClick: () -> Unit,
+    onMenuNavigate: (HomeMoreMenu) -> Unit,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     ResponsiveAppBarScaffold(
@@ -83,36 +82,21 @@ fun HomeScaffold(
                                     isMoreActionsVisible = false
                                 }
                             ) {
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(stringResource(R.string.settings_title))
-                                    },
-                                    leadingIcon = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.ic_settings),
-                                            contentDescription = null
-                                        )
-                                    },
-                                    onClick = {
-                                        isMoreActionsVisible = false
-                                        onSettingsClick()
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(stringResource(R.string.about_title))
-                                    },
-                                    leadingIcon = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.ic_info),
-                                            contentDescription = null
-                                        )
-                                    },
-                                    onClick = {
-                                        isMoreActionsVisible = false
-                                        onAboutClick()
-                                    }
-                                )
+                                HomeMoreMenu.entries.forEach { menu ->
+                                    DropdownMenuItem(
+                                        text = { Text(stringResource(menu.title)) },
+                                        leadingIcon = {
+                                            Icon(
+                                                painter = painterResource(menu.icon),
+                                                contentDescription = null
+                                            )
+                                        },
+                                        onClick = {
+                                            isMoreActionsVisible = false
+                                            onMenuNavigate(menu)
+                                        }
+                                    )
+                                }
                             }
                         }
 
