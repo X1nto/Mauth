@@ -2,6 +2,8 @@ package com.xinto.mauth.ui.component.pinboard
 
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.scaleIn
@@ -11,7 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,7 +41,7 @@ fun PinDisplay(
     Surface(
         modifier = modifier,
         color = color,
-        shape = CircleShape
+        shape = RoundedCornerShape(15.dp)
     ) {
         Row(
             modifier = Modifier
@@ -61,8 +63,8 @@ fun PinDisplay(
                 }
                 AnimatedVisibility(
                     visibleState = transitionState,
-                    enter = scaleIn(),
-                    exit = scaleOut()
+                    enter = EnterTransition.None, // No animations
+                    exit = ExitTransition.None
                 ) {
                     Text(
                         text = "•",

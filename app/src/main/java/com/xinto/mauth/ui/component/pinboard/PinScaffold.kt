@@ -87,7 +87,7 @@ fun PinScaffold(
             )
             PinBoard(
                 modifier = Modifier
-                    .padding(horizontal = 8.dp)
+                    .padding(horizontal = 20.dp)
                     .padding(top = 32.dp),
                 state = state
             )

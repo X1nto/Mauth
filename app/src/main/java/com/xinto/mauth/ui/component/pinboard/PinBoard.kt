@@ -32,7 +32,7 @@ fun PinBoard(
     FlowRow(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
-        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
         maxItemsInEachRow = 3
     ) {
         state.buttons.forEach { button ->

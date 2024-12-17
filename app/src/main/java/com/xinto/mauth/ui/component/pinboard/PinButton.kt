@@ -75,7 +75,7 @@ fun PinButton(
     val contentColor by colors.getForegroundColor(interactionSource)
     Box(
         modifier = modifier
-            .aspectRatio(1f)
+            .aspectRatio(2f)
             .sizeIn(
                 minWidth = PinButtonDefaults.PinButtonMinSize,
                 minHeight = PinButtonDefaults.PinButtonMinSize,
@@ -107,8 +107,8 @@ fun PinButton(
 object PinButtonDefaults {
 
     val PinButtonMinSize = 72.dp
-    const val AnimationDurationPress = 200
-    const val AnimationDurationRelease = 150
+    const val AnimationDurationPress = 0
+    const val AnimationDurationRelease = 0
 
     @Composable
     fun plainPinButtonColors(
@@ -142,12 +142,11 @@ object PinButtonDefaults {
 
     @Composable
     fun plainPinButtonShapes(
-        shape: CornerBasedShape = RoundedCornerShape(50),
-        shapePressed: CornerBasedShape = MaterialTheme.shapes.large
+        shape: CornerBasedShape = RoundedCornerShape(15)
     ): PinButtonShapes {
         return PinButtonShapes(
             shape = shape,
-            shapePressed = shapePressed
+            shapePressed = shape
         )
     }
 
