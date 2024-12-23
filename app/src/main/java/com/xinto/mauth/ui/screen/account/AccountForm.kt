@@ -66,14 +66,18 @@ class AccountForm(private val initial: DomainAccountInfo) : Form<DomainAccountIn
     )
 
     fun isSame(): Boolean {
+        val typeSimilar = when (type.value) {
+            OtpType.TOTP -> initial.period == period.value
+            OtpType.HOTP -> initial.counter == counter.value
+        }
+
         return initial.icon == icon.value &&
                 initial.label == label.value &&
                 initial.issuer == issuer.value &&
                 initial.secret == secret.value &&
                 initial.type == type.value &&
                 initial.digits == digits.value &&
-                initial.counter == counter.value &&
-                initial.period == period.value
+                typeSimilar
     }
 
     override fun validate(): DomainAccountInfo? {
@@ -84,8 +88,11 @@ class AccountForm(private val initial: DomainAccountInfo) : Form<DomainAccountIn
         if (!algorithm.validate()) return null
         if (!type.validate()) return null
         if (!digits.validate()) return null
-        if (!counter.validate()) return null
-        if (!period.validate()) return null
+
+        when (type.value) {
+            OtpType.TOTP -> if (!period.validate()) return null
+            OtpType.HOTP -> if (!counter.validate()) return null
+        }
 
         return initial.copy(
             icon = icon.value,
@@ -95,8 +102,8 @@ class AccountForm(private val initial: DomainAccountInfo) : Form<DomainAccountIn
             algorithm = algorithm.value,
             type = type.value,
             digits = digits.value,
-            counter = counter.value,
-            period = period.value
+            counter = if (type.value == OtpType.HOTP) counter.value else initial.counter,
+            period = if (type.value == OtpType.TOTP) period.value else initial.period
         )
     }
 
