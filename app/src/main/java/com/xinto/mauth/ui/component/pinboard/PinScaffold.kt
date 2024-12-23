@@ -4,10 +4,12 @@ import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.LocalTextStyle
@@ -21,6 +23,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,44 +56,101 @@ fun PinScaffold(
         contentColor = contentColor,
         contentWindowInsets = contentWindowInsets,
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .padding(it)
-                .padding(40.dp)
-                .padding(bottom = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Bottom),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            if (description != null) {
-                Spacer(modifier = Modifier.weight(1f))
+        val orientation = LocalConfiguration.current.orientation
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .padding(it)
+                    .padding(20.dp)
+                    .padding(bottom = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
+                    modifier = Modifier
+                        .weight(0.6f)
+                        .fillMaxHeight()
                 ) {
-                    CompositionLocalProvider(
-                        LocalTextStyle provides MaterialTheme.typography.headlineMedium.copy(
-                            textAlign = TextAlign.Center
-                        )
+                    Column(
+                        modifier = Modifier.fillMaxHeight(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        description()
+                        if (description != null) {
+                            Box(
+                                modifier = Modifier.fillMaxWidth(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CompositionLocalProvider(
+                                    LocalTextStyle provides MaterialTheme.typography.headlineMedium.copy(
+                                        textAlign = TextAlign.Center
+                                    )
+                                ) {
+                                    description()
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(32.dp))
+                        }
+                        PinDisplay(
+                            modifier = Modifier
+                                .fillMaxWidth(0.5f),
+                            length = codeLength,
+                            error = error,
+                        )
                     }
                 }
-                Spacer(modifier = Modifier.weight(1f))
+                Box(modifier = Modifier.weight(0.4f)) {
+                    PinBoard(
+                        modifier = Modifier
+                            .padding(horizontal = 32.dp)
+                            .padding(bottom = 16.dp),
+                        state = state
+                    )
+                }
             }
-            PinDisplay(
+        } else {
+
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                length = codeLength,
-                error = error,
-            )
-            PinBoard(
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .padding(top = 32.dp),
-                state = state
-            )
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .padding(it)
+                    .padding(40.dp)
+                    .padding(bottom = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Bottom),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                if (description != null) {
+                    Spacer(modifier = Modifier.weight(1f))
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CompositionLocalProvider(
+                            LocalTextStyle provides MaterialTheme.typography.headlineMedium.copy(
+                                textAlign = TextAlign.Center
+                            )
+                        ) {
+                            description()
+                        }
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+                PinDisplay(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    length = codeLength,
+                    error = error,
+                )
+                PinBoard(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .padding(top = 32.dp),
+                    state = state
+                )
+            }
         }
     }
 }
