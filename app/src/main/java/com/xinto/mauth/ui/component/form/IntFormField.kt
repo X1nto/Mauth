@@ -18,18 +18,15 @@ class IntFormField(
 
     private val min: Int = Int.MIN_VALUE,
     private val max: Int = Int.MAX_VALUE
-) : FormField<Int>(initial, id = label) {
+) : FormField<String>(initial.toString(), id = label) {
 
     @Composable
     override fun invoke(modifier: Modifier) {
         OutlinedTextField(
             modifier = modifier,
-            value = value.toString(),
+            value = value,
             onValueChange = {
-                val intRepr = it.toIntOrNull()
-                if (intRepr != null) {
-                    value = intRepr
-                }
+                value = it
             },
             label = {
                 Text(stringResource(label))
@@ -42,9 +39,10 @@ class IntFormField(
         )
     }
 
-    @Suppress("ConvertTwoComparisonsToRangeCheck")
     override fun isValid(): Boolean {
-        return value > min && value < max
+        val intValue = value.toIntOrNull() ?: return false
+
+        return intValue in min..max
     }
 
 }

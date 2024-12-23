@@ -67,8 +67,8 @@ class AccountForm(private val initial: DomainAccountInfo) : Form<DomainAccountIn
 
     fun isSame(): Boolean {
         val typeSimilar = when (type.value) {
-            OtpType.TOTP -> initial.period == period.value
-            OtpType.HOTP -> initial.counter == counter.value
+            OtpType.TOTP -> initial.period == period.value.toIntOrNull()
+            OtpType.HOTP -> initial.counter == counter.value.toIntOrNull()
         }
 
         return initial.icon == icon.value &&
@@ -76,7 +76,7 @@ class AccountForm(private val initial: DomainAccountInfo) : Form<DomainAccountIn
                 initial.issuer == issuer.value &&
                 initial.secret == secret.value &&
                 initial.type == type.value &&
-                initial.digits == digits.value &&
+                initial.digits == digits.value.toIntOrNull() &&
                 typeSimilar
     }
 
@@ -101,9 +101,9 @@ class AccountForm(private val initial: DomainAccountInfo) : Form<DomainAccountIn
             secret = secret.value,
             algorithm = algorithm.value,
             type = type.value,
-            digits = digits.value,
-            counter = if (type.value == OtpType.HOTP) counter.value else initial.counter,
-            period = if (type.value == OtpType.TOTP) period.value else initial.period
+            digits = digits.value.toInt(),
+            counter = if (type.value == OtpType.HOTP) counter.value.toInt() else initial.counter,
+            period = if (type.value == OtpType.TOTP) period.value.toInt() else initial.period
         )
     }
 
