@@ -59,7 +59,7 @@ class AccountRepository(
 
     suspend fun putAccount(domainAccountInfo: DomainAccountInfo) {
         val entityAccount = domainAccountInfo.toEntityAccount()
-        rtdataDao.upsertCountData(EntityCountData(entityAccount.id, domainAccountInfo.counter.toInt()))
+        rtdataDao.upsertCountData(EntityCountData(entityAccount.id, domainAccountInfo.counter))
         accountsDao.upsert(entityAccount)
     }
 
@@ -150,9 +150,9 @@ class AccountRepository(
             secret = secret,
             algorithm = algorithm,
             type = type,
-            digits = digits.toString(),
-            period = period.toString(),
-            counter = counter.toString(),
+            digits = digits,
+            period = period,
+            counter = counter,
             createdMillis = createDateMillis
         )
     }
@@ -166,8 +166,8 @@ class AccountRepository(
             issuer = issuer,
             algorithm = algorithm,
             type = type,
-            digits = digits.toInt(),
-            period = period.toInt(),
+            digits = digits,
+            period = period,
             createDateMillis = createdMillis
         )
     }
