@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -20,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -63,14 +65,14 @@ fun PinScaffold(
                     .fillMaxWidth()
                     .fillMaxHeight()
                     .padding(it)
-                    .padding(20.dp)
+                    .padding(horizontal = 20.dp)
                     .padding(bottom = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
                     modifier = Modifier
-                        .weight(0.6f)
+                        .fillMaxWidth(0.5f)
                         .fillMaxHeight()
                 ) {
                     Column(
@@ -101,11 +103,22 @@ fun PinScaffold(
                         )
                     }
                 }
-                Box(modifier = Modifier.weight(0.4f)) {
+                val pinBoardHorizontalPadding = 32.dp
+                val horizontalButtonSpace = 16.dp
+                val totalPadding = (pinBoardHorizontalPadding * 2) + (horizontalButtonSpace * 2)
+                val maxBoxWidth = remember(PinButtonDefaults.PinButtonMinSize) {
+                    val buttonsInRow = 3
+                    (PinButtonDefaults.PinButtonMinSize * buttonsInRow) + totalPadding
+                }
+                Box(
+                    modifier = Modifier.sizeIn(maxWidth =  maxBoxWidth),
+                    contentAlignment = Alignment.Center
+                ) {
                     PinBoard(
                         modifier = Modifier
-                            .padding(horizontal = 32.dp)
+                            .padding(horizontal = pinBoardHorizontalPadding)
                             .padding(bottom = 16.dp),
+                        horizontalButtonSpace = horizontalButtonSpace,
                         state = state
                     )
                 }

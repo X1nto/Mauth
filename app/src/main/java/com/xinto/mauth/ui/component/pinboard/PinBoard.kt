@@ -3,7 +3,6 @@ package com.xinto.mauth.ui.component.pinboard
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowColumn
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -18,9 +17,9 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.xinto.mauth.R
 import com.xinto.mauth.ui.theme.MauthTheme
@@ -29,142 +28,57 @@ import com.xinto.mauth.ui.theme.MauthTheme
 @Composable
 fun PinBoard(
     modifier: Modifier = Modifier,
+    horizontalButtonSpace: Dp = 16.dp,
     state: PinBoardState = rememberPinBoardState()
 ) {
-    val orientation = LocalConfiguration.current.orientation
-    if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-
-        FlowColumn(
-            modifier = modifier,
-            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
-            horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
-            maxItemsInEachColumn = 4
-        ) {
-            val rowCount = 4
-            val rowWidth = 3
-            val columnCount = 3
-            val columnButtons = buildList {
-                for (columnIndex in 0..<columnCount) {
-                    for (rowIndex in 0..<rowCount) {
-                        add(state.buttons[rowWidth * rowIndex + columnIndex])
+    FlowRow(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+        horizontalArrangement = Arrangement.spacedBy(horizontalButtonSpace, Alignment.CenterHorizontally),
+        maxItemsInEachRow = 3
+    ) {
+        state.buttons.forEach { button ->
+            when (button) {
+                is PinBoardState.PinBoardButton.Number -> {
+                    PinButton(
+                        modifier = Modifier.weight(1f),
+                        onClick = { state.onNumberClick(button.number) }
+                    ) {
+                        Text(button.toString())
                     }
                 }
-            }
-            columnButtons.forEach { button ->
-                when (button) {
-                    is PinBoardState.PinBoardButton.Number -> {
-                        PinButton(
-                            modifier = Modifier.weight(1f),
-                            onClick = { state.onNumberClick(button.number) }
-                        ) {
-                            Text(button.toString())
-                        }
-                    }
-
-                    is PinBoardState.PinBoardButton.Backspace,
-                    is PinBoardState.PinBoardButton.Fingerprint,
-                    is PinBoardState.PinBoardButton.Enter -> {
-                        PrimaryPinButton(
-                            modifier = Modifier.weight(1f),
-                            onClick = when (button) {
-                                is PinBoardState.PinBoardButton.Backspace -> state.onBackspaceClick
-                                is PinBoardState.PinBoardButton.Fingerprint -> state.onFingerprintClick
-                                is PinBoardState.PinBoardButton.Enter -> state.onEnterClick
-                                else -> throw NoSuchElementException()
-                            },
-                            onLongClick =
+                is PinBoardState.PinBoardButton.Backspace,
+                is PinBoardState.PinBoardButton.Fingerprint,
+                is PinBoardState.PinBoardButton.Enter -> {
+                    PrimaryPinButton(
+                        modifier = Modifier.weight(1f),
+                        onClick = when (button) {
+                            is PinBoardState.PinBoardButton.Backspace -> state.onBackspaceClick
+                            is PinBoardState.PinBoardButton.Fingerprint -> state.onFingerprintClick
+                            is PinBoardState.PinBoardButton.Enter -> state.onEnterClick
+                            else -> throw NoSuchElementException()
+                        },
+                        onLongClick =
                             if (button is PinBoardState.PinBoardButton.Backspace)
                                 state.onBackspaceLongClick
                             else null
-                        ) {
-                            Icon(
-                                modifier = Modifier
-                                    .fillMaxSize(0.4f)
-                                    .aspectRatio(1f),
-                                painter = painterResource(
-                                    id = when (button) {
-                                        is PinBoardState.PinBoardButton.Backspace -> R.drawable.ic_backspace
-                                        is PinBoardState.PinBoardButton.Fingerprint -> R.drawable.ic_fingerprint
-                                        is PinBoardState.PinBoardButton.Enter -> R.drawable.ic_tab
-                                        else -> throw NoSuchElementException()
-                                    }
-                                ),
-                                contentDescription = null
-                            )
-                        }
-                    }
-
-                    is PinBoardState.PinBoardButton.Empty -> {
-                        Spacer(
-                            Modifier
-                                .aspectRatio(1f)
-                                .weight(1f)
-                                .size(PinButtonDefaults.PinButtonMinSize)
+                    ) {
+                        Icon(
+                            modifier = Modifier.fillMaxSize(0.4f).aspectRatio(1f),
+                            painter = painterResource(
+                                id = when (button) {
+                                    is PinBoardState.PinBoardButton.Backspace -> R.drawable.ic_backspace
+                                    is PinBoardState.PinBoardButton.Fingerprint -> R.drawable.ic_fingerprint
+                                    is PinBoardState.PinBoardButton.Enter -> R.drawable.ic_tab
+                                    else -> throw NoSuchElementException()
+                                }
+                            ),
+                            contentDescription = null
                         )
                     }
                 }
-            }
-        }
-    } else {
-
-        FlowRow(
-            modifier = modifier,
-            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
-            horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
-            maxItemsInEachRow = 3
-        ) {
-            state.buttons.forEach { button ->
-                when (button) {
-                    is PinBoardState.PinBoardButton.Number -> {
-                        PinButton(
-                            modifier = Modifier.weight(1f),
-                            onClick = { state.onNumberClick(button.number) }
-                        ) {
-                            Text(button.toString())
-                        }
-                    }
-
-                    is PinBoardState.PinBoardButton.Backspace,
-                    is PinBoardState.PinBoardButton.Fingerprint,
-                    is PinBoardState.PinBoardButton.Enter -> {
-                        PrimaryPinButton(
-                            modifier = Modifier.weight(1f),
-                            onClick = when (button) {
-                                is PinBoardState.PinBoardButton.Backspace -> state.onBackspaceClick
-                                is PinBoardState.PinBoardButton.Fingerprint -> state.onFingerprintClick
-                                is PinBoardState.PinBoardButton.Enter -> state.onEnterClick
-                                else -> throw NoSuchElementException()
-                            },
-                            onLongClick =
-                            if (button is PinBoardState.PinBoardButton.Backspace)
-                                state.onBackspaceLongClick
-                            else null
-                        ) {
-                            Icon(
-                                modifier = Modifier
-                                    .fillMaxSize(0.4f)
-                                    .aspectRatio(1f),
-                                painter = painterResource(
-                                    id = when (button) {
-                                        is PinBoardState.PinBoardButton.Backspace -> R.drawable.ic_backspace
-                                        is PinBoardState.PinBoardButton.Fingerprint -> R.drawable.ic_fingerprint
-                                        is PinBoardState.PinBoardButton.Enter -> R.drawable.ic_tab
-                                        else -> throw NoSuchElementException()
-                                    }
-                                ),
-                                contentDescription = null
-                            )
-                        }
-                    }
-
-                    is PinBoardState.PinBoardButton.Empty -> {
-                        Spacer(
-                            Modifier
-                                .aspectRatio(1f)
-                                .weight(1f)
-                                .size(PinButtonDefaults.PinButtonMinSize)
-                        )
-                    }
+                is PinBoardState.PinBoardButton.Empty -> {
+                    Spacer(Modifier.aspectRatio(1f).weight(1f).size(PinButtonDefaults.PinButtonMinSize))
                 }
             }
         }
