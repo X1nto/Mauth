@@ -22,6 +22,7 @@ import com.xinto.mauth.domain.account.AccountRepository
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.domain.otp.OtpRepository
 import com.xinto.mauth.util.catchMap
+import kotlinx.collections.immutable.adapters.ImmutableListAdapter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -43,7 +44,7 @@ class HomeViewModel(
     val state = accounts.getAccounts()
         .map {
             when (it.isNotEmpty()) {
-                true -> HomeScreenState.Success(it)
+                true -> HomeScreenState.Success(ImmutableListAdapter(it))
                 false -> HomeScreenState.Empty
             }
         }.catchMap {

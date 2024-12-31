@@ -49,12 +49,6 @@ android {
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api" +
             "-opt-in=com.google.accompanist.permissions.ExperimentalPermissionsApi"
 
-        freeCompilerArgs += listOf(
-            "-P",
-            "plugin:androidx.compose.compiler.plugins.kotlin:stabilityConfigurationPath=" +
-                    "${projectDir.absolutePath}/compose_stability.conf"
-        )
-
         val buildDir = layout.buildDirectory.asFile.get().absolutePath
         if (project.findProperty("composeCompilerReports") == "true") {
             freeCompilerArgs += listOf(
@@ -73,6 +67,10 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+
+    composeCompiler {
+        stabilityConfigurationFile.set(project.layout.projectDirectory.file("compose_stability.conf"))
     }
 
     packaging {
@@ -133,6 +131,8 @@ dependencies {
     implementation("androidx.security:security-crypto-ktx:1.1.0-alpha06")
 
     implementation("androidx.datastore:datastore-preferences:1.1.1")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.8")
 
     implementation("dev.olshevski.navigation:reimagined:1.5.0")
 

@@ -2,6 +2,7 @@ package com.xinto.mauth.ui.screen.home
 
 import androidx.compose.runtime.Immutable
 import com.xinto.mauth.domain.account.model.DomainAccount
+import kotlinx.collections.immutable.ImmutableList
 
 @Immutable
 sealed interface HomeScreenState {
@@ -14,7 +15,7 @@ sealed interface HomeScreenState {
 
     @Immutable
     @JvmInline
-    value class Success(val accounts: List<DomainAccount>) : HomeScreenState
+    value class Success(val accounts: ImmutableList<DomainAccount>) : HomeScreenState
 
     @Immutable
     @JvmInline
