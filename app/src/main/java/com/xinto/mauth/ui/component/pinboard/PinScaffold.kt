@@ -136,8 +136,7 @@ fun PinScaffold(
                     .fillMaxWidth()
                     .fillMaxHeight()
                     .padding(it)
-                    .padding(40.dp)
-                    .padding(bottom = 16.dp),
+                    .padding(start = 40.dp, top = 40.dp, end = 40.dp, bottom = 56.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Bottom),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
