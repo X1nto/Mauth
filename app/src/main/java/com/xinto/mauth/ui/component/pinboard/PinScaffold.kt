@@ -45,6 +45,7 @@ fun PinScaffold(
     contentWindowInsets: WindowInsets = ScaffoldDefaults.contentWindowInsets,
     description: (@Composable () -> Unit)? = null,
     error: Boolean = false,
+    useSmallButtons: Boolean = false,
     codeLength: Int,
 ) {
     Scaffold(
@@ -59,14 +60,20 @@ fun PinScaffold(
         contentWindowInsets = contentWindowInsets,
     ) {
         val orientation = LocalConfiguration.current.orientation
+        val minButtonSize = remember(useSmallButtons) {
+            if (useSmallButtons) {
+                PinButtonDefaults.PinButtonSmallMinSize
+            } else {
+                PinButtonDefaults.PinButtonNormalMinSize
+            }
+        }
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight()
                     .padding(it)
-                    .padding(horizontal = 20.dp)
-                    .padding(bottom = 16.dp),
+                    .padding(horizontal = 20.dp),
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -103,22 +110,21 @@ fun PinScaffold(
                         )
                     }
                 }
-                val pinBoardHorizontalPadding = 32.dp
+                val pinBoardHorizontalPadding = 16.dp
                 val horizontalButtonSpace = 16.dp
                 val totalPadding = (pinBoardHorizontalPadding * 2) + (horizontalButtonSpace * 2)
-                val maxBoxWidth = remember(PinButtonDefaults.PinButtonMinSize) {
+                val maxBoxWidth = remember(minButtonSize) {
                     val buttonsInRow = 3
-                    (PinButtonDefaults.PinButtonMinSize * buttonsInRow) + totalPadding
+                    (minButtonSize * buttonsInRow) + totalPadding
                 }
                 Box(
-                    modifier = Modifier.sizeIn(maxWidth =  maxBoxWidth),
+                    modifier = Modifier.sizeIn(maxWidth = maxBoxWidth),
                     contentAlignment = Alignment.Center
                 ) {
                     PinBoard(
-                        modifier = Modifier
-                            .padding(horizontal = pinBoardHorizontalPadding)
-                            .padding(bottom = 16.dp),
+                        modifier = Modifier.padding(horizontal = pinBoardHorizontalPadding),
                         horizontalButtonSpace = horizontalButtonSpace,
+                        minButtonSize = minButtonSize,
                         state = state
                     )
                 }

@@ -29,6 +29,7 @@ import com.xinto.mauth.ui.theme.MauthTheme
 fun PinBoard(
     modifier: Modifier = Modifier,
     horizontalButtonSpace: Dp = 16.dp,
+    minButtonSize: Dp = PinButtonDefaults.PinButtonNormalMinSize,
     state: PinBoardState = rememberPinBoardState()
 ) {
     FlowRow(
@@ -42,7 +43,8 @@ fun PinBoard(
                 is PinBoardState.PinBoardButton.Number -> {
                     PinButton(
                         modifier = Modifier.weight(1f),
-                        onClick = { state.onNumberClick(button.number) }
+                        onClick = { state.onNumberClick(button.number) },
+                        minButtonSize = minButtonSize
                     ) {
                         Text(button.toString())
                     }
@@ -59,9 +61,10 @@ fun PinBoard(
                             else -> throw NoSuchElementException()
                         },
                         onLongClick =
-                            if (button is PinBoardState.PinBoardButton.Backspace)
-                                state.onBackspaceLongClick
-                            else null
+                        if (button is PinBoardState.PinBoardButton.Backspace)
+                            state.onBackspaceLongClick
+                        else null,
+                        minButtonSize = minButtonSize
                     ) {
                         Icon(
                             modifier = Modifier.fillMaxSize(0.4f).aspectRatio(1f),
@@ -78,7 +81,7 @@ fun PinBoard(
                     }
                 }
                 is PinBoardState.PinBoardButton.Empty -> {
-                    Spacer(Modifier.aspectRatio(1f).weight(1f).size(PinButtonDefaults.PinButtonMinSize))
+                    Spacer(Modifier.aspectRatio(1f).weight(1f).size(minButtonSize))
                 }
             }
         }
