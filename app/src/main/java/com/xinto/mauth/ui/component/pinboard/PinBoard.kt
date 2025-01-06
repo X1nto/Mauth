@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.xinto.mauth.R
 import com.xinto.mauth.ui.theme.MauthTheme
@@ -27,12 +28,14 @@ import com.xinto.mauth.ui.theme.MauthTheme
 @Composable
 fun PinBoard(
     modifier: Modifier = Modifier,
+    horizontalButtonSpace: Dp = 16.dp,
+    minButtonSize: Dp = PinButtonDefaults.PinButtonNormalMinSize,
     state: PinBoardState = rememberPinBoardState()
 ) {
     FlowRow(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
-        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+        horizontalArrangement = Arrangement.spacedBy(horizontalButtonSpace, Alignment.CenterHorizontally),
         maxItemsInEachRow = 3
     ) {
         state.buttons.forEach { button ->
@@ -40,7 +43,8 @@ fun PinBoard(
                 is PinBoardState.PinBoardButton.Number -> {
                     PinButton(
                         modifier = Modifier.weight(1f),
-                        onClick = { state.onNumberClick(button.number) }
+                        onClick = { state.onNumberClick(button.number) },
+                        minButtonSize = minButtonSize
                     ) {
                         Text(button.toString())
                     }
@@ -57,9 +61,10 @@ fun PinBoard(
                             else -> throw NoSuchElementException()
                         },
                         onLongClick =
-                            if (button is PinBoardState.PinBoardButton.Backspace)
-                                state.onBackspaceLongClick
-                            else null
+                        if (button is PinBoardState.PinBoardButton.Backspace)
+                            state.onBackspaceLongClick
+                        else null,
+                        minButtonSize = minButtonSize
                     ) {
                         Icon(
                             modifier = Modifier.fillMaxSize(0.4f).aspectRatio(1f),
@@ -76,7 +81,7 @@ fun PinBoard(
                     }
                 }
                 is PinBoardState.PinBoardButton.Empty -> {
-                    Spacer(Modifier.aspectRatio(1f).weight(1f).size(PinButtonDefaults.PinButtonMinSize))
+                    Spacer(Modifier.aspectRatio(1f).weight(1f).size(minButtonSize))
                 }
             }
         }

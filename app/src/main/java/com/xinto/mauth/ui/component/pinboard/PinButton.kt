@@ -31,6 +31,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.xinto.mauth.ui.component.Animatable
 import kotlinx.coroutines.CancellationException
@@ -48,6 +49,7 @@ fun PrimaryPinButton(
     enabled: Boolean = true,
     colors: PinButtonColors = PinButtonDefaults.primaryPinButtonColors(),
     shapes: PinButtonShapes = PinButtonDefaults.plainPinButtonShapes(),
+    minButtonSize: Dp = PinButtonDefaults.PinButtonNormalMinSize,
     content: @Composable () -> Unit
 ) = PinButton(
     onClick = onClick,
@@ -56,6 +58,7 @@ fun PrimaryPinButton(
     enabled = enabled,
     colors = colors,
     shapes = shapes,
+    minButtonSize = minButtonSize,
     content = content
 )
 
@@ -67,18 +70,19 @@ fun PinButton(
     enabled: Boolean = true,
     colors: PinButtonColors = PinButtonDefaults.plainPinButtonColors(),
     shapes: PinButtonShapes = PinButtonDefaults.plainPinButtonShapes(),
+    minButtonSize: Dp = PinButtonDefaults.PinButtonNormalMinSize,
     content: @Composable () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    val shape by shapes.getButtonShape(interactionSource)
+    val shape by shapes.getButtonShape(interactionSource, minButtonSize)
     val backgroundColor by colors.getBackgroundColor(interactionSource)
     val contentColor by colors.getForegroundColor(interactionSource)
     Box(
         modifier = modifier
             .aspectRatio(1f)
             .sizeIn(
-                minWidth = PinButtonDefaults.PinButtonMinSize,
-                minHeight = PinButtonDefaults.PinButtonMinSize,
+                minWidth = minButtonSize,
+                minHeight = minButtonSize,
             )
             .graphicsLayer {
                 clip = true
@@ -106,7 +110,8 @@ fun PinButton(
 
 object PinButtonDefaults {
 
-    val PinButtonMinSize = 72.dp
+    val PinButtonSmallMinSize = 56.dp
+    val PinButtonNormalMinSize = 72.dp
     const val AnimationDurationPress = 200
     const val AnimationDurationRelease = 150
 
@@ -190,14 +195,14 @@ data class PinButtonShapes(
 ) {
 
     @Composable
-    fun getButtonShape(interactionSource: InteractionSource): State<CornerBasedShape> {
+    fun getButtonShape(interactionSource: InteractionSource, minButtonSize: Dp = PinButtonDefaults.PinButtonNormalMinSize): State<CornerBasedShape> {
         val density = LocalDensity.current
         val size = with(density) {
-            val shapeSize = PinButtonDefaults.PinButtonMinSize.toPx()
+            val shapeSize = minButtonSize.toPx()
             Size(shapeSize, shapeSize)
         }
 
-        val animatable = remember(density, size) {
+        val animatable = remember(density, size, minButtonSize) {
             Animatable(shape, density, size)
         }
         return animatePressValue(
