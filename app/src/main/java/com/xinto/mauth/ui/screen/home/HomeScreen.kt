@@ -3,7 +3,6 @@ package com.xinto.mauth.ui.screen.home
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.TopAppBarDefaults
@@ -12,6 +11,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -25,6 +26,8 @@ import com.xinto.mauth.ui.screen.home.state.HomeScreenEmpty
 import com.xinto.mauth.ui.screen.home.state.HomeScreenError
 import com.xinto.mauth.ui.screen.home.state.HomeScreenLoading
 import com.xinto.mauth.ui.screen.home.state.HomeScreenSuccess
+import com.xinto.mauth.ui.util.collectAsStateListWithLifecycle
+import com.xinto.mauth.ui.util.collectAsStateMapWithLifecycle
 import org.koin.androidx.compose.koinViewModel
 import java.util.UUID
 
@@ -40,8 +43,8 @@ fun HomeScreen(
 ) {
     val viewModel: HomeViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val realTimeData by viewModel.realTimeData.collectAsStateWithLifecycle()
-    val selectedAccounts by viewModel.selectedAccounts.collectAsStateWithLifecycle()
+    val realTimeData = viewModel.realTimeData.collectAsStateMapWithLifecycle()
+    val selectedAccounts = viewModel.selectedAccounts.collectAsStateListWithLifecycle()
     val activeSortSetting by viewModel.activeSortSetting.collectAsStateWithLifecycle()
 
     val photoPickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -96,8 +99,8 @@ fun HomeScreen(
     onAccountCounterIncrease: (UUID) -> Unit,
     onAccountCopyCode: (String, String, Boolean) -> Unit,
     state: HomeScreenState,
-    accountRealtimeData: Map<UUID, DomainOtpRealtimeData>,
-    selectedAccounts: List<UUID>,
+    accountRealtimeData: SnapshotStateMap<UUID, DomainOtpRealtimeData>,
+    selectedAccounts: SnapshotStateList<UUID>,
     activeSortSetting: SortSetting,
     onActiveSortChange: (SortSetting) -> Unit
 ) {
@@ -118,33 +121,33 @@ fun HomeScreen(
         onActiveSortChange = onActiveSortChange,
         scrollBehavior = scrollBehavior
     ) {
-        Box(
-            modifier = Modifier
+        val modifier = remember {
+            Modifier
                 .fillMaxSize()
                 .padding(it)
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
-        ) {
-            when (state) {
-                is HomeScreenState.Loading -> {
-                    HomeScreenLoading()
-                }
-                is HomeScreenState.Empty -> {
-                    HomeScreenEmpty()
-                }
-                is HomeScreenState.Success -> {
-                    HomeScreenSuccess(
-                        onAccountSelect = onAccountSelect,
-                        onAccountEdit = onAccountEdit,
-                        onAccountCounterIncrease = onAccountCounterIncrease,
-                        onAccountCopyCode = onAccountCopyCode,
-                        accounts = state.accounts,
-                        selectedAccounts = selectedAccounts,
-                        accountRealtimeData = accountRealtimeData
-                    )
-                }
-                is HomeScreenState.Error -> {
-                    HomeScreenError()
-                }
+        }
+        when (state) {
+            is HomeScreenState.Loading -> {
+                HomeScreenLoading(modifier)
+            }
+            is HomeScreenState.Empty -> {
+                HomeScreenEmpty(modifier)
+            }
+            is HomeScreenState.Success -> {
+                HomeScreenSuccess(
+                    modifier = modifier,
+                    onAccountSelect = onAccountSelect,
+                    onAccountEdit = onAccountEdit,
+                    onAccountCounterIncrease = onAccountCounterIncrease,
+                    onAccountCopyCode = onAccountCopyCode,
+                    accounts = state.accounts,
+                    selectedAccounts = selectedAccounts,
+                    accountRealtimeData = accountRealtimeData
+                )
+            }
+            is HomeScreenState.Error -> {
+                HomeScreenError(modifier)
             }
         }
     }

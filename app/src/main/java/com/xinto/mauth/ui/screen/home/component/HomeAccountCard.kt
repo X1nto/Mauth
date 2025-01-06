@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -107,13 +106,16 @@ fun HomeAccountCard(
             )
         },
         bottomContent = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 RealtimeInformation(
                     realtimeData = realtimeData,
                     showCode = showCode,
                     onCounterClick = onCounterClick
                 )
-                Spacer(modifier = Modifier.weight(1f))
                 InteractionButtons(
                     showCode = showCode,
                     onShowCodeChange = {

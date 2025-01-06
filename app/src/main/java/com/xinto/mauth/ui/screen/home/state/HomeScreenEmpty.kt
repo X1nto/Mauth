@@ -2,7 +2,6 @@ package com.xinto.mauth.ui.screen.home.state
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -17,9 +16,9 @@ import androidx.compose.ui.unit.dp
 import com.xinto.mauth.R
 
 @Composable
-fun HomeScreenEmpty() {
+fun HomeScreenEmpty(modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
