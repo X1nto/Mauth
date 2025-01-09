@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -104,6 +105,7 @@ fun ThemeScreen(
                                             ThemeSetting.Light -> R.drawable.ic_sun
                                         }
                                         Icon(
+                                            modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
                                             painter = painterResource(drawableRes),
                                             contentDescription = null
                                         )
