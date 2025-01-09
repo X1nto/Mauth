@@ -1,0 +1,19 @@
+New Features
+============
+- Added the export screen. It's possible to either export all accounts from the 3-dot menu, or export the selected accounts only from the selection menu. Exporting requires authentication if you have PIN lock enabled.
+- Added initial support for tablets and landscape mode.
+- Added Russian translation
+
+Changes
+=======
+- Updated Norwegian Bokmål translation
+- Updated Chinese (Simplified) translation
+- Updated theme colors
+- Custom icons are copied to app's internal directory
+
+Fixes
+=====
+- Fixed a blank screen appearing after scanning a QR code
+- Fixed custom icons not saving properly
+- Fixed performance issues with the home and account add screens
+- Other minor UI fixes
