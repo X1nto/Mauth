@@ -67,7 +67,7 @@ fun HomeScreen(
                 HomeAddAccountMenu.Manual -> onAddAccountManually()
             }
         },
-        onMenuNavigate = {
+        onMoreMenuNavigate = {
             when (it) {
                 HomeMoreMenu.Settings -> onSettingsNavigate()
                 HomeMoreMenu.Export -> onExportNavigate(selectedAccounts)
@@ -77,6 +77,9 @@ fun HomeScreen(
         onAccountSelect = viewModel::toggleAccountSelection,
         onCancelAccountSelection = viewModel::clearAccountSelection,
         onDeleteSelectedAccounts = viewModel::deleteSelectedAccounts,
+        onExportSelectedAccounts = {
+            onExportNavigate(selectedAccounts)
+        },
         onAccountEdit = onAccountEdit,
         onAccountCounterIncrease = viewModel::incrementCounter,
         onAccountCopyCode = viewModel::copyCodeToClipboard,
@@ -91,10 +94,11 @@ fun HomeScreen(
 @Composable
 fun HomeScreen(
     onAddAccountNavigate: (HomeAddAccountMenu) -> Unit,
-    onMenuNavigate: (HomeMoreMenu) -> Unit,
+    onMoreMenuNavigate: (HomeMoreMenu) -> Unit,
     onAccountSelect: (UUID) -> Unit,
     onCancelAccountSelection: () -> Unit,
     onDeleteSelectedAccounts: () -> Unit,
+    onExportSelectedAccounts: () -> Unit,
     onAccountEdit: (UUID) -> Unit,
     onAccountCounterIncrease: (UUID) -> Unit,
     onAccountCopyCode: (String, String, Boolean) -> Unit,
@@ -116,12 +120,13 @@ fun HomeScreen(
         onDeleteSelected = {
             showDeleteDialog = true
         },
-        onMenuNavigate = onMenuNavigate,
+        onExportSelected = onExportSelectedAccounts,
+        onMenuNavigate = onMoreMenuNavigate,
         activeSortSetting = activeSortSetting,
         onActiveSortChange = onActiveSortChange,
         scrollBehavior = scrollBehavior
     ) {
-        val modifier = remember {
+        val modifier = remember(it, scrollBehavior) {
             Modifier
                 .fillMaxSize()
                 .padding(it)

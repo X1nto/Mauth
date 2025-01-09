@@ -40,6 +40,7 @@ fun HomeScaffold(
     onAdd: () -> Unit,
     onCancelSelection: () -> Unit,
     onDeleteSelected: () -> Unit,
+    onExportSelected: () -> Unit,
     onMenuNavigate: (HomeMoreMenu) -> Unit,
     content: @Composable (PaddingValues) -> Unit,
 ) {
@@ -56,18 +57,24 @@ fun HomeScaffold(
                 },
                 label = "Actions"
             ) { isSelectionActive ->
-                if (isSelectionActive) {
-                    IconButton(onClick = onDeleteSelected) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_delete_forever),
-                            contentDescription = null
-                        )
-                    }
-                } else {
-                    Row(
-                        horizontalArrangement = arrangement,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
+                Row(
+                    horizontalArrangement = arrangement,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (isSelectionActive) {
+                        IconButton(onClick = onDeleteSelected) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_delete_forever),
+                                contentDescription = null
+                            )
+                        }
+                        IconButton(onClick = onExportSelected) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_export),
+                                contentDescription = null
+                            )
+                        }
+                    } else {
                         var isMoreActionsVisible by remember { mutableStateOf(false) }
                         IconButton(onClick = {
                             isMoreActionsVisible = true
