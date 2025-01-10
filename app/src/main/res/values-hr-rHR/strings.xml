@@ -1,0 +1,53 @@
+<resources>
+    <string name="app_name" translatable="false">Mauth</string>
+
+    <string name="home_dashboard_empty">Još ništa ovdje</string>
+    <string name="home_dashboard_error">Neuspješno učitavanje računa</string>
+    <string name="home_addaccount_title">Dodajte račun</string>
+    <string name="home_addaccount_subtitle">Skenirajte QR kod ili ručno unesite ključ</string>
+    <string name="home_addaccount_data_scanqr">Skenirajte QR kod</string>
+    <string name="home_addaccount_data_imageqr">Odaberite sliku</string>
+    <string name="home_addaccount_data_manual">Ručno unesite podatke</string>
+    <string name="home_delete_title">Izbriši račune?</string>
+    <string name="home_delete_subtitle">Odabrani računi bit će trajno izbrisani.</string>
+    <string name="home_delete_button_delete">Izbriši</string>
+    <string name="home_delete_button_cancel">Odustani</string>
+    <string name="home_more_settings">Postavke</string>
+    <string name="home_code_copy_success">Kod uspješno kopiran u međuspremnik</string>
+    <string name="home_code_copy_fail">Kopiranje koda nije uspjelo</string>
+    <string name="home_image_parse_fail">Nije uspjelo analiziranje QR koda</string>
+    <string name="home_sort_label">Oznaka</string>
+    <string name="home_sort_issuer">Izdavač</string>
+    <string name="home_sort_date">Datum</string>
+
+    <string name="qrscan_title">Skeniranje QR koda</string>
+    <string name="qrscan_permissions_title">Nedostaju dozvole</string>
+    <string name="qrscan_permissions_subtitle">Nije odobrena dozvola za kameru.</string>
+    <string name="qrscan_permissions_subtitle_rationale">Dozvola za kameru potrebna je za ovu aplikaciju kako bi skenirala i analizirala QR kod, bez nje, Mauth ne može skenirati i uvesti vaše račune.</string>
+    <string name="qrscan_permissions_button_grant">Odobri</string>
+    <string name="qrscan_permissions_button_cancel">Odustani</string>
+    <string name="qrscan_error">Nedovoljne dozvole</string>
+
+    <string name="account_title_add">Dodajte račun</string>
+    <string name="account_title_edit">Uredi račun</string>
+    <string name="account_actions_save">Spremi</string>
+    <string name="account_data_label">Oznaka</string>
+    <string name="account_data_issuer">Izdavač</string>
+    <string name="account_data_secret">Tajna</string>
+    <string name="account_data_type">Vrsta</string>
+    <string name="account_data_algorithm">Algoritam</string>
+    <string name="account_data_digits">Brojke</string>
+    <string name="account_data_counter">Brojač</string>
+    <string name="account_data_period">Perioda</string>
+    <string name="account_discard_title">Odbaciti promjene?</string>
+    <string name="account_discard_subtitle">Vaše promjene neće biti spremljene.</string>
+    <string name="account_discard_buttons_discard">Odbaci</string>
+    <string name="account_discard_buttons_cancel">Odustani</string>
+    <string name="account_error">Došlo je do pogreške prilikom učitavanja računa</string>
+    <string name="account_data_status_required">potrebno</string>
+    <string name="account_data_status_range">raspon %1$s-%2$s</string>
+
+    <string name="settings_title">Postavke</string>
+    <string name="settings_prefs_securemode">Siguran način</string>
+    <string name="settings_prefs_securemode_description">Sprječava snimanje zaslona u aplikaciji</string>
+</resources>
