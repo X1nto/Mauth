@@ -1,0 +1,95 @@
+<resources>
+    <string name="app_name" translatable="false">Mauth</string>
+
+    <string name="auth_title">Entrez votre code PIN</string>
+            <string name="auth_biometrics_title">Authentification Biométrique</string>
+    <string name="auth_biometrics_cancel">Annuler</string>
+
+    <string name="home_dashboard_empty">Aucun comptes pour l'instant</string>
+    <string name="home_dashboard_error">Erreur lors du chargement des comptes</string>
+    <string name="home_addaccount_title">Ajouter un compte</string>
+    <string name="home_addaccount_subtitle">Scanner un QR code ou entrer la clef manuellement</string>
+    <string name="home_addaccount_data_scanqr">Scanner un QR code</string>
+    <string name="home_addaccount_data_imageqr">Sélectionner une image</string>
+    <string name="home_addaccount_data_manual">Entrer les données manuellement</string>
+    <string name="home_delete_title">Supprimer le compte ?</string>
+    <string name="home_delete_subtitle">Les comptes sélectionnés vont être suprimés définitivement.</string>
+    <string name="home_delete_button_delete">Supprimer</string>
+    <string name="home_delete_button_cancel">Annuler</string>
+    <string name="home_more_settings">Paramètres</string>
+    <string name="home_code_copy_success">Le code a bien été copié dans le presse papier</string>
+    <string name="home_code_copy_fail">Le code n'a pas pu être copié.</string>
+    <string name="home_image_parse_fail">Le QR code n'as pas pu être lu.</string>
+    <string name="home_sort_label_ascending">Nom (A-Z)</string>
+    <string name="home_sort_label_descending">Nom (Z-A)</string>
+    <string name="home_sort_issuer_ascending">Publieur (A-Z)</string>
+    <string name="home_sort_issuer_descending">Publieur (Z-A)</string>
+    <string name="home_sort_date_ascending">Du plus récent au plus ancient</string>
+    <string name="home_sort_date_descending">Du plus ancient au plus recent</string>
+
+    <string name="qrscan_title">Scaner un QR code</string>
+    <string name="qrscan_permissions_title">Permission manquante</string>
+    <string name="qrscan_permissions_subtitle">La permission de la caméra n'as pas été donnée</string>
+    <string name="qrscan_permissions_subtitle_rationale">La permission d'accéder a la caméra est nécessaire pour pouvoir scanner des QR codes.</string>
+    <string name="qrscan_permissions_button_grant">Autoriser</string>
+    <string name="qrscan_permissions_button_cancel">Annuler</string>
+    <string name="qrscan_error">Permissions insufisantes.</string>
+
+    <string name="account_title_add">Ajouter un compte</string>
+    <string name="account_title_edit">Editer un compte</string>
+    <string name="account_actions_save">Enregistrer</string>
+    <string name="account_data_label">Nom</string>
+    <string name="account_data_issuer">Publieur</string>
+    <string name="account_data_secret">Secret</string>
+    <string name="account_data_type">Type</string>
+    <string name="account_data_algorithm">Algorithme</string>
+    <string name="account_data_digits">Chifres</string>
+    <string name="account_data_counter">Conteur</string>
+    <string name="account_data_period">Cycle</string>
+    <string name="account_discard_title">Annuler les changements ?</string>
+    <string name="account_discard_subtitle">Vos changements seront perdus.</string>
+    <string name="account_discard_buttons_discard">Abandonner les changements</string>
+    <string name="account_discard_buttons_cancel">Annuler</string>
+    <string name="account_error">Il y a eu une erreur lors du chargement du compte.</string>
+    <string name="account_data_status_required">Nécessaire</string>
+    <string name="account_data_status_range">De %1$s a %2$s nombres</string>
+
+    <string name="settings_title">Paramètres</string>
+    <string name="settings_category_security">Sécurité</string>
+    <string name="settings_prefs_securemode">Mode sécurisé</string>
+    <string name="settings_prefs_securemode_description">Bloquer les captures d'écrants</string>
+    <string name="settings_prefs_pincode">code PIN</string>
+    <string name="settings_prefs_pincode_description">authentification au démarage de l'app</string>
+    <string name="settings_prefs_biometrics">Authentification biométrique</string>
+    <string name="settings_biometrics_setup_title">Configurer la biométrie</string>
+    <string name="settings_biometrics_setup_cancel">Annuler</string>
+    <string name="settings_biometrics_disable_title">Désactiver la biométrie</string>
+    <string name="settings_biometrics_disable_cancel">Annuler</string>
+    <string name="settings_category_appearance">Apparance</string>
+    <string name="settings_prefs_theme">Theme</string>
+
+    <string name="pinsetup_title_create">Créer un code PIN</string>
+    <string name="pinsetup_title_confirm">Confirmer votre code PIN</string>
+
+    <string name="pinremove_title">Entrer votre code PIN</string>
+
+    <string name="theme_title">Theme</string>
+    <string name="theme_theme_system">Systeme</string>
+    <string name="theme_theme_dark">Sombre</string>
+    <string name="theme_theme_light">Clair</string>
+    <string name="theme_colors_dynamic">Dynamique</string>
+    <string name="theme_colors_purple">Violet Papillon de nuit</string>
+    <string name="theme_colors_blue">Bleu mûre</string>
+    <string name="theme_colors_yellow">Jaune cornichon</string>
+    <string name="theme_colors_green">Vert Toxique</string>
+    <string name="theme_colors_orange">Orange cuir</string>
+    <string name="theme_colors_turquoise">Turquoise Océan</string>
+
+    <string name="export_title">Exporter</string>
+    <string name="export_url_copy_success">l'URL du OTP a bien été copiée dans le presse papier</string>
+
+    <string name="about_title">A propos</string>
+    <string name="about_version">Vertion v%1$s</string>
+    <string name="about_links_source">Code source</string>
+    <string name="about_links_feedback">Reporter un bug</string>
+</resources>
