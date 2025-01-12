@@ -2,7 +2,7 @@
     <string name="app_name" translatable="false">Mauth</string>
 
     <string name="auth_title">Entrez votre code PIN</string>
-            <string name="auth_biometrics_title">Authentification Biométrique</string>
+    <string name="auth_biometrics_title">Authentification Biométrique</string>
     <string name="auth_biometrics_cancel">Annuler</string>
 
     <string name="home_dashboard_empty">Aucun comptes pour l'instant</string>
