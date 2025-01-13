@@ -5,7 +5,7 @@
     <string name="auth_biometrics_title">Authentification Biométrique</string>
     <string name="auth_biometrics_cancel">Annuler</string>
 
-    <string name="home_dashboard_empty">Aucun comptes pour l'instant</string>
+    <string name="home_dashboard_empty">Aucun comptes pour l\'instant</string>
     <string name="home_dashboard_error">Erreur lors du chargement des comptes</string>
     <string name="home_addaccount_title">Ajouter un compte</string>
     <string name="home_addaccount_subtitle">Scanner un QR code ou entrer la clef manuellement</string>
@@ -18,8 +18,8 @@
     <string name="home_delete_button_cancel">Annuler</string>
     <string name="home_more_settings">Paramètres</string>
     <string name="home_code_copy_success">Le code a bien été copié dans le presse papier</string>
-    <string name="home_code_copy_fail">Le code n'a pas pu être copié.</string>
-    <string name="home_image_parse_fail">Le QR code n'as pas pu être lu.</string>
+    <string name="home_code_copy_fail">Le code n\'a pas pu être copié.</string>
+    <string name="home_image_parse_fail">Le QR code n\'as pas pu être lu.</string>
     <string name="home_sort_label_ascending">Nom (A-Z)</string>
     <string name="home_sort_label_descending">Nom (Z-A)</string>
     <string name="home_sort_issuer_ascending">Publieur (A-Z)</string>
@@ -29,8 +29,8 @@
 
     <string name="qrscan_title">Scaner un QR code</string>
     <string name="qrscan_permissions_title">Permission manquante</string>
-    <string name="qrscan_permissions_subtitle">La permission de la caméra n'as pas été donnée</string>
-    <string name="qrscan_permissions_subtitle_rationale">La permission d'accéder a la caméra est nécessaire pour pouvoir scanner des QR codes.</string>
+    <string name="qrscan_permissions_subtitle">La permission de la caméra n\'as pas été donnée</string>
+    <string name="qrscan_permissions_subtitle_rationale">La permission d\'accéder a la caméra est nécessaire pour pouvoir scanner des QR codes.</string>
     <string name="qrscan_permissions_button_grant">Autoriser</string>
     <string name="qrscan_permissions_button_cancel">Annuler</string>
     <string name="qrscan_error">Permissions insufisantes.</string>
@@ -57,9 +57,9 @@
     <string name="settings_title">Paramètres</string>
     <string name="settings_category_security">Sécurité</string>
     <string name="settings_prefs_securemode">Mode sécurisé</string>
-    <string name="settings_prefs_securemode_description">Bloquer les captures d'écrants</string>
+    <string name="settings_prefs_securemode_description">Bloquer les captures d\'écrants</string>
     <string name="settings_prefs_pincode">code PIN</string>
-    <string name="settings_prefs_pincode_description">authentification au démarage de l'app</string>
+    <string name="settings_prefs_pincode_description">authentification au démarage de l\'app</string>
     <string name="settings_prefs_biometrics">Authentification biométrique</string>
     <string name="settings_biometrics_setup_title">Configurer la biométrie</string>
     <string name="settings_biometrics_setup_cancel">Annuler</string>
@@ -86,7 +86,7 @@
     <string name="theme_colors_turquoise">Turquoise Océan</string>
 
     <string name="export_title">Exporter</string>
-    <string name="export_url_copy_success">l'URL du OTP a bien été copiée dans le presse papier</string>
+    <string name="export_url_copy_success">l\'URL du OTP a bien été copiée dans le presse papier</string>
 
     <string name="about_title">A propos</string>
     <string name="about_version">Vertion v%1$s</string>
