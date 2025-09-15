@@ -9,6 +9,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.set
 
 object ZxingEncoder {
 
@@ -20,7 +22,7 @@ object ZxingEncoder {
         @ColorInt backgroundColor: Int,
         @ColorInt dataColor: Int
     ): Bitmap {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             suspendCoroutine { continuation ->
                 val bitMatrix = writer.encode(
                     /* contents = */ data,
@@ -29,11 +31,11 @@ object ZxingEncoder {
                     /* height = */ size,
                     /* hints = */ mapOf(EncodeHintType.MARGIN to 2)
                 )
-                val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888).apply {
+                val bitmap = createBitmap(size, size).apply {
                     for (x in 0 until size) {
                         for (y in 0 until size) {
                             val hasData = bitMatrix.get(x, y)
-                            setPixel(x, y, if (hasData) dataColor else backgroundColor)
+                            this[x, y] = if (hasData) dataColor else backgroundColor
                         }
                     }
                 }
