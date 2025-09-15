@@ -3,6 +3,7 @@ package com.xinto.mauth.ui.component.form
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MenuAnchorType
@@ -21,12 +22,13 @@ import com.xinto.mauth.R
 class ComboBoxFormField<E: Enum<E>>(
     initial: E,
 
-    @StringRes
+    @param:StringRes
     private val label: Int
 ) : FormField<E>(initial, id = label) {
 
     private val clazz = initial.declaringJavaClass
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun invoke(modifier: Modifier) {
         val (expanded, setExpanded) = remember {

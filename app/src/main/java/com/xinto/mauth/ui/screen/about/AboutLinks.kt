@@ -7,12 +7,8 @@ import com.xinto.mauth.R
 
 @Immutable
 data class AboutLink(
-    @DrawableRes
-    val icon: Int,
-
-    @StringRes
-    val title: Int,
-
+    @param:DrawableRes val icon: Int,
+    @param:StringRes val title: Int,
     val url: String
 ) {
     companion object {

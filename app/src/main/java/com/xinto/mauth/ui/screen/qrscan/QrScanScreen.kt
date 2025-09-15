@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
@@ -33,6 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
 import com.xinto.mauth.R
@@ -44,6 +46,7 @@ import com.xinto.mauth.ui.screen.qrscan.component.rememberCameraState
 import org.koin.androidx.compose.koinViewModel
 import java.util.concurrent.Executors
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun QrScanScreen(
     onBack: () -> Unit,
@@ -74,6 +77,7 @@ fun QrScanScreen(
     )
 }
 
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun QrScanScreen(
     onBack: () -> Unit,
