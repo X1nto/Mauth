@@ -1,4 +1,4 @@
-import com.google.protobuf.gradle.proto
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id("com.android.application")
@@ -40,31 +40,11 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = "17"
-        freeCompilerArgs = freeCompilerArgs +
-            "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi" +
-            "-opt-in=androidx.compose.animation.ExperimentalAnimationApi" +
-            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api" +
-            "-opt-in=com.google.accompanist.permissions.ExperimentalPermissionsApi"
-
-        val buildDir = layout.buildDirectory.asFile.get().absolutePath
-        if (project.findProperty("composeCompilerReports") == "true") {
-            freeCompilerArgs += listOf(
-                "-P",
-                "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${buildDir}/compose_compiler"
-            )
-        }
-        if (project.findProperty("composeCompilerMetrics") == "true") {
-            freeCompilerArgs += listOf(
-                "-P",
-                "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${buildDir}/compose_compiler"
-            )
-        }
     }
 
     buildFeatures {
@@ -73,7 +53,7 @@ android {
     }
 
     composeCompiler {
-        stabilityConfigurationFile.set(project.layout.projectDirectory.file("compose_stability.conf"))
+        stabilityConfigurationFiles.add(project.layout.projectDirectory.file("compose_stability.conf"))
     }
 
     packaging {
@@ -93,6 +73,24 @@ android {
     lint {
         disable += "MissingTranslation"
         disable += "ExtraTranslation"
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_11)
+
+        val buildDir = layout.buildDirectory.asFile.get().absolutePath
+        if (project.findProperty("composeCompilerReports") == "true") {
+            freeCompilerArgs.add(
+                "-P plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${buildDir}/compose_compiler"
+            )
+        }
+        if (project.findProperty("composeCompilerMetrics") == "true") {
+            freeCompilerArgs.add(
+                "-P plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${buildDir}/compose_compiler"
+            )
+        }
     }
 }
 
@@ -125,7 +123,6 @@ dependencies {
     val composeBom = platform("androidx.compose:compose-bom:2025.09.00")
     implementation(composeBom)
     implementation("androidx.compose.foundation:foundation")
-    implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material3:material3-window-size-class")
     implementation("androidx.compose.ui:ui-tooling-preview")
