@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION") // AndroidX Crypto
+
 package com.xinto.mauth.core.auth
 
 import android.content.Context
