@@ -1,6 +1,7 @@
 package com.xinto.mauth.domain.otp
 
 import com.xinto.mauth.core.otp.generator.OtpGenerator
+import com.xinto.mauth.core.otp.model.OtpData
 import com.xinto.mauth.core.otp.model.OtpType
 import com.xinto.mauth.core.otp.parser.OtpUriParser
 import com.xinto.mauth.core.otp.parser.OtpUriParserResult
@@ -73,22 +74,7 @@ class OtpRepository(
         }
     }
 
-    fun parseUriToAccountInfo(uri: String): DomainAccountInfo? {
-        return when (val parseResult = otpUriParser.parseOtpUri(uri)) {
-            is OtpUriParserResult.Success -> {
-                val default = DomainAccountInfo.new()
-                default.copy(
-                    label = parseResult.data.label,
-                    issuer = parseResult.data.issuer,
-                    secret = parseResult.data.secret,
-                    algorithm = parseResult.data.algorithm,
-                    type = parseResult.data.type,
-                    digits = parseResult.data.digits,
-                    counter = parseResult.data.counter ?: default.counter,
-                    period = parseResult.data.period ?: default.period,
-                )
-            }
-            is OtpUriParserResult.Failure -> null
-        }
+    fun parseUri(uri: String): OtpUriParserResult {
+        return otpUriParser.parseOtpUri(uri)
     }
 }

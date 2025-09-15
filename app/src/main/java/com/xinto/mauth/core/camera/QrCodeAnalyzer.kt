@@ -6,8 +6,8 @@ import com.google.zxing.NotFoundException
 import java.nio.ByteBuffer
 
 class QrCodeAnalyzer(
-    private inline val onSuccess: (com.google.zxing.Result) -> Unit,
-    private inline val onFail: (NotFoundException) -> Unit
+    private val onSuccess: (com.google.zxing.Result) -> Unit,
+    private val onFail: (NotFoundException) -> Unit
 ) : ImageAnalysis.Analyzer {
 
     override fun analyze(image: ImageProxy) {

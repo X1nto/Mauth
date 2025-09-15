@@ -34,6 +34,8 @@
     <string name="qrscan_permissions_button_grant">Grant</string>
     <string name="qrscan_permissions_button_cancel">Cancel</string>
     <string name="qrscan_error">Insufficient permissions</string>
+    <string name="qrscan_error_batch">Scanned QR code does not match previous.</string>
+    <string name="qrscan_error_order">Scan QR codes in the correct order.</string>
 
     <string name="account_title_add">Add an account</string>
     <string name="account_title_edit">Edit an account</string>
@@ -92,4 +94,5 @@
     <string name="about_version">Version v%1$s</string>
     <string name="about_links_source">Source</string>
     <string name="about_links_feedback">Feedback</string>
+    <string name="qrscan_info_batch">Scanned %1$d out of %2$d</string>
 </resources>

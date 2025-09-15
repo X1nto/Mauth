@@ -24,6 +24,7 @@ import com.xinto.mauth.core.camera.ZxingEncoder
 fun ZxingQrImage(
     data: String,
     modifier: Modifier = Modifier,
+    size: Int = 256,
     backgroundColor: Color = Color.White,
     contentColor: Color = Color.Black,
     contentScale: ContentScale = ContentScale.Fit
@@ -33,30 +34,28 @@ fun ZxingQrImage(
         bitmap = null
         bitmap = ZxingEncoder.encodeToBitmap(
             data = data,
-            size = 300,
+            size = size,
             backgroundColor = backgroundColor.toArgb(),
             dataColor = contentColor.toArgb()
         ).asImageBitmap()
     }
-    Box(modifier = modifier) {
-        if (bitmap != null) {
-            Image(
-                modifier = Modifier
-                    .aspectRatio(1f)
-                    .fillMaxSize(),
-                bitmap = bitmap!!,
-                contentDescription = null,
-                contentScale = contentScale
-            )
-        } else {
-            Box(
-                modifier = Modifier
-                    .aspectRatio(1f)
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+    if (bitmap != null) {
+        Image(
+            modifier = modifier
+                .aspectRatio(1f)
+                .fillMaxSize(),
+            bitmap = bitmap!!,
+            contentDescription = null,
+            contentScale = contentScale
+        )
+    } else {
+        Box(
+            modifier = modifier
+                .aspectRatio(1f)
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
         }
     }
 }

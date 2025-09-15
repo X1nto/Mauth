@@ -13,7 +13,9 @@ import com.xinto.mauth.Mauth
 import com.xinto.mauth.R
 import com.xinto.mauth.domain.account.AccountRepository
 import com.xinto.mauth.util.catchMap
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.util.UUID
@@ -25,7 +27,14 @@ class ExportViewModel(
     private val accountRepository: AccountRepository,
 ) : AndroidViewModel(application) {
 
-    val state = accountRepository.getAccounts()
+    private val _mode = MutableStateFlow(ExportMode.Batch)
+    val mode = _mode.asStateFlow()
+
+    fun switchMode(mode: ExportMode) {
+        _mode.value = mode
+    }
+
+    val individualState = accountRepository.getAccounts()
         .map { accounts ->
             val filteredAccounts = if (this.accounts.isEmpty()) {
                 accounts
@@ -45,6 +54,26 @@ class ExportViewModel(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = ExportScreenState.Loading
+        )
+
+    val batchState = accountRepository.getAccounts()
+        .map { accounts ->
+            val filteredAccounts = if (this.accounts.isEmpty()) {
+                accounts
+            } else {
+                accounts.filter { this.accounts.contains(it.id) }
+            }
+
+            val batchExports = with(accountRepository) {
+                filteredAccounts.toBatchOtpUrl()
+            }
+            BatchExportState.Success(batchExports)
+        }.catchMap {
+            BatchExportState.Error
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = BatchExportState.Loading
         )
 
     fun copyUrlToClipboard(label: String, url: String) {

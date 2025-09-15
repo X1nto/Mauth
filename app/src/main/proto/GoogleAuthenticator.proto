@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+option java_package = "com.xinto.mauth";
+option java_outer_classname = "GoogleAuthenticator";
+
+message MigrationPayload {
+
+  repeated OtpData otp_data = 1;
+  int32 version = 2;
+  int32 batch_size = 3;
+  optional int32 batch_index = 4;
+  int32 batch_id = 5;
+
+  message OtpData {
+    bytes secret = 1;
+    string name = 2;
+    string issuer = 3;
+    Algorithm algorithm = 4;
+    Digits digits = 5;
+    OtpType type = 6;
+    int64 counter = 7;
+  }
+
+  enum Algorithm {
+    ALGORITHM_UNSPECIFIED = 0;
+    ALGORITHM_SHA1 = 1;
+    ALGORITHM_SHA256 = 2;
+    ALGORITHM_SHA512 = 3;
+    ALGORITHM_MD5 = 4;
+  }
+
+  enum Digits {
+    DIGITS_UNSPECIFIED = 0;
+    DIGITS_SIX = 1;
+    DIGITS_EIGHT = 2;
+  }
+
+  enum OtpType {
+    OTP_TYPE_UNSPECIFIED = 0;
+    OTP_TYPE_HOTP = 1;
+    OTP_TYPE_TOTP = 2;
+  }
+}
