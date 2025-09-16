@@ -182,25 +182,28 @@ private fun BatchExports(
                         )
                     }
                 }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(24.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    repeat(state.data.size) {
-                        val selectedBackgroundColor = MaterialTheme.colorScheme.primary
-                        val unselectedBackgroundColor = MaterialTheme.colorScheme.secondary
-                        Box(
-                            modifier = Modifier
-                                .drawBehind {
-                                    val color = if (pagerState.currentPage == it) selectedBackgroundColor else unselectedBackgroundColor
-                                    drawCircle(color)
-                                }
-                                .animateContentSize()
-                                .size(if (pagerState.currentPage == it) 16.dp else 12.dp)
-                        )
+                if (state.data.size > 1) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(24.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        repeat(state.data.size) {
+                            val selectedBackgroundColor = MaterialTheme.colorScheme.primary
+                            val unselectedBackgroundColor = MaterialTheme.colorScheme.secondary
+                            Box(
+                                modifier = Modifier
+                                    .drawBehind {
+                                        val color =
+                                            if (pagerState.currentPage == it) selectedBackgroundColor else unselectedBackgroundColor
+                                        drawCircle(color)
+                                    }
+                                    .animateContentSize()
+                                    .size(if (pagerState.currentPage == it) 16.dp else 12.dp)
+                            )
+                        }
                     }
                 }
             }
