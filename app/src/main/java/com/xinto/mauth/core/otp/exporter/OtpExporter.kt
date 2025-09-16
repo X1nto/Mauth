@@ -6,4 +6,6 @@ interface OtpExporter {
 
     fun exportOtp(data: OtpData): String
 
+    fun exportBatch(data: List<OtpData>): List<String>
+
 }

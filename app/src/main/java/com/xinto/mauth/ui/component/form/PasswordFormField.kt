@@ -22,10 +22,10 @@ import com.xinto.mauth.R
 class PasswordFormField(
     initial: String,
 
-    @StringRes
+    @param:StringRes
     private val label: Int,
 
-    @DrawableRes
+    @param:DrawableRes
     private val icon: Int,
     private val required: Boolean = false
 ) : FormField<String>(initial, id = label) {

@@ -15,6 +15,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.xinto.mauth.Mauth
 import com.xinto.mauth.R
+import com.xinto.mauth.core.otp.parser.OtpUriParserResult
 import com.xinto.mauth.core.settings.Settings
 import com.xinto.mauth.core.settings.model.SortSetting
 import com.xinto.mauth.domain.QrRepository
@@ -134,7 +135,13 @@ class HomeViewModel(
             return null
         }
 
-        return otp.parseUriToAccountInfo(text)
+        val parseResult = otp.parseUri(text)
+        if (parseResult !is OtpUriParserResult.Success)
+            return null
+
+        return with(accounts) {
+            parseResult.data.toAccountInfo()
+        }
     }
 
     fun setActiveSort(value: SortSetting) {

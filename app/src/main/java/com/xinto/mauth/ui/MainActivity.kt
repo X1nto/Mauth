@@ -25,10 +25,12 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.xinto.mauth.core.otp.parser.OtpUriParserResult
 import com.xinto.mauth.core.settings.model.ColorSetting
 import com.xinto.mauth.core.settings.model.ThemeSetting
 import com.xinto.mauth.domain.AuthRepository
 import com.xinto.mauth.domain.SettingsRepository
+import com.xinto.mauth.domain.account.AccountRepository
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.domain.otp.OtpRepository
 import com.xinto.mauth.ui.navigation.MauthDestination
@@ -60,6 +62,7 @@ class MainActivity : FragmentActivity() {
 
     private val settings: SettingsRepository by inject()
     private val otp: OtpRepository by inject()
+    private val accounts: AccountRepository by inject()
     private val auth: AuthRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,7 +114,12 @@ class MainActivity : FragmentActivity() {
                     val navigator = rememberNavController(initialScreen)
 
                     LaunchedEffect(intent.data) {
-                        val accountInfo = otp.parseUriToAccountInfo(intent.data.toString())
+                        val accountInfo = when (val parseResult = otp.parseUri(intent.data.toString())) {
+                            is OtpUriParserResult.Success -> with(accounts) {
+                                parseResult.data.toAccountInfo()
+                            }
+                            else -> null
+                        }
                         if (accountInfo != null) {
                             navigator.navigate(MauthDestination.AddAccount(accountInfo))
                         }

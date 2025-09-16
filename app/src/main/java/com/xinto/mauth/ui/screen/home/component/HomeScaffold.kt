@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,6 +31,7 @@ import com.xinto.mauth.core.settings.model.SortSetting
 import com.xinto.mauth.ui.component.ResponsiveAppBarScaffold
 import com.xinto.mauth.ui.screen.home.HomeMoreMenu
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScaffold(
     modifier: Modifier = Modifier,

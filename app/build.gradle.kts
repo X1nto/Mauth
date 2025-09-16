@@ -1,14 +1,17 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id("com.android.application")
     kotlin("android")
     id("kotlin-parcelize")
     id("com.google.devtools.ksp")
     kotlin("plugin.compose")
+    id("com.google.protobuf")
 }
 
 android {
     namespace = "com.xinto.mauth"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.xinto.mauth"
@@ -37,31 +40,11 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = "17"
-        freeCompilerArgs = freeCompilerArgs +
-            "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi" +
-            "-opt-in=androidx.compose.animation.ExperimentalAnimationApi" +
-            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api" +
-            "-opt-in=com.google.accompanist.permissions.ExperimentalPermissionsApi"
-
-        val buildDir = layout.buildDirectory.asFile.get().absolutePath
-        if (project.findProperty("composeCompilerReports") == "true") {
-            freeCompilerArgs += listOf(
-                "-P",
-                "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${buildDir}/compose_compiler"
-            )
-        }
-        if (project.findProperty("composeCompilerMetrics") == "true") {
-            freeCompilerArgs += listOf(
-                "-P",
-                "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${buildDir}/compose_compiler"
-            )
-        }
     }
 
     buildFeatures {
@@ -70,7 +53,7 @@ android {
     }
 
     composeCompiler {
-        stabilityConfigurationFile.set(project.layout.projectDirectory.file("compose_stability.conf"))
+        stabilityConfigurationFiles.add(project.layout.projectDirectory.file("compose_stability.conf"))
     }
 
     packaging {
@@ -93,21 +76,53 @@ android {
     }
 }
 
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_11)
+
+        val buildDir = layout.buildDirectory.asFile.get().absolutePath
+        if (project.findProperty("composeCompilerReports") == "true") {
+            freeCompilerArgs.add(
+                "-P plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${buildDir}/compose_compiler"
+            )
+        }
+        if (project.findProperty("composeCompilerMetrics") == "true") {
+            freeCompilerArgs.add(
+                "-P plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${buildDir}/compose_compiler"
+            )
+        }
+    }
+}
+
 ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
 }
 
-dependencies {
-    implementation("androidx.core:core-ktx:1.15.0")
-    implementation("androidx.core:core-splashscreen:1.0.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
-    implementation("androidx.activity:activity-compose:1.9.3")
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.25.3"
+    }
+    generateProtoTasks {
+        all().forEach { task ->
+            task.builtins {
+                create("java") {
+                    option("lite")
+                }
+            }
+        }
+    }
+}
 
-    val composeBom = platform("androidx.compose:compose-bom:2024.10.01")
+dependencies {
+    implementation("androidx.core:core-ktx:1.17.0")
+    implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.3")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.9.3")
+    implementation("androidx.activity:activity-compose:1.11.0")
+
+    val composeBom = platform("androidx.compose:compose-bom:2025.09.00")
     implementation(composeBom)
     implementation("androidx.compose.foundation:foundation")
-    implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material3:material3-window-size-class")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -122,32 +137,34 @@ dependencies {
     implementation("androidx.camera:camera-view:$cameraxVersion")
     implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
 
-    val roomVersion = "2.6.1"
+    val roomVersion = "2.7.0"
     implementation("androidx.room:room-common:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
 
     implementation("androidx.biometric:biometric:1.1.0")
-    implementation("androidx.security:security-crypto-ktx:1.1.0-alpha06")
+    implementation("androidx.security:security-crypto-ktx:1.1.0")
 
-    implementation("androidx.datastore:datastore-preferences:1.1.1")
+    implementation("androidx.datastore:datastore-preferences:1.1.7")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.8")
+    implementation("com.google.protobuf:protobuf-javalite:4.32.1")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0")
 
     implementation("dev.olshevski.navigation:reimagined:1.5.0")
 
-    implementation("commons-codec:commons-codec:1.15")
+    implementation("commons-codec:commons-codec:1.19.0")
 
-    implementation("com.google.zxing:core:3.5.0")
+    implementation("com.google.zxing:core:3.5.3")
 
-    implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("io.coil-kt:coil-compose:2.7.0")
 
     implementation("io.insert-koin:koin-androidx-compose:3.4.5")
 
-    val accompanistVersion = "0.36.0"
+    val accompanistVersion = "0.37.3"
     implementation("com.google.accompanist:accompanist-permissions:$accompanistVersion")
 
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    androidTestImplementation("androidx.test.ext:junit:1.3.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
 }

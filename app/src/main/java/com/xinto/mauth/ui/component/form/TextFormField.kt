@@ -14,10 +14,10 @@ import com.xinto.mauth.R
 class TextFormField(
     initial: String,
 
-    @StringRes
+    @param:StringRes
     private val label: Int,
 
-    @DrawableRes
+    @param:DrawableRes
     private val icon: Int = 0,
     private val required: Boolean = false
 ) : FormField<String>(initial, id = label) {

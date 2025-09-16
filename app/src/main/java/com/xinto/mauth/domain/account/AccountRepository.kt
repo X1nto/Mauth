@@ -81,6 +81,24 @@ class AccountRepository(
         )
     }
 
+    fun OtpData.toAccountInfo(): DomainAccountInfo {
+        val default = DomainAccountInfo.new()
+        return default.copy(
+            label = label,
+            issuer = issuer,
+            secret = secret,
+            algorithm = algorithm,
+            type = type,
+            digits = digits,
+            counter = counter ?: default.counter,
+            period = period ?: default.period,
+        )
+    }
+
+    suspend fun List<DomainAccount>.toBatchOtpUrl(): List<String> {
+        return otpExporter.exportBatch(this.map { it.toOtpData() })
+    }
+
     suspend fun DomainAccount.toOtpData(): OtpData {
         return when (this) {
             is DomainAccount.Hotp -> {

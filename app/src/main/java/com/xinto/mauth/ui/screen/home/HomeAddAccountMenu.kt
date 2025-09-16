@@ -5,8 +5,8 @@ import androidx.annotation.StringRes
 import com.xinto.mauth.R
 
 enum class HomeAddAccountMenu(
-    @DrawableRes val icon: Int,
-    @StringRes val title: Int
+    @param:DrawableRes val icon: Int,
+    @param:StringRes val title: Int
 ) {
     ScanQR(R.drawable.ic_qr_code_scanner, R.string.home_addaccount_data_scanqr),
     ImageQR(R.drawable.ic_qr_code_2, R.string.home_addaccount_data_imageqr),
