@@ -79,11 +79,11 @@ fun PinButton(
     val contentColor by colors.getForegroundColor(interactionSource)
     Box(
         modifier = modifier
-            .aspectRatio(1f)
             .sizeIn(
                 minWidth = minButtonSize,
-                minHeight = minButtonSize,
+                minHeight = minButtonSize
             )
+            .aspectRatio(1f)
             .graphicsLayer {
                 clip = true
                 this.shape = shape
@@ -110,7 +110,7 @@ fun PinButton(
 
 object PinButtonDefaults {
 
-    val PinButtonSmallMinSize = 56.dp
+    val PinButtonSmallMinSize = 48.dp
     val PinButtonNormalMinSize = 72.dp
     const val AnimationDurationPress = 200
     const val AnimationDurationRelease = 150
