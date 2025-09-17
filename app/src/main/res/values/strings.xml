@@ -36,6 +36,7 @@
     <string name="qrscan_error">Insufficient permissions</string>
     <string name="qrscan_error_batch">Scanned QR code does not match previous.</string>
     <string name="qrscan_error_order">Scan QR codes in the correct order.</string>
+    <string name="qrscan_info_batch">Scanned %1$d out of %2$d</string>
 
     <string name="account_title_add">Add an account</string>
     <string name="account_title_edit">Edit an account</string>
@@ -89,10 +90,10 @@
 
     <string name="export_title">Export</string>
     <string name="export_url_copy_success">Successfully copied the OTP URL to the clipboard</string>
+    <string name="export_batch_hint">Scan this QR code using any Google Authenticator compatible app</string>
 
     <string name="about_title">About</string>
     <string name="about_version">Version v%1$s</string>
     <string name="about_links_source">Source</string>
     <string name="about_links_feedback">Feedback</string>
-    <string name="qrscan_info_batch">Scanned %1$d out of %2$d</string>
 </resources>

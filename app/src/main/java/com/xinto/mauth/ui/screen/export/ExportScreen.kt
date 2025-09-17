@@ -39,6 +39,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
@@ -167,42 +168,47 @@ private fun BatchExports(
             ) {
                 val pagerState = rememberPagerState { state.data.size }
                 HorizontalPager(pagerState) {
-                    Surface(
+                    ZxingQrImage(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 12.dp),
-                        shape = MaterialTheme.shapes.large,
-                        tonalElevation = 1.dp
+                            .padding(horizontal = 24.dp),
+                        data = state.data[it],
+                        size = 512,
+                        backgroundColor = Color.Transparent,
+                        contentColor = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                if (state.data.size > 1) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(24.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        ZxingQrImage(
-                            data = state.data[it],
-                            size = 512,
-                            backgroundColor = Color.Transparent,
-                            contentColor = MaterialTheme.colorScheme.onSurface
-                        )
+                        repeat(state.data.size) {
+                            val selectedBackgroundColor = MaterialTheme.colorScheme.primary
+                            val unselectedBackgroundColor = MaterialTheme.colorScheme.secondary
+                            Box(
+                                modifier = Modifier
+                                    .drawBehind {
+                                        val color =
+                                            if (pagerState.currentPage == it) selectedBackgroundColor else unselectedBackgroundColor
+                                        drawCircle(color)
+                                    }
+                                    .animateContentSize()
+                                    .size(if (pagerState.currentPage == it) 16.dp else 12.dp)
+                            )
+                        }
                     }
                 }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(24.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    repeat(state.data.size) {
-                        val selectedBackgroundColor = MaterialTheme.colorScheme.primary
-                        val unselectedBackgroundColor = MaterialTheme.colorScheme.secondary
-                        Box(
-                            modifier = Modifier
-                                .drawBehind {
-                                    val color = if (pagerState.currentPage == it) selectedBackgroundColor else unselectedBackgroundColor
-                                    drawCircle(color)
-                                }
-                                .animateContentSize()
-                                .size(if (pagerState.currentPage == it) 16.dp else 12.dp)
-                        )
-                    }
-                }
+
+                Text(
+                    modifier = Modifier.padding(32.dp),
+                    text = stringResource(R.string.export_batch_hint),
+                    style = MaterialTheme.typography.titleSmall,
+                    textAlign = TextAlign.Center
+                )
             }
         }
         is BatchExportState.Error -> {
