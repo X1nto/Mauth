@@ -89,6 +89,7 @@
     <string name="theme_colors_turquoise">Ocean Turquoise</string>
 
     <string name="export_title">Export</string>
+    <string name="export_state_empty">No accounts to export</string>
     <string name="export_url_copy_success">Successfully copied the OTP URL to the clipboard</string>
     <string name="export_batch_hint">Scan this QR code using any Google Authenticator compatible app</string>
 
