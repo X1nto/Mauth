@@ -17,8 +17,8 @@ android {
         applicationId = "com.xinto.mauth"
         minSdk = 21
         targetSdk = 35
-        versionCode = 90
-        versionName = "0.9.0"
+        versionCode = 100
+        versionName = "0.10.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
