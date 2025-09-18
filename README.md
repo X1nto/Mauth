@@ -7,7 +7,7 @@ alt="App icon">
 [![F-Droid](https://img.shields.io/f-droid/v/com.xinto.mauth.svg?logo=F-Droid&color=green&style=for-the-badge)](https://f-droid.org/en/packages/com.xinto.mauth)
 [![Releases](https://img.shields.io/github/release/X1nto/Mauth.svg?logo=github&color=171515&style=for-the-badge)](https://github.com/X1nto/Mauth/releases)
 
-Mauth (pronounced Moth) is a Two-Factor Authentication app with support for TOTP and HOTP. It is also fully compatible with Google Authenticator.
+Mauth is a Two-Factor Authentication app with support for TOTP and HOTP. It is also fully compatible with Google Authenticator.
 
 Logo by [@wingio](https://github.com/wingio)
 
@@ -15,7 +15,6 @@ Logo by [@wingio](https://github.com/wingio)
 While there are many 2FA authenticator apps out there, most of them come with an outdated UI/UX and functionality. Mauth aims to be as intuitive and feature-rich as possible, while also providing a beautiful Material You UI.
 
 # Features
-- [x] Compatibility with Google Authenticator
 - Security
   - [x] Biometrics
   - [x] PIN
@@ -35,13 +34,17 @@ While there are many 2FA authenticator apps out there, most of them come with an
   - [x] Editing
   - [x] Deletion
 - Exporting
-  - [ ] Plain text
+  - [x] QR Codes
+    - [x] Individual accounts
+    - [x] Batch export (Google Authenticator's QR code format)
+  - [x] otpauth:// URIs
   - [ ] Encrypted data
 - Importing
-  - [ ] Google Authenticator
+  - [x] Google Authenticator
   - [ ] Authy
-  - [ ] Aegis
+  - [ ] Aegis (Yes, via Export for Google Authenticator in settings)
   - [ ] Microsoft Authenticator
+  - [x] Other authenticators that support exporting to Google Authenticator
 
 # Screenshots
 <img width=200 alt="Auth screen" 
