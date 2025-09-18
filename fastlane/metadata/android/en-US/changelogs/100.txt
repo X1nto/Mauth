@@ -1,0 +1,13 @@
+New Features
+============
+- You can now import and export accounts from/to Google Authenticator and other compatible apps.
+
+Changes
+=======
+- Improved the QR code scanner accuracy and performance
+- Decreased the account digit range from 1-10 to 6-9 to align with the OTP spec
+- Updated translations
+
+Fixes
+=====
+- Fixed PIN layout issues on some device sizes and screen orientations
