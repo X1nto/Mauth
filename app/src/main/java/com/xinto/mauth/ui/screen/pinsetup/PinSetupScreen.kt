@@ -1,6 +1,5 @@
 package com.xinto.mauth.ui.screen.pinsetup
 
-import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
@@ -9,12 +8,11 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -56,7 +54,7 @@ fun PinSetupScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun PinSetupScreen(
     code: String,
@@ -68,25 +66,37 @@ fun PinSetupScreen(
     onNumberDelete: () -> Unit,
     onAllDelete: () -> Unit,
 ) {
-    val orientation = LocalConfiguration.current.orientation
     PinScaffold(
         codeLength = code.length,
         error = error,
         topBar = {
-            if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                TopAppBar(
-                    title = { AppBarTitle(state) },
-                    navigationIcon = { AppBarNavigationIcon(onPrevious) }
-                )
-            } else {
-                LargeTopAppBar(
-                    title = { AppBarTitle(state) },
-                    navigationIcon = { AppBarNavigationIcon(onPrevious) }
-                )
-            }
+            TopAppBar(
+                title = {
+                    AnimatedContent(
+                        targetState = state,
+                        label = "PinSetupDescription",
+                        transitionSpec = {
+                            fadeIn() togetherWith fadeOut()
+                        }
+                    ) {
+                        val resource = when (it) {
+                            is PinSetupScreenState.Initial -> R.string.pinsetup_title_create
+                            is PinSetupScreenState.Confirm -> R.string.pinsetup_title_confirm
+                        }
+                        Text(stringResource(resource))
+                    }
+                },
+                navigationIcon = {
+                    IconButton(onClick = onPrevious) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_arrow_back),
+                            contentDescription = null
+                        )
+                    }
+                }
+            )
         },
         description = null,
-        useSmallButtons = orientation == Configuration.ORIENTATION_LANDSCAPE,
         state = rememberPinBoardState(
             showEnter = true,
             onNumberClick = onNumberEnter,
@@ -95,31 +105,4 @@ fun PinSetupScreen(
             onBackspaceLongClick = onAllDelete
         )
     )
-}
-
-@Composable
-fun AppBarTitle(state: PinSetupScreenState) {
-    AnimatedContent(
-        targetState = state,
-        label = "PinSetupDescription",
-        transitionSpec = {
-            fadeIn() togetherWith fadeOut()
-        }
-    ) {
-        val resource = when (it) {
-            is PinSetupScreenState.Initial -> R.string.pinsetup_title_create
-            is PinSetupScreenState.Confirm -> R.string.pinsetup_title_confirm
-        }
-        Text(stringResource(resource))
-    }
-}
-
-@Composable
-fun AppBarNavigationIcon(onPrevious: () -> Unit) {
-    IconButton(onClick = onPrevious) {
-        Icon(
-            painter = painterResource(R.drawable.ic_arrow_back),
-            contentDescription = null
-        )
-    }
 }

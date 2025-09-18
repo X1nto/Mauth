@@ -1,16 +1,13 @@
 package com.xinto.mauth.ui.screen.pinremove
 
-import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -50,25 +47,23 @@ fun PinRemoveScreen(
     onNumberDelete: () -> Unit,
     onAllDelete: () -> Unit,
 ) {
-    val orientation = LocalConfiguration.current.orientation
     PinScaffold(
         codeLength = state.code.length,
         error = state is PinRemoveScreenState.Error,
         topBar = {
-            if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                TopAppBar(
-                    title = { AppBarTitle() },
-                    navigationIcon = { AppBarNavigationIcon(onBack) }
-                )
-            } else {
-                LargeTopAppBar(
-                    title = { AppBarTitle() },
-                    navigationIcon = { AppBarNavigationIcon(onBack) }
-                )
-            }
+            TopAppBar(
+                title = { Text(stringResource(R.string.pinremove_title)) },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_arrow_back),
+                            contentDescription = null
+                        )
+                    }
+                }
+            )
         },
         description = null,
-        useSmallButtons = orientation == Configuration.ORIENTATION_LANDSCAPE,
         state = rememberPinBoardState(
             showEnter = true,
             onNumberClick = onNumberEnter,
@@ -77,19 +72,4 @@ fun PinRemoveScreen(
             onBackspaceLongClick = onAllDelete
         )
     )
-}
-
-@Composable
-fun AppBarTitle() {
-    Text(stringResource(R.string.pinremove_title))
-}
-
-@Composable
-fun AppBarNavigationIcon(onBack: () -> Unit) {
-    IconButton(onClick = onBack) {
-        Icon(
-            painter = painterResource(R.drawable.ic_arrow_back),
-            contentDescription = null
-        )
-    }
 }
