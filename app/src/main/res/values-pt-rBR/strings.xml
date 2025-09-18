@@ -1,10 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Mauth</string>
-
     <string name="auth_title">Digite o seu PIN</string>
     <string name="auth_biometrics_title">Autenticação biométrica</string>
     <string name="auth_biometrics_cancel">Cancelar</string>
-
     <string name="home_dashboard_empty">Nada aqui ainda</string>
     <string name="home_dashboard_error">Falha ao carregar contas</string>
     <string name="home_addaccount_title">Adicionar uma conta</string>
@@ -20,10 +19,6 @@
     <string name="home_code_copy_success">Código copiado com sucesso para a área de transferência</string>
     <string name="home_code_copy_fail">Falha ao copiar o código</string>
     <string name="home_image_parse_fail">Falha ao analisar o código QR</string>
-    <string name="home_sort_label">Rótulo</string>
-    <string name="home_sort_issuer">Emissor</string>
-    <string name="home_sort_date">Data</string>
-
     <string name="qrscan_title">Escanear um código QR</string>
     <string name="qrscan_permissions_title">Permissões ausentes</string>
     <string name="qrscan_permissions_subtitle">Permissão para a câmera não concedida.</string>
@@ -31,7 +26,6 @@
     <string name="qrscan_permissions_button_grant">Conceder</string>
     <string name="qrscan_permissions_button_cancel">Cancelar</string>
     <string name="qrscan_error">Permissões insuficientes</string>
-
     <string name="account_title_add">Adicionar uma conta</string>
     <string name="account_title_edit">Editar uma conta</string>
     <string name="account_actions_save">Salvar</string>
@@ -50,7 +44,6 @@
     <string name="account_error">Ocorreu um erro ao carregar a conta</string>
     <string name="account_data_status_required">Obrigatório</string>
     <string name="account_data_status_range">Intervalo %1$s-%2$s</string>
-
     <string name="settings_title">Configurações</string>
     <string name="settings_prefs_securemode">Modo seguro</string>
     <string name="settings_prefs_securemode_description">Impede capturas de tela no aplicativo</string>
@@ -61,12 +54,9 @@
     <string name="settings_biometrics_setup_cancel">Cancelar</string>
     <string name="settings_biometrics_disable_title">Desativar biometria</string>
     <string name="settings_biometrics_disable_cancel">Cancelar</string>
-
     <string name="pinsetup_title_create">Defina um PIN</string>
     <string name="pinsetup_title_confirm">Confirme o seu PIN</string>
-
     <string name="pinremove_title">Digite o seu PIN</string>
-
     <string name="about_title">Sobre</string>
     <string name="about_version">Versão v%1$s</string>
     <string name="about_links_source">Código fonte</string>

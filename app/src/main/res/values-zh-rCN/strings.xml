@@ -80,4 +80,6 @@
     <string name="about_version">应用版本 v%1$s</string>
     <string name="about_links_source">开源仓库</string>
     <string name="about_links_feedback">留言反馈</string>
+    <string name="export_title">导出</string>
+    <string name="export_url_copy_success">已成功将 OTP URL 复制到剪贴板</string>
 </resources>
