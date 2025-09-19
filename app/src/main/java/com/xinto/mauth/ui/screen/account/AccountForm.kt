@@ -51,8 +51,8 @@ class AccountForm(private val initial: DomainAccountInfo) : Form<DomainAccountIn
     val digits = IntFormField(
         initial = initial.digits,
         label = R.string.account_data_digits,
-        min = 1,
-        max = 10
+        min = 6,
+        max = 9
     )
     val counter = IntFormField(
         initial = initial.counter,

@@ -10,7 +10,12 @@ sealed interface ExportScreenState {
     data object Loading : ExportScreenState
 
     @Immutable
-    data class Success(val accounts: List<DomainExportAccount>) : ExportScreenState
+    data class Success(
+        val batchUris: List<String>,
+        val individualAccounts: List<DomainExportAccount>
+    ) : ExportScreenState
+
+    data object Empty : ExportScreenState
 
     @Immutable
     data object Error : ExportScreenState

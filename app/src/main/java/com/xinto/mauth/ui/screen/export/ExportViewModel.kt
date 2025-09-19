@@ -34,46 +34,36 @@ class ExportViewModel(
         _mode.value = mode
     }
 
-    val individualState = accountRepository.getAccounts()
+    val state = accountRepository.getAccounts()
         .map { accounts ->
             val filteredAccounts = if (this.accounts.isEmpty()) {
                 accounts
             } else {
                 accounts.filter { this.accounts.contains(it.id) }
             }
+
+            if (filteredAccounts.isEmpty())
+                return@map ExportScreenState.Empty
 
             val exportAccounts = filteredAccounts.map {
                 with (accountRepository) {
                     it.toExportAccount()
                 }
             }
-            ExportScreenState.Success(exportAccounts)
+            val batchExports = with(accountRepository) {
+                filteredAccounts.toBatchOtpUrl()
+            }
+
+            ExportScreenState.Success(
+                batchUris = batchExports,
+                individualAccounts = exportAccounts
+            )
         }.catchMap {
             ExportScreenState.Error
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = ExportScreenState.Loading
-        )
-
-    val batchState = accountRepository.getAccounts()
-        .map { accounts ->
-            val filteredAccounts = if (this.accounts.isEmpty()) {
-                accounts
-            } else {
-                accounts.filter { this.accounts.contains(it.id) }
-            }
-
-            val batchExports = with(accountRepository) {
-                filteredAccounts.toBatchOtpUrl()
-            }
-            BatchExportState.Success(batchExports)
-        }.catchMap {
-            BatchExportState.Error
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = BatchExportState.Loading
         )
 
     fun copyUrlToClipboard(label: String, url: String) {

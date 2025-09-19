@@ -23,6 +23,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -61,8 +62,7 @@ fun ExportScreen(
     }
 
     val mode by viewModel.mode.collectAsStateWithLifecycle()
-    val individualState by viewModel.individualState.collectAsStateWithLifecycle()
-    val batchState by viewModel.batchState.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     ExportScreen(
         onBackNavigate = onBackNavigate,
@@ -74,8 +74,7 @@ fun ExportScreen(
         },
         mode = mode,
         onModeSelect = viewModel::switchMode,
-        individualState = individualState,
-        batchState = batchState,
+        state = state,
     )
 }
 
@@ -84,8 +83,7 @@ fun ExportScreen(
 fun ExportScreen(
     onBackNavigate: () -> Unit,
     onCopyUrlToClipboard: (DomainExportAccount) -> Unit,
-    individualState: ExportScreenState,
-    batchState: BatchExportState,
+    state: ExportScreenState,
     mode: ExportMode,
     onModeSelect: (ExportMode) -> Unit
 ) {
@@ -111,35 +109,75 @@ fun ExportScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            SingleChoiceSegmentedButtonRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp)
-            ) {
-                ExportMode.entries.forEachIndexed { i, m ->
-                    SegmentedButton(
-                        selected = mode == m,
-                        onClick = { onModeSelect(m) },
-                        shape = SegmentedButtonDefaults.itemShape(index = i, count = ExportMode.entries.size)
+            when (state) {
+                is ExportScreenState.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Text(m.name)
+                        CircularProgressIndicator()
                     }
                 }
-            }
+                is ExportScreenState.Success -> {
+                    SingleChoiceSegmentedButtonRow(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp)
+                    ) {
+                        ExportMode.entries.forEachIndexed { i, m ->
+                            SegmentedButton(
+                                selected = mode == m,
+                                onClick = { onModeSelect(m) },
+                                shape = SegmentedButtonDefaults.itemShape(index = i, count = ExportMode.entries.size)
+                            ) {
+                                Text(m.name)
+                            }
+                        }
+                    }
 
-            when (mode) {
-                ExportMode.Batch -> {
-                    BatchExports(
-                        modifier = Modifier.weight(1f),
-                        state = batchState
-                    )
+                    when (mode) {
+                        ExportMode.Batch -> {
+                            BatchExports(
+                                modifier = Modifier.weight(1f),
+                                uris = state.batchUris
+                            )
+                        }
+                        ExportMode.Individual -> {
+                            IndividualExports(
+                                modifier = Modifier.weight(1f),
+                                accounts = state.individualAccounts,
+                                onCopyUrlToClipboard = onCopyUrlToClipboard
+                            )
+                        }
+                    }
                 }
-                ExportMode.Individual -> {
-                    IndividualExports(
-                        modifier = Modifier.weight(1f),
-                        state = individualState,
-                        onCopyUrlToClipboard = onCopyUrlToClipboard
-                    )
+                is ExportScreenState.Empty -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(72.dp),
+                            painter = painterResource(R.drawable.ic_no_accounts),
+                            contentDescription = null
+                        )
+                        ProvideTextStyle(MaterialTheme.typography.headlineSmall) {
+                            Text(stringResource(R.string.export_state_empty))
+                        }
+                    }
+                }
+                is ExportScreenState.Error -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_error),
+                            contentDescription = null
+                        )
+                    }
                 }
             }
         }
@@ -149,180 +187,132 @@ fun ExportScreen(
 @Composable
 private fun BatchExports(
     modifier: Modifier = Modifier,
-    state: BatchExportState
+    uris: List<String>
 ) {
-    when (state) {
-        is BatchExportState.Loading -> {
-            Box(
-                modifier = modifier,
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        val pagerState = rememberPagerState { uris.size }
+        HorizontalPager(pagerState) {
+            ZxingQrImage(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                data = uris[it],
+                size = 512,
+                backgroundColor = Color.Transparent,
+                contentColor = MaterialTheme.colorScheme.onSurface
+            )
         }
-        is BatchExportState.Success -> {
-            Column(
-                modifier = modifier,
-                verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
-                horizontalAlignment = Alignment.CenterHorizontally
+        if (uris.size > 1) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(24.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                val pagerState = rememberPagerState { state.data.size }
-                HorizontalPager(pagerState) {
-                    ZxingQrImage(
+                repeat(uris.size) {
+                    val selectedBackgroundColor = MaterialTheme.colorScheme.primary
+                    val unselectedBackgroundColor = MaterialTheme.colorScheme.secondary
+                    Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 24.dp),
-                        data = state.data[it],
-                        size = 512,
-                        backgroundColor = Color.Transparent,
-                        contentColor = MaterialTheme.colorScheme.onSurface
+                            .drawBehind {
+                                val color =
+                                    if (pagerState.currentPage == it) selectedBackgroundColor else unselectedBackgroundColor
+                                drawCircle(color)
+                            }
+                            .animateContentSize()
+                            .size(if (pagerState.currentPage == it) 16.dp else 12.dp)
                     )
                 }
-                if (state.data.size > 1) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(24.dp),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        repeat(state.data.size) {
-                            val selectedBackgroundColor = MaterialTheme.colorScheme.primary
-                            val unselectedBackgroundColor = MaterialTheme.colorScheme.secondary
-                            Box(
-                                modifier = Modifier
-                                    .drawBehind {
-                                        val color =
-                                            if (pagerState.currentPage == it) selectedBackgroundColor else unselectedBackgroundColor
-                                        drawCircle(color)
-                                    }
-                                    .animateContentSize()
-                                    .size(if (pagerState.currentPage == it) 16.dp else 12.dp)
-                            )
-                        }
-                    }
-                }
+            }
+        }
 
-                Text(
-                    modifier = Modifier.padding(32.dp),
-                    text = stringResource(R.string.export_batch_hint),
-                    style = MaterialTheme.typography.titleSmall,
-                    textAlign = TextAlign.Center
-                )
-            }
-        }
-        is BatchExportState.Error -> {
-            Column(
-                modifier = modifier,
-                verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_error),
-                    contentDescription = null
-                )
-            }
-        }
+        Text(
+            modifier = Modifier.padding(32.dp),
+            text = stringResource(R.string.export_batch_hint),
+            style = MaterialTheme.typography.titleSmall,
+            textAlign = TextAlign.Center
+        )
     }
 }
 
 @Composable
 private fun IndividualExports(
     modifier: Modifier = Modifier,
-    state: ExportScreenState,
+    accounts: List<DomainExportAccount>,
     onCopyUrlToClipboard: (DomainExportAccount) -> Unit
 ) {
-    when (state) {
-        is ExportScreenState.Loading -> {
-            Box(
-                modifier = modifier,
-                contentAlignment = Alignment.Center
+    LazyVerticalStaggeredGrid(
+        modifier = modifier,
+        columns = StaggeredGridCells.Adaptive(150.dp),
+        contentPadding = PaddingValues(16.dp),
+        verticalItemSpacing = 16.dp,
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        items(
+            items = accounts,
+            key = { it.id }
+        ) { account ->
+            Surface(
+                onClick = { onCopyUrlToClipboard(account) },
+                color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+                border = CardDefaults.outlinedCardBorder(),
+                shape = MaterialTheme.shapes.medium
             ) {
-                CircularProgressIndicator()
-            }
-        }
-        is ExportScreenState.Success -> {
-            LazyVerticalStaggeredGrid(
-                modifier = modifier,
-                columns = StaggeredGridCells.Adaptive(150.dp),
-                contentPadding = PaddingValues(16.dp),
-                verticalItemSpacing = 16.dp,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(
-                    items = state.accounts,
-                    key = { it.id }
-                ) { account ->
+                Column(modifier = Modifier.fillMaxWidth()) {
                     Surface(
-                        onClick = { onCopyUrlToClipboard(account) },
-                        color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
-                        border = CardDefaults.outlinedCardBorder(),
-                        shape = MaterialTheme.shapes.medium
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.medium,
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh
                     ) {
-                        Column(modifier = Modifier.fillMaxWidth()) {
-                            Surface(
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = MaterialTheme.shapes.medium,
-                                color = MaterialTheme.colorScheme.surfaceContainerHigh
+                        ZxingQrImage(
+                            modifier = Modifier.fillMaxSize(),
+                            data = account.url,
+                            backgroundColor = Color.Transparent,
+                            contentColor = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                    Row(
+                        modifier = Modifier.padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Surface(
+                            shape = MaterialTheme.shapes.small,
+                            color = MaterialTheme.colorScheme.secondaryContainer
+                        ) {
+                            Box(
+                                modifier = Modifier.size(36.dp),
+                                contentAlignment = Alignment.Center
                             ) {
-                                ZxingQrImage(
-                                    modifier = Modifier.fillMaxSize(),
-                                    data = account.url,
-                                    backgroundColor = Color.Transparent,
-                                    contentColor = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                            Row(
-                                modifier = Modifier.padding(8.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                Surface(
-                                    shape = MaterialTheme.shapes.small,
-                                    color = MaterialTheme.colorScheme.secondaryContainer
-                                ) {
-                                    Box(
-                                        modifier = Modifier.size(36.dp),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        if (account.icon != null) {
-                                            UriImage(uri = account.icon)
-                                        } else {
-                                            Text(
-                                                text = account.shortLabel,
-                                                style = MaterialTheme.typography.titleSmall
-                                            )
-                                        }
-                                    }
-                                }
-                                Column {
-                                    if (account.issuer.isNotEmpty()) {
-                                        Text(
-                                            text = account.issuer,
-                                            style = MaterialTheme.typography.labelSmall
-                                        )
-                                    }
+                                if (account.icon != null) {
+                                    UriImage(uri = account.icon)
+                                } else {
                                     Text(
-                                        text = account.label,
-                                        style = MaterialTheme.typography.bodyLarge
+                                        text = account.shortLabel,
+                                        style = MaterialTheme.typography.titleSmall
                                     )
                                 }
                             }
                         }
+                        Column {
+                            if (account.issuer.isNotEmpty()) {
+                                Text(
+                                    text = account.issuer,
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                            Text(
+                                text = account.label,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
                     }
                 }
-            }
-        }
-        is ExportScreenState.Error -> {
-            Column(
-                modifier = modifier,
-                verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_error),
-                    contentDescription = null
-                )
             }
         }
     }

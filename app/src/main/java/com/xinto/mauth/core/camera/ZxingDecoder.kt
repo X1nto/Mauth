@@ -17,6 +17,8 @@ object ZxingDecoder {
         setHints(
             mapOf(
                 DecodeHintType.POSSIBLE_FORMATS to arrayListOf(BarcodeFormat.QR_CODE),
+                DecodeHintType.TRY_HARDER to true,
+                DecodeHintType.ALSO_INVERTED to true
             )
         )
     }

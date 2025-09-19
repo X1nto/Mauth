@@ -89,6 +89,7 @@ class DefaultOtpExporter : OtpExporter {
 
         val batches = migrationBuilders.mapIndexed { i, builder ->
             builder
+                .setVersion(1)
                 .setBatchIndex(i)
                 .setBatchSize(migrationBuilders.size)
                 .setBatchId(if (migrationBuilders.size == 1) 0 else randomBatchId)
