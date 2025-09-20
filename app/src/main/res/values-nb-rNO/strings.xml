@@ -1,10 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Mauth</string>
-
     <string name="auth_title">Skriv inn din PIN</string>
     <string name="auth_biometrics_title">Biometrisk identitetsbekreftelse</string>
     <string name="auth_biometrics_cancel">Avbryt</string>
-
     <string name="home_dashboard_empty">Ingenting her enda</string>
     <string name="home_dashboard_error">Kunne ikke laste inn kontoer</string>
     <string name="home_addaccount_title">Legg til en konto</string>
@@ -26,7 +25,6 @@
     <string name="home_sort_issuer_descending">Utsteder (Å–A)</string>
     <string name="home_sort_date_ascending">Eldste dato først</string>
     <string name="home_sort_date_descending">Nyeste dato først</string>
-
     <string name="qrscan_title">Skann en QR-kode</string>
     <string name="qrscan_permissions_title">Manglende tilganger</string>
     <string name="qrscan_permissions_subtitle">Kameratilgang ikke innvilget.</string>
@@ -34,7 +32,6 @@
     <string name="qrscan_permissions_button_grant">Innvilg</string>
     <string name="qrscan_permissions_button_cancel">Avbryt</string>
     <string name="qrscan_error">Utilstrekkelig tilgang</string>
-
     <string name="account_title_add">Legg til en konto</string>
     <string name="account_title_edit">Rediger en konto</string>
     <string name="account_actions_save">Lagre</string>
@@ -53,7 +50,6 @@
     <string name="account_error">Kunne ikke laste inn kontoen</string>
     <string name="account_data_status_required">påkrevd</string>
     <string name="account_data_status_range">område %1$s–%2$s</string>
-
     <string name="settings_title">Innstillinger</string>
     <string name="settings_category_security">Sikkerhet</string>
     <string name="settings_prefs_securemode">Sikkerhetsmodus</string>
@@ -67,12 +63,9 @@
     <string name="settings_biometrics_disable_cancel">Avbryt</string>
     <string name="settings_category_appearance">Utseende</string>
     <string name="settings_prefs_theme">Drakt</string>
-
     <string name="pinsetup_title_create">Sett en PIN</string>
     <string name="pinsetup_title_confirm">Bekreft din PIN</string>
-
     <string name="pinremove_title">Skriv inn din PIN</string>
-
     <string name="theme_title">Drakt</string>
     <string name="theme_theme_system">System</string>
     <string name="theme_theme_dark">Mørk</string>
@@ -84,10 +77,8 @@
     <string name="theme_colors_green">Dødelig grønn</string>
     <string name="theme_colors_orange">Læroransje</string>
     <string name="theme_colors_turquoise">Havturkis</string>
-
     <string name="export_title">Eksportering</string>
     <string name="export_url_copy_success">OTP-nettadresse kopiert til utklippstavlen</string>
-
     <string name="about_title">Om</string>
     <string name="about_version">Versjon v%1$s</string>
     <string name="about_links_source">Kildekode</string>
