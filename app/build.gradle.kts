@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id("com.android.application")
-    kotlin("android")
     id("kotlin-parcelize")
     id("com.google.devtools.ksp")
     kotlin("plugin.compose")
@@ -35,6 +34,7 @@ android {
         }
         getByName("release") {
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
@@ -44,29 +44,14 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    kotlinOptions {
-    }
-
     buildFeatures {
         compose = true
         buildConfig = true
     }
 
-    composeCompiler {
-        stabilityConfigurationFiles.add(project.layout.projectDirectory.file("compose_stability.conf"))
-    }
-
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-
-    sourceSets {
-        applicationVariants.all {
-            getByName(name) {
-                kotlin.srcDir("build/generated/ksp/$name/kotlin")
-            }
         }
     }
 
@@ -93,6 +78,10 @@ kotlin {
             )
         }
     }
+}
+
+composeCompiler {
+    stabilityConfigurationFiles.add(project.layout.projectDirectory.file("compose_stability.conf"))
 }
 
 ksp {
