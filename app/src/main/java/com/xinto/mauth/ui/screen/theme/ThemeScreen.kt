@@ -34,14 +34,14 @@ import com.xinto.mauth.core.settings.model.ColorSetting
 import com.xinto.mauth.core.settings.model.ThemeSetting
 import com.xinto.mauth.ui.screen.theme.component.ThemeColorCard
 import com.xinto.mauth.ui.theme.MauthTheme
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ThemeScreen(
     onExit: () -> Unit
 ) {
     BackHandler(onBack = onExit)
-    val viewModel: ThemeViewModel = getViewModel()
+    val viewModel: ThemeViewModel = koinViewModel()
     val theme by viewModel.theme.collectAsStateWithLifecycle()
     val color by viewModel.color.collectAsStateWithLifecycle()
     ThemeScreen(
