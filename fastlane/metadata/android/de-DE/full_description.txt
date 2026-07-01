@@ -1,0 +1,11 @@
+Mauth ist eine Multi-Faktor-Authentifizierungs-App, die TOTP und HOTP unterstützt und mit Google Authenticator kompatibel ist. Diese App hat eine schöne Benutzeroberfläche mit den notwendigsten Funktionen.
+
+Die App besitzt die folgenden Funktionen:
+– Kompatibilität mit dem Google Authenticator
+– Sicherheit
+– Mehrere Methoden, um Konten hinzuzufügen
+– Unterstützung für mehrere Authentifizierungs-Algorithmen
+– Kontenorganisation und Verwaltung
+– Datenexportierung und Importierung
+
+Mauth ist noch in der Beta und nimmt alle Rückmeldungen in Bezug auf das Aussehen und Funktionieren der App an.
