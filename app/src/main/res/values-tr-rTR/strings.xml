@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="home_dashboard_empty">Burada henüz bir şey yok</string>
     <string name="home_addaccount_title">Bir hesap ekle</string>
@@ -9,14 +10,12 @@
     <string name="home_delete_subtitle">Seçilen hesaplar kalıcı olarak silinecek.</string>
     <string name="home_delete_button_delete">Sil</string>
     <string name="home_delete_button_cancel">İptal</string>
-
     <string name="qrscan_title">QR kodunu tarayın</string>
     <string name="qrscan_permissions_title">Eksik izinler</string>
     <string name="qrscan_permissions_subtitle">Kamera izni verilmedi.</string>
     <string name="qrscan_permissions_subtitle_rationale">Bu uygulamanın QR kodunu taraması ve analiz etmesi için kamera izni gerekir, Kamera izni olmadan Mauth hesaplarınızı tarayamaz ve içe aktaramaz.</string>
     <string name="qrscan_permissions_button_grant">İzin Ver</string>
     <string name="qrscan_permissions_button_cancel">İptal Et</string>
-
     <string name="account_title_add">Bir hesap ekle</string>
     <string name="account_title_edit">Bir hesabı düzenleyin</string>
     <string name="account_actions_save">Kaydet</string>
@@ -32,4 +31,21 @@
     <string name="account_discard_subtitle">Değişiklikleriniz kaydedilmeyecek.</string>
     <string name="account_discard_buttons_discard">Discard</string>
     <string name="account_discard_buttons_cancel">İptal Et</string>
+    <string name="auth_title">PIN Girin</string>
+    <string name="auth_biometrics_title">Biometrik Doğrulama</string>
+    <string name="auth_biometrics_cancel">İptal</string>
+    <string name="home_dashboard_error">Hesapları yüklerken hata</string>
+    <string name="home_more_settings">Ayarlar</string>
+    <string name="home_code_copy_success">Panoya kopyalandı</string>
+    <string name="home_code_copy_fail">Kod kopyalanamadı</string>
+    <string name="home_image_parse_fail">QR kodu başarısız</string>
+    <string name="home_sort_date_ascending">Eskiden başlayarak</string>
+    <string name="home_sort_date_descending">Yeniden başlayarak</string>
+    <string name="qrscan_info_batch">%1$d de %2$d tarandı</string>
+    <string name="account_error">Hesabı yüklerken hata oldu</string>
+    <string name="account_data_status_required">gerekli</string>
+    <string name="account_data_status_range">aralık %1$s-%2$s</string>
+    <string name="settings_title">Ayarlar</string>
+    <string name="settings_category_security">Güvenlik</string>
+    <string name="settings_prefs_securemode">Güvenlik modu</string>
 </resources>

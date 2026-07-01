@@ -27,7 +27,7 @@
     <string name="qrscan_title">Сканировать QR код</string>
     <string name="qrscan_permissions_title">Не хватает разрешений</string>
     <string name="qrscan_permissions_subtitle">Разрешение на камеру не предоставлено.</string>
-    <string name="qrscan_permissions_subtitle_rationale">Разрешение на камеру требуется, чтобы это приложение сканировало и анализировала QR код, без него Mauth не может сканировать и импортировать ваши учетные записи.</string>
+    <string name="qrscan_permissions_subtitle_rationale">Разрешение на камеру требуется, чтобы это приложение сканировало и анализировала QR код, без него Mauth не может сканировать и импортировать ваши учётные записи.</string>
     <string name="qrscan_permissions_button_grant">Разрешить</string>
     <string name="qrscan_permissions_button_cancel">Отмена</string>
     <string name="qrscan_error">Не хватает разрешений</string>
@@ -46,7 +46,7 @@
     <string name="account_discard_subtitle">Ваши изменения не будут сохранены.</string>
     <string name="account_discard_buttons_discard">Отклонить</string>
     <string name="account_discard_buttons_cancel">Отмена</string>
-    <string name="account_error">Произошла ошибка при загрузке учетной записи</string>
+    <string name="account_error">Произошла ошибка при загрузке учётной записи</string>
     <string name="account_data_status_required">требуется</string>
     <string name="account_data_status_range">в диапазоне %1$s-%2$s</string>
     <string name="settings_title">Настройки</string>
@@ -82,4 +82,9 @@
     <string name="about_links_feedback">Обратная связь</string>
     <string name="export_title">Экспорт</string>
     <string name="export_url_copy_success">URL этого OTP скопирован в буфер обмена</string>
+    <string name="qrscan_error_batch">Отсканированный QR код не совпадает с предыдущим.</string>
+    <string name="qrscan_error_order">Сканируйте QR-коды в правильном порядке.</string>
+    <string name="qrscan_info_batch">Отсканировано %1$d из %2$d</string>
+    <string name="export_state_empty">Нет учётных записей для экспорта</string>
+    <string name="export_batch_hint">Отсканируйте этот QR-код с помощью любого приложения, совместимого с Google Authenticator</string>
 </resources>
