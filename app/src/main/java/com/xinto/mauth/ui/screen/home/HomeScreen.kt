@@ -5,7 +5,12 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,12 +21,13 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.xinto.mauth.R
 import com.xinto.mauth.core.settings.model.SortSetting
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.domain.otp.model.DomainOtpRealtimeData
-import com.xinto.mauth.ui.screen.home.component.HomeAddAccountSheet
-import com.xinto.mauth.ui.screen.home.component.HomeDeleteAccountsDialog
 import com.xinto.mauth.ui.screen.home.component.HomeScaffold
 import com.xinto.mauth.ui.screen.home.state.HomeScreenEmpty
 import com.xinto.mauth.ui.screen.home.state.HomeScreenError
@@ -78,9 +84,7 @@ fun HomeScreen(
         onAccountSelect = viewModel::toggleAccountSelection,
         onCancelAccountSelection = viewModel::clearAccountSelection,
         onDeleteSelectedAccounts = viewModel::deleteSelectedAccounts,
-        onExportSelectedAccounts = {
-            onExportNavigate(selectedAccounts)
-        },
+        onExportSelectedAccounts = { onExportNavigate(selectedAccounts) },
         onAccountEdit = onAccountEdit,
         onAccountCounterIncrease = viewModel::incrementCounter,
         onAccountCopyCode = viewModel::copyCodeToClipboard,
@@ -110,18 +114,14 @@ fun HomeScreen(
     activeSortSetting: SortSetting,
     onActiveSortChange: (SortSetting) -> Unit
 ) {
-    var showAddSheet by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     HomeScaffold(
         isSelectionActive = selectedAccounts.isNotEmpty(),
-        onAdd = {
-            showAddSheet = true
-        },
+        selectedCount = selectedAccounts.size,
+        onAddAccountNavigate = onAddAccountNavigate,
         onCancelSelection = onCancelAccountSelection,
-        onDeleteSelected = {
-            showDeleteDialog = true
-        },
+        onDeleteSelected = { showDeleteDialog = true },
         onExportSelected = onExportSelectedAccounts,
         onMenuNavigate = onMoreMenuNavigate,
         activeSortSetting = activeSortSetting,
@@ -158,26 +158,41 @@ fun HomeScreen(
             }
         }
     }
-    if (showAddSheet) {
-        HomeAddAccountSheet(
-            onDismiss = {
-                showAddSheet = false
-            },
-            onAddAccountNavigate = {
-                showAddSheet = false
-                onAddAccountNavigate(it)
-            }
-        )
-    }
     if (showDeleteDialog) {
-        HomeDeleteAccountsDialog(
+        DeleteDialog(
             onConfirm = {
                 showDeleteDialog = false
                 onDeleteSelectedAccounts()
             },
-            onCancel = {
-                showDeleteDialog = false
-            }
+            onDismissRequest = { showDeleteDialog = false }
         )
     }
+}
+
+@Composable
+private fun DeleteDialog(
+    onDismissRequest: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        icon = {
+            Icon(
+                painter = painterResource(R.drawable.ic_delete_forever),
+                contentDescription = null
+            )
+        },
+        title = { Text(stringResource(R.string.home_delete_title)) },
+        text = { Text(stringResource(R.string.home_delete_subtitle)) },
+        confirmButton = {
+            FilledTonalButton(onClick = onConfirm) {
+                Text(stringResource(R.string.home_delete_button_delete))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text(stringResource(R.string.home_delete_button_cancel))
+            }
+        }
+    )
 }

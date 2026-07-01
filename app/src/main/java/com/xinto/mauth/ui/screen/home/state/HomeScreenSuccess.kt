@@ -29,7 +29,7 @@ fun HomeScreenSuccess(
 ) {
     LazyVerticalGrid(
         modifier = modifier,
-        contentPadding = PaddingValues(16.dp),
+        contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 88.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         columns = GridCells.Adaptive(minSize = 250.dp),
