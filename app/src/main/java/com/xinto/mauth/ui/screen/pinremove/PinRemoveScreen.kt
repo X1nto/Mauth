@@ -14,13 +14,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
 import com.xinto.mauth.ui.component.pinboard.PinScaffold
 import com.xinto.mauth.ui.component.pinboard.rememberPinBoardState
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun PinRemoveScreen(
     onExit: () -> Unit
 ) {
-    val viewModel: PinRemoveViewModel = getViewModel()
+    val viewModel: PinRemoveViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
     BackHandler(onBack = onExit)
     PinRemoveScreen(

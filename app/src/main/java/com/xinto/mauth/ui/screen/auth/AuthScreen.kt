@@ -21,7 +21,7 @@ import com.xinto.mauth.ui.component.pinboard.PinScaffold
 import com.xinto.mauth.ui.component.pinboard.rememberPinBoardState
 import com.xinto.mauth.ui.component.rememberBiometricHandler
 import com.xinto.mauth.ui.component.rememberBiometricPromptData
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AuthScreen(
@@ -29,7 +29,7 @@ fun AuthScreen(
     onAuthSuccess: () -> Unit,
     onBackPress: (() -> Unit)? = null
 ) {
-    val viewModel: AuthViewModel = getViewModel()
+    val viewModel: AuthViewModel = koinViewModel()
     val code by viewModel.code.collectAsStateWithLifecycle()
     val useBiometrics by viewModel.useBiometrics.collectAsStateWithLifecycle()
 
