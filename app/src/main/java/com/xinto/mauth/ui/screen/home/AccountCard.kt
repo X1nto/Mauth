@@ -1,4 +1,4 @@
-package com.xinto.mauth.ui.screen.home.component
+package com.xinto.mauth.ui.screen.home
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
@@ -7,6 +7,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +17,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -45,7 +49,7 @@ import com.xinto.mauth.ui.component.TwoPaneCard
 import com.xinto.mauth.ui.component.UriImage
 
 @Composable
-fun HomeAccountCard(
+fun AccountCard(
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     onEdit: () -> Unit,
@@ -54,9 +58,14 @@ fun HomeAccountCard(
     account: DomainAccount,
     realtimeData: DomainOtpRealtimeData,
     selected: Boolean,
+    colors: CardColors = CardDefaults.cardColors(),
+    elevation: CardElevation = CardDefaults.cardElevation(),
+    border: BorderStroke? = null,
 ) {
     var showCode by remember { mutableStateOf(false) }
     TwoPaneCard(
+        onClick = onClick,
+        onLongClick = onLongClick,
         selected = selected,
         expanded = !selected,
         topContent = {
@@ -127,8 +136,9 @@ fun HomeAccountCard(
                 )
             }
         },
-        onClick = onClick,
-        onLongClick = onLongClick
+        colors = colors,
+        elevation = elevation,
+        border = border
     )
 }
 

@@ -25,6 +25,10 @@
     <string name="home_code_copy_success">Successfully copied the code to clipboard</string>
     <string name="home_code_copy_fail">Failed to copy the code</string>
     <string name="home_image_parse_fail">Failed to parse the QR code</string>
+    <string name="home_search_placeholder">Search accounts</string>
+    <string name="home_search_clear">Clear search</string>
+    <string name="home_search_collapse">Close search</string>
+    <string name="home_search_empty">No matching accounts</string>
     <string name="home_sort_label_ascending">Label (A-Z)</string>
     <string name="home_sort_label_descending">Label (Z-A)</string>
     <string name="home_sort_issuer_ascending">Issuer (A-Z)</string>
