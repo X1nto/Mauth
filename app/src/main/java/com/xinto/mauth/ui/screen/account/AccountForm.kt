@@ -10,6 +10,7 @@ import androidx.compose.runtime.Stable
 import com.xinto.mauth.R
 import com.xinto.mauth.core.otp.model.OtpType
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
+import com.xinto.mauth.domain.group.model.DomainGroup
 import com.xinto.mauth.ui.component.form.ComboBoxFormField
 import com.xinto.mauth.ui.component.form.Form
 import com.xinto.mauth.ui.component.form.IntFormField
@@ -18,9 +19,16 @@ import com.xinto.mauth.ui.component.form.PasswordFormField
 import com.xinto.mauth.ui.component.form.TextFormField
 import com.xinto.mauth.ui.component.form.formfield
 import com.xinto.mauth.ui.component.form.singleFormfield
+import kotlinx.coroutines.flow.StateFlow
+import java.util.UUID
 
 @Stable
-class AccountForm(private val initial: DomainAccountInfo) : Form<DomainAccountInfo>(), LazyGridForm {
+class AccountForm(
+    private val initial: DomainAccountInfo,
+    // TODO rethink this later
+    groups: StateFlow<List<DomainGroup>>,
+    onCreateGroup: suspend (name: String, emoji: String?) -> UUID
+) : Form<DomainAccountInfo>(), LazyGridForm {
 
     val icon = IconFormField(initial = initial.icon)
     val label = TextFormField(
@@ -39,6 +47,11 @@ class AccountForm(private val initial: DomainAccountInfo) : Form<DomainAccountIn
         label = R.string.account_data_secret,
         icon = R.drawable.ic_key,
         required = true
+    )
+    val group = GroupFormField(
+        initial = initial.groupId,
+        groups = groups,
+        onCreateGroup = onCreateGroup
     )
     val algorithm = ComboBoxFormField(
         initial = initial.algorithm,
@@ -75,6 +88,7 @@ class AccountForm(private val initial: DomainAccountInfo) : Form<DomainAccountIn
                 initial.label == label.value &&
                 initial.issuer == issuer.value &&
                 initial.secret == secret.value &&
+                initial.groupId == group.value &&
                 initial.type == type.value &&
                 initial.digits == digits.value.toIntOrNull() &&
                 typeSimilar
@@ -99,6 +113,7 @@ class AccountForm(private val initial: DomainAccountInfo) : Form<DomainAccountIn
             label = label.value,
             issuer = issuer.value,
             secret = secret.value,
+            groupId = group.value,
             algorithm = algorithm.value,
             type = type.value,
             digits = digits.value.toInt(),
@@ -112,6 +127,7 @@ class AccountForm(private val initial: DomainAccountInfo) : Form<DomainAccountIn
         singleFormfield(label)
         singleFormfield(issuer)
         singleFormfield(secret)
+        singleFormfield(group)
         formfield(type)
         formfield(algorithm)
         formfield(digits)

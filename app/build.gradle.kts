@@ -137,6 +137,10 @@ dependencies {
 
     implementation("androidx.datastore:datastore-preferences:1.2.1")
 
+    implementation("androidx.emoji2:emoji2-emojipicker:1.6.0")
+
+    implementation("sh.calvin.reorderable:reorderable:3.1.0")
+
     implementation("com.google.protobuf:protobuf-javalite:4.35.1")
 
     implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.5.0")

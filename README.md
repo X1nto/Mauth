@@ -30,7 +30,7 @@ While there are many 2FA authenticator apps out there, most of them come with an
 - Organization
   - [x] Search
   - [x] Sorting
-  - [ ] Grouping
+  - [x] Grouping
   - [x] Editing
   - [x] Deletion
 - Exporting

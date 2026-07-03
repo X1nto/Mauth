@@ -12,6 +12,7 @@ import com.xinto.mauth.domain.SettingsRepository
 import com.xinto.mauth.domain.account.model.DomainAccount
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.domain.account.model.DomainExportAccount
+import com.xinto.mauth.domain.group.model.GroupFilter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -26,23 +27,42 @@ class AccountRepository(
     private val otpExporter: OtpExporter
 ) {
 
-    fun getAccounts(): Flow<List<DomainAccount>> {
+    fun getAccounts(groupFilter: GroupFilter): Flow<List<DomainAccount>> {
         return combine(
             accountsDao.observeAll(),
             settingsRepository.getSortMode()
         ) { accounts, sort ->
-            val mapped = accounts.map {
-                it.toDomain()
-            }
-            return@combine when (sort) {
-                SortSetting.IssuerAsc -> mapped.sortedBy { it.issuer }
-                SortSetting.IssuerDesc -> mapped.sortedByDescending { it.issuer }
-                SortSetting.DateAsc -> mapped.sortedBy { it.createdMillis }
-                SortSetting.DateDesc -> mapped.sortedByDescending { it.createdMillis }
-                SortSetting.LabelAsc -> mapped.sortedBy { it.label }
-                SortSetting.LabelDesc -> mapped.sortedByDescending { it.label }
-            }
+            accounts
+                .filter { groupFilter.matches(it.groupId) }
+                .map { it.toDomain() }
+                .sortedFor(sort)
         }.flowOn(Dispatchers.IO)
+    }
+
+    fun getGroupedAccounts(): Flow<Map<UUID?, List<DomainAccount>>> {
+        return combine(
+            accountsDao.observeAll(),
+            settingsRepository.getSortMode()
+        ) { accounts, sort ->
+            accounts
+                .groupBy { it.groupId }
+                .mapValues { (_, bucket) ->
+                    bucket
+                        .map { it.toDomain() }
+                        .sortedFor(sort)
+                }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    private fun List<DomainAccount>.sortedFor(sort: SortSetting): List<DomainAccount> {
+        return when (sort) {
+            SortSetting.IssuerAsc -> sortedBy { it.issuer }
+            SortSetting.IssuerDesc -> sortedByDescending { it.issuer }
+            SortSetting.DateAsc -> sortedBy { it.createdMillis }
+            SortSetting.DateDesc -> sortedByDescending { it.createdMillis }
+            SortSetting.LabelAsc -> sortedBy { it.label }
+            SortSetting.LabelDesc -> sortedByDescending { it.label }
+        }
     }
 
     fun getAccountInfo(id: UUID): Flow<DomainAccountInfo> {
@@ -171,6 +191,7 @@ class AccountRepository(
             digits = digits,
             period = period,
             counter = counter,
+            groupId = groupId,
             createdMillis = createDateMillis
         )
     }
@@ -186,6 +207,7 @@ class AccountRepository(
             type = type,
             digits = digits,
             period = period,
+            groupId = groupId,
             createDateMillis = createdMillis
         )
     }

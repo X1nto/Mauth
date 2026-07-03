@@ -18,10 +18,12 @@ import com.xinto.mauth.domain.AuthRepository
 import com.xinto.mauth.domain.QrRepository
 import com.xinto.mauth.domain.SettingsRepository
 import com.xinto.mauth.domain.account.AccountRepository
+import com.xinto.mauth.domain.group.GroupRepository
 import com.xinto.mauth.domain.otp.OtpRepository
 import com.xinto.mauth.ui.screen.account.AccountViewModel
 import com.xinto.mauth.ui.screen.auth.AuthViewModel
 import com.xinto.mauth.ui.screen.export.ExportViewModel
+import com.xinto.mauth.ui.screen.groups.GroupsViewModel
 import com.xinto.mauth.ui.screen.home.HomeViewModel
 import com.xinto.mauth.ui.screen.pinremove.PinRemoveViewModel
 import com.xinto.mauth.ui.screen.pinsetup.PinSetupViewModel
@@ -62,6 +64,11 @@ object MauthDI {
             val db: AccountDatabase = get()
             db.rtdataDao()
         }
+
+        single {
+            val db: AccountDatabase = get()
+            db.groupsDao()
+        }
     }
 
     val DomainModule = module {
@@ -70,6 +77,7 @@ object MauthDI {
         singleOf(::QrRepository)
         singleOf(::SettingsRepository)
         singleOf(::AuthRepository)
+        singleOf(::GroupRepository)
     }
 
     val UiModule = module {
@@ -82,6 +90,7 @@ object MauthDI {
         viewModelOf(::AuthViewModel)
         viewModelOf(::ThemeViewModel)
         viewModelOf(::ExportViewModel)
+        viewModelOf(::GroupsViewModel)
     }
 
     val all = listOf(CoreModule, DbModule, DomainModule, UiModule)

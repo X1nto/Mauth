@@ -6,6 +6,7 @@
     <string name="auth_biometrics_cancel">Cancel</string>
 
     <string name="home_dashboard_empty">Nothing here yet</string>
+    <string name="home_dashboard_empty_group">No accounts in this group</string>
     <string name="home_dashboard_error">Failed to load accounts</string>
     <string name="home_addaccount_title">Add an account</string>
     <string name="home_addaccount_subtitle">Scan a QR code or enter the key manually</string>
@@ -21,7 +22,12 @@
         <item quantity="one">%1$d selected</item>
         <item quantity="other">%1$d selected</item>
     </plurals>
+    <string name="home_move_title">Move to group</string>
+    <string name="home_move_action_remove">Remove from group</string>
+    <string name="home_move_action_create">Create new group</string>
+    <string name="home_move_subtitle_existing">Existing groups</string>
     <string name="home_more_settings">Settings</string>
+    <string name="home_more_groups">Groups</string>
     <string name="home_code_copy_success">Successfully copied the code to clipboard</string>
     <string name="home_code_copy_fail">Failed to copy the code</string>
     <string name="home_image_parse_fail">Failed to parse the QR code</string>
@@ -35,6 +41,9 @@
     <string name="home_sort_issuer_descending">Issuer (Z-A)</string>
     <string name="home_sort_date_ascending">Oldest first</string>
     <string name="home_sort_date_descending">Newest first</string>
+    <string name="home_groups_all">All</string>
+    <string name="home_groups_ungrouped">Ungrouped</string>
+    <string name="home_groups_action_add">Manage groups</string>
 
     <string name="qrscan_title">Scan a QR code</string>
     <string name="qrscan_permissions_title">Missing permissions</string>
@@ -58,6 +67,8 @@
     <string name="account_data_digits">Digits</string>
     <string name="account_data_counter">Counter</string>
     <string name="account_data_period">Period</string>
+    <string name="account_data_group">Group</string>
+    <string name="account_data_group_none">None</string>
     <string name="account_discard_title">Discard changes?</string>
     <string name="account_discard_subtitle">Your changes will not be saved.</string>
     <string name="account_discard_buttons_discard">Discard</string>
@@ -106,4 +117,36 @@
     <string name="about_version">Version v%1$s</string>
     <string name="about_links_source">Source</string>
     <string name="about_links_feedback">Feedback</string>
+
+    <string name="groups_title">Groups</string>
+    <string name="groups_state_empty">No groups yet</string>
+    <string name="groups_create_title">New group</string>
+    <string name="groups_rename_title">Rename group</string>
+    <string name="groups_emoji_add">Add emoji</string>
+    <string name="groups_emoji_change">Change emoji</string>
+    <string name="groups_emoji_choose">Choose an emoji</string>
+    <string name="groups_emoji_action_remove">Remove emoji</string>
+    <string name="groups_dialog_field_name">Name</string>
+    <string name="groups_dialog_error_duplicate">A group with this name already exists</string>
+    <string name="groups_dialog_action_create">Create</string>
+    <string name="groups_dialog_action_save">Save</string>
+    <string name="groups_dialog_action_cancel">Cancel</string>
+    <string name="groups_delete_title">Delete group?</string>
+    <string name="groups_delete_subtitle">Accounts in this group will have this group removed.</string>
+    <string name="groups_delete_confirm">Delete</string>
+    <string name="groups_action_rename">Rename</string>
+    <string name="groups_action_add_account">Add account</string>
+    <string name="groups_action_add_group">Add group</string>
+    <string name="groups_action_delete">Delete</string>
+    <string name="groups_action_move_up">Move up</string>
+    <string name="groups_action_move_down">Move down</string>
+    <string name="groups_action_reorder">Reorder</string>
+    <string name="groups_action_move">Move account</string>
+    <string name="groups_action_group">Move to %1$s</string>
+    <string name="groups_action_ungrouped">Move to Ungrouped</string>
+    <string name="groups_drop_hint">Drop accounts here</string>
+    <plurals name="groups_account_count">
+        <item quantity="one">%1$d account</item>
+        <item quantity="other">%1$d accounts</item>
+    </plurals>
 </resources>

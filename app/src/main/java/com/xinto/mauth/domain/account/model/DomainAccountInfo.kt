@@ -21,6 +21,7 @@ data class DomainAccountInfo(
     val digits: Int,
     val counter: Int,
     val period: Int,
+    val groupId: UUID? = null,
     val createdMillis: Long
 ) : Parcelable {
 
@@ -37,6 +38,7 @@ data class DomainAccountInfo(
                 digits = 6,
                 counter = 0,
                 period = 30,
+                groupId = null,
                 createdMillis = System.currentTimeMillis()
             )
         }

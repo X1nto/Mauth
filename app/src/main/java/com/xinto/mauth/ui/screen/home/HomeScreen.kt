@@ -20,13 +20,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -39,18 +42,26 @@ import androidx.compose.material3.ExpandedDockedSearchBar
 import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingActionButtonMenu
 import androidx.compose.material3.FloatingActionButtonMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.SearchBarValue
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.ToggleFloatingActionButton
@@ -58,6 +69,8 @@ import androidx.compose.material3.ToggleFloatingActionButtonDefaults.animateIcon
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.VerticalDivider
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -80,15 +93,21 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
 import com.xinto.mauth.core.settings.model.SortSetting
+import com.xinto.mauth.domain.account.model.DomainAccount
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
+import com.xinto.mauth.domain.group.model.DomainGroup
+import com.xinto.mauth.domain.group.model.GroupFilter
 import com.xinto.mauth.domain.otp.model.DomainOtpRealtimeData
+import com.xinto.mauth.ui.screen.groups.CreateGroupDialog
 import com.xinto.mauth.ui.util.collectAsStateListWithLifecycle
 import com.xinto.mauth.ui.util.collectAsStateMapWithLifecycle
-import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -96,24 +115,65 @@ import java.util.UUID
 
 @Composable
 fun HomeScreen(
-    onAddAccountManually: () -> Unit,
+    onAddAccountManually: (groupId: UUID?) -> Unit,
     onAddAccountViaScanning: () -> Unit,
     onAddAccountFromImage: (DomainAccountInfo) -> Unit,
     onSettingsNavigate: () -> Unit,
     onExportNavigate: (accounts: List<UUID>) -> Unit,
     onAboutNavigate: () -> Unit,
-    onAccountEdit: (UUID) -> Unit
+    onAccountEdit: (UUID) -> Unit,
+    onManageGroups: () -> Unit
 ) {
     val viewModel: HomeViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val realTimeData = viewModel.realTimeData.collectAsStateMapWithLifecycle()
     val selectedAccounts = viewModel.selectedAccounts.collectAsStateListWithLifecycle()
     val activeSortSetting by viewModel.activeSortSetting.collectAsStateWithLifecycle()
+    val groups by viewModel.groups.collectAsStateWithLifecycle()
+    val activeGroup by viewModel.activeGroup.collectAsStateWithLifecycle()
+    val searchAccounts by viewModel.searchAccounts.collectAsStateWithLifecycle()
 
     val photoPickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         viewModel.getAccountInfoFromQrUri(uri)?.let {
             onAddAccountFromImage(it)
         }
+    }
+
+    var showGroupCreateDialog by remember { mutableStateOf(false) }
+    if (showGroupCreateDialog) {
+        CreateGroupDialog(
+            isNameTaken = { candidate -> groups.any { it.name.equals(candidate, ignoreCase = true) } },
+            onConfirm = { name, emoji ->
+                viewModel.createGroup(name, emoji)
+                showGroupCreateDialog = false
+            },
+            onDismissRequest = { showGroupCreateDialog = false }
+        )
+    }
+
+    var showMoveSheet by remember { mutableStateOf(false) }
+    var showMoveCreateDialog by remember { mutableStateOf(false) }
+    if (showMoveSheet) {
+        MoveToGroupSheet(
+            groups = groups,
+            onSelectGroup = { groupId ->
+                viewModel.moveSelectedToGroup(groupId)
+                showMoveSheet = false
+            },
+            onCreateGroup = { showMoveCreateDialog = true },
+            onDismiss = { showMoveSheet = false }
+        )
+    }
+    if (showMoveCreateDialog) {
+        CreateGroupDialog(
+            isNameTaken = { candidate -> groups.any { it.name.equals(candidate, ignoreCase = true) } },
+            onConfirm = { name, emoji ->
+                viewModel.createGroupAndMoveSelected(name, emoji)
+                showMoveCreateDialog = false
+                showMoveSheet = false
+            },
+            onDismissRequest = { showMoveCreateDialog = false }
+        )
     }
 
     HomeScreen(
@@ -127,11 +187,12 @@ fun HomeScreen(
                         )
                     )
                 }
-                HomeAddAccountMenu.Manual -> onAddAccountManually()
+                HomeAddAccountMenu.Manual -> onAddAccountManually((activeGroup as? GroupFilter.Specific)?.id)
             }
         },
         onMoreMenuNavigate = {
             when (it) {
+                HomeMoreMenu.Groups -> onManageGroups()
                 HomeMoreMenu.Settings -> onSettingsNavigate()
                 HomeMoreMenu.Export -> onExportNavigate(selectedAccounts)
                 HomeMoreMenu.About -> onAboutNavigate()
@@ -149,6 +210,12 @@ fun HomeScreen(
         selectedAccounts = selectedAccounts,
         activeSortSetting = activeSortSetting,
         onActiveSortChange = viewModel::setActiveSort,
+        groups = groups,
+        activeGroup = activeGroup,
+        onActiveGroupChange = viewModel::setActiveGroup,
+        onCreateGroupClick = { showGroupCreateDialog = true },
+        onGroupSelectedClick = { showMoveSheet = true },
+        searchAccounts = searchAccounts,
     )
 }
 
@@ -168,9 +235,16 @@ private fun HomeScreen(
     accountRealtimeData: SnapshotStateMap<UUID, DomainOtpRealtimeData>,
     selectedAccounts: SnapshotStateList<UUID>,
     activeSortSetting: SortSetting,
-    onActiveSortChange: (SortSetting) -> Unit
+    onActiveSortChange: (SortSetting) -> Unit,
+    groups: ImmutableList<DomainGroup>,
+    activeGroup: GroupFilter,
+    onActiveGroupChange: (GroupFilter) -> Unit,
+    onCreateGroupClick: () -> Unit,
+    onGroupSelectedClick: () -> Unit,
+    searchAccounts: ImmutableList<DomainAccount>
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
+
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     val isExpandedWidth = LocalWindowInfo.current.containerDpSize.width >= 600.dp
@@ -224,6 +298,8 @@ private fun HomeScreen(
                         onCancelSelection = onCancelAccountSelection,
                         onDeleteSelected = { showDeleteDialog = true },
                         onExportSelected = onExportSelectedAccounts,
+                        canMoveToGroup = groups.isNotEmpty(),
+                        onMoveToGroup = onGroupSelectedClick,
                         scrollBehavior = scrollBehavior,
                     )
                 } else {
@@ -256,79 +332,102 @@ private fun HomeScreen(
             }
         }
     ) { innerPadding ->
-        val contentModifier = remember(innerPadding, scrollBehavior) {
-            Modifier
+        Column(
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
-        }
-        when (state) {
-            is HomeScreenState.Loading -> {
-                Box(
-                    modifier = contentModifier,
-                    contentAlignment = Alignment.Center
-                ) {
-                    LoadingIndicator()
+        ) {
+            if (groups.isNotEmpty()) {
+                AnimatedVisibility(visible = !isSelectionActive) {
+                    GroupFilterRow(
+                        modifier = Modifier.padding(top = 8.dp),
+                        groups = groups,
+                        activeGroup = activeGroup,
+                        onActiveGroupChange = onActiveGroupChange,
+                        onAddGroup = onCreateGroupClick,
+                    )
                 }
             }
-            is HomeScreenState.Empty -> {
-                Column(
-                    modifier = contentModifier,
-                    verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        modifier = Modifier.size(72.dp),
-                        painter = painterResource(R.drawable.ic_empty_dashboard),
-                        contentDescription = null
-                    )
-                    ProvideTextStyle(MaterialTheme.typography.headlineSmall) {
-                        Text(stringResource(R.string.home_dashboard_empty))
+            val contentModifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+            when (state) {
+                is HomeScreenState.Loading -> {
+                    Box(
+                        modifier = contentModifier,
+                        contentAlignment = Alignment.Center
+                    ) {
+                        LoadingIndicator()
                     }
                 }
-            }
-            is HomeScreenState.Success -> {
-                LazyVerticalGrid(
-                    modifier = contentModifier,
-                    contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 88.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    columns = GridCells.Adaptive(minSize = 250.dp),
-                ) {
-                    items(items = state.accounts, key = { it.id }) { account ->
-                        val realtimeData = accountRealtimeData[account.id]
-                        if (realtimeData != null) {
-                            AccountCard(
-                                onClick = {
-                                    if (selectedAccounts.isNotEmpty()) {
-                                        onAccountSelect(account.id)
-                                    }
-                                },
-                                onLongClick = { onAccountSelect(account.id) },
-                                onEdit = { onAccountEdit(account.id) },
-                                onCounterClick = { onAccountCounterIncrease(account.id) },
-                                onCopyCode = { onAccountCopyCode(account.label, realtimeData.code, it) },
-                                account = account,
-                                realtimeData = realtimeData,
-                                selected = selectedAccounts.contains(account.id),
-                                colors = CardDefaults.elevatedCardColors(),
-                                elevation = CardDefaults.elevatedCardElevation()
-                            )
+                is HomeScreenState.Empty -> {
+                    val emptyMessage = when (activeGroup) {
+                        GroupFilter.All -> R.string.home_dashboard_empty
+                        GroupFilter.Ungrouped, is GroupFilter.Specific -> R.string.home_dashboard_empty_group
+                    }
+                    val emptyIcon = when (activeGroup) {
+                        GroupFilter.All -> R.drawable.ic_empty_dashboard
+                        GroupFilter.Ungrouped, is GroupFilter.Specific -> R.drawable.ic_label_off
+                    }
+                    Column(
+                        modifier = contentModifier,
+                        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(72.dp),
+                            painter = painterResource(emptyIcon),
+                            contentDescription = null
+                        )
+                        ProvideTextStyle(MaterialTheme.typography.headlineSmall) {
+                            Text(stringResource(emptyMessage))
                         }
                     }
                 }
-            }
-            is HomeScreenState.Error -> {
-                Column(
-                    modifier = contentModifier,
-                    verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_error),
-                        contentDescription = null
-                    )
-                    Text(stringResource(R.string.home_dashboard_error))
+                is HomeScreenState.Success -> {
+                    LazyVerticalGrid(
+                        modifier = contentModifier,
+                        contentPadding = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 88.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        columns = GridCells.Adaptive(minSize = 250.dp),
+                    ) {
+                        items(items = state.accounts, key = { it.id }) { account ->
+                            val realtimeData = accountRealtimeData[account.id]
+                            if (realtimeData != null) {
+                                AccountCard(
+                                    onClick = {
+                                        if (selectedAccounts.isNotEmpty()) {
+                                            onAccountSelect(account.id)
+                                        }
+                                    },
+                                    onLongClick = { onAccountSelect(account.id) },
+                                    onEdit = { onAccountEdit(account.id) },
+                                    onCounterClick = { onAccountCounterIncrease(account.id) },
+                                    onCopyCode = { onAccountCopyCode(account.label, realtimeData.code, it) },
+                                    account = account,
+                                    realtimeData = realtimeData,
+                                    selected = selectedAccounts.contains(account.id),
+                                    colors = CardDefaults.elevatedCardColors(),
+                                    elevation = CardDefaults.elevatedCardElevation()
+                                )
+                            }
+                        }
+                    }
+                }
+                is HomeScreenState.Error -> {
+                    Column(
+                        modifier = contentModifier,
+                        verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_error),
+                            contentDescription = null
+                        )
+                        Text(stringResource(R.string.home_dashboard_error))
+                    }
                 }
             }
         }
@@ -336,7 +435,7 @@ private fun HomeScreen(
 
     val searchResults: @Composable ColumnScope.() -> Unit = {
         SearchResults(
-            state = state,
+            searchAccounts = searchAccounts,
             searchTextFieldState = searchTextFieldState,
             onAccountEdit = onAccountEdit,
             onAccountCounterIncrease = onAccountCounterIncrease,
@@ -496,7 +595,7 @@ private fun MoreAction(onMenuNavigate: (HomeMoreMenu) -> Unit) {
 
 @Composable
 private fun ColumnScope.SearchResults(
-    state: HomeScreenState,
+    searchAccounts: ImmutableList<DomainAccount>,
     searchTextFieldState: TextFieldState,
     onAccountEdit: (UUID) -> Unit,
     onAccountCounterIncrease: (UUID) -> Unit,
@@ -504,13 +603,11 @@ private fun ColumnScope.SearchResults(
     selectedAccounts: SnapshotStateList<UUID>,
     accountRealtimeData: SnapshotStateMap<UUID, DomainOtpRealtimeData>,
 ) {
-    val allAccounts = (state as? HomeScreenState.Success)?.accounts
     val query = searchTextFieldState.text.toString().trim()
-    val filteredAccounts = remember(allAccounts, query) {
+    val filteredAccounts = remember(searchAccounts, query) {
         when {
-            allAccounts == null -> persistentListOf()
-            query.isEmpty() -> allAccounts
-            else -> allAccounts
+            query.isEmpty() -> searchAccounts
+            else -> searchAccounts
                 .filter { it.label.contains(query, ignoreCase = true) || it.issuer.contains(query, ignoreCase = true) }
                 .toImmutableList()
         }
@@ -560,6 +657,8 @@ private fun SelectionTopBar(
     onCancelSelection: () -> Unit,
     onDeleteSelected: () -> Unit,
     onExportSelected: () -> Unit,
+    canMoveToGroup: Boolean,
+    onMoveToGroup: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
 ) {
     TopAppBar(
@@ -573,6 +672,14 @@ private fun SelectionTopBar(
         },
         title = { Text(pluralStringResource(R.plurals.home_selection_count, selectedCount, selectedCount)) },
         actions = {
+            if (canMoveToGroup) {
+                IconButton(onClick = onMoveToGroup) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_label),
+                        contentDescription = stringResource(R.string.home_move_title),
+                    )
+                }
+            }
             IconButton(onClick = onDeleteSelected) {
                 Icon(
                     painter = painterResource(R.drawable.ic_delete_forever),
@@ -588,6 +695,190 @@ private fun SelectionTopBar(
         },
         scrollBehavior = scrollBehavior,
     )
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun GroupFilterRow(
+    groups: ImmutableList<DomainGroup>,
+    activeGroup: GroupFilter,
+    onActiveGroupChange: (GroupFilter) -> Unit,
+    onAddGroup: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyRow(
+        modifier = modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        item(key = "all", contentType = 0) {
+            val selected = activeGroup is GroupFilter.All
+            FilterChip(
+                selected = selected,
+                onClick = { onActiveGroupChange(GroupFilter.All) },
+                label = { Text(stringResource(R.string.home_groups_all)) },
+                leadingIcon = if (!selected) null else { ->
+                    Icon(
+                        modifier = Modifier.size(FilterChipDefaults.IconSize),
+                        painter = painterResource(R.drawable.ic_check),
+                        contentDescription = null
+                    )
+                }
+            )
+        }
+        item(key = "ungrouped", contentType = 0) {
+            val selected = activeGroup is GroupFilter.Ungrouped
+            FilterChip(
+                selected = selected,
+                onClick = { onActiveGroupChange(GroupFilter.Ungrouped) },
+                label = { Text(stringResource(R.string.home_groups_ungrouped)) },
+                leadingIcon = if (!selected) null else { ->
+                    Icon(
+                        modifier = Modifier.size(FilterChipDefaults.IconSize),
+                        painter = painterResource(R.drawable.ic_check),
+                        contentDescription = null
+                    )
+                }
+            )
+        }
+        item(key = "divider", contentType = 1) {
+            VerticalDivider(modifier = Modifier.height(24.dp))
+        }
+        items(items = groups, key = { it.id }) { group ->
+            val selected = activeGroup is GroupFilter.Specific && activeGroup.id == group.id
+            val emoji = group.emoji
+            FilterChip(
+                selected = selected,
+                onClick = { onActiveGroupChange(GroupFilter.Specific(group.id)) },
+                label = { Text(group.name) },
+                leadingIcon = when {
+                    selected -> { ->
+                        Icon(
+                            modifier = Modifier.size(FilterChipDefaults.IconSize),
+                            painter = painterResource(R.drawable.ic_check),
+                            contentDescription = null
+                        )
+                    }
+                    emoji != null -> { ->
+                        Text(text = emoji, fontSize = 16.sp)
+                    }
+                    else -> null
+                }
+            )
+        }
+        item(key = "add") {
+            FilledIconButton(
+                modifier = Modifier.size(IconButtonDefaults.extraSmallContainerSize(widthOption = IconButtonDefaults.IconButtonWidthOption.Wide)),
+                onClick = onAddGroup,
+                shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.extraSmallSquareShape)
+            ) {
+                Icon(
+                    modifier = Modifier.size(IconButtonDefaults.extraSmallIconSize),
+                    painter = painterResource(R.drawable.ic_new_label),
+                    contentDescription = stringResource(R.string.home_groups_action_add),
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun MoveToGroupSheet(
+    groups: ImmutableList<DomainGroup>,
+    onSelectGroup: (UUID?) -> Unit,
+    onCreateGroup: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = rememberBottomSheetState(
+            initialValue = SheetValue.Expanded,
+            enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded)
+        )
+    ) {
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(R.string.home_move_title),
+            style = MaterialTheme.typography.headlineSmall,
+            textAlign = TextAlign.Center
+        )
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            item(key = "create") {
+                ListItem(
+                    modifier = Modifier.fillParentMaxWidth(),
+                    onClick = onCreateGroup,
+                    leadingContent = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_new_label),
+                            contentDescription = null
+                        )
+                    },
+                    colors = ListItemDefaults.colors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        leadingContentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    ),
+                    shapes = ListItemDefaults.segmentedShapes(index = 0, count = 2)
+                ) {
+                    Text(stringResource(R.string.home_move_action_create))
+                }
+            }
+            item(key = "remove") {
+                ListItem(
+                    modifier = Modifier.fillParentMaxWidth(),
+                    onClick = { onSelectGroup(null) },
+                    leadingContent = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_label_off),
+                            contentDescription = null,
+                        )
+                    },
+                    colors = ListItemDefaults.colors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                        contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                        leadingContentColor = MaterialTheme.colorScheme.onErrorContainer
+                    ),
+                    shapes = ListItemDefaults.segmentedShapes(index = 1, count = 2)
+                ) {
+                    Text(stringResource(R.string.home_move_action_remove))
+                }
+            }
+            item(key = "divider") {
+                Text(
+                    modifier = Modifier.padding(start = 12.dp, top = 12.dp, bottom = 4.dp),
+                    text = stringResource(R.string.home_move_subtitle_existing),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            itemsIndexed(items = groups, key = { _, group -> group.id }) { index, group ->
+                ListItem(
+                    modifier = Modifier.fillParentMaxWidth(),
+                    onClick = { onSelectGroup(group.id) },
+                    leadingContent = {
+                        if (group.emoji != null) {
+                            Text(group.emoji)
+                        } else {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_label),
+                                contentDescription = null,
+                            )
+                        }
+                    },
+                    shapes = ListItemDefaults.segmentedShapes(index = index, count = groups.size)
+                ) {
+                    Text(group.name)
+                }
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

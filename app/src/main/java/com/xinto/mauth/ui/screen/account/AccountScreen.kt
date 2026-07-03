@@ -1,9 +1,16 @@
 package com.xinto.mauth.ui.screen.account
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells.Fixed
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -18,17 +25,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
+import com.xinto.mauth.R.drawable.ic_error
+import com.xinto.mauth.R.string.account_error
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
-import com.xinto.mauth.ui.screen.account.component.AccountExitDialog
-import com.xinto.mauth.ui.screen.account.state.AccountScreenError
-import com.xinto.mauth.ui.screen.account.state.AccountScreenLoading
-import com.xinto.mauth.ui.screen.account.state.AccountScreenSuccess
+import com.xinto.mauth.ui.component.form.form
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import java.util.UUID
@@ -126,9 +134,7 @@ fun AccountScreen(
                         )
                     }
                 },
-                title = {
-                    Text(title)
-                },
+                title = { Text(title) },
                 scrollBehavior = scrollBehavior
             )
         }
@@ -141,13 +147,36 @@ fun AccountScreen(
         ) {
             when (state) {
                 is AccountScreenState.Loading -> {
-                    AccountScreenLoading()
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
                 is AccountScreenState.Success -> {
-                    AccountScreenSuccess(form = state.form)
+                    LazyVerticalGrid(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        contentPadding = PaddingValues(16.dp),
+                        columns = Fixed(2)
+                    ) {
+                        form(lazyGridForm = state.form)
+                    }
                 }
                 is AccountScreenState.Error -> {
-                    AccountScreenError()
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            painter = painterResource(ic_error),
+                            contentDescription = null
+                        )
+                        Text(stringResource(account_error))
+                    }
                 }
             }
         }
@@ -163,4 +192,26 @@ fun AccountScreen(
             }
         )
     }
+}
+
+@Composable
+private fun AccountExitDialog(
+    onCancel: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onCancel,
+        title = { Text(stringResource(R.string.account_discard_title)) },
+        text = { Text(stringResource(R.string.account_discard_subtitle)) },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(stringResource(R.string.account_discard_buttons_discard))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onCancel) {
+                Text(stringResource(R.string.account_discard_buttons_cancel))
+            }
+        }
+    )
 }
