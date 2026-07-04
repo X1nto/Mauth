@@ -111,8 +111,9 @@ protobuf {
 dependencies {
     implementation("androidx.core:core-ktx:1.19.0")
     implementation("androidx.core:core-splashscreen:1.2.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.11.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.11.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.11.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-navigation3:2.11.0")
     implementation("androidx.activity:activity-compose:1.13.0")
 
     val composeBom = platform("androidx.compose:compose-bom-alpha:2026.06.00")
@@ -156,7 +157,9 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.5.0")
 
-    implementation("dev.olshevski.navigation:reimagined:1.5.0")
+    val navigationVersion = "1.1.4"
+    implementation("androidx.navigation3:navigation3-runtime:$navigationVersion")
+    implementation("androidx.navigation3:navigation3-ui:$navigationVersion")
 
     implementation("commons-codec:commons-codec:1.22.0")
 
