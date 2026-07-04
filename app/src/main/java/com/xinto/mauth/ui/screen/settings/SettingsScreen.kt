@@ -1,10 +1,12 @@
 package com.xinto.mauth.ui.screen.settings
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -25,10 +27,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
-import com.xinto.mauth.ui.component.lazygroup.itemGrouped
 import com.xinto.mauth.ui.component.rememberBiometricHandler
 import com.xinto.mauth.ui.component.rememberBiometricPromptData
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
+import com.xinto.mauth.ui.screen.settings.component.SettingsGroup
 import com.xinto.mauth.ui.screen.settings.component.SettingsNavigateItem
 import com.xinto.mauth.ui.screen.settings.component.SettingsSwitchItem
 import com.xinto.mauth.ui.theme.MauthTheme
@@ -120,14 +122,16 @@ fun SettingsScreen(
             )
         }
     ) {
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(it)
-                .nestedScroll(scrollBehavior.nestedScrollConnection),
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .verticalScroll(rememberScrollState())
+                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            itemGrouped(header = { Text(stringResource(R.string.settings_category_security)) }) {
+            SettingsGroup(header = { Text(stringResource(R.string.settings_category_security)) }) {
                 val count = if (showBiometrics) 4 else 3
                 SettingsSwitchItem(
                     onCheckedChange = onSecureModeChange,
@@ -185,7 +189,7 @@ fun SettingsScreen(
                     shapes = ListItemDefaults.segmentedShapes(index = if (showBiometrics) 3 else 2, count = count)
                 )
             }
-            itemGrouped(header = { Text(stringResource(R.string.settings_category_appearance)) }) {
+            SettingsGroup(header = { Text(stringResource(R.string.settings_category_appearance)) }) {
                 SettingsNavigateItem(
                     onClick = onThemeNavigate,
                     title = { Text(stringResource(R.string.settings_prefs_theme)) },
