@@ -34,6 +34,7 @@ fun SettingsScreen(
     onSetupPinCode: () -> Unit,
     onDisablePinCode: () -> Unit,
     onThemeNavigate: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val viewModel: SettingsViewModel = koinViewModel()
     val secureMode by viewModel.secureMode.collectAsStateWithLifecycle()
@@ -54,6 +55,7 @@ fun SettingsScreen(
 
     BackHandler(onBack = onBack)
     SettingsScreen(
+        modifier = modifier,
         onBack = onBack,
         secureMode = secureMode,
         onSecureModeChange = viewModel::updateSecureMode,
@@ -86,11 +88,12 @@ fun SettingsScreen(
     showBiometrics: Boolean,
     biometrics: Boolean,
     onBiometricsChange: (Boolean) -> Unit,
-    onThemeNavigate: () -> Unit
+    onThemeNavigate: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
         topBar = {
             TopAppBar(
                 title = {

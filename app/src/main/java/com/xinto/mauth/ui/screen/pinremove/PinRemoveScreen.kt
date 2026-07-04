@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -18,12 +19,14 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun PinRemoveScreen(
-    onExit: () -> Unit
+    onExit: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val viewModel: PinRemoveViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
     BackHandler(onBack = onExit)
     PinRemoveScreen(
+        modifier = modifier,
         state = state,
         onEnter = {
             if (viewModel.removePin()) {
@@ -46,8 +49,10 @@ fun PinRemoveScreen(
     onNumberEnter: (Char) -> Unit,
     onNumberDelete: () -> Unit,
     onAllDelete: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     PinScaffold(
+        modifier = modifier,
         codeLength = state.code.length,
         error = state is PinRemoveScreenState.Error,
         topBar = {

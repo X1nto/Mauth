@@ -50,7 +50,8 @@ import java.util.concurrent.Executors
 @Composable
 fun QrScanScreen(
     onBack: () -> Unit,
-    onScan: (DomainAccountInfo) -> Unit
+    onScan: (DomainAccountInfo) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val cameraPermission = rememberPermissionState(Manifest.permission.CAMERA)
     val viewModel: QrScanViewModel = koinViewModel()
@@ -66,6 +67,7 @@ fun QrScanScreen(
         }
     }
     QrScanScreen(
+        modifier = modifier,
         onBack = onBack,
         onScan = viewModel::parseResult,
         permissionStatus = cameraPermission.status,
@@ -85,7 +87,8 @@ fun QrScanScreen(
     permissionStatus: PermissionStatus,
     onRequestPermission: () -> Unit,
     batchData: BatchData,
-    scanError: ScanError?
+    scanError: ScanError?,
+    modifier: Modifier = Modifier
 ) {
     var showPermissionDeniedDialog by remember { mutableStateOf(false) }
     var showPermissionDeniedDialogRationale by remember { mutableStateOf(false) }
@@ -97,7 +100,7 @@ fun QrScanScreen(
     }
     BackHandler(onBack = onBack)
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
         topBar = {
             LargeTopAppBar(
                 title = {

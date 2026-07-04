@@ -177,6 +177,7 @@ class MainActivity : FragmentActivity() {
                         when (screen) {
                             is MauthDestination.Auth -> {
                                 AuthScreen(
+                                    modifier = Modifier.fillMaxSize(),
                                     onAuthSuccess = {
                                         if (screen.nextDestination != null) {
                                             navigator.replaceLast(screen.nextDestination)
@@ -191,6 +192,7 @@ class MainActivity : FragmentActivity() {
                             }
                             is MauthDestination.Home -> {
                                 HomeScreen(
+                                    modifier = Modifier.fillMaxSize(),
                                     onAddAccountManually = { groupId ->
                                         navigator.navigate(
                                             MauthDestination.AddAccount(DomainAccountInfo.new().copy(groupId = groupId))
@@ -221,6 +223,7 @@ class MainActivity : FragmentActivity() {
                             }
                             is MauthDestination.QrScanner -> {
                                 QrScanScreen(
+                                    modifier = Modifier.fillMaxSize(),
                                     onBack = navigator::pop,
                                     onScan = {
                                         navigator.replaceLast(MauthDestination.AddAccount(it))
@@ -229,6 +232,7 @@ class MainActivity : FragmentActivity() {
                             }
                             is MauthDestination.Settings -> {
                                 SettingsScreen(
+                                    modifier = Modifier.fillMaxSize(),
                                     onBack = navigator::pop,
                                     onSetupPinCode = {
                                         navigator.navigate(MauthDestination.PinSetup)
@@ -242,10 +246,14 @@ class MainActivity : FragmentActivity() {
                                 )
                             }
                             is MauthDestination.About -> {
-                                AboutScreen(onBack = navigator::pop)
+                                AboutScreen(
+                                    modifier = Modifier.fillMaxSize(),
+                                    onBack = navigator::pop
+                                )
                             }
                             is MauthDestination.Groups -> {
                                 GroupsScreen(
+                                    modifier = Modifier.fillMaxSize(),
                                     onBack = navigator::pop,
                                     onAddAccount = { groupId ->
                                         navigator.navigate(
@@ -256,27 +264,39 @@ class MainActivity : FragmentActivity() {
                             }
                             is MauthDestination.AddAccount -> {
                                 AddAccountScreen(
+                                    modifier = Modifier.fillMaxSize(),
                                     prefilled = screen.params,
                                     onExit = navigator::pop
                                 )
                             }
                             is MauthDestination.EditAccount -> {
                                 EditAccountScreen(
+                                    modifier = Modifier.fillMaxSize(),
                                     id = screen.id,
                                     onExit = navigator::pop
                                 )
                             }
                             is MauthDestination.PinSetup -> {
-                                PinSetupScreen(onExit = navigator::pop)
+                                PinSetupScreen(
+                                    modifier = Modifier.fillMaxSize(),
+                                    onExit = navigator::pop
+                                )
                             }
                             is MauthDestination.PinRemove -> {
-                                PinRemoveScreen(onExit = navigator::pop)
+                                PinRemoveScreen(
+                                    modifier = Modifier.fillMaxSize(),
+                                    onExit = navigator::pop
+                                )
                             }
                             is MauthDestination.Theme -> {
-                                ThemeScreen(onExit = navigator::pop)
+                                ThemeScreen(
+                                    modifier = Modifier.fillMaxSize(),
+                                    onExit = navigator::pop
+                                )
                             }
                             is MauthDestination.Export -> {
                                 ExportScreen(
+                                    modifier = Modifier.fillMaxSize(),
                                     accounts = screen.accounts,
                                     onBackNavigate = navigator::pop
                                 )

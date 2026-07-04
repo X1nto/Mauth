@@ -122,7 +122,8 @@ fun HomeScreen(
     onExportNavigate: (accounts: List<UUID>) -> Unit,
     onAboutNavigate: () -> Unit,
     onAccountEdit: (UUID) -> Unit,
-    onManageGroups: () -> Unit
+    onManageGroups: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val viewModel: HomeViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -177,6 +178,7 @@ fun HomeScreen(
     }
 
     HomeScreen(
+        modifier = modifier,
         onAddAccountNavigate = {
             when (it) {
                 HomeAddAccountMenu.ScanQR -> onAddAccountViaScanning()
@@ -241,7 +243,8 @@ private fun HomeScreen(
     onActiveGroupChange: (GroupFilter) -> Unit,
     onCreateGroupClick: () -> Unit,
     onGroupSelectedClick: () -> Unit,
-    searchAccounts: ImmutableList<DomainAccount>
+    searchAccounts: ImmutableList<DomainAccount>,
+    modifier: Modifier = Modifier
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
 
@@ -286,6 +289,7 @@ private fun HomeScreen(
         isFabMenuExpanded = false
     }
     Scaffold(
+        modifier = modifier,
         topBar = {
             AnimatedContent(
                 targetState = isSelectionActive,

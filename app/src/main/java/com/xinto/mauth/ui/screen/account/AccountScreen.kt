@@ -44,13 +44,15 @@ import java.util.UUID
 @Composable
 fun AddAccountScreen(
     prefilled: DomainAccountInfo,
-    onExit: () -> Unit
+    onExit: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val viewModel: AccountViewModel = koinViewModel {
         parametersOf(AccountViewModelParams.Prefilled(prefilled))
     }
     val state by viewModel.state.collectAsStateWithLifecycle()
     AccountScreen(
+        modifier = modifier,
         title = stringResource(R.string.account_title_add),
         state = state,
         onSave = {
@@ -67,13 +69,15 @@ fun AddAccountScreen(
 @Composable
 fun EditAccountScreen(
     id: UUID,
-    onExit: () -> Unit
+    onExit: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val viewModel: AccountViewModel = koinViewModel {
         parametersOf(AccountViewModelParams.Id(id))
     }
     val state by viewModel.state.collectAsStateWithLifecycle()
     AccountScreen(
+        modifier = modifier,
         title = stringResource(R.string.account_title_edit),
         state = state,
         onSave = {
@@ -94,6 +98,7 @@ fun AccountScreen(
     state: AccountScreenState,
     onSave: () -> Unit,
     onExit: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var isExitDialogShown by remember { mutableStateOf(false) }
     val hasChanges by remember(state) {
@@ -110,6 +115,7 @@ fun AccountScreen(
     }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
+        modifier = modifier,
         topBar = {
             TopAppBar(
                 actions = {

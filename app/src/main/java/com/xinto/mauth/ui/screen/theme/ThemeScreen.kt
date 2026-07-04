@@ -38,13 +38,15 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ThemeScreen(
-    onExit: () -> Unit
+    onExit: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     BackHandler(onBack = onExit)
     val viewModel: ThemeViewModel = koinViewModel()
     val theme by viewModel.theme.collectAsStateWithLifecycle()
     val color by viewModel.color.collectAsStateWithLifecycle()
     ThemeScreen(
+        modifier = modifier,
         onBack = onExit,
         theme = theme,
         onThemeChange = viewModel::updateTheme,
@@ -60,10 +62,12 @@ fun ThemeScreen(
     theme: ThemeSetting,
     onThemeChange: (ThemeSetting) -> Unit,
     color: ColorSetting,
-    onColorChange: (ColorSetting) -> Unit
+    onColorChange: (ColorSetting) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
+        modifier = modifier,
         topBar = {
             TopAppBar(
                 title = {

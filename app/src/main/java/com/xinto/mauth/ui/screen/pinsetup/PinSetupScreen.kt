@@ -13,6 +13,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -23,7 +24,8 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun PinSetupScreen(
-    onExit: () -> Unit
+    onExit: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val viewModel: PinSetupViewModel = koinViewModel()
     val code by viewModel.code.collectAsStateWithLifecycle()
@@ -35,6 +37,7 @@ fun PinSetupScreen(
         }
     })
     PinSetupScreen(
+        modifier = modifier,
         code = code,
         state = state,
         error = error,
@@ -65,8 +68,10 @@ fun PinSetupScreen(
     onNumberEnter: (Char) -> Unit,
     onNumberDelete: () -> Unit,
     onAllDelete: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     PinScaffold(
+        modifier = modifier,
         codeLength = code.length,
         error = error,
         topBar = {

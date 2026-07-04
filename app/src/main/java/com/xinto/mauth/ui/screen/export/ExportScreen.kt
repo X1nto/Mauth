@@ -54,7 +54,8 @@ import java.util.UUID
 @Composable
 fun ExportScreen(
     onBackNavigate: () -> Unit,
-    accounts: List<UUID>
+    accounts: List<UUID>,
+    modifier: Modifier = Modifier
 ) {
     BackHandler(onBack = onBackNavigate)
     val viewModel: ExportViewModel = koinViewModel {
@@ -65,6 +66,7 @@ fun ExportScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     ExportScreen(
+        modifier = modifier,
         onBackNavigate = onBackNavigate,
         onCopyUrlToClipboard = {
             viewModel.copyUrlToClipboard(
@@ -85,9 +87,11 @@ fun ExportScreen(
     onCopyUrlToClipboard: (DomainExportAccount) -> Unit,
     state: ExportScreenState,
     mode: ExportMode,
-    onModeSelect: (ExportMode) -> Unit
+    onModeSelect: (ExportMode) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Scaffold(
+        modifier = modifier,
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.export_title)) },

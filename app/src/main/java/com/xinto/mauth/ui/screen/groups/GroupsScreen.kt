@@ -79,7 +79,8 @@ import kotlin.time.Duration.Companion.milliseconds
 @Composable
 fun GroupsScreen(
     onBack: () -> Unit,
-    onAddAccount: (groupId: UUID?) -> Unit
+    onAddAccount: (groupId: UUID?) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val viewModel: GroupsViewModel = koinViewModel()
     val model by viewModel.uiModel.collectAsStateWithLifecycle()
@@ -91,6 +92,7 @@ fun GroupsScreen(
     val isEmpty = model.isEmpty
 
     Scaffold(
+        modifier = modifier,
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.groups_title)) },
