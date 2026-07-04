@@ -25,6 +25,7 @@ import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -151,7 +152,13 @@ private fun InteractionButtons(
     Row(verticalAlignment = Alignment.CenterVertically) {
         FilledIconToggleButton(
             checked = showCode, 
-            onCheckedChange = onShowCodeChange
+            onCheckedChange = onShowCodeChange,
+            colors = IconButtonDefaults.filledTonalIconToggleButtonColors(
+                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                checkedContainerColor = MaterialTheme.colorScheme.tertiary,
+                checkedContentColor = MaterialTheme.colorScheme.onTertiary
+            )
         ) {
             if (showCode) {
                 Icon(
