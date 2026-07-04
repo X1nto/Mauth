@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -22,8 +23,11 @@ inline fun LazyListScope.group(
     content: LazyListScope.() -> Unit
 ) {
     item {
-        Box(modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)) {
-            CompositionLocalProvider(LocalTextStyle provides MaterialTheme.typography.headlineMedium) {
+        Box(modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)) {
+            CompositionLocalProvider(
+                LocalTextStyle provides MaterialTheme.typography.titleMedium,
+                LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant
+            ) {
                 header()
             }
         }

@@ -101,9 +101,7 @@ fun SettingsScreen(
         modifier = modifier,
         topBar = {
             TopAppBar(
-                title = {
-                    Text(stringResource(R.string.settings_title))
-                },
+                title = { Text(stringResource(R.string.settings_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -121,37 +119,43 @@ fun SettingsScreen(
                 .fillMaxSize()
                 .padding(it)
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
-            contentPadding = PaddingValues(16.dp),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
         ) {
             itemGrouped(header = { Text(stringResource(R.string.settings_category_security)) }) {
                 SettingsSwitchItem(
                     onCheckedChange = onSecureModeChange,
                     checked = secureMode,
-                    title = {
-                        Text(stringResource(R.string.settings_prefs_securemode))
-                    },
-                    description = {
-                        Text(stringResource(R.string.settings_prefs_securemode_description))
+                    title = { Text(stringResource(R.string.settings_prefs_securemode)) },
+                    description = { Text(stringResource(R.string.settings_prefs_securemode_description)) },
+                    icon = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_security),
+                            contentDescription = null
+                        )
                     }
                 )
                 SettingsSwitchItem(
                     onCheckedChange = onPinCodeChange,
                     checked = pinCode,
-                    title = {
-                        Text(stringResource(R.string.settings_prefs_pincode))
-                    },
-                    description = {
-                        Text(stringResource(R.string.settings_prefs_pincode_description))
+                    title = { Text(stringResource(R.string.settings_prefs_pincode)) },
+                    description = { Text(stringResource(R.string.settings_prefs_pincode_description)) },
+                    icon = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_pin),
+                            contentDescription = null
+                        )
                     }
                 )
                 SettingsSwitchItem(
                     onCheckedChange = onLockOnResumeChange,
                     checked = pinCode && lockOnResume,
-                    title = {
-                        Text(stringResource(R.string.settings_prefs_autolock))
-                    },
-                    description = {
-                        Text(stringResource(R.string.settings_prefs_autolock_description))
+                    title = { Text(stringResource(R.string.settings_prefs_autolock)) },
+                    description = { Text(stringResource(R.string.settings_prefs_autolock_description)) },
+                    icon = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_lock_reset),
+                            contentDescription = null
+                        )
                     },
                     enabled = pinCode
                 )
@@ -159,8 +163,12 @@ fun SettingsScreen(
                     SettingsSwitchItem(
                         onCheckedChange = onBiometricsChange,
                         checked = biometrics,
-                        title = {
-                            Text(stringResource(R.string.settings_prefs_biometrics))
+                        title = { Text(stringResource(R.string.settings_prefs_biometrics)) },
+                        icon = {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_fingerprint),
+                                contentDescription = null
+                            )
                         },
                         enabled = pinCode
                     )
@@ -169,9 +177,13 @@ fun SettingsScreen(
             itemGrouped(header = { Text(stringResource(R.string.settings_category_appearance)) }) {
                 SettingsNavigateItem(
                     onClick = onThemeNavigate,
-                    title = {
-                        Text(stringResource(R.string.settings_prefs_theme))
-                    },
+                    title = { Text(stringResource(R.string.settings_prefs_theme)) },
+                    icon = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_brush),
+                            contentDescription = null
+                        )
+                    }
                 )
             }
         }
