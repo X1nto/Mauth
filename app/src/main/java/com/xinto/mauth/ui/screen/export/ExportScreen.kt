@@ -46,7 +46,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
 import com.xinto.mauth.domain.account.model.DomainExportAccount
 import com.xinto.mauth.ui.component.UriImage
+import com.xinto.mauth.ui.preview.PreviewAllConfigurations
 import com.xinto.mauth.ui.screen.export.component.ZxingQrImage
+import com.xinto.mauth.ui.theme.MauthTheme
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import java.util.UUID
@@ -318,6 +320,129 @@ private fun IndividualExports(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun ExportScreen_Loading_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            ExportScreen(
+                modifier = Modifier.fillMaxSize(),
+                onBackNavigate = {},
+                onCopyUrlToClipboard = {},
+                state = ExportScreenState.Loading,
+                mode = ExportMode.Batch,
+                onModeSelect = {}
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun ExportScreen_SuccessBatch_Preview() {
+    val accounts = listOf(
+        DomainExportAccount(
+            id = UUID.fromString("00000000-0000-0000-0000-000000000001"),
+            icon = null,
+            label = "GitHub",
+            issuer = "github.com",
+            url = "otpauth://totp/GitHub:user?secret=JBSWY3DPEHPK3PXP&issuer=GitHub"
+        ),
+        DomainExportAccount(
+            id = UUID.fromString("00000000-0000-0000-0000-000000000002"),
+            icon = null,
+            label = "Amazon",
+            issuer = "amazon.com",
+            url = "otpauth://totp/Amazon:user?secret=JBSWY3DPEHPK3PXP&issuer=Amazon"
+        )
+    )
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            ExportScreen(
+                modifier = Modifier.fillMaxSize(),
+                onBackNavigate = {},
+                onCopyUrlToClipboard = {},
+                state = ExportScreenState.Success(
+                    batchUris = listOf("otpauth-migration://offline?data=SampleBatchPayload"),
+                    individualAccounts = accounts
+                ),
+                mode = ExportMode.Batch,
+                onModeSelect = {}
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun ExportScreen_SuccessIndividual_Preview() {
+    val accounts = listOf(
+        DomainExportAccount(
+            id = UUID.fromString("00000000-0000-0000-0000-000000000001"),
+            icon = null,
+            label = "GitHub",
+            issuer = "github.com",
+            url = "otpauth://totp/GitHub:user?secret=JBSWY3DPEHPK3PXP&issuer=GitHub"
+        ),
+        DomainExportAccount(
+            id = UUID.fromString("00000000-0000-0000-0000-000000000002"),
+            icon = null,
+            label = "Amazon",
+            issuer = "amazon.com",
+            url = "otpauth://totp/Amazon:user?secret=JBSWY3DPEHPK3PXP&issuer=Amazon"
+        )
+    )
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            ExportScreen(
+                modifier = Modifier.fillMaxSize(),
+                onBackNavigate = {},
+                onCopyUrlToClipboard = {},
+                state = ExportScreenState.Success(
+                    batchUris = listOf("otpauth-migration://offline?data=SampleBatchPayload"),
+                    individualAccounts = accounts
+                ),
+                mode = ExportMode.Individual,
+                onModeSelect = {}
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun ExportScreen_Empty_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            ExportScreen(
+                modifier = Modifier.fillMaxSize(),
+                onBackNavigate = {},
+                onCopyUrlToClipboard = {},
+                state = ExportScreenState.Empty,
+                mode = ExportMode.Batch,
+                onModeSelect = {}
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun ExportScreen_Error_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            ExportScreen(
+                modifier = Modifier.fillMaxSize(),
+                onBackNavigate = {},
+                onCopyUrlToClipboard = {},
+                state = ExportScreenState.Error,
+                mode = ExportMode.Batch,
+                onModeSelect = {}
+            )
         }
     }
 }

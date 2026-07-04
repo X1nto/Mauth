@@ -65,6 +65,7 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.SearchBarValue
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.ToggleFloatingActionButton
@@ -79,6 +80,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -101,16 +104,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
+import com.xinto.mauth.core.otp.model.OtpDigest
 import com.xinto.mauth.core.settings.model.SortSetting
 import com.xinto.mauth.domain.account.model.DomainAccount
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.domain.group.model.DomainGroup
 import com.xinto.mauth.domain.group.model.GroupFilter
 import com.xinto.mauth.domain.otp.model.DomainOtpRealtimeData
+import com.xinto.mauth.ui.preview.PreviewAllConfigurations
 import com.xinto.mauth.ui.screen.groups.CreateGroupDialog
+import com.xinto.mauth.ui.theme.MauthTheme
 import com.xinto.mauth.ui.util.collectAsStateListWithLifecycle
 import com.xinto.mauth.ui.util.collectAsStateMapWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -981,4 +988,287 @@ private fun DeleteDialog(
             }
         }
     )
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun HomeScreen_Loading_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            HomeScreen(
+                onAddAccountNavigate = {},
+                onMoreMenuNavigate = {},
+                onAccountSelect = {},
+                onCancelAccountSelection = {},
+                onDeleteSelectedAccounts = {},
+                onExportSelectedAccounts = {},
+                onAccountEdit = {},
+                onAccountCounterIncrease = {},
+                onAccountCopyCode = { _, _, _ -> },
+                state = HomeScreenState.Loading,
+                accountRealtimeData = remember { mutableStateMapOf<UUID, DomainOtpRealtimeData>() },
+                selectedAccounts = remember { mutableStateListOf<UUID>() },
+                activeSortSetting = SortSetting.entries.first(),
+                onActiveSortChange = {},
+                groups = persistentListOf(),
+                activeGroup = GroupFilter.All,
+                onActiveGroupChange = {},
+                onCreateGroupClick = {},
+                onGroupSelectedClick = {},
+                searchAccounts = persistentListOf(),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun HomeScreen_Empty_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            HomeScreen(
+                onAddAccountNavigate = {},
+                onMoreMenuNavigate = {},
+                onAccountSelect = {},
+                onCancelAccountSelection = {},
+                onDeleteSelectedAccounts = {},
+                onExportSelectedAccounts = {},
+                onAccountEdit = {},
+                onAccountCounterIncrease = {},
+                onAccountCopyCode = { _, _, _ -> },
+                state = HomeScreenState.Empty,
+                accountRealtimeData = remember { mutableStateMapOf<UUID, DomainOtpRealtimeData>() },
+                selectedAccounts = remember { mutableStateListOf<UUID>() },
+                activeSortSetting = SortSetting.entries.first(),
+                onActiveSortChange = {},
+                groups = persistentListOf(),
+                activeGroup = GroupFilter.All,
+                onActiveGroupChange = {},
+                onCreateGroupClick = {},
+                onGroupSelectedClick = {},
+                searchAccounts = persistentListOf(),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun HomeScreen_Success_Preview() {
+    val totp = DomainAccount.Totp(
+        id = UUID.fromString("00000000-0000-0000-0000-000000000001"),
+        icon = null,
+        secret = "JBSWY3DPEHPK3PXP",
+        label = "GitHub",
+        issuer = "github.com",
+        algorithm = OtpDigest.SHA1,
+        digits = 6,
+        createdMillis = 0L,
+        period = 30
+    )
+    val hotp = DomainAccount.Hotp(
+        id = UUID.fromString("00000000-0000-0000-0000-000000000002"),
+        icon = null,
+        secret = "JBSWY3DPEHPK3PXP",
+        label = "Amazon",
+        issuer = "amazon.com",
+        algorithm = OtpDigest.SHA1,
+        digits = 6,
+        createdMillis = 0L
+    )
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            HomeScreen(
+                onAddAccountNavigate = {},
+                onMoreMenuNavigate = {},
+                onAccountSelect = {},
+                onCancelAccountSelection = {},
+                onDeleteSelectedAccounts = {},
+                onExportSelectedAccounts = {},
+                onAccountEdit = {},
+                onAccountCounterIncrease = {},
+                onAccountCopyCode = { _, _, _ -> },
+                state = HomeScreenState.Success(persistentListOf(totp, hotp)),
+                accountRealtimeData = remember {
+                    mutableStateMapOf(
+                        totp.id to DomainOtpRealtimeData.Totp(code = "123456", progress = 0.6f, countdown = 18),
+                        hotp.id to DomainOtpRealtimeData.Hotp(code = "654321", count = 3)
+                    )
+                },
+                selectedAccounts = remember { mutableStateListOf<UUID>() },
+                activeSortSetting = SortSetting.entries.first(),
+                onActiveSortChange = {},
+                groups = persistentListOf(),
+                activeGroup = GroupFilter.All,
+                onActiveGroupChange = {},
+                onCreateGroupClick = {},
+                onGroupSelectedClick = {},
+                searchAccounts = persistentListOf(),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun HomeScreen_Selection_Preview() {
+    val totp = DomainAccount.Totp(
+        id = UUID.fromString("00000000-0000-0000-0000-000000000001"),
+        icon = null,
+        secret = "JBSWY3DPEHPK3PXP",
+        label = "GitHub",
+        issuer = "github.com",
+        algorithm = OtpDigest.SHA1,
+        digits = 6,
+        createdMillis = 0L,
+        period = 30
+    )
+    val hotp = DomainAccount.Hotp(
+        id = UUID.fromString("00000000-0000-0000-0000-000000000002"),
+        icon = null,
+        secret = "JBSWY3DPEHPK3PXP",
+        label = "Amazon",
+        issuer = "amazon.com",
+        algorithm = OtpDigest.SHA1,
+        digits = 6,
+        createdMillis = 0L
+    )
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            HomeScreen(
+                onAddAccountNavigate = {},
+                onMoreMenuNavigate = {},
+                onAccountSelect = {},
+                onCancelAccountSelection = {},
+                onDeleteSelectedAccounts = {},
+                onExportSelectedAccounts = {},
+                onAccountEdit = {},
+                onAccountCounterIncrease = {},
+                onAccountCopyCode = { _, _, _ -> },
+                state = HomeScreenState.Success(persistentListOf(totp, hotp)),
+                accountRealtimeData = remember {
+                    mutableStateMapOf(
+                        totp.id to DomainOtpRealtimeData.Totp(code = "123456", progress = 0.6f, countdown = 18),
+                        hotp.id to DomainOtpRealtimeData.Hotp(code = "654321", count = 3)
+                    )
+                },
+                selectedAccounts = remember { mutableStateListOf(totp.id) },
+                activeSortSetting = SortSetting.entries.first(),
+                onActiveSortChange = {},
+                groups = persistentListOf(),
+                activeGroup = GroupFilter.All,
+                onActiveGroupChange = {},
+                onCreateGroupClick = {},
+                onGroupSelectedClick = {},
+                searchAccounts = persistentListOf(),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun HomeScreen_Groups_Preview() {
+    val totp = DomainAccount.Totp(
+        id = UUID.fromString("00000000-0000-0000-0000-000000000001"),
+        icon = null,
+        secret = "JBSWY3DPEHPK3PXP",
+        label = "GitHub",
+        issuer = "github.com",
+        algorithm = OtpDigest.SHA1,
+        digits = 6,
+        createdMillis = 0L,
+        period = 30
+    )
+    val hotp = DomainAccount.Hotp(
+        id = UUID.fromString("00000000-0000-0000-0000-000000000002"),
+        icon = null,
+        secret = "JBSWY3DPEHPK3PXP",
+        label = "Amazon",
+        issuer = "amazon.com",
+        algorithm = OtpDigest.SHA1,
+        digits = 6,
+        createdMillis = 0L
+    )
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            HomeScreen(
+                onAddAccountNavigate = {},
+                onMoreMenuNavigate = {},
+                onAccountSelect = {},
+                onCancelAccountSelection = {},
+                onDeleteSelectedAccounts = {},
+                onExportSelectedAccounts = {},
+                onAccountEdit = {},
+                onAccountCounterIncrease = {},
+                onAccountCopyCode = { _, _, _ -> },
+                state = HomeScreenState.Success(persistentListOf(totp, hotp)),
+                accountRealtimeData = remember {
+                    mutableStateMapOf(
+                        totp.id to DomainOtpRealtimeData.Totp(code = "123456", progress = 0.6f, countdown = 18),
+                        hotp.id to DomainOtpRealtimeData.Hotp(code = "654321", count = 3)
+                    )
+                },
+                selectedAccounts = remember { mutableStateListOf<UUID>() },
+                activeSortSetting = SortSetting.entries.first(),
+                onActiveSortChange = {},
+                groups = persistentListOf(
+                    DomainGroup(
+                        id = UUID.fromString("00000000-0000-0000-0000-0000000000a1"),
+                        name = "Work",
+                        emoji = "💼",
+                        sortIndex = 0
+                    ),
+                    DomainGroup(
+                        id = UUID.fromString("00000000-0000-0000-0000-0000000000a2"),
+                        name = "Personal",
+                        emoji = null,
+                        sortIndex = 1
+                    )
+                ),
+                activeGroup = GroupFilter.All,
+                onActiveGroupChange = {},
+                onCreateGroupClick = {},
+                onGroupSelectedClick = {},
+                searchAccounts = persistentListOf(),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun HomeScreen_Error_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            HomeScreen(
+                onAddAccountNavigate = {},
+                onMoreMenuNavigate = {},
+                onAccountSelect = {},
+                onCancelAccountSelection = {},
+                onDeleteSelectedAccounts = {},
+                onExportSelectedAccounts = {},
+                onAccountEdit = {},
+                onAccountCounterIncrease = {},
+                onAccountCopyCode = { _, _, _ -> },
+                state = HomeScreenState.Error("Something went wrong"),
+                accountRealtimeData = remember { mutableStateMapOf<UUID, DomainOtpRealtimeData>() },
+                selectedAccounts = remember { mutableStateListOf<UUID>() },
+                activeSortSetting = SortSetting.entries.first(),
+                onActiveSortChange = {},
+                groups = persistentListOf(),
+                activeGroup = GroupFilter.All,
+                onActiveGroupChange = {},
+                onCreateGroupClick = {},
+                onGroupSelectedClick = {},
+                searchAccounts = persistentListOf(),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
 }

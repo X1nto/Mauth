@@ -8,7 +8,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -24,8 +26,10 @@ import com.xinto.mauth.R
 import com.xinto.mauth.ui.component.lazygroup.itemGrouped
 import com.xinto.mauth.ui.component.rememberBiometricHandler
 import com.xinto.mauth.ui.component.rememberBiometricPromptData
+import com.xinto.mauth.ui.preview.PreviewAllConfigurations
 import com.xinto.mauth.ui.screen.settings.component.SettingsNavigateItem
 import com.xinto.mauth.ui.screen.settings.component.SettingsSwitchItem
+import com.xinto.mauth.ui.theme.MauthTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -186,6 +190,52 @@ fun SettingsScreen(
                     }
                 )
             }
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun SettingsScreen_Default_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            SettingsScreen(
+                modifier = Modifier.fillMaxSize(),
+                onBack = {},
+                secureMode = false,
+                onSecureModeChange = {},
+                pinCode = false,
+                onPinCodeChange = {},
+                lockOnResume = false,
+                onLockOnResumeChange = {},
+                showBiometrics = false,
+                biometrics = false,
+                onBiometricsChange = {},
+                onThemeNavigate = {}
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun SettingsScreen_AllEnabled_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            SettingsScreen(
+                modifier = Modifier.fillMaxSize(),
+                onBack = {},
+                secureMode = true,
+                onSecureModeChange = {},
+                pinCode = true,
+                onPinCodeChange = {},
+                lockOnResume = true,
+                onLockOnResumeChange = {},
+                showBiometrics = true,
+                biometrics = true,
+                onBiometricsChange = {},
+                onThemeNavigate = {}
+            )
         }
     }
 }

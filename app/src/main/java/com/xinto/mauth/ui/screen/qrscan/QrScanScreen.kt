@@ -40,9 +40,11 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.xinto.mauth.R
 import com.xinto.mauth.core.camera.QrCodeAnalyzer
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
+import com.xinto.mauth.ui.preview.PreviewAllConfigurations
 import com.xinto.mauth.ui.screen.qrscan.component.QrScanCamera
 import com.xinto.mauth.ui.screen.qrscan.component.QrScanPermissionDeniedDialog
 import com.xinto.mauth.ui.screen.qrscan.component.rememberCameraState
+import com.xinto.mauth.ui.theme.MauthTheme
 import org.koin.androidx.compose.koinViewModel
 import java.util.concurrent.Executors
 
@@ -200,5 +202,43 @@ fun QrScanScreen(
                 showPermissionDeniedDialog = false
             }
         )
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+@PreviewAllConfigurations
+private fun QrScanScreen_PermissionDenied_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            QrScanScreen(
+                modifier = Modifier.fillMaxSize(),
+                onBack = {},
+                onScan = {},
+                permissionStatus = PermissionStatus.Denied(shouldShowRationale = false),
+                onRequestPermission = {},
+                batchData = BatchData(current = 1, outOf = 1),
+                scanError = null
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+@PreviewAllConfigurations
+private fun QrScanScreen_PermissionDeniedRationale_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            QrScanScreen(
+                modifier = Modifier.fillMaxSize(),
+                onBack = {},
+                onScan = {},
+                permissionStatus = PermissionStatus.Denied(shouldShowRationale = true),
+                onRequestPermission = {},
+                batchData = BatchData(current = 1, outOf = 1),
+                scanError = null
+            )
+        }
     }
 }

@@ -60,12 +60,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
+import com.xinto.mauth.core.otp.model.OtpDigest
 import com.xinto.mauth.domain.account.model.DomainAccount
 import com.xinto.mauth.domain.group.model.DomainGroup
 import com.xinto.mauth.ui.component.UriImage
 import com.xinto.mauth.ui.component.lazygroup.GroupedItemType
 import com.xinto.mauth.ui.component.lazygroup.GroupedListItem
+import com.xinto.mauth.ui.preview.PreviewAllConfigurations
+import com.xinto.mauth.ui.theme.MauthTheme
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.delay
@@ -77,7 +81,6 @@ import java.util.UUID
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GroupsScreen(
     onBack: () -> Unit,
@@ -87,11 +90,39 @@ fun GroupsScreen(
     val viewModel: GroupsViewModel = koinViewModel()
     val model by viewModel.uiModel.collectAsStateWithLifecycle()
 
+    GroupsScreen(
+        state = model,
+        onBack = onBack,
+        onAddAccount = onAddAccount,
+        onMoveAccountToGroup = viewModel::moveAccountToGroup,
+        onReorderGroups = viewModel::reorderGroups,
+        onMoveGroupUp = viewModel::moveUp,
+        onMoveGroupDown = viewModel::moveDown,
+        onCreateGroup = viewModel::createGroup,
+        onUpdateGroup = viewModel::updateGroup,
+        onDeleteGroup = viewModel::deleteGroup,
+        modifier = modifier
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun GroupsScreen(
+    state: GroupsState,
+    onBack: () -> Unit,
+    onAddAccount: (groupId: UUID?) -> Unit,
+    onMoveAccountToGroup: (accountId: UUID, groupId: UUID?) -> Unit,
+    onReorderGroups: (orderedIds: List<UUID>) -> Unit,
+    onMoveGroupUp: (UUID) -> Unit,
+    onMoveGroupDown: (UUID) -> Unit,
+    onCreateGroup: (name: String, emoji: String?) -> Unit,
+    onUpdateGroup: (id: UUID, name: String, emoji: String?) -> Unit,
+    onDeleteGroup: (id: UUID) -> Unit,
+    modifier: Modifier = Modifier
+) {
     var showCreateDialog by remember { mutableStateOf(false) }
     var renameTarget by remember { mutableStateOf<DomainGroup?>(null) }
     var deleteTarget by remember { mutableStateOf<DomainGroup?>(null) }
-
-    val isEmpty = model.isEmpty
 
     Scaffold(
         modifier = modifier,
@@ -121,7 +152,7 @@ fun GroupsScreen(
             )
         }
     ) { innerPadding ->
-        if (isEmpty) {
+        if (state.isEmpty) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -139,12 +170,12 @@ fun GroupsScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
-                model = model,
+                model = state,
                 onAddAccount = onAddAccount,
-                onMoveAccountToGroup = viewModel::moveAccountToGroup,
-                onReorderGroups = viewModel::reorderGroups,
-                onMoveGroupUp = viewModel::moveUp,
-                onMoveGroupDown = viewModel::moveDown,
+                onMoveAccountToGroup = onMoveAccountToGroup,
+                onReorderGroups = onReorderGroups,
+                onMoveGroupUp = onMoveGroupUp,
+                onMoveGroupDown = onMoveGroupDown,
                 onRename = { renameTarget = it },
                 onDelete = { deleteTarget = it }
             )
@@ -153,9 +184,9 @@ fun GroupsScreen(
 
     if (showCreateDialog) {
         CreateGroupDialog(
-            isNameTaken = { candidate -> model.groupSections.any { it.group.name.equals(candidate, ignoreCase = true) } },
+            isNameTaken = { candidate -> state.groupSections.any { it.group.name.equals(candidate, ignoreCase = true) } },
             onConfirm = { name, emoji ->
-                viewModel.createGroup(name, emoji)
+                onCreateGroup(name, emoji)
                 showCreateDialog = false
             },
             onDismissRequest = { showCreateDialog = false }
@@ -167,12 +198,12 @@ fun GroupsScreen(
             initialName = renameTarget!!.name,
             initialEmoji = renameTarget!!.emoji,
             isNameTaken = { candidate ->
-                model.groupSections.any {
+                state.groupSections.any {
                     it.group.id != renameTarget!!.id && it.group.name.equals(candidate, ignoreCase = true)
                 }
             },
             onConfirm = { name, emoji ->
-                viewModel.updateGroup(renameTarget!!.id, name, emoji)
+                onUpdateGroup(renameTarget!!.id, name, emoji)
                 renameTarget = null
             },
             onDismissRequest = { renameTarget = null }
@@ -192,7 +223,7 @@ fun GroupsScreen(
             confirmButton = {
                 FilledTonalButton(
                     onClick = {
-                        viewModel.deleteGroup(deleteTarget!!.id)
+                        onDeleteGroup(deleteTarget!!.id)
                         deleteTarget = null
                     }
                 ) {
@@ -705,6 +736,82 @@ private fun AddAccountRow(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun GroupsScreen_Empty_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            GroupsScreen(
+                state = GroupsState(persistentListOf()),
+                onBack = {},
+                onAddAccount = {},
+                onMoveAccountToGroup = { _, _ -> },
+                onReorderGroups = {},
+                onMoveGroupUp = {},
+                onMoveGroupDown = {},
+                onCreateGroup = { _, _ -> },
+                onUpdateGroup = { _, _, _ -> },
+                onDeleteGroup = {},
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun GroupsScreen_Populated_Preview() {
+    val totp = DomainAccount.Totp(
+        id = UUID.fromString("00000000-0000-0000-0000-000000000001"),
+        icon = null,
+        secret = "JBSWY3DPEHPK3PXP",
+        label = "GitHub",
+        issuer = "github.com",
+        algorithm = OtpDigest.SHA1,
+        digits = 6,
+        createdMillis = 0L,
+        period = 30
+    )
+    val hotp = DomainAccount.Hotp(
+        id = UUID.fromString("00000000-0000-0000-0000-000000000002"),
+        icon = null,
+        secret = "JBSWY3DPEHPK3PXP",
+        label = "Amazon",
+        issuer = "amazon.com",
+        algorithm = OtpDigest.SHA1,
+        digits = 6,
+        createdMillis = 0L
+    )
+    val group = DomainGroup(
+        id = UUID.fromString("00000000-0000-0000-0000-0000000000a1"),
+        name = "Work",
+        emoji = "💼",
+        sortIndex = 0
+    )
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            GroupsScreen(
+                state = GroupsState(
+                    persistentListOf(
+                        GroupSection.Grouped(group, persistentListOf(totp)),
+                        GroupSection.Ungrouped(persistentListOf(hotp))
+                    )
+                ),
+                onBack = {},
+                onAddAccount = {},
+                onMoveAccountToGroup = { _, _ -> },
+                onReorderGroups = {},
+                onMoveGroupUp = {},
+                onMoveGroupDown = {},
+                onCreateGroup = { _, _ -> },
+                onUpdateGroup = { _, _, _ -> },
+                onDeleteGroup = {},
+                modifier = Modifier.fillMaxSize()
+            )
         }
     }
 }

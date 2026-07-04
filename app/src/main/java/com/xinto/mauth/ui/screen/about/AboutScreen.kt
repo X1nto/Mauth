@@ -1,9 +1,9 @@
 package com.xinto.mauth.ui.screen.about
 
-import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,11 +22,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.xinto.mauth.BuildConfig
 import com.xinto.mauth.R
 import com.xinto.mauth.ui.component.rememberUriHandler
+import com.xinto.mauth.ui.preview.PreviewAllConfigurations
 import com.xinto.mauth.ui.screen.about.component.LinkedButton
 import com.xinto.mauth.ui.screen.about.component.LinkedButtonsRow
 import com.xinto.mauth.ui.theme.MauthTheme
@@ -104,11 +104,15 @@ fun AboutScreen(
     }
 }
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, showSystemUi = true)
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showSystemUi = true)
 @Composable
-fun AboutScreenPreview() {
+@PreviewAllConfigurations
+private fun AboutScreen_Preview() {
     MauthTheme {
-        AboutScreen(onBack = {})
+        Surface(color = MaterialTheme.colorScheme.background) {
+            AboutScreen(
+                modifier = Modifier.fillMaxSize(),
+                onBack = {}
+            )
+        }
     }
 }

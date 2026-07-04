@@ -14,7 +14,9 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -35,8 +37,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
 import com.xinto.mauth.R.drawable.ic_error
 import com.xinto.mauth.R.string.account_error
+import com.xinto.mauth.core.otp.model.OtpDigest
+import com.xinto.mauth.core.otp.model.OtpType
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.ui.component.form.form
+import com.xinto.mauth.ui.preview.PreviewAllConfigurations
+import com.xinto.mauth.ui.theme.MauthTheme
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import java.util.UUID
@@ -220,4 +227,72 @@ private fun AccountExitDialog(
             }
         }
     )
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun AccountScreen_Loading_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            AccountScreen(
+                modifier = Modifier.fillMaxSize(),
+                title = "Add account",
+                state = AccountScreenState.Loading,
+                onSave = {},
+                onExit = {}
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun AccountScreen_Success_Preview() {
+    val form = remember {
+        AccountForm(
+            initial = DomainAccountInfo(
+                id = UUID.fromString("00000000-0000-0000-0000-000000000001"),
+                icon = null,
+                label = "Google",
+                issuer = "google.com",
+                secret = "JBSWY3DPEHPK3PXP",
+                algorithm = OtpDigest.SHA1,
+                type = OtpType.TOTP,
+                digits = 6,
+                counter = 0,
+                period = 30,
+                groupId = null,
+                createdMillis = 0L
+            ),
+            groups = MutableStateFlow(emptyList()),
+            onCreateGroup = { _, _ -> UUID.randomUUID() }
+        )
+    }
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            AccountScreen(
+                modifier = Modifier.fillMaxSize(),
+                title = "Add account",
+                state = AccountScreenState.Success(form),
+                onSave = {},
+                onExit = {}
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun AccountScreen_Error_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            AccountScreen(
+                modifier = Modifier.fillMaxSize(),
+                title = "Edit account",
+                state = AccountScreenState.Error(error = "Failed to load account"),
+                onSave = {},
+                onExit = {}
+            )
+        }
+    }
 }
