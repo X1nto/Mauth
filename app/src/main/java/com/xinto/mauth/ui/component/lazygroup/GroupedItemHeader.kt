@@ -13,9 +13,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 
 inline fun LazyListScope.group(
@@ -44,68 +42,14 @@ inline fun LazyListScope.itemGrouped(
 ) {
     group(header = header) {
         item {
+            // The rounded corners of the group come from the per-item ListItemShapes
+            // (see ListItemDefaults.segmentedShapes); the column only spaces the segments.
             Column(
-                modifier = Modifier
-                    .fillParentMaxWidth()
-                    .clip(MaterialTheme.shapes.medium),
+                modifier = Modifier.fillParentMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                CompositionLocalProvider(LocalGroupedItemType provides GroupedItemType.Middle) {
-                    itemContent()
-                }
+                itemContent()
             }
         }
-    }
-}
-
-inline fun LazyListScope.itemsGrouped(
-    crossinline header: @Composable () -> Unit,
-    count: Int,
-    noinline key: ((index: Int) -> Any)? = null,
-    crossinline contentType: (index: Int) -> Any? = { null },
-    crossinline itemContent: @Composable LazyItemScope.(index: Int) -> Unit
-) {
-    group(header = header) {
-        itemsGrouped(
-            count = count,
-            key = key,
-            contentType = contentType,
-            itemContent = itemContent
-        )
-    }
-}
-
-inline fun <T> LazyListScope.itemsGrouped(
-    crossinline header: @Composable () -> Unit,
-    items: Array<T>,
-    noinline key: ((item: T) -> Any)? = null,
-    crossinline contentType: (item: T) -> Any? = { null },
-    crossinline itemContent: @Composable LazyItemScope.(item: T) -> Unit
-) {
-    group(header = header) {
-        itemsGrouped(
-            items = items,
-            key = key,
-            contentType = contentType,
-            itemContent = itemContent
-        )
-    }
-}
-
-inline fun <T> LazyListScope.itemsGrouped(
-    crossinline header: @Composable () -> Unit,
-    items: List<T>,
-    noinline key: ((item: T) -> Any)? = null,
-    crossinline contentType: (item: T) -> Any? = { null },
-    crossinline itemContent: @Composable LazyItemScope.(item: T) -> Unit
-) {
-    group(header = header) {
-        itemsGrouped(
-            items = items,
-            key = key,
-            contentType = contentType,
-            itemContent = itemContent
-        )
     }
 }

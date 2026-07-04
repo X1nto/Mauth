@@ -23,11 +23,14 @@ import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.DropdownMenuPopup
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
@@ -65,7 +68,6 @@ import com.xinto.mauth.domain.account.model.DomainAccount
 import com.xinto.mauth.domain.group.model.DomainGroup
 import com.xinto.mauth.ui.component.UriImage
 import com.xinto.mauth.ui.component.lazygroup.GroupedItemType
-import com.xinto.mauth.ui.component.lazygroup.GroupedListItem
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
 import com.xinto.mauth.ui.theme.MauthTheme
 import kotlinx.collections.immutable.ImmutableList
@@ -546,6 +548,7 @@ private fun UngroupedHeaderRow(count: Int, isDropTarget: Boolean) {
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun AccountRowItem(
     account: DomainAccount,
@@ -586,8 +589,8 @@ private fun AccountRowItem(
                 dragHandler.isOver(groupId)
             }
         }
-        GroupedListItem(
-            type = type,
+        ListItem(
+            shapes = segmentedShapesFor(type),
             colors = ListItemDefaults.colors(
                 containerColor = if (isHighlighted) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceContainerLow
             ),
@@ -595,13 +598,6 @@ private fun AccountRowItem(
                 AccountAvatar(
                     account = account,
                     color = if (isHighlighted) MaterialTheme.colorScheme.surfaceContainer else MaterialTheme.colorScheme.secondaryContainer
-                )
-            },
-            headlineContent = {
-                Text(
-                    text = account.label,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
                 )
             },
             supportingContent = if (account.issuer.isEmpty()) null else { ->
@@ -619,9 +615,31 @@ private fun AccountRowItem(
                     painter = painterResource(R.drawable.ic_drag_handle),
                     contentDescription = stringResource(R.string.groups_action_move)
                 )
+            },
+            content = {
+                Text(
+                    text = account.label,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         )
     }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun segmentedShapesFor(type: GroupedItemType): ListItemShapes = when (type) {
+    GroupedItemType.Only -> {
+        ListItemDefaults.segmentedShapes(
+            index = 0,
+            count = 1,
+            defaultShapes = ListItemDefaults.shapes(MaterialTheme.shapes.large)
+        )
+    }
+    GroupedItemType.First -> ListItemDefaults.segmentedShapes(index = 0, count = 2)
+    GroupedItemType.Middle -> ListItemDefaults.segmentedShapes(index = 1, count = 3)
+    GroupedItemType.Last -> ListItemDefaults.segmentedShapes(index = 1, count = 2)
 }
 
 @Composable

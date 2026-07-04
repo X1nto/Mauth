@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -84,7 +86,7 @@ fun SettingsScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SettingsScreen(
     onBack: () -> Unit,
@@ -126,6 +128,7 @@ fun SettingsScreen(
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
         ) {
             itemGrouped(header = { Text(stringResource(R.string.settings_category_security)) }) {
+                val count = if (showBiometrics) 4 else 3
                 SettingsSwitchItem(
                     onCheckedChange = onSecureModeChange,
                     checked = secureMode,
@@ -136,7 +139,8 @@ fun SettingsScreen(
                             painter = painterResource(R.drawable.ic_security),
                             contentDescription = null
                         )
-                    }
+                    },
+                    shapes = ListItemDefaults.segmentedShapes(index = 0, count = count)
                 )
                 SettingsSwitchItem(
                     onCheckedChange = onPinCodeChange,
@@ -148,7 +152,8 @@ fun SettingsScreen(
                             painter = painterResource(R.drawable.ic_pin),
                             contentDescription = null
                         )
-                    }
+                    },
+                    shapes = ListItemDefaults.segmentedShapes(index = 1, count = count)
                 )
                 if (showBiometrics) {
                     SettingsSwitchItem(
@@ -161,7 +166,8 @@ fun SettingsScreen(
                                 contentDescription = null
                             )
                         },
-                        enabled = pinCode
+                        enabled = pinCode,
+                        shapes = ListItemDefaults.segmentedShapes(index = 2, count = count)
                     )
                 }
                 SettingsSwitchItem(
@@ -175,7 +181,8 @@ fun SettingsScreen(
                             contentDescription = null
                         )
                     },
-                    enabled = pinCode
+                    enabled = pinCode,
+                    shapes = ListItemDefaults.segmentedShapes(index = if (showBiometrics) 3 else 2, count = count)
                 )
             }
             itemGrouped(header = { Text(stringResource(R.string.settings_category_appearance)) }) {
@@ -187,7 +194,12 @@ fun SettingsScreen(
                             painter = painterResource(R.drawable.ic_brush),
                             contentDescription = null
                         )
-                    }
+                    },
+                    shapes = ListItemDefaults.segmentedShapes(
+                        index = 0,
+                        count = 1,
+                        defaultShapes = ListItemDefaults.shapes(shape = MaterialTheme.shapes.large)
+                    )
                 )
             }
         }
