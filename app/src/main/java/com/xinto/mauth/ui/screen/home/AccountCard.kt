@@ -65,6 +65,7 @@ fun AccountCard(
     account: DomainAccount,
     realtimeData: DomainOtpRealtimeData,
     selected: Boolean,
+    selectionActive: Boolean,
     colors: CardColors = CardDefaults.cardColors(),
     elevation: CardElevation = CardDefaults.cardElevation(),
     border: BorderStroke? = null,
@@ -74,7 +75,7 @@ fun AccountCard(
         onClick = onClick,
         onLongClick = onLongClick,
         selected = selected,
-        expanded = !selected,
+        expanded = !selectionActive,
         topContent = {
             AccountInfo(
                 icon = {

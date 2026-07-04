@@ -428,6 +428,7 @@ private fun HomeScreen(
                                     account = account,
                                     realtimeData = realtimeData,
                                     selected = selectedAccounts.contains(account.id),
+                                    selectionActive = selectedAccounts.isNotEmpty(),
                                     colors = CardDefaults.elevatedCardColors(),
                                     elevation = CardDefaults.elevatedCardElevation()
                                 )
@@ -694,6 +695,7 @@ private fun ColumnScope.SearchResults(
                         account = account,
                         realtimeData = realtimeData,
                         selected = selectedAccounts.contains(account.id),
+                        selectionActive = selectedAccounts.isNotEmpty(),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
                     )
                 }
