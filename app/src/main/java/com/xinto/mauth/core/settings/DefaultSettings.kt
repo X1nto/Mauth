@@ -22,6 +22,12 @@ class DefaultSettings(context: Context) : Settings {
         }
     }
 
+    override fun getLockOnResume(): Flow<Boolean> {
+        return preferences.data.map {
+            it[KEY_LOCK_ON_RESUME] ?: false
+        }
+    }
+
     override fun getUseBiometrics(): Flow<Boolean> {
         return preferences.data.map {
             it[KEY_USE_BIOMETRICS] ?: false
@@ -58,6 +64,12 @@ class DefaultSettings(context: Context) : Settings {
         }
     }
 
+    override suspend fun setLockOnResume(value: Boolean) {
+        preferences.edit {
+            it[KEY_LOCK_ON_RESUME] = value
+        }
+    }
+
     override suspend fun setUseBiometrics(value: Boolean) {
         preferences.edit {
             it[KEY_USE_BIOMETRICS] = value
@@ -84,6 +96,7 @@ class DefaultSettings(context: Context) : Settings {
 
     private companion object {
         val KEY_SECURE_MODE = booleanPreferencesKey("private_mode")
+        val KEY_LOCK_ON_RESUME = booleanPreferencesKey("lock_on_resume")
         val KEY_USE_BIOMETRICS = booleanPreferencesKey("use_biometrics")
         val KEY_SORT_MODE = stringPreferencesKey("sort_mode")
         val KEY_THEME = stringPreferencesKey("theme")

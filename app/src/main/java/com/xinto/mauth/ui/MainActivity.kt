@@ -20,14 +20,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
+import androidx.core.os.BundleCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
@@ -41,7 +45,7 @@ import com.xinto.mauth.domain.account.AccountRepository
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.domain.otp.OtpRepository
 import com.xinto.mauth.ui.navigation.MauthDestination
-import com.xinto.mauth.ui.navigation.rememberMauthNavigator
+import com.xinto.mauth.ui.navigation.MauthNavigator
 import com.xinto.mauth.ui.screen.about.AboutScreen
 import com.xinto.mauth.ui.screen.account.AddAccountScreen
 import com.xinto.mauth.ui.screen.account.EditAccountScreen
@@ -56,6 +60,9 @@ import com.xinto.mauth.ui.screen.settings.SettingsScreen
 import com.xinto.mauth.ui.screen.theme.ThemeScreen
 import com.xinto.mauth.ui.theme.MauthTheme
 import com.xinto.mauth.util.launchInLifecycle
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 
@@ -65,6 +72,11 @@ class MainActivity : FragmentActivity() {
     private val otp: OtpRepository by inject()
     private val accounts: AccountRepository by inject()
     private val auth: AuthRepository by inject()
+
+    private val lockOnResume: StateFlow<Boolean> = settings.getLockOnResume()
+        .stateIn(lifecycleScope, SharingStarted.Eagerly, false)
+
+    private lateinit var navigator: MauthNavigator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -92,13 +104,14 @@ class MainActivity : FragmentActivity() {
                 }
             }
 
-
-        val initialScreen = runBlocking {
-            if (auth.isProtected()) {
-                MauthDestination.Auth()
-            } else {
-                MauthDestination.Home
-            }
+        val backStack = savedInstanceState
+            ?.let { BundleCompat.getParcelableArrayList(it, KEY_BACKSTACK, MauthDestination::class.java) }
+            ?.toMutableStateList()
+            ?: mutableStateListOf(
+                if (runBlocking { auth.isProtected() }) MauthDestination.Auth() else MauthDestination.Home
+            )
+        navigator = MauthNavigator(backStack) {
+            runBlocking { auth.isProtected() }
         }
 
         setContent {
@@ -112,10 +125,6 @@ class MainActivity : FragmentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val navigator = rememberMauthNavigator(initialScreen) {
-                        runBlocking { auth.isProtected() }
-                    }
-
                     var handledIntentData by rememberSaveable { mutableStateOf<String?>(null) }
                     LaunchedEffect(intent.data) {
                         val data = intent.data?.toString()
@@ -206,10 +215,10 @@ class MainActivity : FragmentActivity() {
                                 AuthScreen(
                                     modifier = Modifier.fillMaxSize(),
                                     onAuthSuccess = {
-                                        if (key.nextDestination != null) {
-                                            navigator.replaceLast(key.nextDestination)
-                                        } else {
-                                            navigator.replaceAll(MauthDestination.Home)
+                                        when {
+                                            key.nextDestination != null -> navigator.replaceLast(key.nextDestination)
+                                            navigator.backStack.size > 1 -> navigator.pop()
+                                            else -> navigator.replaceAll(MauthDestination.Home)
                                         }
                                     },
                                     onBackPress = if (key.nextDestination == null) null else { ->
@@ -333,5 +342,26 @@ class MainActivity : FragmentActivity() {
                 }
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        if (lockOnResume.value &&
+            !isChangingConfigurations &&
+            navigator.backStack.lastOrNull() !is MauthDestination.Auth &&
+            runBlocking { auth.isProtected() }
+        ) {
+            navigator.navigate(MauthDestination.Auth())
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelableArrayList(KEY_BACKSTACK, ArrayList(navigator.backStack))
+    }
+
+    private companion object {
+        const val KEY_BACKSTACK = "backstack"
     }
 }

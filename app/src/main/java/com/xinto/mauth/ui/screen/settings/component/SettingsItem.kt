@@ -1,8 +1,10 @@
 package com.xinto.mauth.ui.screen.settings.component
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -19,7 +21,10 @@ fun SettingsItem(
 ) {
     val colors = ListItemDefaults.colors(
         headlineColor = MaterialTheme.colorScheme.onSurface.let {
-            if (!enabled) it.copy(alpha = 0.3f) else it
+            if (!enabled) it.copy(alpha = 0.5f) else it
+        },
+        supportingColor = MaterialTheme.colorScheme.onSurface.let {
+            if (!enabled) it.copy(alpha = 0.5f) else it
         },
         leadingIconColor = MaterialTheme.colorScheme.onSurface.let {
             if (!enabled) it.copy(alpha = 0.38f) else it
@@ -27,13 +32,23 @@ fun SettingsItem(
         trailingIconColor = MaterialTheme.colorScheme.onSurface.let {
             if (!enabled) it.copy(alpha = 0.38f) else it
         },
+        containerColor = if (enabled) MaterialTheme.colorScheme.surfaceContainer else MaterialTheme.colorScheme.surfaceContainerLow
     )
     GroupedListItem(
         modifier = modifier,
         leadingContent = icon,
         trailingContent = trailing,
-        supportingContent = description,
-        headlineContent = title,
+        // helps center trailing content
+        headlineContent = {
+            Column {
+                title()
+                if (description != null) {
+                    ProvideTextStyle(MaterialTheme.typography.bodyMedium) {
+                        description()
+                    }
+                }
+            }
+        },
         tonalElevation = 1.dp,
         colors = colors,
     )

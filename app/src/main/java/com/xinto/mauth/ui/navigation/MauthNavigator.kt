@@ -1,29 +1,7 @@
 package com.xinto.mauth.ui.navigation
 
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.listSaver
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.toMutableStateList
-
-@Composable
-fun rememberMauthNavigator(
-    initial: MauthDestination,
-    isProtected: () -> Boolean,
-): MauthNavigator {
-    val backStack = rememberSaveable(
-        saver = listSaver(
-            save = { it.toList() },
-            restore = { it.toMutableStateList() },
-        )
-    ) {
-        mutableStateListOf(initial)
-    }
-    return remember(backStack) { MauthNavigator(backStack, isProtected) }
-}
 
 @Stable
 class MauthNavigator(

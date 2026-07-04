@@ -83,6 +83,8 @@
     <string name="settings_prefs_securemode_description">Prevent screenshots within the app</string>
     <string name="settings_prefs_pincode">PIN Lock</string>
     <string name="settings_prefs_pincode_description">Require authentication on startup</string>
+    <string name="settings_prefs_autolock">Auto-lock</string>
+    <string name="settings_prefs_autolock_description">Require authentication every time you re-enter the app</string>
     <string name="settings_prefs_biometrics">Biometric Authentication</string>
     <string name="settings_biometrics_setup_title">Setup Biometrics</string>
     <string name="settings_biometrics_setup_cancel">Cancel</string>

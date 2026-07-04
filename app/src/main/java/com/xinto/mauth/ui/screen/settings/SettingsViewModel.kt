@@ -20,6 +20,13 @@ class SettingsViewModel(
             initialValue = false
         )
 
+    val lockOnResume = settings.getLockOnResume()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = false
+        )
+
     val pinLock = authRepository.observeIsProtected()
         .stateIn(
             scope = viewModelScope,
@@ -37,6 +44,12 @@ class SettingsViewModel(
     fun updateSecureMode(newSecureMode: Boolean) {
         viewModelScope.launch {
             settings.setSecureMode(newSecureMode)
+        }
+    }
+
+    fun updateLockOnResume(newLockOnResume: Boolean) {
+        viewModelScope.launch {
+            settings.setLockOnResume(newLockOnResume)
         }
     }
 

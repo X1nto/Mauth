@@ -38,6 +38,7 @@ fun SettingsScreen(
 ) {
     val viewModel: SettingsViewModel = koinViewModel()
     val secureMode by viewModel.secureMode.collectAsStateWithLifecycle()
+    val lockOnResume by viewModel.lockOnResume.collectAsStateWithLifecycle()
     val pinLock by viewModel.pinLock.collectAsStateWithLifecycle()
     val biometrics by viewModel.biometrics.collectAsStateWithLifecycle()
 
@@ -67,6 +68,8 @@ fun SettingsScreen(
                 onDisablePinCode()
             }
         },
+        lockOnResume = lockOnResume,
+        onLockOnResumeChange = viewModel::updateLockOnResume,
         showBiometrics = biometricHandler.canUseBiometrics(),
         biometrics = biometrics,
         onBiometricsChange = {
@@ -85,6 +88,8 @@ fun SettingsScreen(
     onSecureModeChange: (Boolean) -> Unit,
     pinCode: Boolean,
     onPinCodeChange: (Boolean) -> Unit,
+    lockOnResume: Boolean,
+    onLockOnResumeChange: (Boolean) -> Unit,
     showBiometrics: Boolean,
     biometrics: Boolean,
     onBiometricsChange: (Boolean) -> Unit,
@@ -138,6 +143,17 @@ fun SettingsScreen(
                     description = {
                         Text(stringResource(R.string.settings_prefs_pincode_description))
                     }
+                )
+                SettingsSwitchItem(
+                    onCheckedChange = onLockOnResumeChange,
+                    checked = pinCode && lockOnResume,
+                    title = {
+                        Text(stringResource(R.string.settings_prefs_autolock))
+                    },
+                    description = {
+                        Text(stringResource(R.string.settings_prefs_autolock_description))
+                    },
+                    enabled = pinCode
                 )
                 if (showBiometrics) {
                     SettingsSwitchItem(
