@@ -59,6 +59,11 @@ android {
         disable += "MissingTranslation"
         disable += "ExtraTranslation"
     }
+
+    sourceSets {
+        // Expose the exported Room schemas to instrumented tests (MigrationTestHelper).
+        getByName("androidTest").assets.srcDir("$projectDir/schemas")
+    }
 }
 
 kotlin {
@@ -131,6 +136,12 @@ dependencies {
     implementation("androidx.room:room-common:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
+    androidTestImplementation("androidx.room:room-testing:$roomVersion")
+
+    // Needed for room-testing
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core") {
+        version { strictly("1.8.1") }
+    }
 
     implementation("androidx.biometric:biometric:1.1.0")
     implementation("androidx.security:security-crypto-ktx:1.1.0")
