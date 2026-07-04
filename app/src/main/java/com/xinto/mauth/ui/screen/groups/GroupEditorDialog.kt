@@ -20,10 +20,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberBottomSheetState
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -108,22 +113,32 @@ private fun CreateEditGroupDialog(
                 isError = duplicate,
                 supportingText = if (!duplicate) null else { -> Text(stringResource(R.string.groups_dialog_error_duplicate)) },
                 trailingIcon = {
-                    IconButton(onClick = { showEmojiPicker = true }) {
-                        val current = emoji
-                        if (current != null) {
-                            val changeLabel = stringResource(R.string.groups_emoji_change)
-                            Text(
-                                text = current,
-                                fontSize = 22.sp,
-                                modifier = Modifier.semantics { contentDescription = changeLabel }
-                            )
-                        } else {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_add_reaction),
-                                contentDescription = stringResource(R.string.groups_emoji_add)
-                            )
-                        }
-                    }
+                    val emojiLabel = stringResource(
+                        if (emoji != null) R.string.groups_emoji_change else R.string.groups_emoji_add
+                    )
+                    TooltipBox(
+                        modifier = Modifier,
+                        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                        tooltip = { this.PlainTooltip { Text(text = emojiLabel) } },
+                        state = rememberTooltipState(),
+                        content = {
+                            IconButton(onClick = { showEmojiPicker = true }) {
+                                val current = emoji
+                                if (current != null) {
+                                    Text(
+                                        text = current,
+                                        fontSize = 22.sp,
+                                        modifier = Modifier.semantics { contentDescription = emojiLabel }
+                                    )
+                                } else {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_add_reaction),
+                                        contentDescription = emojiLabel
+                                    )
+                                }
+                            }
+                        },
+                    )
                 }
             )
         },

@@ -36,7 +36,7 @@
     <string name="qrscan_info_batch">Es wurden %1$d von %2$d QR-Codes gescannt</string>
     <string name="account_title_add">Ein Konto hinzufügen</string>
     <string name="account_title_edit">Ein Konto bearbeiten</string>
-    <string name="account_actions_save">Speichern</string>
+    <string name="account_action_save">Speichern</string>
     <string name="account_data_label">Name</string>
     <string name="account_data_issuer">Aussteller</string>
     <string name="account_data_secret">Geheimnis</string>

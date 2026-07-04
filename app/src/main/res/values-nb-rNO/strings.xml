@@ -34,7 +34,7 @@
     <string name="qrscan_error">Utilstrekkelig tilgang</string>
     <string name="account_title_add">Legg til en konto</string>
     <string name="account_title_edit">Rediger en konto</string>
-    <string name="account_actions_save">Lagre</string>
+    <string name="account_action_save">Lagre</string>
     <string name="account_data_label">Etikett</string>
     <string name="account_data_issuer">Utsteder</string>
     <string name="account_data_secret">Hemmelighet</string>

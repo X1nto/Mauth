@@ -34,11 +34,16 @@ import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -466,12 +471,21 @@ private fun ReorderableCollectionItemScope.GroupHeaderRow(
             )
         }
         Box {
-            IconButton(onClick = { menuOpen = true }) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_more_vert),
-                    contentDescription = null
-                )
-            }
+            val moreLabel = stringResource(R.string.groups_action_more)
+            TooltipBox(
+                modifier = Modifier,
+                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                tooltip = { this.PlainTooltip { Text(text = moreLabel) } },
+                state = rememberTooltipState(),
+                content = {
+                    IconButton(onClick = { menuOpen = true }) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_more_vert),
+                            contentDescription = moreLabel
+                        )
+                    }
+                },
+            )
             DropdownMenuPopup(
                 expanded = menuOpen,
                 onDismissRequest = { menuOpen = false }
@@ -608,12 +622,21 @@ private fun AccountRowItem(
                 )
             },
             trailingContent = {
-                Icon(
-                    modifier = Modifier
-                        .padding(vertical = 12.dp)
-                        .then(dragHandler.handleFor(account, groupId)),
-                    painter = painterResource(R.drawable.ic_drag_handle),
-                    contentDescription = stringResource(R.string.groups_action_move)
+                val moveLabel = stringResource(R.string.groups_action_move)
+                TooltipBox(
+                    modifier = Modifier,
+                    positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                    tooltip = { this.PlainTooltip { Text(text = moveLabel) } },
+                    state = rememberTooltipState(),
+                    content = {
+                        Icon(
+                            modifier = Modifier
+                                .padding(vertical = 12.dp)
+                                .then(dragHandler.handleFor(account, groupId)),
+                            painter = painterResource(R.drawable.ic_drag_handle),
+                            contentDescription = moveLabel
+                        )
+                    },
                 )
             },
             content = {

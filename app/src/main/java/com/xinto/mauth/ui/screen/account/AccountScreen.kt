@@ -130,7 +130,7 @@ fun AccountScreen(
                         onClick = onSave,
                         enabled = state is AccountScreenState.Success
                     ) {
-                        Text(stringResource(R.string.account_actions_save))
+                        Text(stringResource(R.string.account_action_save))
                     }
                 },
                 navigationIcon = {

@@ -18,6 +18,7 @@
     <string name="home_delete_button_delete">Delete</string>
     <string name="home_delete_button_cancel">Cancel</string>
     <string name="home_selection_clear">Clear selection</string>
+    <string name="home_selection_delete">Delete</string>
     <plurals name="home_selection_count">
         <item quantity="one">%1$d selected</item>
         <item quantity="other">%1$d selected</item>
@@ -28,6 +29,11 @@
     <string name="home_move_subtitle_existing">Existing groups</string>
     <string name="home_more_settings">Settings</string>
     <string name="home_more_groups">Groups</string>
+    <string name="home_more_options">More options</string>
+    <string name="home_action_edit">Edit</string>
+    <string name="home_action_code_copy">Copy code</string>
+    <string name="home_action_code_show">Show code</string>
+    <string name="home_action_code_hide">Hide code</string>
     <string name="home_code_copy_success">Successfully copied the code to clipboard</string>
     <string name="home_code_copy_fail">Failed to copy the code</string>
     <string name="home_image_parse_fail">Failed to parse the QR code</string>
@@ -35,6 +41,7 @@
     <string name="home_search_clear">Clear search</string>
     <string name="home_search_collapse">Close search</string>
     <string name="home_search_empty">No matching accounts</string>
+    <string name="home_sort_title">Sort</string>
     <string name="home_sort_label_ascending">Label (A-Z)</string>
     <string name="home_sort_label_descending">Label (Z-A)</string>
     <string name="home_sort_issuer_ascending">Issuer (A-Z)</string>
@@ -43,7 +50,6 @@
     <string name="home_sort_date_descending">Newest first</string>
     <string name="home_groups_all">All</string>
     <string name="home_groups_ungrouped">Ungrouped</string>
-    <string name="home_groups_action_add">Manage groups</string>
 
     <string name="qrscan_title">Scan a QR code</string>
     <string name="qrscan_permissions_title">Missing permissions</string>
@@ -58,7 +64,6 @@
 
     <string name="account_title_add">Add an account</string>
     <string name="account_title_edit">Edit an account</string>
-    <string name="account_actions_save">Save</string>
     <string name="account_data_label">Label</string>
     <string name="account_data_issuer">Issuer</string>
     <string name="account_data_secret">Secret</string>
@@ -76,6 +81,9 @@
     <string name="account_error">An error occurred while loading the account</string>
     <string name="account_data_status_required">required</string>
     <string name="account_data_status_range">range %1$s-%2$s</string>
+    <string name="account_action_save">Save</string>
+    <string name="account_action_code_show">Show password</string>
+    <string name="account_action_code_hide">Hide password</string>
 
     <string name="settings_title">Settings</string>
     <string name="settings_category_security">Security</string>
@@ -136,6 +144,7 @@
     <string name="groups_delete_title">Delete group?</string>
     <string name="groups_delete_subtitle">Accounts in this group will have this group removed.</string>
     <string name="groups_delete_confirm">Delete</string>
+    <string name="groups_action_more">More options</string>
     <string name="groups_action_rename">Rename</string>
     <string name="groups_action_add_account">Add account</string>
     <string name="groups_action_add_group">Add group</string>

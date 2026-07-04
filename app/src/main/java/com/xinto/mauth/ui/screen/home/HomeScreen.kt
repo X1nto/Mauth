@@ -59,6 +59,7 @@ import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBarDefaults
@@ -70,12 +71,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.ToggleFloatingActionButton
 import androidx.compose.material3.ToggleFloatingActionButtonDefaults.animateIcon
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.material3.rememberSearchBarState
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -537,49 +542,58 @@ private fun SortAction(
     modifier: Modifier = Modifier
 ) {
     var isSortVisible by remember { mutableStateOf(false) }
-    IconButton(
+    val sortLabel = stringResource(R.string.home_sort_title)
+    TooltipBox(
         modifier = modifier,
-        onClick = { isSortVisible = true }
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_sort),
-            contentDescription = null,
-        )
-        DropdownMenuPopup(
-            expanded = isSortVisible,
-            onDismissRequest = { isSortVisible = false },
-        ) {
-            DropdownMenuGroup(shapes = MenuDefaults.groupShapes()) {
-                SortSetting.entries.forEachIndexed { index, sortSetting ->
-                    DropdownMenuItem(
-                        selected = activeSortSetting == sortSetting,
-                        onClick = {
-                            isSortVisible = false
-                            onActiveSortChange(sortSetting)
-                        },
-                        text = {
-                            val resource = when (sortSetting) {
-                                SortSetting.DateAsc -> R.string.home_sort_date_ascending
-                                SortSetting.DateDesc -> R.string.home_sort_date_descending
-                                SortSetting.LabelAsc -> R.string.home_sort_label_ascending
-                                SortSetting.LabelDesc -> R.string.home_sort_label_descending
-                                SortSetting.IssuerAsc -> R.string.home_sort_issuer_ascending
-                                SortSetting.IssuerDesc -> R.string.home_sort_issuer_descending
-                            }
-                            Text(stringResource(resource))
-                        },
-                        selectedLeadingIcon = {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_check),
-                                contentDescription = null
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+        tooltip = { PlainTooltip { Text(text = sortLabel) } },
+        state = rememberTooltipState(),
+        content = {
+            IconButton(onClick = { isSortVisible = true }) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_sort),
+                    contentDescription = sortLabel,
+                )
+                DropdownMenuPopup(
+                    expanded = isSortVisible,
+                    onDismissRequest = { isSortVisible = false },
+                ) {
+                    DropdownMenuGroup(shapes = MenuDefaults.groupShapes()) {
+                        SortSetting.entries.forEachIndexed { index, sortSetting ->
+                            DropdownMenuItem(
+                                selected = activeSortSetting == sortSetting,
+                                onClick = {
+                                    isSortVisible = false
+                                    onActiveSortChange(sortSetting)
+                                },
+                                text = {
+                                    val resource = when (sortSetting) {
+                                        SortSetting.DateAsc -> R.string.home_sort_date_ascending
+                                        SortSetting.DateDesc -> R.string.home_sort_date_descending
+                                        SortSetting.LabelAsc -> R.string.home_sort_label_ascending
+                                        SortSetting.LabelDesc -> R.string.home_sort_label_descending
+                                        SortSetting.IssuerAsc -> R.string.home_sort_issuer_ascending
+                                        SortSetting.IssuerDesc -> R.string.home_sort_issuer_descending
+                                    }
+                                    Text(stringResource(resource))
+                                },
+                                selectedLeadingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_check),
+                                        contentDescription = null
+                                    )
+                                },
+                                shapes = MenuDefaults.itemShape(
+                                    index = index,
+                                    count = SortSetting.entries.size
+                                ),
                             )
-                        },
-                        shapes = MenuDefaults.itemShape(index = index, count = SortSetting.entries.size),
-                    )
+                        }
+                    }
                 }
             }
-        }
-    }
+        },
+    )
 }
 
 @Composable
@@ -588,46 +602,60 @@ private fun MoreAction(
     modifier: Modifier = Modifier
 ) {
     var isMoreVisible by remember { mutableStateOf(false) }
-    IconButton(
+    val moreLabel = stringResource(R.string.home_more_options)
+    TooltipBox(
         modifier = modifier,
-        onClick = { isMoreVisible = true }
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_more_vert),
-            contentDescription = null,
-        )
-        DropdownMenuPopup(
-            expanded = isMoreVisible,
-            onDismissRequest = { isMoreVisible = false },
-        ) {
-            val groupedActions = HomeMoreMenu.entries
-                .partition { it != HomeMoreMenu.Settings && it != HomeMoreMenu.About }
-                .toList()
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+        tooltip = { PlainTooltip { Text(text = moreLabel) } },
+        state = rememberTooltipState(),
+        content = {
+            IconButton(onClick = { isMoreVisible = true }) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_more_vert),
+                    contentDescription = moreLabel,
+                )
+                DropdownMenuPopup(
+                    expanded = isMoreVisible,
+                    onDismissRequest = { isMoreVisible = false },
+                ) {
+                    val groupedActions = HomeMoreMenu.entries
+                        .partition { it != HomeMoreMenu.Settings && it != HomeMoreMenu.About }
+                        .toList()
 
-            groupedActions.forEachIndexed { groupIndex, actions ->
-                DropdownMenuGroup(shapes = MenuDefaults.groupShape(index = groupIndex, count = groupedActions.size)) {
-                    actions.forEachIndexed { actionIndex, action ->
-                        DropdownMenuItem(
-                            onClick = {
-                                isMoreVisible = false
-                                onMenuNavigate(action)
-                            },
-                            text = { Text(stringResource(action.title)) },
-                            shape = MenuDefaults.itemShape(index = actionIndex, count = actions.size).shape,
-                            leadingIcon = {
-                                Icon(
-                                    modifier = Modifier.size(MenuDefaults.LeadingIconSize),
-                                    painter = painterResource(action.icon),
-                                    contentDescription = null,
+                    groupedActions.forEachIndexed { groupIndex, actions ->
+                        DropdownMenuGroup(
+                            shapes = MenuDefaults.groupShape(
+                                index = groupIndex,
+                                count = groupedActions.size
+                            )
+                        ) {
+                            actions.forEachIndexed { actionIndex, action ->
+                                DropdownMenuItem(
+                                    onClick = {
+                                        isMoreVisible = false
+                                        onMenuNavigate(action)
+                                    },
+                                    text = { Text(stringResource(action.title)) },
+                                    shape = MenuDefaults.itemShape(
+                                        index = actionIndex,
+                                        count = actions.size
+                                    ).shape,
+                                    leadingIcon = {
+                                        Icon(
+                                            modifier = Modifier.size(MenuDefaults.LeadingIconSize),
+                                            painter = painterResource(action.icon),
+                                            contentDescription = null,
+                                        )
+                                    },
                                 )
-                            },
-                        )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(MenuDefaults.GroupSpacing))
                     }
                 }
-                Spacer(modifier = Modifier.height(MenuDefaults.GroupSpacing))
             }
-        }
-    }
+        },
+    )
 }
 
 @Composable
@@ -710,25 +738,52 @@ private fun SelectionTopBar(
         title = { Text(pluralStringResource(R.plurals.home_selection_count, selectedCount, selectedCount)) },
         actions = {
             if (canMoveToGroup) {
-                IconButton(onClick = onMoveToGroup) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_label),
-                        contentDescription = stringResource(R.string.home_move_title),
-                    )
-                }
-            }
-            IconButton(onClick = onDeleteSelected) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_delete_forever),
-                    contentDescription = null,
+                val moveLabel = stringResource(R.string.home_move_title)
+                TooltipBox(
+                    modifier = Modifier,
+                    positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                    tooltip = { this.PlainTooltip { Text(text = moveLabel) } },
+                    state = rememberTooltipState(),
+                    content = {
+                        IconButton(onClick = onMoveToGroup) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_label),
+                                contentDescription = moveLabel,
+                            )
+                        }
+                    },
                 )
             }
-            IconButton(onClick = onExportSelected) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_export),
-                    contentDescription = null,
-                )
-            }
+            val deleteLabel = stringResource(R.string.home_selection_delete)
+            TooltipBox(
+                modifier = Modifier,
+                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                tooltip = { this.PlainTooltip { Text(text = deleteLabel) } },
+                state = rememberTooltipState(),
+                content = {
+                        IconButton(onClick = onDeleteSelected) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_delete_forever),
+                                contentDescription = deleteLabel,
+                            )
+                        }
+                    },
+            )
+            val exportLabel = stringResource(R.string.export_title)
+            TooltipBox(
+                modifier = Modifier,
+                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                tooltip = { this.PlainTooltip { Text(text = exportLabel) } },
+                state = rememberTooltipState(),
+                content = {
+                    IconButton(onClick = onExportSelected) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_export),
+                            contentDescription = exportLabel,
+                        )
+                    }
+                },
+            )
         },
         scrollBehavior = scrollBehavior,
     )
@@ -806,17 +861,26 @@ private fun GroupFilterRow(
             )
         }
         item(key = "add") {
-            FilledIconButton(
-                modifier = Modifier.size(IconButtonDefaults.extraSmallContainerSize(widthOption = IconButtonDefaults.IconButtonWidthOption.Wide)),
-                onClick = onAddGroup,
-                shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.extraSmallSquareShape)
-            ) {
-                Icon(
-                    modifier = Modifier.size(IconButtonDefaults.extraSmallIconSize),
-                    painter = painterResource(R.drawable.ic_new_label),
-                    contentDescription = stringResource(R.string.home_groups_action_add),
-                )
-            }
+            val addGroupLabel = stringResource(R.string.groups_action_add_group)
+            TooltipBox(
+                modifier = Modifier,
+                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                tooltip = { this.PlainTooltip { Text(text = addGroupLabel) } },
+                state = rememberTooltipState(),
+                content = {
+                    FilledIconButton(
+                        modifier = Modifier.size(IconButtonDefaults.extraSmallContainerSize(widthOption = IconButtonDefaults.IconButtonWidthOption.Wide)),
+                        onClick = onAddGroup,
+                        shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.extraSmallSquareShape)
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(IconButtonDefaults.extraSmallIconSize),
+                            painter = painterResource(R.drawable.ic_new_label),
+                            contentDescription = addGroupLabel,
+                        )
+                    }
+                },
+            )
         }
     }
 }

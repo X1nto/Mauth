@@ -29,8 +29,13 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -41,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.xinto.mauth.R
@@ -105,12 +111,21 @@ fun AccountCard(
                             )
                         }
                     } else {
-                        IconButton(onClick = onEdit) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_edit),
-                                contentDescription = null
-                            )
-                        }
+                        val editLabel = stringResource(R.string.home_action_edit)
+                        TooltipBox(
+                            modifier = Modifier,
+                            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                            tooltip = { this.PlainTooltip { Text(text = editLabel) } },
+                            state = rememberTooltipState(),
+                            content = {
+                                IconButton(onClick = onEdit) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_edit),
+                                        contentDescription = editLabel
+                                    )
+                                }
+                            },
+                        )
                     }
                 }
             )
@@ -150,34 +165,54 @@ private fun InteractionButtons(
     onCopyCode: () -> Unit
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        FilledIconToggleButton(
-            checked = showCode, 
-            onCheckedChange = onShowCodeChange,
-            colors = IconButtonDefaults.filledTonalIconToggleButtonColors(
-                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                checkedContainerColor = MaterialTheme.colorScheme.tertiary,
-                checkedContentColor = MaterialTheme.colorScheme.onTertiary
-            )
-        ) {
-            if (showCode) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_visibility),
-                    contentDescription = null
-                )
-            } else {
-                Icon(
-                    painter = painterResource(R.drawable.ic_visibility_off),
-                    contentDescription = null
-                )
-            }
-        }
-        FilledTonalIconButton(onClick = onCopyCode) {
-            Icon(
-                painter = painterResource(R.drawable.ic_copy_all),
-                contentDescription = null
-            )
-        }
+        val codeToggleLabel = stringResource(
+            if (showCode) R.string.home_action_code_hide else R.string.home_action_code_show
+        )
+        TooltipBox(
+            modifier = Modifier,
+            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+            tooltip = { this.PlainTooltip { Text(text = codeToggleLabel) } },
+            state = rememberTooltipState(),
+            content = {
+                FilledIconToggleButton(
+                    checked = showCode,
+                    onCheckedChange = onShowCodeChange,
+                    colors = IconButtonDefaults.filledTonalIconToggleButtonColors(
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                        checkedContainerColor = MaterialTheme.colorScheme.tertiary,
+                        checkedContentColor = MaterialTheme.colorScheme.onTertiary
+                    )
+                ) {
+                    if (showCode) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_visibility),
+                            contentDescription = codeToggleLabel
+                        )
+                    } else {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_visibility_off),
+                            contentDescription = codeToggleLabel
+                        )
+                    }
+                }
+            },
+        )
+        val copyLabel = stringResource(R.string.home_action_code_copy)
+        TooltipBox(
+            modifier = Modifier,
+            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+            tooltip = { this.PlainTooltip { Text(text = copyLabel) } },
+            state = rememberTooltipState(),
+            content = {
+                FilledTonalIconButton(onClick = onCopyCode) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_copy_all),
+                        contentDescription = copyLabel
+                    )
+                }
+            },
+        )
     }
 }
 

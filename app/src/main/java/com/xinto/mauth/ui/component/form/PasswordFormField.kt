@@ -5,7 +5,12 @@ import androidx.annotation.StringRes
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,14 +61,25 @@ class PasswordFormField(
                 )
             },
             trailingIcon = {
-                IconButton(onClick = { showPassword = !showPassword }) {
-                    val visible = painterResource(R.drawable.ic_visibility)
-                    val notVisible = painterResource(R.drawable.ic_visibility_off)
-                    Icon(
-                        painter = if (showPassword) visible else notVisible,
-                        contentDescription = null
-                    )
-                }
+                val toggleLabel = stringResource(
+                    if (showPassword) R.string.account_action_code_hide else R.string.account_action_code_show
+                )
+                TooltipBox(
+                    modifier = Modifier,
+                    positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                    tooltip = { this.PlainTooltip { Text(text = toggleLabel) } },
+                    state = rememberTooltipState(),
+                    content = {
+                        IconButton(onClick = { showPassword = !showPassword }) {
+                            val visible = painterResource(R.drawable.ic_visibility)
+                            val notVisible = painterResource(R.drawable.ic_visibility_off)
+                            Icon(
+                                painter = if (showPassword) visible else notVisible,
+                                contentDescription = toggleLabel
+                            )
+                        }
+                    },
+                )
             },
             supportingText = if (!required) null else { ->
                 Text(stringResource(R.string.account_data_status_required))
