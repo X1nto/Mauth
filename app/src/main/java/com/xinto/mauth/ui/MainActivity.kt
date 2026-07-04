@@ -31,13 +31,11 @@ import androidx.core.os.BundleCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.xinto.mauth.core.otp.parser.OtpUriParserResult
-import com.xinto.mauth.core.settings.model.ColorSetting
 import com.xinto.mauth.core.settings.model.ThemeSetting
 import com.xinto.mauth.domain.AuthRepository
 import com.xinto.mauth.domain.SettingsRepository
@@ -60,9 +58,7 @@ import com.xinto.mauth.ui.screen.settings.SettingsScreen
 import com.xinto.mauth.ui.screen.theme.ThemeScreen
 import com.xinto.mauth.ui.theme.MauthTheme
 import com.xinto.mauth.util.launchInLifecycle
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 
@@ -74,7 +70,6 @@ class MainActivity : FragmentActivity() {
     private val auth: AuthRepository by inject()
 
     private val lockOnResume: StateFlow<Boolean> = settings.getLockOnResume()
-        .stateIn(lifecycleScope, SharingStarted.Eagerly, false)
 
     private lateinit var navigator: MauthNavigator
 
@@ -115,8 +110,8 @@ class MainActivity : FragmentActivity() {
         }
 
         setContent {
-            val theme by settings.getTheme().collectAsStateWithLifecycle(initialValue = ThemeSetting.DEFAULT)
-            val color by settings.getColor().collectAsStateWithLifecycle(initialValue = ColorSetting.DEFAULT)
+            val theme by settings.getTheme().collectAsStateWithLifecycle()
+            val color by settings.getColor().collectAsStateWithLifecycle()
             MauthTheme(
                 theme = theme,
                 color = color

@@ -1,62 +1,46 @@
 package com.xinto.mauth.core.settings
 
 import android.content.Context
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
+import androidx.datastore.preferences.preferencesDataStoreFile
 import com.xinto.mauth.core.settings.model.ColorSetting
 import com.xinto.mauth.core.settings.model.SortSetting
 import com.xinto.mauth.core.settings.model.ThemeSetting
-import kotlinx.coroutines.flow.Flow
+import kotlin.enums.enumEntries
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 class DefaultSettings(context: Context) : Settings {
 
-    private val Context.preferences by preferencesDataStore("preferences")
-    private val preferences = context.preferences
-
-    override fun getSecureMode(): Flow<Boolean> {
-        return preferences.data.map {
-            it[KEY_SECURE_MODE] ?: false
-        }
+    private val preferences = PreferenceDataStoreFactory.create {
+        context.applicationContext.preferencesDataStoreFile("preferences")
     }
 
-    override fun getLockOnResume(): Flow<Boolean> {
-        return preferences.data.map {
-            it[KEY_LOCK_ON_RESUME] ?: false
-        }
-    }
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
-    override fun getUseBiometrics(): Flow<Boolean> {
-        return preferences.data.map {
-            it[KEY_USE_BIOMETRICS] ?: false
-        }
-    }
+    private val secureMode = preferenceStateFlow { it[KEY_SECURE_MODE] ?: false }
+    private val lockOnResume = preferenceStateFlow { it[KEY_LOCK_ON_RESUME] ?: false }
+    private val useBiometrics = preferenceStateFlow { it[KEY_USE_BIOMETRICS] ?: false }
+    private val sortMode = preferenceStateFlow { it[KEY_SORT_MODE].toEnumOr(SortSetting.DEFAULT) }
+    private val theme = preferenceStateFlow { it[KEY_THEME].toEnumOr(ThemeSetting.DEFAULT) }
+    private val color = preferenceStateFlow { it[KEY_COLOR].toEnumOr(ColorSetting.DEFAULT) }
 
-    override fun getSortMode(): Flow<SortSetting> {
-        return preferences.data.map {
-            it[KEY_SORT_MODE]?.let { name ->
-                SortSetting.valueOf(name)
-            } ?: SortSetting.DEFAULT
-        }
-    }
-
-    override fun getTheme(): Flow<ThemeSetting> {
-        return preferences.data.map { preferences ->
-            preferences[KEY_THEME]?.let { name ->
-                ThemeSetting.entries.find { it.name == name }
-            } ?: ThemeSetting.DEFAULT
-        }
-    }
-
-    override fun getColor(): Flow<ColorSetting> {
-        return preferences.data.map { preferences ->
-            preferences[KEY_COLOR]?.let { name ->
-                ColorSetting.entries.find { it.name == name }
-            } ?: ColorSetting.DEFAULT
-        }
-    }
+    override fun getSecureMode(): StateFlow<Boolean> = secureMode
+    override fun getLockOnResume(): StateFlow<Boolean> = lockOnResume
+    override fun getUseBiometrics(): StateFlow<Boolean> = useBiometrics
+    override fun getSortMode(): StateFlow<SortSetting> = sortMode
+    override fun getTheme(): StateFlow<ThemeSetting> = theme
+    override fun getColor(): StateFlow<ColorSetting> = color
 
     override suspend fun setSecureMode(value: Boolean) {
         preferences.edit {
@@ -92,6 +76,20 @@ class DefaultSettings(context: Context) : Settings {
         preferences.edit {
             it[KEY_COLOR] = value.name
         }
+    }
+
+    private inline fun <T> preferenceStateFlow(crossinline transform: (Preferences) -> T): StateFlow<T> {
+        return preferences.data
+            .map(transform)
+            .stateIn(
+                scope = scope,
+                started = SharingStarted.Eagerly,
+                initialValue = transform(emptyPreferences())
+            )
+    }
+
+    private inline fun <reified T : Enum<T>> String?.toEnumOr(default: T): T {
+        return this?.let { name -> enumEntries<T>().find { it.name == name } } ?: default
     }
 
     private companion object {

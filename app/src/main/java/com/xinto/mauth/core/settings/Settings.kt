@@ -3,15 +3,15 @@ package com.xinto.mauth.core.settings
 import com.xinto.mauth.core.settings.model.ColorSetting
 import com.xinto.mauth.core.settings.model.SortSetting
 import com.xinto.mauth.core.settings.model.ThemeSetting
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 interface Settings {
-    fun getSecureMode(): Flow<Boolean>
-    fun getLockOnResume(): Flow<Boolean>
-    fun getUseBiometrics(): Flow<Boolean>
-    fun getSortMode(): Flow<SortSetting>
-    fun getTheme(): Flow<ThemeSetting>
-    fun getColor(): Flow<ColorSetting>
+    fun getSecureMode(): StateFlow<Boolean>
+    fun getLockOnResume(): StateFlow<Boolean>
+    fun getUseBiometrics(): StateFlow<Boolean>
+    fun getSortMode(): StateFlow<SortSetting>
+    fun getTheme(): StateFlow<ThemeSetting>
+    fun getColor(): StateFlow<ColorSetting>
 
     suspend fun setSecureMode(value: Boolean)
     suspend fun setLockOnResume(value: Boolean)
