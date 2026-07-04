@@ -1,13 +1,22 @@
 package com.xinto.mauth.ui.screen.account
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.DropdownMenuPopup
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
 import com.xinto.mauth.R.drawable.ic_label
@@ -67,68 +77,93 @@ class GroupFormField(
                     )
                 }
             )
-            ExposedDropdownMenu(
+            DropdownMenuPopup(
+                modifier = Modifier.exposedDropdownSize(),
                 expanded = expanded,
                 onDismissRequest = { setExpanded(false) }
             ) {
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.account_data_group_none)) },
-                    onClick = {
-                        setExpanded(false)
-                        value = null
-                    },
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_label_off),
-                            contentDescription = null
-                        )
-                    },
-                    trailingIcon = if (value != null) null else { ->
-                        Icon(
-                            painter = painterResource(R.drawable.ic_check),
-                            contentDescription = null
-                        )
-                    }
-                )
-                groupList.forEach { group ->
+                val groupListScrollState = rememberScrollState()
+                DropdownMenuGroup(
+                    shapes = MenuDefaults.groupShapes(MenuDefaults.leadingGroupShape),
+                    modifier = Modifier
+                        .heightIn(max = 280.dp)
+                        .verticalScroll(groupListScrollState),
+                ) {
+                    val selected = value == null
                     DropdownMenuItem(
-                        text = { Text(group.name) },
+                        selected = selected,
                         onClick = {
                             setExpanded(false)
-                            value = group.id
+                            value = null
                         },
+                        text = { Text(stringResource(R.string.account_data_group_none)) },
+                        shapes = MenuDefaults.itemShapes(MenuDefaults.leadingItemShape),
                         leadingIcon = {
-                            if (group.emoji != null) {
-                                Text(text = group.emoji)
-                            } else {
-                                Icon(
-                                    painter = painterResource(ic_label),
-                                    contentDescription = null
-                                )
-                            }
+                            Icon(
+                                painter = painterResource(R.drawable.ic_label_off),
+                                contentDescription = null
+                            )
                         },
-                        trailingIcon = if (value != group.id) null else { ->
+                        trailingIcon = if (!selected) null else { ->
                             Icon(
                                 painter = painterResource(R.drawable.ic_check),
                                 contentDescription = null
                             )
                         }
                     )
-                }
-                HorizontalDivider()
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.groups_action_add_group)) },
-                    onClick = {
-                        setExpanded(false)
-                        showCreateDialog = true
-                    },
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_add),
-                            contentDescription = null
-                        )
+                    if (groupList.isNotEmpty()) {
+                        HorizontalDivider(modifier = Modifier.padding(MenuDefaults.HorizontalDividerPadding))
+                        groupList.forEachIndexed { index, group ->
+                            val selected = value == group.id
+                            DropdownMenuItem(
+                                selected = selected,
+                                onClick = {
+                                    setExpanded(false)
+                                    value = group.id
+                                },
+                                text = { Text(group.name) },
+                                shapes = MenuDefaults.itemShape(
+                                    index = index + 1,
+                                    count = groupList.size + 1
+                                ),
+                                leadingIcon = {
+                                    if (group.emoji != null) {
+                                        Text(text = group.emoji)
+                                    } else {
+                                        Icon(
+                                            painter = painterResource(ic_label),
+                                            contentDescription = null
+                                        )
+                                    }
+                                },
+                                trailingIcon = if (!selected) null else { ->
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_check),
+                                        contentDescription = null
+                                    )
+                                }
+                            )
+                        }
                     }
-                )
+                }
+                Spacer(Modifier.height(MenuDefaults.GroupSpacing))
+                DropdownMenuGroup(shapes = MenuDefaults.groupShapes(MenuDefaults.trailingGroupShape)) {
+                    DropdownMenuItem(
+                        selected = false,
+                        onClick = {
+                            setExpanded(false)
+                            showCreateDialog = true
+                        },
+                        text = { Text(stringResource(R.string.groups_action_add_group)) },
+                        shapes = MenuDefaults.itemShapes(MenuDefaults.selectedItemShape),
+                        leadingIcon = {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_add),
+                                contentDescription = null
+                            )
+                        },
+                    )
+                }
             }
         }
         if (showCreateDialog) {

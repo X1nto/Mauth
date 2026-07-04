@@ -19,8 +19,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.DropdownMenuPopup
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilledTonalButton
@@ -29,6 +30,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -437,24 +439,42 @@ private fun ReorderableCollectionItemScope.GroupHeaderRow(
                     contentDescription = null
                 )
             }
-            DropdownMenu(
+            DropdownMenuPopup(
                 expanded = menuOpen,
                 onDismissRequest = { menuOpen = false }
             ) {
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.groups_action_rename)) },
-                    onClick = {
-                        menuOpen = false
-                        onRename()
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.groups_action_delete)) },
-                    onClick = {
-                        menuOpen = false
-                        onDelete()
-                    }
-                )
+                DropdownMenuGroup(shapes = MenuDefaults.groupShapes()) {
+                    DropdownMenuItem(
+                        onClick = {
+                            menuOpen = false
+                            onRename()
+                        },
+                        text = { Text(stringResource(R.string.groups_action_rename)) },
+                        shape = MenuDefaults.itemShape(index = 0, count = 2).shape,
+                        leadingIcon = {
+                            Icon(
+                                modifier = Modifier.size(MenuDefaults.LeadingIconSize),
+                                painter = painterResource(R.drawable.ic_edit),
+                                contentDescription = null
+                            )
+                        }
+                    )
+                    DropdownMenuItem(
+                        onClick = {
+                            menuOpen = false
+                            onDelete()
+                        },
+                        text = { Text(stringResource(R.string.groups_action_delete)) },
+                        shape = MenuDefaults.itemShape(index = 1, count = 2).shape,
+                        leadingIcon = {
+                            Icon(
+                                modifier = Modifier.size(MenuDefaults.LeadingIconSize),
+                                painter = painterResource(R.drawable.ic_delete),
+                                contentDescription = null
+                            )
+                        }
+                    )
+                }
             }
         }
     }

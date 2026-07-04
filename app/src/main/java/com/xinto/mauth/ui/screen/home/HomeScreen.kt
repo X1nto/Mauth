@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -36,8 +37,9 @@ import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AppBarWithSearch
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.DropdownMenuPopup
 import androidx.compose.material3.ExpandedDockedSearchBar
 import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -55,6 +57,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Scaffold
@@ -524,74 +527,97 @@ private fun SearchInputField(
 private fun SortAction(
     activeSortSetting: SortSetting,
     onActiveSortChange: (SortSetting) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     var isSortVisible by remember { mutableStateOf(false) }
-    IconButton(onClick = { isSortVisible = true }) {
+    IconButton(
+        modifier = modifier,
+        onClick = { isSortVisible = true }
+    ) {
         Icon(
             painter = painterResource(R.drawable.ic_sort),
             contentDescription = null,
         )
-        DropdownMenu(
+        DropdownMenuPopup(
             expanded = isSortVisible,
             onDismissRequest = { isSortVisible = false },
         ) {
-            SortSetting.entries.forEach { sortSetting ->
-                DropdownMenuItem(
-                    onClick = {
-                        isSortVisible = false
-                        onActiveSortChange(sortSetting)
-                    },
-                    text = {
-                        val resource = when (sortSetting) {
-                            SortSetting.DateAsc -> R.string.home_sort_date_ascending
-                            SortSetting.DateDesc -> R.string.home_sort_date_descending
-                            SortSetting.LabelAsc -> R.string.home_sort_label_ascending
-                            SortSetting.LabelDesc -> R.string.home_sort_label_descending
-                            SortSetting.IssuerAsc -> R.string.home_sort_issuer_ascending
-                            SortSetting.IssuerDesc -> R.string.home_sort_issuer_descending
-                        }
-                        Text(stringResource(resource))
-                    },
-                    trailingIcon = {
-                        if (activeSortSetting == sortSetting) {
+            DropdownMenuGroup(shapes = MenuDefaults.groupShapes()) {
+                SortSetting.entries.forEachIndexed { index, sortSetting ->
+                    DropdownMenuItem(
+                        selected = activeSortSetting == sortSetting,
+                        onClick = {
+                            isSortVisible = false
+                            onActiveSortChange(sortSetting)
+                        },
+                        text = {
+                            val resource = when (sortSetting) {
+                                SortSetting.DateAsc -> R.string.home_sort_date_ascending
+                                SortSetting.DateDesc -> R.string.home_sort_date_descending
+                                SortSetting.LabelAsc -> R.string.home_sort_label_ascending
+                                SortSetting.LabelDesc -> R.string.home_sort_label_descending
+                                SortSetting.IssuerAsc -> R.string.home_sort_issuer_ascending
+                                SortSetting.IssuerDesc -> R.string.home_sort_issuer_descending
+                            }
+                            Text(stringResource(resource))
+                        },
+                        selectedLeadingIcon = {
                             Icon(
                                 painter = painterResource(R.drawable.ic_check),
-                                contentDescription = null,
+                                contentDescription = null
                             )
-                        }
-                    },
-                )
+                        },
+                        shapes = MenuDefaults.itemShape(index = index, count = SortSetting.entries.size),
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-private fun MoreAction(onMenuNavigate: (HomeMoreMenu) -> Unit) {
+private fun MoreAction(
+    onMenuNavigate: (HomeMoreMenu) -> Unit,
+    modifier: Modifier = Modifier
+) {
     var isMoreVisible by remember { mutableStateOf(false) }
-    IconButton(onClick = { isMoreVisible = true }) {
+    IconButton(
+        modifier = modifier,
+        onClick = { isMoreVisible = true }
+    ) {
         Icon(
             painter = painterResource(R.drawable.ic_more_vert),
             contentDescription = null,
         )
-        DropdownMenu(
+        DropdownMenuPopup(
             expanded = isMoreVisible,
             onDismissRequest = { isMoreVisible = false },
         ) {
-            HomeMoreMenu.entries.forEach { menu ->
-                DropdownMenuItem(
-                    text = { Text(stringResource(menu.title)) },
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(menu.icon),
-                            contentDescription = null,
+            val groupedActions = HomeMoreMenu.entries
+                .partition { it != HomeMoreMenu.Settings && it != HomeMoreMenu.About }
+                .toList()
+
+            groupedActions.forEachIndexed { groupIndex, actions ->
+                DropdownMenuGroup(shapes = MenuDefaults.groupShape(index = groupIndex, count = groupedActions.size)) {
+                    actions.forEachIndexed { actionIndex, action ->
+                        DropdownMenuItem(
+                            onClick = {
+                                isMoreVisible = false
+                                onMenuNavigate(action)
+                            },
+                            text = { Text(stringResource(action.title)) },
+                            shape = MenuDefaults.itemShape(index = actionIndex, count = actions.size).shape,
+                            leadingIcon = {
+                                Icon(
+                                    modifier = Modifier.size(MenuDefaults.LeadingIconSize),
+                                    painter = painterResource(action.icon),
+                                    contentDescription = null,
+                                )
+                            },
                         )
-                    },
-                    onClick = {
-                        isMoreVisible = false
-                        onMenuNavigate(menu)
-                    },
-                )
+                    }
+                }
+                Spacer(modifier = Modifier.height(MenuDefaults.GroupSpacing))
             }
         }
     }

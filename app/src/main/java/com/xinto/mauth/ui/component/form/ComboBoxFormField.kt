@@ -2,11 +2,14 @@ package com.xinto.mauth.ui.component.form
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.DropdownMenuPopup
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MenuAnchorType
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,7 +42,7 @@ class ComboBoxFormField<E: Enum<E>>(
             onExpandedChange = setExpanded
         ) {
             OutlinedTextField(
-                modifier = modifier.menuAnchor(MenuAnchorType.PrimaryEditable),
+                modifier = modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
                 value = value.name,
                 onValueChange = {},
                 singleLine = true,
@@ -57,18 +60,30 @@ class ComboBoxFormField<E: Enum<E>>(
                 },
                 isError = error
             )
-            ExposedDropdownMenu(
+            DropdownMenuPopup(
+                modifier = Modifier.exposedDropdownSize(),
                 expanded = expanded,
                 onDismissRequest = { setExpanded(false) }
             ) {
-                clazz.enumConstants!!.forEach {
-                    DropdownMenuItem(
-                        text = { Text(it.name) },
-                        onClick = {
-                            setExpanded(false)
-                            value = it
-                        }
-                    )
+                DropdownMenuGroup(shapes = MenuDefaults.groupShapes()) {
+                    val entries = clazz.enumConstants!!
+                    entries.forEachIndexed { index, entry ->
+                        DropdownMenuItem(
+                            selected = value == entry,
+                            onClick = {
+                                setExpanded(false)
+                                value = entry
+                            },
+                            text = { Text(entry.name) },
+                            shapes = MenuDefaults.itemShape(index, entries.size),
+                            selectedLeadingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_check),
+                                    contentDescription = null
+                                )
+                            }
+                        )
+                    }
                 }
             }
         }
