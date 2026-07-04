@@ -3,12 +3,16 @@ package com.xinto.mauth.db.dao.account.entity
 import android.net.Uri
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.xinto.mauth.core.otp.model.OtpDigest
 import com.xinto.mauth.core.otp.model.OtpType
 import java.util.UUID
 
-@Entity(tableName = "accounts")
+@Entity(
+    tableName = "accounts",
+    indices = [Index("group_id")]
+)
 data class EntityAccount(
     @PrimaryKey
     @ColumnInfo(name = "id", typeAffinity = ColumnInfo.BLOB)
@@ -37,6 +41,9 @@ data class EntityAccount(
 
     @ColumnInfo(name = "period", defaultValue = "30")
     val period: Int,
+
+    @ColumnInfo(name = "group_id", typeAffinity = ColumnInfo.BLOB)
+    val groupId: UUID? = null,
 
     @ColumnInfo(name = "create_date", defaultValue = "0")
     val createDateMillis: Long

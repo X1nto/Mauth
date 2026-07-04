@@ -12,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import com.xinto.mauth.Mauth
 import com.xinto.mauth.R
 import com.xinto.mauth.domain.account.AccountRepository
+import com.xinto.mauth.domain.group.model.GroupFilter
 import com.xinto.mauth.util.catchMap
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -34,7 +35,7 @@ class ExportViewModel(
         _mode.value = mode
     }
 
-    val state = accountRepository.getAccounts()
+    val state = accountRepository.getAccounts(GroupFilter.All)
         .map { accounts ->
             val filteredAccounts = if (this.accounts.isEmpty()) {
                 accounts

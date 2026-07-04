@@ -39,6 +39,7 @@ import com.xinto.mauth.ui.screen.account.AddAccountScreen
 import com.xinto.mauth.ui.screen.account.EditAccountScreen
 import com.xinto.mauth.ui.screen.auth.AuthScreen
 import com.xinto.mauth.ui.screen.export.ExportScreen
+import com.xinto.mauth.ui.screen.groups.GroupsScreen
 import com.xinto.mauth.ui.screen.home.HomeScreen
 import com.xinto.mauth.ui.screen.pinremove.PinRemoveScreen
 import com.xinto.mauth.ui.screen.pinsetup.PinSetupScreen
@@ -190,9 +191,9 @@ class MainActivity : FragmentActivity() {
                             }
                             is MauthDestination.Home -> {
                                 HomeScreen(
-                                    onAddAccountManually = {
+                                    onAddAccountManually = { groupId ->
                                         navigator.navigate(
-                                            MauthDestination.AddAccount(DomainAccountInfo.new())
+                                            MauthDestination.AddAccount(DomainAccountInfo.new().copy(groupId = groupId))
                                         )
                                     },
                                     onAddAccountViaScanning = {
@@ -212,6 +213,9 @@ class MainActivity : FragmentActivity() {
                                     },
                                     onAboutNavigate = {
                                         navigator.navigate(MauthDestination.About)
+                                    },
+                                    onManageGroups = {
+                                        navigator.navigate(MauthDestination.Groups)
                                     }
                                 )
                             }
@@ -239,6 +243,16 @@ class MainActivity : FragmentActivity() {
                             }
                             is MauthDestination.About -> {
                                 AboutScreen(onBack = navigator::pop)
+                            }
+                            is MauthDestination.Groups -> {
+                                GroupsScreen(
+                                    onBack = navigator::pop,
+                                    onAddAccount = { groupId ->
+                                        navigator.navigate(
+                                            MauthDestination.AddAccount(DomainAccountInfo.new().copy(groupId = groupId))
+                                        )
+                                    }
+                                )
                             }
                             is MauthDestination.AddAccount -> {
                                 AddAccountScreen(

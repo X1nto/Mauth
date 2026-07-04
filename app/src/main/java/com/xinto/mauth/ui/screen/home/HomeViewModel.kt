@@ -21,12 +21,17 @@ import com.xinto.mauth.core.settings.model.SortSetting
 import com.xinto.mauth.domain.QrRepository
 import com.xinto.mauth.domain.account.AccountRepository
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
+import com.xinto.mauth.domain.group.GroupRepository
+import com.xinto.mauth.domain.group.model.GroupFilter
 import com.xinto.mauth.domain.otp.OtpRepository
 import com.xinto.mauth.util.catchMap
 import kotlinx.collections.immutable.adapters.ImmutableListAdapter
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -39,10 +44,16 @@ class HomeViewModel(
     private val settings: Settings,
     private val accounts: AccountRepository,
     private val otp: OtpRepository,
-    private val qr: QrRepository
+    private val qr: QrRepository,
+    private val groupRepository: GroupRepository
 ) : AndroidViewModel(application) {
 
-    val state = accounts.getAccounts()
+    private val _activeGroup = MutableStateFlow<GroupFilter>(GroupFilter.All)
+    val activeGroup = _activeGroup.asStateFlow()
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val state = _activeGroup
+        .flatMapLatest { accounts.getAccounts(it) }
         .map {
             when (it.isNotEmpty()) {
                 true -> HomeScreenState.Success(ImmutableListAdapter(it))
@@ -56,8 +67,36 @@ class HomeViewModel(
             initialValue = HomeScreenState.Loading
         )
 
+    val searchAccounts = accounts.getAccounts(GroupFilter.All)
+        .map { ImmutableListAdapter(it) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = persistentListOf()
+        )
+
+    val groups = groupRepository.getGroups()
+        .map { ImmutableListAdapter(it) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = persistentListOf()
+        )
+
     private val _selectedAccounts = MutableStateFlow(listOf<UUID>())
     val selectedAccounts = _selectedAccounts.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            groupRepository.getGroups().collect { live ->
+                val current = _activeGroup.value
+                when {
+                    live.isEmpty() && current != GroupFilter.All -> _activeGroup.value = GroupFilter.All
+                    current is GroupFilter.Specific && live.none { it.id == current.id } -> _activeGroup.value = GroupFilter.All
+                }
+            }
+        }
+    }
 
     val realTimeData = otp.getOtpRealtimeData()
         .stateIn(
@@ -147,6 +186,32 @@ class HomeViewModel(
     fun setActiveSort(value: SortSetting) {
         viewModelScope.launch {
             settings.setSortMode(value)
+        }
+    }
+
+    fun setActiveGroup(filter: GroupFilter) {
+        _activeGroup.update { filter }
+        clearAccountSelection()
+    }
+
+    fun moveSelectedToGroup(groupId: UUID?) {
+        viewModelScope.launch {
+            groupRepository.assignAccountsToGroup(selectedAccounts.value.toSet(), groupId)
+            clearAccountSelection()
+        }
+    }
+
+    fun createGroup(name: String, emoji: String?) {
+        viewModelScope.launch {
+            groupRepository.createGroup(name, emoji)
+        }
+    }
+
+    fun createGroupAndMoveSelected(name: String, emoji: String?) {
+        viewModelScope.launch {
+            val groupId = groupRepository.createGroup(name, emoji)
+            groupRepository.assignAccountsToGroup(selectedAccounts.value.toSet(), groupId)
+            clearAccountSelection()
         }
     }
 }

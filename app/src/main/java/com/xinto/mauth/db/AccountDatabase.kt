@@ -11,12 +11,14 @@ import com.xinto.mauth.db.converter.UriConverter
 import com.xinto.mauth.db.converter.UuidConverter
 import com.xinto.mauth.db.dao.account.AccountsDao
 import com.xinto.mauth.db.dao.account.entity.EntityAccount
+import com.xinto.mauth.db.dao.group.GroupsDao
+import com.xinto.mauth.db.dao.group.entity.EntityGroup
 import com.xinto.mauth.db.dao.rtdata.RtdataDao
 import com.xinto.mauth.db.dao.rtdata.entity.EntityCountData
 
 @Database(
-    entities = [EntityAccount::class, EntityCountData::class],
-    version = 5,
+    entities = [EntityAccount::class, EntityCountData::class, EntityGroup::class],
+    version = 6,
     autoMigrations = [
         AutoMigration(
             from = 1,
@@ -29,6 +31,10 @@ import com.xinto.mauth.db.dao.rtdata.entity.EntityCountData
         AutoMigration(
             from = 4,
             to = 5
+        ),
+        AutoMigration(
+            from = 5,
+            to = 6
         )
     ]
 )
@@ -38,6 +44,8 @@ abstract class AccountDatabase : RoomDatabase() {
     abstract fun accountsDao(): AccountsDao
 
     abstract fun rtdataDao(): RtdataDao
+
+    abstract fun groupsDao(): GroupsDao
 
     companion object Migrations {
 

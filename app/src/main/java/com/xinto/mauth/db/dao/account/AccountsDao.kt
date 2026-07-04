@@ -26,4 +26,7 @@ interface AccountsDao {
     @Query("DELETE FROM accounts WHERE id in (:ids)")
     suspend fun delete(ids: Set<UUID>)
 
+    @Query("UPDATE accounts SET group_id = :groupId WHERE id in (:ids)")
+    suspend fun setGroup(ids: Set<UUID>, groupId: UUID?)
+
 }
