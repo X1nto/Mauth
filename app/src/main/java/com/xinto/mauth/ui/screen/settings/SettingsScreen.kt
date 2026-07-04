@@ -150,19 +150,6 @@ fun SettingsScreen(
                         )
                     }
                 )
-                SettingsSwitchItem(
-                    onCheckedChange = onLockOnResumeChange,
-                    checked = pinCode && lockOnResume,
-                    title = { Text(stringResource(R.string.settings_prefs_autolock)) },
-                    description = { Text(stringResource(R.string.settings_prefs_autolock_description)) },
-                    icon = {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_lock_reset),
-                            contentDescription = null
-                        )
-                    },
-                    enabled = pinCode
-                )
                 if (showBiometrics) {
                     SettingsSwitchItem(
                         onCheckedChange = onBiometricsChange,
@@ -177,6 +164,19 @@ fun SettingsScreen(
                         enabled = pinCode
                     )
                 }
+                SettingsSwitchItem(
+                    onCheckedChange = onLockOnResumeChange,
+                    checked = pinCode && lockOnResume,
+                    title = { Text(stringResource(R.string.settings_prefs_autolock)) },
+                    description = { Text(stringResource(R.string.settings_prefs_autolock_description)) },
+                    icon = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_lock_reset),
+                            contentDescription = null
+                        )
+                    },
+                    enabled = pinCode
+                )
             }
             itemGrouped(header = { Text(stringResource(R.string.settings_category_appearance)) }) {
                 SettingsNavigateItem(
