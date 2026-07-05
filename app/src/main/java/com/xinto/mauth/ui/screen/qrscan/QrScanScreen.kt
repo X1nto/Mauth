@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -73,9 +74,7 @@ fun QrScanScreen(
         onBack = onBack,
         onScan = viewModel::parseResult,
         permissionStatus = cameraPermission.status,
-        onRequestPermission = {
-            cameraPermission.launchPermissionRequest()
-        },
+        onRequestPermission = cameraPermission::launchPermissionRequest,
         batchData = batchData,
         scanError = scanError
     )
@@ -177,15 +176,22 @@ fun QrScanScreen(
             }
             is PermissionStatus.Denied -> {
                 Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .padding(bottom = 64.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
+                        modifier = Modifier.size(72.dp),
                         painter = painterResource(R.drawable.ic_error),
                         contentDescription = null
                     )
-                    Text(stringResource(R.string.qrscan_error))
+                    Text(
+                        text = stringResource(R.string.qrscan_error),
+                        style = MaterialTheme.typography.titleLarge
+                    )
                 }
             }
         }
