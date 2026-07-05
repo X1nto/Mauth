@@ -8,6 +8,11 @@ import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.toggleableState
+import androidx.compose.ui.state.ToggleableState
 
 @Composable
 fun SettingsSwitchItem(
@@ -21,7 +26,6 @@ fun SettingsSwitchItem(
     thumbContent: (@Composable () -> Unit)? = null,
     enabled: Boolean = true,
 ) {
-    // The row itself drives the toggle, so the switch is display-only to avoid a double toggle.
     val switch: @Composable () -> Unit = {
         Switch(
             checked = checked,
@@ -32,9 +36,11 @@ fun SettingsSwitchItem(
     }
     if (onCheckedChange != null) {
         SettingsItem(
-            checked = checked,
-            onCheckedChange = onCheckedChange,
-            modifier = modifier,
+            onClick = { onCheckedChange(!checked) },
+            modifier = modifier.semantics {
+                role = Role.Switch
+                toggleableState = ToggleableState(checked)
+            },
             shapes = shapes,
             icon = icon,
             description = description,
