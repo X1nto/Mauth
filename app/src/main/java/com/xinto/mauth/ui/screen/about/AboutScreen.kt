@@ -2,11 +2,13 @@ package com.xinto.mauth.ui.screen.about
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -57,8 +59,10 @@ fun AboutScreen(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
                 .padding(it)
+                .fillMaxWidth()
+                .wrapContentWidth()
+                .widthIn(max = 600.dp)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)

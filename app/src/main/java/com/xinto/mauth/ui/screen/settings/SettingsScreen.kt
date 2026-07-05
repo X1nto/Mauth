@@ -2,9 +2,13 @@ package com.xinto.mauth.ui.screen.settings
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,6 +24,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
@@ -124,12 +129,15 @@ fun SettingsScreen(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
                 .padding(it)
+                .fillMaxWidth()
+                .wrapContentWidth()
+                .widthIn(max = 600.dp)
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
                 .verticalScroll(rememberScrollState())
                 .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             SettingsGroup(header = { Text(stringResource(R.string.settings_category_security)) }) {
                 val count = if (showBiometrics) 4 else 3

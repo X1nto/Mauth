@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells.Fixed
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.AlertDialog
@@ -156,7 +157,8 @@ fun AccountScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .nestedScroll(scrollBehavior.nestedScrollConnection),
+            contentAlignment = Alignment.TopCenter
         ) {
             when (state) {
                 is AccountScreenState.Loading -> {
@@ -169,7 +171,9 @@ fun AccountScreen(
                 }
                 is AccountScreenState.Success -> {
                     LazyVerticalGrid(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .widthIn(max = 600.dp)
+                            .fillMaxSize(),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         contentPadding = PaddingValues(16.dp),
