@@ -238,7 +238,7 @@ fun HomeScreen(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun HomeScreen(
+fun HomeScreen(
     onAddAccountNavigate: (HomeAddAccountMenu) -> Unit,
     onMoreMenuNavigate: (HomeMoreMenu) -> Unit,
     onAccountSelect: (UUID) -> Unit,
