@@ -2,34 +2,17 @@
 
 package com.xinto.mauth.ui.screen.settings.component
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.takeOrElse
-
-// Needed to properly center trailing content
-@Composable
-private fun SettingsItemHeadline(
-    title: @Composable () -> Unit,
-    description: (@Composable () -> Unit)?,
-) {
-    Column {
-        title()
-        if (description != null) {
-            ProvideTextStyle(MaterialTheme.typography.bodyMedium) {
-                description()
-            }
-        }
-    }
-}
 
 @Composable
 fun SettingsItem(
@@ -47,9 +30,11 @@ fun SettingsItem(
         enabled = enabled,
         leadingContent = icon,
         trailingContent = trailing,
+        supportingContent = description,
         shapes = shapes,
         colors = colors,
-        content = { SettingsItemHeadline(title, description) },
+        verticalAlignment = Alignment.CenterVertically,
+        content = title,
     )
 }
 
@@ -71,37 +56,14 @@ fun SettingsItem(
         enabled = enabled,
         leadingContent = icon,
         trailingContent = trailing,
+        supportingContent = description,
         shapes = shapes,
         colors = colors,
-        content = { SettingsItemHeadline(title, description) },
+        verticalAlignment = Alignment.CenterVertically,
+        content = title,
     )
 }
 
-@Composable
-fun SettingsItem(
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-    title: @Composable () -> Unit,
-    modifier: Modifier = Modifier,
-    description: (@Composable () -> Unit)? = null,
-    trailing: (@Composable () -> Unit)? = null,
-    icon: (@Composable () -> Unit)? = null,
-    colors: ListItemColors = SettingsItemDefaults.colors(),
-    shapes: ListItemShapes = ListItemDefaults.shapes(),
-    enabled: Boolean = true,
-) {
-    ListItem(
-        checked = checked,
-        onCheckedChange = onCheckedChange,
-        modifier = modifier,
-        enabled = enabled,
-        leadingContent = icon,
-        trailingContent = trailing,
-        shapes = shapes,
-        colors = colors,
-        content = { SettingsItemHeadline(title, description) },
-    )
-}
 
 object SettingsItemDefaults {
 
