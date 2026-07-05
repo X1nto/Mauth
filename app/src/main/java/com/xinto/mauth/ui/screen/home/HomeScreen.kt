@@ -232,7 +232,13 @@ fun HomeScreen(
         activeGroup = activeGroup,
         onActiveGroupChange = viewModel::setActiveGroup,
         onCreateGroupClick = { showGroupCreateDialog = true },
-        onGroupSelectedClick = { showMoveSheet = true },
+        onGroupSelectedClick = {
+            if (groups.isEmpty()) {
+                showMoveCreateDialog = true
+            } else {
+                showMoveSheet = true
+            }
+        },
         searchAccounts = searchAccounts,
     )
 }
@@ -318,7 +324,7 @@ fun HomeScreen(
                         onCancelSelection = onCancelAccountSelection,
                         onDeleteSelected = { showDeleteDialog = true },
                         onExportSelected = onExportSelectedAccounts,
-                        canMoveToGroup = groups.isNotEmpty(),
+                        hasGroups = groups.isNotEmpty(),
                         onMoveToGroup = onGroupSelectedClick,
                         scrollBehavior = scrollBehavior,
                     )
@@ -729,7 +735,7 @@ private fun SelectionTopBar(
     onCancelSelection: () -> Unit,
     onDeleteSelected: () -> Unit,
     onExportSelected: () -> Unit,
-    canMoveToGroup: Boolean,
+    hasGroups: Boolean,
     onMoveToGroup: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
 ) {
@@ -744,28 +750,24 @@ private fun SelectionTopBar(
         },
         title = { Text(pluralStringResource(R.plurals.home_selection_count, selectedCount, selectedCount)) },
         actions = {
-            if (canMoveToGroup) {
-                val moveLabel = stringResource(R.string.home_move_title)
-                TooltipBox(
-                    modifier = Modifier,
-                    positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
-                    tooltip = { this.PlainTooltip { Text(text = moveLabel) } },
-                    state = rememberTooltipState(),
-                    content = {
-                        IconButton(onClick = onMoveToGroup) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_label),
-                                contentDescription = moveLabel,
-                            )
-                        }
-                    },
-                )
-            }
+            val moveLabel = stringResource(if (hasGroups) R.string.home_move_title else R.string.home_move_action_create)
+            TooltipBox(
+                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                tooltip = { PlainTooltip { Text(moveLabel) } },
+                state = rememberTooltipState(),
+                content = {
+                    IconButton(onClick = onMoveToGroup) {
+                        Icon(
+                            painter = painterResource(if (hasGroups) R.drawable.ic_label else R.drawable.ic_new_label),
+                            contentDescription = moveLabel,
+                        )
+                    }
+                },
+            )
             val deleteLabel = stringResource(R.string.home_selection_delete)
             TooltipBox(
-                modifier = Modifier,
                 positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
-                tooltip = { this.PlainTooltip { Text(text = deleteLabel) } },
+                tooltip = { PlainTooltip { Text(deleteLabel) } },
                 state = rememberTooltipState(),
                 content = {
                         IconButton(onClick = onDeleteSelected) {
@@ -778,9 +780,8 @@ private fun SelectionTopBar(
             )
             val exportLabel = stringResource(R.string.export_title)
             TooltipBox(
-                modifier = Modifier,
                 positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
-                tooltip = { this.PlainTooltip { Text(text = exportLabel) } },
+                tooltip = { PlainTooltip { Text(exportLabel) } },
                 state = rememberTooltipState(),
                 content = {
                     IconButton(onClick = onExportSelected) {
