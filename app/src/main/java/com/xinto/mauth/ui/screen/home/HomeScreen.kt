@@ -764,20 +764,6 @@ private fun SelectionTopBar(
                     }
                 },
             )
-            val deleteLabel = stringResource(R.string.home_selection_delete)
-            TooltipBox(
-                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
-                tooltip = { PlainTooltip { Text(deleteLabel) } },
-                state = rememberTooltipState(),
-                content = {
-                        IconButton(onClick = onDeleteSelected) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_delete_forever),
-                                contentDescription = deleteLabel,
-                            )
-                        }
-                    },
-            )
             val exportLabel = stringResource(R.string.export_title)
             TooltipBox(
                 positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
@@ -788,6 +774,23 @@ private fun SelectionTopBar(
                         Icon(
                             painter = painterResource(R.drawable.ic_export),
                             contentDescription = exportLabel,
+                        )
+                    }
+                },
+            )
+            // Destructive action last and error-tinted so it reads as dangerous and
+            // isn't sandwiched between the safe actions.
+            val deleteLabel = stringResource(R.string.home_selection_delete)
+            TooltipBox(
+                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                tooltip = { PlainTooltip { Text(deleteLabel) } },
+                state = rememberTooltipState(),
+                content = {
+                    IconButton(onClick = onDeleteSelected) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_delete_forever),
+                            contentDescription = deleteLabel,
+                            tint = MaterialTheme.colorScheme.error,
                         )
                     }
                 },
