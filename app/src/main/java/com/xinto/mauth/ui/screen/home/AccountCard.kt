@@ -6,6 +6,8 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -16,11 +18,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -28,6 +30,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Surface
@@ -36,6 +39,7 @@ import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -45,6 +49,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -55,6 +60,9 @@ import com.xinto.mauth.domain.otp.model.DomainOtpRealtimeData
 import com.xinto.mauth.ui.component.TwoPaneCard
 import com.xinto.mauth.ui.component.UriImage
 
+private enum class AccountCardTrailing { Edit, Checked, None }
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AccountCard(
     onClick: () -> Unit,
@@ -85,6 +93,7 @@ fun AccountCard(
                         Text(account.shortLabel, style = MaterialTheme.typography.titleLarge)
                     }
                 },
+                iconShape = if (account.icon != null) MaterialTheme.shapes.medium else MaterialShapes.Clover4Leaf.toShape(),
                 name = {
                     Text(
                         text = account.label,
@@ -98,35 +107,56 @@ fun AccountCard(
                     }
                 },
                 trailing = {
-                    if (selected) {
-                        Box(
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.primary)
-                                .padding(4.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_check),
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onPrimary
-                            )
-                        }
-                    } else {
-                        val editLabel = stringResource(R.string.home_action_edit)
-                        TooltipBox(
-                            modifier = Modifier,
-                            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
-                            tooltip = { this.PlainTooltip { Text(text = editLabel) } },
-                            state = rememberTooltipState(),
-                            content = {
-                                IconButton(onClick = onEdit) {
+                    val target = when {
+                        !selectionActive -> AccountCardTrailing.Edit
+                        selected -> AccountCardTrailing.Checked
+                        else -> AccountCardTrailing.None
+                    }
+                    val spatial = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
+                    AnimatedContent(
+                        targetState = target,
+                        transitionSpec = {
+                            scaleIn(spatial) + fadeIn() togetherWith scaleOut(spatial) + fadeOut()
+                        },
+                        contentAlignment = Alignment.Center,
+                        label = "AccountCardTrailing",
+                    ) { trailingState ->
+                        when (trailingState) {
+                            AccountCardTrailing.Edit -> {
+                                val editLabel = stringResource(R.string.home_action_edit)
+                                TooltipBox(
+                                    modifier = Modifier,
+                                    positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                                    tooltip = { this.PlainTooltip { Text(text = editLabel) } },
+                                    state = rememberTooltipState(),
+                                    content = {
+                                        IconButton(onClick = onEdit) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.ic_edit),
+                                                contentDescription = editLabel
+                                            )
+                                        }
+                                    },
+                                )
+                            }
+                            AccountCardTrailing.Checked -> {
+                                Surface(
+                                    modifier = Modifier.padding(end = 4.dp),
+                                    shape = MaterialShapes.Cookie9Sided.toShape(),
+                                    color = MaterialTheme.colorScheme.primary
+                                ) {
                                     Icon(
-                                        painter = painterResource(R.drawable.ic_edit),
-                                        contentDescription = editLabel
+                                        modifier = Modifier
+                                            .padding(4.dp)
+                                            .size(20.dp),
+                                        painter = painterResource(R.drawable.ic_check),
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onPrimary
                                     )
                                 }
-                            },
-                        )
+                            }
+                            AccountCardTrailing.None -> {}
+                        }
                     }
                 }
             )
@@ -275,6 +305,7 @@ private fun RealtimeInformation(
 @Composable
 private fun AccountInfo(
     icon: @Composable () -> Unit,
+    iconShape: Shape,
     name: @Composable () -> Unit,
     issuer: @Composable () -> Unit,
     trailing: @Composable () -> Unit,
@@ -286,7 +317,7 @@ private fun AccountInfo(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Surface(
-            shape = MaterialTheme.shapes.medium,
+            shape = iconShape,
             color = MaterialTheme.colorScheme.secondaryContainer
         ) {
             Box(
