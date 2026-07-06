@@ -124,9 +124,17 @@
     <string name="export_batch_hint">Scan this QR code using any Google Authenticator compatible app</string>
 
     <string name="about_title">About</string>
-    <string name="about_version">Version v%1$s</string>
     <string name="about_links_source">Source</string>
     <string name="about_links_feedback">Feedback</string>
+    <string name="about_info_version">Version</string>
+    <string name="about_info_version_description">v%1$s</string>
+    <string name="about_info_version_copied">Copied build info</string>
+    <string name="about_info_source">Installed from</string>
+    <string name="about_info_source_gplay">Google Play</string>
+    <string name="about_info_source_fdroid">F-Droid</string>
+    <string name="about_info_source_other">Other source</string>
+    <string name="about_info_privacy">Privacy policy</string>
+    <string name="about_info_license">License</string>
 
     <string name="groups_title">Groups</string>
     <string name="groups_state_empty">No groups yet</string>
