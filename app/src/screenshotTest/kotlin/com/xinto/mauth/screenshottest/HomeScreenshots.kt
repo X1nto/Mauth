@@ -43,6 +43,7 @@ class HomeScreenshots {
             onGroupSelectedClick = {},
             searchAccounts = persistentListOf(),
             modifier = Modifier.fillMaxSize(),
+            showScanButton = false
         )
     }
 
@@ -72,6 +73,7 @@ class HomeScreenshots {
             onGroupSelectedClick = {},
             searchAccounts = persistentListOf(),
             modifier = Modifier.fillMaxSize(),
+            showScanButton = false
         )
     }
 
@@ -101,6 +103,7 @@ class HomeScreenshots {
             onGroupSelectedClick = {},
             searchAccounts = persistentListOf(),
             modifier = Modifier.fillMaxSize(),
+            showScanButton = false
         )
     }
 
@@ -130,6 +133,7 @@ class HomeScreenshots {
             onGroupSelectedClick = {},
             searchAccounts = persistentListOf(),
             modifier = Modifier.fillMaxSize(),
+            showScanButton = false
         )
     }
 }
