@@ -18,9 +18,11 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -36,8 +38,9 @@ import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AppBarWithSearch
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.DropdownMenuPopup
 import androidx.compose.material3.ExpandedDockedSearchBar
 import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -55,27 +58,36 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.SearchBarValue
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.ToggleFloatingActionButton
 import androidx.compose.material3.ToggleFloatingActionButtonDefaults.animateIcon
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.material3.rememberSearchBarState
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -98,16 +110,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
+import com.xinto.mauth.core.otp.model.OtpDigest
 import com.xinto.mauth.core.settings.model.SortSetting
 import com.xinto.mauth.domain.account.model.DomainAccount
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.domain.group.model.DomainGroup
 import com.xinto.mauth.domain.group.model.GroupFilter
 import com.xinto.mauth.domain.otp.model.DomainOtpRealtimeData
+import com.xinto.mauth.ui.preview.PreviewAllConfigurations
 import com.xinto.mauth.ui.screen.groups.CreateGroupDialog
+import com.xinto.mauth.ui.theme.MauthTheme
 import com.xinto.mauth.ui.util.collectAsStateListWithLifecycle
 import com.xinto.mauth.ui.util.collectAsStateMapWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -122,7 +138,8 @@ fun HomeScreen(
     onExportNavigate: (accounts: List<UUID>) -> Unit,
     onAboutNavigate: () -> Unit,
     onAccountEdit: (UUID) -> Unit,
-    onManageGroups: () -> Unit
+    onManageGroups: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val viewModel: HomeViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -177,6 +194,7 @@ fun HomeScreen(
     }
 
     HomeScreen(
+        modifier = modifier,
         onAddAccountNavigate = {
             when (it) {
                 HomeAddAccountMenu.ScanQR -> onAddAccountViaScanning()
@@ -214,14 +232,20 @@ fun HomeScreen(
         activeGroup = activeGroup,
         onActiveGroupChange = viewModel::setActiveGroup,
         onCreateGroupClick = { showGroupCreateDialog = true },
-        onGroupSelectedClick = { showMoveSheet = true },
+        onGroupSelectedClick = {
+            if (groups.isEmpty()) {
+                showMoveCreateDialog = true
+            } else {
+                showMoveSheet = true
+            }
+        },
         searchAccounts = searchAccounts,
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun HomeScreen(
+fun HomeScreen(
     onAddAccountNavigate: (HomeAddAccountMenu) -> Unit,
     onMoreMenuNavigate: (HomeMoreMenu) -> Unit,
     onAccountSelect: (UUID) -> Unit,
@@ -241,7 +265,8 @@ private fun HomeScreen(
     onActiveGroupChange: (GroupFilter) -> Unit,
     onCreateGroupClick: () -> Unit,
     onGroupSelectedClick: () -> Unit,
-    searchAccounts: ImmutableList<DomainAccount>
+    searchAccounts: ImmutableList<DomainAccount>,
+    modifier: Modifier = Modifier
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
 
@@ -286,6 +311,7 @@ private fun HomeScreen(
         isFabMenuExpanded = false
     }
     Scaffold(
+        modifier = modifier,
         topBar = {
             AnimatedContent(
                 targetState = isSelectionActive,
@@ -298,12 +324,13 @@ private fun HomeScreen(
                         onCancelSelection = onCancelAccountSelection,
                         onDeleteSelected = { showDeleteDialog = true },
                         onExportSelected = onExportSelectedAccounts,
-                        canMoveToGroup = groups.isNotEmpty(),
+                        hasGroups = groups.isNotEmpty(),
                         onMoveToGroup = onGroupSelectedClick,
                         scrollBehavior = scrollBehavior,
                     )
                 } else {
                     AppBarWithSearch(
+                        modifier = Modifier.padding(top = 8.dp),
                         state = searchBarState,
                         inputField = searchInputField,
                         navigationIcon = if (!isExpandedWidth) null else { ->
@@ -320,6 +347,9 @@ private fun HomeScreen(
         },
         floatingActionButton = {
             AnimatedVisibility(
+                // FloatingActionButtonMenu and Scaffold both add FAB paddings.
+                // This offsets one of them.
+                modifier = Modifier.offset(x = 16.dp, y = 16.dp),
                 visible = !isSelectionActive,
                 enter = scaleIn() + fadeIn(),
                 exit = scaleOut() + fadeOut()
@@ -409,6 +439,7 @@ private fun HomeScreen(
                                     account = account,
                                     realtimeData = realtimeData,
                                     selected = selectedAccounts.contains(account.id),
+                                    selectionActive = selectedAccounts.isNotEmpty(),
                                     colors = CardDefaults.elevatedCardColors(),
                                     elevation = CardDefaults.elevatedCardElevation()
                                 )
@@ -520,77 +551,123 @@ private fun SearchInputField(
 private fun SortAction(
     activeSortSetting: SortSetting,
     onActiveSortChange: (SortSetting) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     var isSortVisible by remember { mutableStateOf(false) }
-    IconButton(onClick = { isSortVisible = true }) {
-        Icon(
-            painter = painterResource(R.drawable.ic_sort),
-            contentDescription = null,
-        )
-        DropdownMenu(
-            expanded = isSortVisible,
-            onDismissRequest = { isSortVisible = false },
-        ) {
-            SortSetting.entries.forEach { sortSetting ->
-                DropdownMenuItem(
-                    onClick = {
-                        isSortVisible = false
-                        onActiveSortChange(sortSetting)
-                    },
-                    text = {
-                        val resource = when (sortSetting) {
-                            SortSetting.DateAsc -> R.string.home_sort_date_ascending
-                            SortSetting.DateDesc -> R.string.home_sort_date_descending
-                            SortSetting.LabelAsc -> R.string.home_sort_label_ascending
-                            SortSetting.LabelDesc -> R.string.home_sort_label_descending
-                            SortSetting.IssuerAsc -> R.string.home_sort_issuer_ascending
-                            SortSetting.IssuerDesc -> R.string.home_sort_issuer_descending
-                        }
-                        Text(stringResource(resource))
-                    },
-                    trailingIcon = {
-                        if (activeSortSetting == sortSetting) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_check),
-                                contentDescription = null,
+    val sortLabel = stringResource(R.string.home_sort_title)
+    TooltipBox(
+        modifier = modifier,
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+        tooltip = { PlainTooltip { Text(text = sortLabel) } },
+        state = rememberTooltipState(),
+        content = {
+            IconButton(onClick = { isSortVisible = true }) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_sort),
+                    contentDescription = sortLabel,
+                )
+                DropdownMenuPopup(
+                    expanded = isSortVisible,
+                    onDismissRequest = { isSortVisible = false },
+                ) {
+                    DropdownMenuGroup(shapes = MenuDefaults.groupShapes()) {
+                        SortSetting.entries.forEachIndexed { index, sortSetting ->
+                            DropdownMenuItem(
+                                selected = activeSortSetting == sortSetting,
+                                onClick = {
+                                    isSortVisible = false
+                                    onActiveSortChange(sortSetting)
+                                },
+                                text = {
+                                    val resource = when (sortSetting) {
+                                        SortSetting.DateAsc -> R.string.home_sort_date_ascending
+                                        SortSetting.DateDesc -> R.string.home_sort_date_descending
+                                        SortSetting.LabelAsc -> R.string.home_sort_label_ascending
+                                        SortSetting.LabelDesc -> R.string.home_sort_label_descending
+                                        SortSetting.IssuerAsc -> R.string.home_sort_issuer_ascending
+                                        SortSetting.IssuerDesc -> R.string.home_sort_issuer_descending
+                                    }
+                                    Text(stringResource(resource))
+                                },
+                                selectedLeadingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_check),
+                                        contentDescription = null
+                                    )
+                                },
+                                shapes = MenuDefaults.itemShape(
+                                    index = index,
+                                    count = SortSetting.entries.size
+                                ),
                             )
                         }
-                    },
-                )
+                    }
+                }
             }
-        }
-    }
+        },
+    )
 }
 
 @Composable
-private fun MoreAction(onMenuNavigate: (HomeMoreMenu) -> Unit) {
+private fun MoreAction(
+    onMenuNavigate: (HomeMoreMenu) -> Unit,
+    modifier: Modifier = Modifier
+) {
     var isMoreVisible by remember { mutableStateOf(false) }
-    IconButton(onClick = { isMoreVisible = true }) {
-        Icon(
-            painter = painterResource(R.drawable.ic_more_vert),
-            contentDescription = null,
-        )
-        DropdownMenu(
-            expanded = isMoreVisible,
-            onDismissRequest = { isMoreVisible = false },
-        ) {
-            HomeMoreMenu.entries.forEach { menu ->
-                DropdownMenuItem(
-                    text = { Text(stringResource(menu.title)) },
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(menu.icon),
-                            contentDescription = null,
-                        )
-                    },
-                    onClick = {
-                        isMoreVisible = false
-                        onMenuNavigate(menu)
-                    },
+    val moreLabel = stringResource(R.string.home_more_options)
+    TooltipBox(
+        modifier = modifier,
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+        tooltip = { PlainTooltip { Text(text = moreLabel) } },
+        state = rememberTooltipState(),
+        content = {
+            IconButton(onClick = { isMoreVisible = true }) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_more_vert),
+                    contentDescription = moreLabel,
                 )
+                DropdownMenuPopup(
+                    expanded = isMoreVisible,
+                    onDismissRequest = { isMoreVisible = false },
+                ) {
+                    val groupedActions = HomeMoreMenu.entries
+                        .partition { it != HomeMoreMenu.Settings && it != HomeMoreMenu.About }
+                        .toList()
+
+                    groupedActions.forEachIndexed { groupIndex, actions ->
+                        DropdownMenuGroup(
+                            shapes = MenuDefaults.groupShape(
+                                index = groupIndex,
+                                count = groupedActions.size
+                            )
+                        ) {
+                            actions.forEachIndexed { actionIndex, action ->
+                                DropdownMenuItem(
+                                    onClick = {
+                                        isMoreVisible = false
+                                        onMenuNavigate(action)
+                                    },
+                                    text = { Text(stringResource(action.title)) },
+                                    shape = MenuDefaults.itemShape(
+                                        index = actionIndex,
+                                        count = actions.size
+                                    ).shape,
+                                    leadingIcon = {
+                                        Icon(
+                                            modifier = Modifier.size(MenuDefaults.LeadingIconSize),
+                                            painter = painterResource(action.icon),
+                                            contentDescription = null,
+                                        )
+                                    },
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(MenuDefaults.GroupSpacing))
+                    }
+                }
             }
-        }
-    }
+        },
+    )
 }
 
 @Composable
@@ -629,6 +706,7 @@ private fun ColumnScope.SearchResults(
                         account = account,
                         realtimeData = realtimeData,
                         selected = selectedAccounts.contains(account.id),
+                        selectionActive = selectedAccounts.isNotEmpty(),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
                     )
                 }
@@ -657,7 +735,7 @@ private fun SelectionTopBar(
     onCancelSelection: () -> Unit,
     onDeleteSelected: () -> Unit,
     onExportSelected: () -> Unit,
-    canMoveToGroup: Boolean,
+    hasGroups: Boolean,
     onMoveToGroup: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
 ) {
@@ -672,26 +750,51 @@ private fun SelectionTopBar(
         },
         title = { Text(pluralStringResource(R.plurals.home_selection_count, selectedCount, selectedCount)) },
         actions = {
-            if (canMoveToGroup) {
-                IconButton(onClick = onMoveToGroup) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_label),
-                        contentDescription = stringResource(R.string.home_move_title),
-                    )
-                }
-            }
-            IconButton(onClick = onDeleteSelected) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_delete_forever),
-                    contentDescription = null,
-                )
-            }
-            IconButton(onClick = onExportSelected) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_export),
-                    contentDescription = null,
-                )
-            }
+            val moveLabel = stringResource(if (hasGroups) R.string.home_move_title else R.string.home_move_action_create)
+            TooltipBox(
+                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                tooltip = { PlainTooltip { Text(moveLabel) } },
+                state = rememberTooltipState(),
+                content = {
+                    IconButton(onClick = onMoveToGroup) {
+                        Icon(
+                            painter = painterResource(if (hasGroups) R.drawable.ic_label else R.drawable.ic_new_label),
+                            contentDescription = moveLabel,
+                        )
+                    }
+                },
+            )
+            val exportLabel = stringResource(R.string.export_title)
+            TooltipBox(
+                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                tooltip = { PlainTooltip { Text(exportLabel) } },
+                state = rememberTooltipState(),
+                content = {
+                    IconButton(onClick = onExportSelected) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_export),
+                            contentDescription = exportLabel,
+                        )
+                    }
+                },
+            )
+            // Destructive action last and error-tinted so it reads as dangerous and
+            // isn't sandwiched between the safe actions.
+            val deleteLabel = stringResource(R.string.home_selection_delete)
+            TooltipBox(
+                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                tooltip = { PlainTooltip { Text(deleteLabel) } },
+                state = rememberTooltipState(),
+                content = {
+                    IconButton(onClick = onDeleteSelected) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_delete_forever),
+                            contentDescription = deleteLabel,
+                            tint = MaterialTheme.colorScheme.error,
+                        )
+                    }
+                },
+            )
         },
         scrollBehavior = scrollBehavior,
     )
@@ -769,17 +872,26 @@ private fun GroupFilterRow(
             )
         }
         item(key = "add") {
-            FilledIconButton(
-                modifier = Modifier.size(IconButtonDefaults.extraSmallContainerSize(widthOption = IconButtonDefaults.IconButtonWidthOption.Wide)),
-                onClick = onAddGroup,
-                shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.extraSmallSquareShape)
-            ) {
-                Icon(
-                    modifier = Modifier.size(IconButtonDefaults.extraSmallIconSize),
-                    painter = painterResource(R.drawable.ic_new_label),
-                    contentDescription = stringResource(R.string.home_groups_action_add),
-                )
-            }
+            val addGroupLabel = stringResource(R.string.groups_action_add_group)
+            TooltipBox(
+                modifier = Modifier,
+                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                tooltip = { this.PlainTooltip { Text(text = addGroupLabel) } },
+                state = rememberTooltipState(),
+                content = {
+                    FilledIconButton(
+                        modifier = Modifier.size(IconButtonDefaults.extraSmallContainerSize(widthOption = IconButtonDefaults.IconButtonWidthOption.Wide)),
+                        onClick = onAddGroup,
+                        shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.extraSmallSquareShape)
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(IconButtonDefaults.extraSmallIconSize),
+                            painter = painterResource(R.drawable.ic_new_label),
+                            contentDescription = addGroupLabel,
+                        )
+                    }
+                },
+            )
         }
     }
 }
@@ -951,4 +1063,287 @@ private fun DeleteDialog(
             }
         }
     )
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun HomeScreen_Loading_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            HomeScreen(
+                onAddAccountNavigate = {},
+                onMoreMenuNavigate = {},
+                onAccountSelect = {},
+                onCancelAccountSelection = {},
+                onDeleteSelectedAccounts = {},
+                onExportSelectedAccounts = {},
+                onAccountEdit = {},
+                onAccountCounterIncrease = {},
+                onAccountCopyCode = { _, _, _ -> },
+                state = HomeScreenState.Loading,
+                accountRealtimeData = remember { mutableStateMapOf<UUID, DomainOtpRealtimeData>() },
+                selectedAccounts = remember { mutableStateListOf<UUID>() },
+                activeSortSetting = SortSetting.entries.first(),
+                onActiveSortChange = {},
+                groups = persistentListOf(),
+                activeGroup = GroupFilter.All,
+                onActiveGroupChange = {},
+                onCreateGroupClick = {},
+                onGroupSelectedClick = {},
+                searchAccounts = persistentListOf(),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun HomeScreen_Empty_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            HomeScreen(
+                onAddAccountNavigate = {},
+                onMoreMenuNavigate = {},
+                onAccountSelect = {},
+                onCancelAccountSelection = {},
+                onDeleteSelectedAccounts = {},
+                onExportSelectedAccounts = {},
+                onAccountEdit = {},
+                onAccountCounterIncrease = {},
+                onAccountCopyCode = { _, _, _ -> },
+                state = HomeScreenState.Empty,
+                accountRealtimeData = remember { mutableStateMapOf<UUID, DomainOtpRealtimeData>() },
+                selectedAccounts = remember { mutableStateListOf<UUID>() },
+                activeSortSetting = SortSetting.entries.first(),
+                onActiveSortChange = {},
+                groups = persistentListOf(),
+                activeGroup = GroupFilter.All,
+                onActiveGroupChange = {},
+                onCreateGroupClick = {},
+                onGroupSelectedClick = {},
+                searchAccounts = persistentListOf(),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun HomeScreen_Success_Preview() {
+    val totp = DomainAccount.Totp(
+        id = UUID.fromString("00000000-0000-0000-0000-000000000001"),
+        icon = null,
+        secret = "JBSWY3DPEHPK3PXP",
+        label = "GitHub",
+        issuer = "github.com",
+        algorithm = OtpDigest.SHA1,
+        digits = 6,
+        createdMillis = 0L,
+        period = 30
+    )
+    val hotp = DomainAccount.Hotp(
+        id = UUID.fromString("00000000-0000-0000-0000-000000000002"),
+        icon = null,
+        secret = "JBSWY3DPEHPK3PXP",
+        label = "Amazon",
+        issuer = "amazon.com",
+        algorithm = OtpDigest.SHA1,
+        digits = 6,
+        createdMillis = 0L
+    )
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            HomeScreen(
+                onAddAccountNavigate = {},
+                onMoreMenuNavigate = {},
+                onAccountSelect = {},
+                onCancelAccountSelection = {},
+                onDeleteSelectedAccounts = {},
+                onExportSelectedAccounts = {},
+                onAccountEdit = {},
+                onAccountCounterIncrease = {},
+                onAccountCopyCode = { _, _, _ -> },
+                state = HomeScreenState.Success(persistentListOf(totp, hotp)),
+                accountRealtimeData = remember {
+                    mutableStateMapOf(
+                        totp.id to DomainOtpRealtimeData.Totp(code = "123456", progress = 0.6f, countdown = 18),
+                        hotp.id to DomainOtpRealtimeData.Hotp(code = "654321", count = 3)
+                    )
+                },
+                selectedAccounts = remember { mutableStateListOf<UUID>() },
+                activeSortSetting = SortSetting.entries.first(),
+                onActiveSortChange = {},
+                groups = persistentListOf(),
+                activeGroup = GroupFilter.All,
+                onActiveGroupChange = {},
+                onCreateGroupClick = {},
+                onGroupSelectedClick = {},
+                searchAccounts = persistentListOf(),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun HomeScreen_Selection_Preview() {
+    val totp = DomainAccount.Totp(
+        id = UUID.fromString("00000000-0000-0000-0000-000000000001"),
+        icon = null,
+        secret = "JBSWY3DPEHPK3PXP",
+        label = "GitHub",
+        issuer = "github.com",
+        algorithm = OtpDigest.SHA1,
+        digits = 6,
+        createdMillis = 0L,
+        period = 30
+    )
+    val hotp = DomainAccount.Hotp(
+        id = UUID.fromString("00000000-0000-0000-0000-000000000002"),
+        icon = null,
+        secret = "JBSWY3DPEHPK3PXP",
+        label = "Amazon",
+        issuer = "amazon.com",
+        algorithm = OtpDigest.SHA1,
+        digits = 6,
+        createdMillis = 0L
+    )
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            HomeScreen(
+                onAddAccountNavigate = {},
+                onMoreMenuNavigate = {},
+                onAccountSelect = {},
+                onCancelAccountSelection = {},
+                onDeleteSelectedAccounts = {},
+                onExportSelectedAccounts = {},
+                onAccountEdit = {},
+                onAccountCounterIncrease = {},
+                onAccountCopyCode = { _, _, _ -> },
+                state = HomeScreenState.Success(persistentListOf(totp, hotp)),
+                accountRealtimeData = remember {
+                    mutableStateMapOf(
+                        totp.id to DomainOtpRealtimeData.Totp(code = "123456", progress = 0.6f, countdown = 18),
+                        hotp.id to DomainOtpRealtimeData.Hotp(code = "654321", count = 3)
+                    )
+                },
+                selectedAccounts = remember { mutableStateListOf(totp.id) },
+                activeSortSetting = SortSetting.entries.first(),
+                onActiveSortChange = {},
+                groups = persistentListOf(),
+                activeGroup = GroupFilter.All,
+                onActiveGroupChange = {},
+                onCreateGroupClick = {},
+                onGroupSelectedClick = {},
+                searchAccounts = persistentListOf(),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun HomeScreen_Groups_Preview() {
+    val totp = DomainAccount.Totp(
+        id = UUID.fromString("00000000-0000-0000-0000-000000000001"),
+        icon = null,
+        secret = "JBSWY3DPEHPK3PXP",
+        label = "GitHub",
+        issuer = "github.com",
+        algorithm = OtpDigest.SHA1,
+        digits = 6,
+        createdMillis = 0L,
+        period = 30
+    )
+    val hotp = DomainAccount.Hotp(
+        id = UUID.fromString("00000000-0000-0000-0000-000000000002"),
+        icon = null,
+        secret = "JBSWY3DPEHPK3PXP",
+        label = "Amazon",
+        issuer = "amazon.com",
+        algorithm = OtpDigest.SHA1,
+        digits = 6,
+        createdMillis = 0L
+    )
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            HomeScreen(
+                onAddAccountNavigate = {},
+                onMoreMenuNavigate = {},
+                onAccountSelect = {},
+                onCancelAccountSelection = {},
+                onDeleteSelectedAccounts = {},
+                onExportSelectedAccounts = {},
+                onAccountEdit = {},
+                onAccountCounterIncrease = {},
+                onAccountCopyCode = { _, _, _ -> },
+                state = HomeScreenState.Success(persistentListOf(totp, hotp)),
+                accountRealtimeData = remember {
+                    mutableStateMapOf(
+                        totp.id to DomainOtpRealtimeData.Totp(code = "123456", progress = 0.6f, countdown = 18),
+                        hotp.id to DomainOtpRealtimeData.Hotp(code = "654321", count = 3)
+                    )
+                },
+                selectedAccounts = remember { mutableStateListOf<UUID>() },
+                activeSortSetting = SortSetting.entries.first(),
+                onActiveSortChange = {},
+                groups = persistentListOf(
+                    DomainGroup(
+                        id = UUID.fromString("00000000-0000-0000-0000-0000000000a1"),
+                        name = "Work",
+                        emoji = "💼",
+                        sortIndex = 0
+                    ),
+                    DomainGroup(
+                        id = UUID.fromString("00000000-0000-0000-0000-0000000000a2"),
+                        name = "Personal",
+                        emoji = null,
+                        sortIndex = 1
+                    )
+                ),
+                activeGroup = GroupFilter.All,
+                onActiveGroupChange = {},
+                onCreateGroupClick = {},
+                onGroupSelectedClick = {},
+                searchAccounts = persistentListOf(),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun HomeScreen_Error_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            HomeScreen(
+                onAddAccountNavigate = {},
+                onMoreMenuNavigate = {},
+                onAccountSelect = {},
+                onCancelAccountSelection = {},
+                onDeleteSelectedAccounts = {},
+                onExportSelectedAccounts = {},
+                onAccountEdit = {},
+                onAccountCounterIncrease = {},
+                onAccountCopyCode = { _, _, _ -> },
+                state = HomeScreenState.Error("Something went wrong"),
+                accountRealtimeData = remember { mutableStateMapOf<UUID, DomainOtpRealtimeData>() },
+                selectedAccounts = remember { mutableStateListOf<UUID>() },
+                activeSortSetting = SortSetting.entries.first(),
+                onActiveSortChange = {},
+                groups = persistentListOf(),
+                activeGroup = GroupFilter.All,
+                onActiveGroupChange = {},
+                onCreateGroupClick = {},
+                onGroupSelectedClick = {},
+                searchAccounts = persistentListOf(),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
 }

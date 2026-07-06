@@ -1,13 +1,10 @@
 package com.xinto.mauth.ui.screen.auth
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.xinto.mauth.domain.AuthRepository
 import com.xinto.mauth.domain.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
 class AuthViewModel(
@@ -19,11 +16,6 @@ class AuthViewModel(
     val code = _code.asStateFlow()
 
     val useBiometrics = settingsRepository.getUseBiometrics()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = false
-        )
 
     fun insertNumber(number: Char) {
         _code.update { it + number }

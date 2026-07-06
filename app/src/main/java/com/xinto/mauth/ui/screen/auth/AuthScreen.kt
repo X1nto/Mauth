@@ -1,10 +1,13 @@
 package com.xinto.mauth.ui.screen.auth
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -21,6 +24,8 @@ import com.xinto.mauth.ui.component.pinboard.PinScaffold
 import com.xinto.mauth.ui.component.pinboard.rememberPinBoardState
 import com.xinto.mauth.ui.component.rememberBiometricHandler
 import com.xinto.mauth.ui.component.rememberBiometricPromptData
+import com.xinto.mauth.ui.preview.PreviewAllConfigurations
+import com.xinto.mauth.ui.theme.MauthTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -123,4 +128,80 @@ fun AuthScreen(
         codeLength = code.length,
         state = pinBoardState
     )
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun AuthScreen_Empty_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            AuthScreen(
+                modifier = Modifier.fillMaxSize(),
+                code = "",
+                onNumberAdd = {},
+                onNumberDelete = {},
+                onClear = {},
+                showFingerprint = false,
+                onFingerprintClick = {},
+                onBackPress = null
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun AuthScreen_Fingerprint_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            AuthScreen(
+                modifier = Modifier.fillMaxSize(),
+                code = "",
+                onNumberAdd = {},
+                onNumberDelete = {},
+                onClear = {},
+                showFingerprint = true,
+                onFingerprintClick = {},
+                onBackPress = null
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun AuthScreen_PartialCode_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            AuthScreen(
+                modifier = Modifier.fillMaxSize(),
+                code = "123",
+                onNumberAdd = {},
+                onNumberDelete = {},
+                onClear = {},
+                showFingerprint = true,
+                onFingerprintClick = {},
+                onBackPress = null
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun AuthScreen_WithBackButton_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            AuthScreen(
+                modifier = Modifier.fillMaxSize(),
+                code = "12",
+                onNumberAdd = {},
+                onNumberDelete = {},
+                onClear = {},
+                showFingerprint = false,
+                onFingerprintClick = {},
+                onBackPress = {}
+            )
+        }
+    }
 }

@@ -19,21 +19,31 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.DropdownMenuPopup
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -58,12 +68,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
+import com.xinto.mauth.core.otp.model.OtpDigest
 import com.xinto.mauth.domain.account.model.DomainAccount
 import com.xinto.mauth.domain.group.model.DomainGroup
 import com.xinto.mauth.ui.component.UriImage
 import com.xinto.mauth.ui.component.lazygroup.GroupedItemType
-import com.xinto.mauth.ui.component.lazygroup.GroupedListItem
+import com.xinto.mauth.ui.preview.PreviewAllConfigurations
+import com.xinto.mauth.ui.theme.MauthTheme
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.delay
@@ -75,22 +88,51 @@ import java.util.UUID
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GroupsScreen(
     onBack: () -> Unit,
-    onAddAccount: (groupId: UUID?) -> Unit
+    onAddAccount: (groupId: UUID?) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val viewModel: GroupsViewModel = koinViewModel()
     val model by viewModel.uiModel.collectAsStateWithLifecycle()
 
+    GroupsScreen(
+        state = model,
+        onBack = onBack,
+        onAddAccount = onAddAccount,
+        onMoveAccountToGroup = viewModel::moveAccountToGroup,
+        onReorderGroups = viewModel::reorderGroups,
+        onMoveGroupUp = viewModel::moveUp,
+        onMoveGroupDown = viewModel::moveDown,
+        onCreateGroup = viewModel::createGroup,
+        onUpdateGroup = viewModel::updateGroup,
+        onDeleteGroup = viewModel::deleteGroup,
+        modifier = modifier
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun GroupsScreen(
+    state: GroupsState,
+    onBack: () -> Unit,
+    onAddAccount: (groupId: UUID?) -> Unit,
+    onMoveAccountToGroup: (accountId: UUID, groupId: UUID?) -> Unit,
+    onReorderGroups: (orderedIds: List<UUID>) -> Unit,
+    onMoveGroupUp: (UUID) -> Unit,
+    onMoveGroupDown: (UUID) -> Unit,
+    onCreateGroup: (name: String, emoji: String?) -> Unit,
+    onUpdateGroup: (id: UUID, name: String, emoji: String?) -> Unit,
+    onDeleteGroup: (id: UUID) -> Unit,
+    modifier: Modifier = Modifier
+) {
     var showCreateDialog by remember { mutableStateOf(false) }
     var renameTarget by remember { mutableStateOf<DomainGroup?>(null) }
     var deleteTarget by remember { mutableStateOf<DomainGroup?>(null) }
 
-    val isEmpty = model.isEmpty
-
     Scaffold(
+        modifier = modifier,
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.groups_title)) },
@@ -117,7 +159,7 @@ fun GroupsScreen(
             )
         }
     ) { innerPadding ->
-        if (isEmpty) {
+        if (state.isEmpty) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -135,12 +177,12 @@ fun GroupsScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
-                model = model,
+                model = state,
                 onAddAccount = onAddAccount,
-                onMoveAccountToGroup = viewModel::moveAccountToGroup,
-                onReorderGroups = viewModel::reorderGroups,
-                onMoveGroupUp = viewModel::moveUp,
-                onMoveGroupDown = viewModel::moveDown,
+                onMoveAccountToGroup = onMoveAccountToGroup,
+                onReorderGroups = onReorderGroups,
+                onMoveGroupUp = onMoveGroupUp,
+                onMoveGroupDown = onMoveGroupDown,
                 onRename = { renameTarget = it },
                 onDelete = { deleteTarget = it }
             )
@@ -149,9 +191,9 @@ fun GroupsScreen(
 
     if (showCreateDialog) {
         CreateGroupDialog(
-            isNameTaken = { candidate -> model.groupSections.any { it.group.name.equals(candidate, ignoreCase = true) } },
+            isNameTaken = { candidate -> state.groupSections.any { it.group.name.equals(candidate, ignoreCase = true) } },
             onConfirm = { name, emoji ->
-                viewModel.createGroup(name, emoji)
+                onCreateGroup(name, emoji)
                 showCreateDialog = false
             },
             onDismissRequest = { showCreateDialog = false }
@@ -163,12 +205,12 @@ fun GroupsScreen(
             initialName = renameTarget!!.name,
             initialEmoji = renameTarget!!.emoji,
             isNameTaken = { candidate ->
-                model.groupSections.any {
+                state.groupSections.any {
                     it.group.id != renameTarget!!.id && it.group.name.equals(candidate, ignoreCase = true)
                 }
             },
             onConfirm = { name, emoji ->
-                viewModel.updateGroup(renameTarget!!.id, name, emoji)
+                onUpdateGroup(renameTarget!!.id, name, emoji)
                 renameTarget = null
             },
             onDismissRequest = { renameTarget = null }
@@ -188,7 +230,7 @@ fun GroupsScreen(
             confirmButton = {
                 FilledTonalButton(
                     onClick = {
-                        viewModel.deleteGroup(deleteTarget!!.id)
+                        onDeleteGroup(deleteTarget!!.id)
                         deleteTarget = null
                     }
                 ) {
@@ -429,30 +471,57 @@ private fun ReorderableCollectionItemScope.GroupHeaderRow(
             )
         }
         Box {
-            IconButton(onClick = { menuOpen = true }) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_more_vert),
-                    contentDescription = null
-                )
-            }
-            DropdownMenu(
+            val moreLabel = stringResource(R.string.groups_action_more)
+            TooltipBox(
+                modifier = Modifier,
+                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                tooltip = { this.PlainTooltip { Text(text = moreLabel) } },
+                state = rememberTooltipState(),
+                content = {
+                    IconButton(onClick = { menuOpen = true }) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_more_vert),
+                            contentDescription = moreLabel
+                        )
+                    }
+                },
+            )
+            DropdownMenuPopup(
                 expanded = menuOpen,
                 onDismissRequest = { menuOpen = false }
             ) {
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.groups_action_rename)) },
-                    onClick = {
-                        menuOpen = false
-                        onRename()
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.groups_action_delete)) },
-                    onClick = {
-                        menuOpen = false
-                        onDelete()
-                    }
-                )
+                DropdownMenuGroup(shapes = MenuDefaults.groupShapes()) {
+                    DropdownMenuItem(
+                        onClick = {
+                            menuOpen = false
+                            onRename()
+                        },
+                        text = { Text(stringResource(R.string.groups_action_rename)) },
+                        shape = MenuDefaults.itemShape(index = 0, count = 2).shape,
+                        leadingIcon = {
+                            Icon(
+                                modifier = Modifier.size(MenuDefaults.LeadingIconSize),
+                                painter = painterResource(R.drawable.ic_edit),
+                                contentDescription = null
+                            )
+                        }
+                    )
+                    DropdownMenuItem(
+                        onClick = {
+                            menuOpen = false
+                            onDelete()
+                        },
+                        text = { Text(stringResource(R.string.groups_action_delete)) },
+                        shape = MenuDefaults.itemShape(index = 1, count = 2).shape,
+                        leadingIcon = {
+                            Icon(
+                                modifier = Modifier.size(MenuDefaults.LeadingIconSize),
+                                painter = painterResource(R.drawable.ic_delete),
+                                contentDescription = null
+                            )
+                        }
+                    )
+                }
             }
         }
     }
@@ -493,6 +562,7 @@ private fun UngroupedHeaderRow(count: Int, isDropTarget: Boolean) {
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun AccountRowItem(
     account: DomainAccount,
@@ -533,8 +603,8 @@ private fun AccountRowItem(
                 dragHandler.isOver(groupId)
             }
         }
-        GroupedListItem(
-            type = type,
+        ListItem(
+            shapes = segmentedShapesFor(type),
             colors = ListItemDefaults.colors(
                 containerColor = if (isHighlighted) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceContainerLow
             ),
@@ -542,13 +612,6 @@ private fun AccountRowItem(
                 AccountAvatar(
                     account = account,
                     color = if (isHighlighted) MaterialTheme.colorScheme.surfaceContainer else MaterialTheme.colorScheme.secondaryContainer
-                )
-            },
-            headlineContent = {
-                Text(
-                    text = account.label,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
                 )
             },
             supportingContent = if (account.issuer.isEmpty()) null else { ->
@@ -559,16 +622,47 @@ private fun AccountRowItem(
                 )
             },
             trailingContent = {
-                Icon(
-                    modifier = Modifier
-                        .padding(vertical = 12.dp)
-                        .then(dragHandler.handleFor(account, groupId)),
-                    painter = painterResource(R.drawable.ic_drag_handle),
-                    contentDescription = stringResource(R.string.groups_action_move)
+                val moveLabel = stringResource(R.string.groups_action_move)
+                TooltipBox(
+                    modifier = Modifier,
+                    positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                    tooltip = { this.PlainTooltip { Text(text = moveLabel) } },
+                    state = rememberTooltipState(),
+                    content = {
+                        Icon(
+                            modifier = Modifier
+                                .padding(vertical = 12.dp)
+                                .then(dragHandler.handleFor(account, groupId)),
+                            painter = painterResource(R.drawable.ic_drag_handle),
+                            contentDescription = moveLabel
+                        )
+                    },
+                )
+            },
+            content = {
+                Text(
+                    text = account.label,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         )
     }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun segmentedShapesFor(type: GroupedItemType): ListItemShapes = when (type) {
+    GroupedItemType.Only -> {
+        ListItemDefaults.segmentedShapes(
+            index = 0,
+            count = 1,
+            defaultShapes = ListItemDefaults.shapes(MaterialTheme.shapes.large)
+        )
+    }
+    GroupedItemType.First -> ListItemDefaults.segmentedShapes(index = 0, count = 2)
+    GroupedItemType.Middle -> ListItemDefaults.segmentedShapes(index = 1, count = 3)
+    GroupedItemType.Last -> ListItemDefaults.segmentedShapes(index = 1, count = 2)
 }
 
 @Composable
@@ -683,6 +777,82 @@ private fun AddAccountRow(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun GroupsScreen_Empty_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            GroupsScreen(
+                state = GroupsState(persistentListOf()),
+                onBack = {},
+                onAddAccount = {},
+                onMoveAccountToGroup = { _, _ -> },
+                onReorderGroups = {},
+                onMoveGroupUp = {},
+                onMoveGroupDown = {},
+                onCreateGroup = { _, _ -> },
+                onUpdateGroup = { _, _, _ -> },
+                onDeleteGroup = {},
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun GroupsScreen_Populated_Preview() {
+    val totp = DomainAccount.Totp(
+        id = UUID.fromString("00000000-0000-0000-0000-000000000001"),
+        icon = null,
+        secret = "JBSWY3DPEHPK3PXP",
+        label = "GitHub",
+        issuer = "github.com",
+        algorithm = OtpDigest.SHA1,
+        digits = 6,
+        createdMillis = 0L,
+        period = 30
+    )
+    val hotp = DomainAccount.Hotp(
+        id = UUID.fromString("00000000-0000-0000-0000-000000000002"),
+        icon = null,
+        secret = "JBSWY3DPEHPK3PXP",
+        label = "Amazon",
+        issuer = "amazon.com",
+        algorithm = OtpDigest.SHA1,
+        digits = 6,
+        createdMillis = 0L
+    )
+    val group = DomainGroup(
+        id = UUID.fromString("00000000-0000-0000-0000-0000000000a1"),
+        name = "Work",
+        emoji = "💼",
+        sortIndex = 0
+    )
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            GroupsScreen(
+                state = GroupsState(
+                    persistentListOf(
+                        GroupSection.Grouped(group, persistentListOf(totp)),
+                        GroupSection.Ungrouped(persistentListOf(hotp))
+                    )
+                ),
+                onBack = {},
+                onAddAccount = {},
+                onMoveAccountToGroup = { _, _ -> },
+                onReorderGroups = {},
+                onMoveGroupUp = {},
+                onMoveGroupDown = {},
+                onCreateGroup = { _, _ -> },
+                onUpdateGroup = { _, _, _ -> },
+                onDeleteGroup = {},
+                modifier = Modifier.fillMaxSize()
+            )
         }
     }
 }

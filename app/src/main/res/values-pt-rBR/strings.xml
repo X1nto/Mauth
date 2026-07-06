@@ -28,7 +28,7 @@
     <string name="qrscan_error">Permissões insuficientes</string>
     <string name="account_title_add">Adicionar uma conta</string>
     <string name="account_title_edit">Editar uma conta</string>
-    <string name="account_actions_save">Salvar</string>
+    <string name="account_action_save">Salvar</string>
     <string name="account_data_label">Rótulo</string>
     <string name="account_data_issuer">Emissor</string>
     <string name="account_data_secret">Segredo</string>

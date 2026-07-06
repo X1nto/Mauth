@@ -106,11 +106,6 @@ class HomeViewModel(
         )
 
     val activeSortSetting = settings.getSortMode()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = SortSetting.DEFAULT
-        )
 
     fun copyCodeToClipboard(label: String, code: String, visible: Boolean) {
         val application = getApplication<Mauth>()

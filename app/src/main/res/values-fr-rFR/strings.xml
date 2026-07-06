@@ -34,7 +34,7 @@
     <string name="qrscan_error">Permissions insufisantes.</string>
     <string name="account_title_add">Ajouter un compte</string>
     <string name="account_title_edit">Editer un compte</string>
-    <string name="account_actions_save">Enregistrer</string>
+    <string name="account_action_save">Enregistrer</string>
     <string name="account_data_label">Nom</string>
     <string name="account_data_issuer">Publieur</string>
     <string name="account_data_secret">Secret</string>

@@ -7,14 +7,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells.Fixed
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LoadingIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -35,8 +39,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
 import com.xinto.mauth.R.drawable.ic_error
 import com.xinto.mauth.R.string.account_error
+import com.xinto.mauth.core.otp.model.OtpDigest
+import com.xinto.mauth.core.otp.model.OtpType
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.ui.component.form.form
+import com.xinto.mauth.ui.preview.PreviewAllConfigurations
+import com.xinto.mauth.ui.theme.MauthTheme
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import java.util.UUID
@@ -44,13 +53,15 @@ import java.util.UUID
 @Composable
 fun AddAccountScreen(
     prefilled: DomainAccountInfo,
-    onExit: () -> Unit
+    onExit: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val viewModel: AccountViewModel = koinViewModel {
         parametersOf(AccountViewModelParams.Prefilled(prefilled))
     }
     val state by viewModel.state.collectAsStateWithLifecycle()
     AccountScreen(
+        modifier = modifier,
         title = stringResource(R.string.account_title_add),
         state = state,
         onSave = {
@@ -67,13 +78,15 @@ fun AddAccountScreen(
 @Composable
 fun EditAccountScreen(
     id: UUID,
-    onExit: () -> Unit
+    onExit: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val viewModel: AccountViewModel = koinViewModel {
         parametersOf(AccountViewModelParams.Id(id))
     }
     val state by viewModel.state.collectAsStateWithLifecycle()
     AccountScreen(
+        modifier = modifier,
         title = stringResource(R.string.account_title_edit),
         state = state,
         onSave = {
@@ -87,13 +100,14 @@ fun EditAccountScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AccountScreen(
     title: String,
     state: AccountScreenState,
     onSave: () -> Unit,
     onExit: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var isExitDialogShown by remember { mutableStateOf(false) }
     val hasChanges by remember(state) {
@@ -110,6 +124,7 @@ fun AccountScreen(
     }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
+        modifier = modifier,
         topBar = {
             TopAppBar(
                 actions = {
@@ -117,7 +132,7 @@ fun AccountScreen(
                         onClick = onSave,
                         enabled = state is AccountScreenState.Success
                     ) {
-                        Text(stringResource(R.string.account_actions_save))
+                        Text(stringResource(R.string.account_action_save))
                     }
                 },
                 navigationIcon = {
@@ -143,7 +158,8 @@ fun AccountScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .nestedScroll(scrollBehavior.nestedScrollConnection),
+            contentAlignment = Alignment.TopCenter
         ) {
             when (state) {
                 is AccountScreenState.Loading -> {
@@ -151,12 +167,14 @@ fun AccountScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator()
+                        LoadingIndicator()
                     }
                 }
                 is AccountScreenState.Success -> {
                     LazyVerticalGrid(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .widthIn(max = 600.dp)
+                            .fillMaxSize(),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         contentPadding = PaddingValues(16.dp),
@@ -214,4 +232,72 @@ private fun AccountExitDialog(
             }
         }
     )
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun AccountScreen_Loading_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            AccountScreen(
+                modifier = Modifier.fillMaxSize(),
+                title = "Add account",
+                state = AccountScreenState.Loading,
+                onSave = {},
+                onExit = {}
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun AccountScreen_Success_Preview() {
+    val form = remember {
+        AccountForm(
+            initial = DomainAccountInfo(
+                id = UUID.fromString("00000000-0000-0000-0000-000000000001"),
+                icon = null,
+                label = "Google",
+                issuer = "google.com",
+                secret = "JBSWY3DPEHPK3PXP",
+                algorithm = OtpDigest.SHA1,
+                type = OtpType.TOTP,
+                digits = 6,
+                counter = 0,
+                period = 30,
+                groupId = null,
+                createdMillis = 0L
+            ),
+            groups = MutableStateFlow(emptyList()),
+            onCreateGroup = { _, _ -> UUID.randomUUID() }
+        )
+    }
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            AccountScreen(
+                modifier = Modifier.fillMaxSize(),
+                title = "Add account",
+                state = AccountScreenState.Success(form),
+                onSave = {},
+                onExit = {}
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun AccountScreen_Error_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            AccountScreen(
+                modifier = Modifier.fillMaxSize(),
+                title = "Edit account",
+                state = AccountScreenState.Error(error = "Failed to load account"),
+                onSave = {},
+                onExit = {}
+            )
+        }
+    }
 }

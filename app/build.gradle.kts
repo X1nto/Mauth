@@ -6,6 +6,8 @@ plugins {
     id("com.google.devtools.ksp")
     kotlin("plugin.compose")
     id("com.google.protobuf")
+    id("io.github.takahirom.roborazzi")
+    id("com.android.compose.screenshot")
 }
 
 android {
@@ -49,6 +51,9 @@ android {
         buildConfig = true
     }
 
+    @Suppress("UnstableApiUsage")
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -58,6 +63,17 @@ android {
     lint {
         disable += "MissingTranslation"
         disable += "ExtraTranslation"
+    }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+
+    sourceSets {
+        // Expose the exported Room schemas to instrumented tests (MigrationTestHelper).
+        getByName("androidTest").assets.srcDir("$projectDir/schemas")
     }
 }
 
@@ -106,18 +122,17 @@ protobuf {
 dependencies {
     implementation("androidx.core:core-ktx:1.19.0")
     implementation("androidx.core:core-splashscreen:1.2.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.11.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.11.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.11.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-navigation3:2.11.0")
     implementation("androidx.activity:activity-compose:1.13.0")
 
-    val composeBom = platform("androidx.compose:compose-bom-alpha:2026.06.00")
+    val composeBom = platform("androidx.compose:compose-bom-alpha:2026.06.01")
     implementation(composeBom)
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.material3:material3")
-    implementation("androidx.compose.material3:material3-window-size-class")
+    implementation("androidx.compose.material3.adaptive:adaptive")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    androidTestImplementation(composeBom)
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
@@ -131,6 +146,12 @@ dependencies {
     implementation("androidx.room:room-common:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
+    androidTestImplementation("androidx.room:room-testing:$roomVersion")
+
+    // Needed for room-testing
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core") {
+        version { strictly("1.8.1") }
+    }
 
     implementation("androidx.biometric:biometric:1.1.0")
     implementation("androidx.security:security-crypto-ktx:1.1.0")
@@ -145,7 +166,9 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.5.0")
 
-    implementation("dev.olshevski.navigation:reimagined:1.5.0")
+    val navigationVersion = "1.1.4"
+    implementation("androidx.navigation3:navigation3-runtime:$navigationVersion")
+    implementation("androidx.navigation3:navigation3-ui:$navigationVersion")
 
     implementation("commons-codec:commons-codec:1.22.0")
 
@@ -159,6 +182,19 @@ dependencies {
     implementation("com.google.accompanist:accompanist-permissions:$accompanistVersion")
 
     testImplementation("junit:junit:4.13.2")
+    androidTestImplementation(composeBom)
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
+
+    testImplementation(composeBom)
+    testImplementation("androidx.compose.ui:ui-test-junit4")
+    testImplementation("org.robolectric:robolectric:4.16.1")
+    testImplementation("io.github.takahirom.roborazzi:roborazzi:1.65.0")
+    testImplementation("io.github.takahirom.roborazzi:roborazzi-compose:1.65.0")
+    testImplementation("androidx.test.ext:junit:1.3.0")
+
+    screenshotTestImplementation(composeBom)
+    screenshotTestImplementation("androidx.compose.ui:ui-tooling")
+    screenshotTestImplementation("com.android.tools.screenshot:screenshot-validation-api:0.0.1-alpha15")
 }

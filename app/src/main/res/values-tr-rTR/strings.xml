@@ -18,7 +18,7 @@
     <string name="qrscan_permissions_button_cancel">İptal Et</string>
     <string name="account_title_add">Bir hesap ekle</string>
     <string name="account_title_edit">Bir hesabı düzenleyin</string>
-    <string name="account_actions_save">Kaydet</string>
+    <string name="account_action_save">Kaydet</string>
     <string name="account_data_label">Etiket</string>
     <string name="account_data_issuer">Issuer</string>
     <string name="account_data_secret">Secret</string>

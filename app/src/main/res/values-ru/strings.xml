@@ -33,7 +33,7 @@
     <string name="qrscan_error">Не хватает разрешений</string>
     <string name="account_title_add">Добавить учётную запись</string>
     <string name="account_title_edit">Изменить учётную запись</string>
-    <string name="account_actions_save">Сохранить</string>
+    <string name="account_action_save">Сохранить</string>
     <string name="account_data_label">Метка</string>
     <string name="account_data_issuer">Эмитент</string>
     <string name="account_data_secret">Секрет</string>

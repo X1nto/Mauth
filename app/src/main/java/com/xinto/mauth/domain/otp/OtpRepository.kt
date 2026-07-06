@@ -1,21 +1,22 @@
 package com.xinto.mauth.domain.otp
 
 import com.xinto.mauth.core.otp.generator.OtpGenerator
-import com.xinto.mauth.core.otp.model.OtpData
 import com.xinto.mauth.core.otp.model.OtpType
 import com.xinto.mauth.core.otp.parser.OtpUriParser
 import com.xinto.mauth.core.otp.parser.OtpUriParserResult
 import com.xinto.mauth.core.otp.transformer.KeyTransformer
 import com.xinto.mauth.db.dao.account.AccountsDao
 import com.xinto.mauth.db.dao.rtdata.RtdataDao
-import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.domain.otp.model.DomainOtpRealtimeData
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.transformLatest
-import java.util.*
+import java.util.UUID
+import kotlin.time.Duration.Companion.seconds
 
 class OtpRepository(
     private val accountsDao: AccountsDao,
@@ -32,46 +33,52 @@ class OtpRepository(
                 one.associateBy { it.id },
                 two.associateBy { it.accountId }
             )
-        }.transformLatest {(accounts, counters) ->
+        }.transformLatest { (accounts, counters) ->
+            val secretBytes = accounts.mapValues { (_, account) ->
+                otpKeyTransformer.transformToBytes(account.secret)
+            }
+
+            val (hotpAccounts, totpAccounts) = accounts.values.partition { it.type == OtpType.HOTP }
+
+            val hotpData = buildMap(hotpAccounts.size) {
+                for (account in hotpAccounts) {
+                    val count = counters[account.id]?.count ?: continue
+                    put(account.id, DomainOtpRealtimeData.Hotp(
+                        code = otpGenerator.generateHotp(
+                            secret = secretBytes[account.id]!!,
+                            counter = count.toLong(),
+                            digits = account.digits,
+                            digest = account.algorithm
+                        ),
+                        count = count
+                    ))
+                }
+            }
+
             while (true) {
-                val realtimeData = accounts.mapValues { (id, account) ->
-                    val bytes = otpKeyTransformer.transformToBytes(account.secret)
-                    when (account.type) {
-                        OtpType.HOTP -> {
-                            val count = counters[id]!!.count
-                            DomainOtpRealtimeData.Hotp(
-                                code = otpGenerator.generateHotp(
-                                    secret = bytes,
-                                    counter = count.toLong(),
-                                    digits = account.digits,
-                                    digest = account.algorithm
-                                ),
-                                count = count
-                            )
-                        }
-                        OtpType.TOTP -> {
-                            val seconds = System.currentTimeMillis() / 1000
-                            val diff = seconds % account.period
-                            val progress = 1f - (diff / account.period.toFloat())
-                            val countdown = account.period - diff
-                            DomainOtpRealtimeData.Totp(
-                                code = otpGenerator.generateTotp(
-                                    secret = bytes,
-                                    interval = account.period.toLong(),
-                                    seconds = seconds,
-                                    digits = account.digits,
-                                    digest = account.algorithm
-                                ),
-                                progress = progress,
-                                countdown = countdown.toInt()
-                            )
-                        }
+                val seconds = System.currentTimeMillis() / 1000
+                val data = buildMap(accounts.size) {
+                    putAll(hotpData)
+                    for (account in totpAccounts) {
+                        val period = account.period.coerceAtLeast(1)
+                        val diff = seconds % period
+                        put(account.id, DomainOtpRealtimeData.Totp(
+                            code = otpGenerator.generateTotp(
+                                secret = secretBytes[account.id]!!,
+                                interval = period.toLong(),
+                                seconds = seconds,
+                                digits = account.digits,
+                                digest = account.algorithm
+                            ),
+                            progress = 1f - (diff / period.toFloat()),
+                            countdown = (period - diff).toInt()
+                        ))
                     }
                 }
-                emit(realtimeData)
-                delay(1000)
+                emit(data)
+                delay(1.seconds)
             }
-        }
+        }.flowOn(Dispatchers.Default)
     }
 
     fun parseUri(uri: String): OtpUriParserResult {

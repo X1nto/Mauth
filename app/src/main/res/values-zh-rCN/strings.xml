@@ -33,7 +33,7 @@
     <string name="qrscan_error">未授予所需的权限</string>
     <string name="account_title_add">添加新账户</string>
     <string name="account_title_edit">编辑账户</string>
-    <string name="account_actions_save">保存</string>
+    <string name="account_action_save">保存</string>
     <string name="account_data_label">用户名</string>
     <string name="account_data_issuer">发行方</string>
     <string name="account_data_secret">密钥</string>

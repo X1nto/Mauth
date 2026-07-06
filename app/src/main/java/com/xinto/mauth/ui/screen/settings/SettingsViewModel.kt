@@ -14,20 +14,10 @@ class SettingsViewModel(
 ) : ViewModel() {
 
     val secureMode = settings.getSecureMode()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = false
-        )
+    val lockOnResume = settings.getLockOnResume()
+    val biometrics = settings.getUseBiometrics()
 
     val pinLock = authRepository.observeIsProtected()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = false
-        )
-
-    val biometrics = settings.getUseBiometrics()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -37,6 +27,12 @@ class SettingsViewModel(
     fun updateSecureMode(newSecureMode: Boolean) {
         viewModelScope.launch {
             settings.setSecureMode(newSecureMode)
+        }
+    }
+
+    fun updateLockOnResume(newLockOnResume: Boolean) {
+        viewModelScope.launch {
+            settings.setLockOnResume(newLockOnResume)
         }
     }
 

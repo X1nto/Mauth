@@ -5,25 +5,31 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
 import com.xinto.mauth.ui.component.pinboard.PinScaffold
 import com.xinto.mauth.ui.component.pinboard.rememberPinBoardState
+import com.xinto.mauth.ui.preview.PreviewAllConfigurations
+import com.xinto.mauth.ui.theme.MauthTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun PinSetupScreen(
-    onExit: () -> Unit
+    onExit: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val viewModel: PinSetupViewModel = koinViewModel()
     val code by viewModel.code.collectAsStateWithLifecycle()
@@ -35,6 +41,7 @@ fun PinSetupScreen(
         }
     })
     PinSetupScreen(
+        modifier = modifier,
         code = code,
         state = state,
         error = error,
@@ -54,7 +61,7 @@ fun PinSetupScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3WindowSizeClassApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PinSetupScreen(
     code: String,
@@ -65,8 +72,10 @@ fun PinSetupScreen(
     onNumberEnter: (Char) -> Unit,
     onNumberDelete: () -> Unit,
     onAllDelete: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     PinScaffold(
+        modifier = modifier,
         codeLength = code.length,
         error = error,
         topBar = {
@@ -105,4 +114,64 @@ fun PinSetupScreen(
             onBackspaceLongClick = onAllDelete
         )
     )
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun PinSetupScreen_Initial_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            PinSetupScreen(
+                modifier = Modifier.fillMaxSize(),
+                code = "12",
+                state = PinSetupScreenState.Initial,
+                error = false,
+                onNext = {},
+                onPrevious = {},
+                onNumberEnter = {},
+                onNumberDelete = {},
+                onAllDelete = {}
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun PinSetupScreen_Confirm_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            PinSetupScreen(
+                modifier = Modifier.fillMaxSize(),
+                code = "1234",
+                state = PinSetupScreenState.Confirm,
+                error = false,
+                onNext = {},
+                onPrevious = {},
+                onNumberEnter = {},
+                onNumberDelete = {},
+                onAllDelete = {}
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun PinSetupScreen_ConfirmError_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            PinSetupScreen(
+                modifier = Modifier.fillMaxSize(),
+                code = "1234",
+                state = PinSetupScreenState.Confirm,
+                error = true,
+                onNext = {},
+                onPrevious = {},
+                onNumberEnter = {},
+                onNumberDelete = {},
+                onAllDelete = {}
+            )
+        }
+    }
 }
