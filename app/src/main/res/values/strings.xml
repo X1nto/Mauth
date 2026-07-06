@@ -53,11 +53,14 @@
 
     <string name="qrscan_title">Scan a QR code</string>
     <string name="qrscan_permissions_title">Missing permissions</string>
-    <string name="qrscan_permissions_subtitle">Camera permission not granted.</string>
-    <string name="qrscan_permissions_subtitle_rationale">The camera permission is required for this app to scan and analyze the QR code, without it, Mauth cannot scan and import your accounts.</string>
+    <string name="qrscan_permissions_subtitle">Camera permission not granted</string>
+    <string name="qrscan_permissions_subtitle_rationale">The camera permission is required for Mauth to scan and import your accounts</string>
+    <string name="qrscan_permissions_subtitle_permanent">Camera permission was permanently denied. Grant it via the system app settings to continue</string>
     <string name="qrscan_permissions_button_grant">Grant</string>
+    <string name="qrscan_permissions_button_settings">Open settings</string>
     <string name="qrscan_permissions_button_cancel">Cancel</string>
     <string name="qrscan_error">Insufficient permissions</string>
+    <string name="qrscan_camera_unavailable">Camera unavailable</string>
     <string name="qrscan_error_batch">Scanned QR code does not match previous.</string>
     <string name="qrscan_error_order">Scan QR codes in the correct order.</string>
     <string name="qrscan_info_batch">Scanned %1$d out of %2$d</string>

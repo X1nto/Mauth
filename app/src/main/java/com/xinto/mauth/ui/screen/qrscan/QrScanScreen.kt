@@ -1,14 +1,20 @@
 package com.xinto.mauth.ui.screen.qrscan
 
 import android.Manifest
+import android.content.Intent
+import android.net.Uri.fromParts
+import android.provider.Settings
 import androidx.camera.core.ImageAnalysis
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +39,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -41,9 +49,6 @@ import com.xinto.mauth.R
 import com.xinto.mauth.core.camera.QrCodeAnalyzer
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
-import com.xinto.mauth.ui.screen.qrscan.component.QrScanCamera
-import com.xinto.mauth.ui.screen.qrscan.component.QrScanPermissionDeniedDialog
-import com.xinto.mauth.ui.screen.qrscan.component.rememberCameraState
 import com.xinto.mauth.ui.theme.MauthTheme
 import org.koin.androidx.compose.koinViewModel
 import java.util.concurrent.Executors
@@ -55,7 +60,9 @@ fun QrScanScreen(
     onScan: (DomainAccountInfo) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val cameraPermission = rememberPermissionState(Manifest.permission.CAMERA)
+    var permissionRequested by rememberSaveable { mutableStateOf(false) }
     val viewModel: QrScanViewModel = koinViewModel()
     val batchData by viewModel.batchData.collectAsStateWithLifecycle()
     val scanError by viewModel.scanError.collectAsStateWithLifecycle()
@@ -73,7 +80,18 @@ fun QrScanScreen(
         onBack = onBack,
         onScan = viewModel::parseResult,
         permissionStatus = cameraPermission.status,
-        onRequestPermission = cameraPermission::launchPermissionRequest,
+        permissionRequested = permissionRequested,
+        onRequestPermission = {
+            permissionRequested = true
+            cameraPermission.launchPermissionRequest()
+        },
+        onOpenAppSettings = {
+            val intent = Intent(
+                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                fromParts("package", context.packageName, null)
+            )
+            context.startActivity(intent)
+        },
         batchData = batchData,
         scanError = scanError
     )
@@ -85,26 +103,18 @@ fun QrScanScreen(
     onBack: () -> Unit,
     onScan: (com.google.zxing.Result) -> Unit,
     permissionStatus: PermissionStatus,
+    permissionRequested: Boolean,
     onRequestPermission: () -> Unit,
+    onOpenAppSettings: () -> Unit,
     batchData: BatchData,
     scanError: ScanError?,
     modifier: Modifier = Modifier
 ) {
-    var showPermissionDeniedDialog by remember { mutableStateOf(false) }
-    var showPermissionDeniedDialogRationale by remember { mutableStateOf(false) }
-    LaunchedEffect(permissionStatus) {
-        if (permissionStatus is PermissionStatus.Denied) {
-            showPermissionDeniedDialog = true
-            showPermissionDeniedDialogRationale = permissionStatus.shouldShowRationale
-        }
-    }
     Scaffold(
         modifier = modifier,
         topBar = {
             LargeTopAppBar(
-                title = {
-                    Text(stringResource(R.string.qrscan_title))
-                },
+                title = { Text(stringResource(R.string.qrscan_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -173,10 +183,12 @@ fun QrScanScreen(
                 }
             }
             is PermissionStatus.Denied -> {
+                val permanentlyDenied = permissionRequested && !permissionStatus.shouldShowRationale
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
+                        .padding(horizontal = 32.dp)
                         .padding(bottom = 64.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -190,22 +202,43 @@ fun QrScanScreen(
                         text = stringResource(R.string.qrscan_error),
                         style = MaterialTheme.typography.titleLarge
                     )
+                    Text(
+                        text = stringResource(
+                            when {
+                                permanentlyDenied -> R.string.qrscan_permissions_subtitle_permanent
+                                permissionStatus.shouldShowRationale -> R.string.qrscan_permissions_subtitle_rationale
+                                else -> R.string.qrscan_permissions_subtitle
+                            }
+                        ),
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Center
+                    )
+                    if (permanentlyDenied) {
+                        Button(
+                            modifier = Modifier.padding(top = 8.dp),
+                            onClick = onOpenAppSettings,
+                            shapes = ButtonDefaults.shapes()
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(ButtonDefaults.IconSize),
+                                painter = painterResource(R.drawable.ic_settings),
+                                contentDescription = null
+                            )
+                            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                            Text(stringResource(R.string.qrscan_permissions_button_settings))
+                        }
+                    } else {
+                        Button(
+                            modifier = Modifier.padding(top = 8.dp),
+                            onClick = onRequestPermission,
+                            shapes = ButtonDefaults.shapes()
+                        ) {
+                            Text(stringResource(R.string.qrscan_permissions_button_grant))
+                        }
+                    }
                 }
             }
         }
-    }
-
-    if (showPermissionDeniedDialog) {
-        QrScanPermissionDeniedDialog(
-            shouldShowRationale = showPermissionDeniedDialogRationale,
-            onGrantPermission = {
-                showPermissionDeniedDialog = false
-                onRequestPermission()
-            },
-            onCancel = {
-                showPermissionDeniedDialog = false
-            }
-        )
     }
 }
 
@@ -220,7 +253,9 @@ private fun QrScanScreen_PermissionDenied_Preview() {
                 onBack = {},
                 onScan = {},
                 permissionStatus = PermissionStatus.Denied(shouldShowRationale = false),
+                permissionRequested = false,
                 onRequestPermission = {},
+                onOpenAppSettings = {},
                 batchData = BatchData(current = 1, outOf = 1),
                 scanError = null
             )
@@ -239,7 +274,30 @@ private fun QrScanScreen_PermissionDeniedRationale_Preview() {
                 onBack = {},
                 onScan = {},
                 permissionStatus = PermissionStatus.Denied(shouldShowRationale = true),
+                permissionRequested = true,
                 onRequestPermission = {},
+                onOpenAppSettings = {},
+                batchData = BatchData(current = 1, outOf = 1),
+                scanError = null
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+@PreviewAllConfigurations
+private fun QrScanScreen_PermissionPermanentlyDenied_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            QrScanScreen(
+                modifier = Modifier.fillMaxSize(),
+                onBack = {},
+                onScan = {},
+                permissionStatus = PermissionStatus.Denied(shouldShowRationale = false),
+                permissionRequested = true,
+                onRequestPermission = {},
+                onOpenAppSettings = {},
                 batchData = BatchData(current = 1, outOf = 1),
                 scanError = null
             )
