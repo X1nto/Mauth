@@ -17,10 +17,11 @@ sealed class DomainAccount {
     abstract val createdMillis: Long
 
     val shortLabel by lazy {
-        label.filter {
+        val source = issuer.ifEmpty { label }
+        source.filter {
             it.isUpperCase()
         }.ifEmpty {
-            label[0].uppercase()
+            source[0].uppercase()
         }.take(3)
     }
 
