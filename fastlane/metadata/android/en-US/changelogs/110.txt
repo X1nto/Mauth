@@ -8,12 +8,14 @@ Changes
 =======
 - Revamped the home screen navigation
 - Refined in-app controls to use Material 3 Expressive look
-- Updated the about screen
+- Placeholder icons are now generated from issuers, if they're present
 - Action buttons now show tooltips on long press
-- Refreshed the camera permission screen on the QR scanner
-- Updated translations
+- Camera hardware feature is now fully optional
+- Updated the QR scan screen
+- Updated the about screen
 
 Fixes
 =====
 - Content is no longer stretched on large screens
 - Minor performance and stability improvements
+- Fixed QR scan crash on devices with no/non-standard cameras
