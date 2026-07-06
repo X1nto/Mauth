@@ -91,7 +91,7 @@ class HomeScreenshots {
             onAccountCopyCode = { _, _, _ -> },
             state = HomeScreenState.Success(PreviewFixtures.accounts),
             accountRealtimeData = PreviewFixtures.rememberRealtimeData(),
-            selectedAccounts = remember { mutableStateListOf(PreviewFixtures.totp.id) },
+            selectedAccounts = remember { mutableStateListOf(PreviewFixtures.github.id) },
             activeSortSetting = SortSetting.DEFAULT,
             onActiveSortChange = {},
             groups = persistentListOf(),
