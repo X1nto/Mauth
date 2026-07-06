@@ -17,7 +17,7 @@ android {
     defaultConfig {
         applicationId = "com.xinto.mauth"
         minSdk = 23
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 110
         versionName = "0.11.0"
 
@@ -78,7 +78,7 @@ android {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_11)
 

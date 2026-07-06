@@ -50,7 +50,7 @@ abstract class RoborazziStoreScreenshotTest(
 
 @RunWith(ParameterizedRobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(sdk = [35], qualifiers = "w411dp-h914dp-420dpi", application = android.app.Application::class)
+@Config(sdk = [36], qualifiers = "w411dp-h914dp-420dpi", application = android.app.Application::class)
 class PhoneStoreScreenshotTest(spec: StoreScreenshot) : RoborazziStoreScreenshotTest(spec, "phoneScreenshots") {
 
     companion object {
@@ -63,7 +63,7 @@ class PhoneStoreScreenshotTest(spec: StoreScreenshot) : RoborazziStoreScreenshot
 
 @RunWith(ParameterizedRobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(sdk = [35], qualifiers = "w600dp-h960dp-320dpi", application = android.app.Application::class)
+@Config(sdk = [36], qualifiers = "w600dp-h960dp-320dpi", application = android.app.Application::class)
 class SevenInchStoreScreenshotTest(spec: StoreScreenshot) : RoborazziStoreScreenshotTest(spec, "sevenInchScreenshots") {
 
     companion object {
@@ -76,7 +76,7 @@ class SevenInchStoreScreenshotTest(spec: StoreScreenshot) : RoborazziStoreScreen
 
 @RunWith(ParameterizedRobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(sdk = [35], qualifiers = "w1280dp-h800dp-320dpi", application = android.app.Application::class)
+@Config(sdk = [36], qualifiers = "w1280dp-h800dp-320dpi", application = android.app.Application::class)
 class TenInchStoreScreenshotTest(spec: StoreScreenshot) : RoborazziStoreScreenshotTest(spec, "tenInchScreenshots") {
 
     companion object {
