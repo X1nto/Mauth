@@ -1,0 +1,19 @@
+New Features
+============
+- You can now organize your accounts into groups
+- Added account search, matching by label or issuer
+- Added an auto-lock security setting to lock the app every time you re-enter it (available once PIN lock is enabled)
+
+Changes
+=======
+- Revamped the home screen navigation
+- Refined in-app controls to use Material 3 Expressive look
+- Updated the about screen
+- Action buttons now show tooltips on long press
+- Refreshed the camera permission screen on the QR scanner
+- Updated translations
+
+Fixes
+=====
+- Content is no longer streched on large screens
+- Minor performance and stability improvements
