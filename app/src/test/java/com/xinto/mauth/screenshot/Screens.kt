@@ -31,8 +31,8 @@ data class StoreScreenshot(
 
 val storeScreenshots: List<StoreScreenshot> = listOf(
     StoreScreenshot(1, "auth_pin"),
-    StoreScreenshot(2, "account_add"),
-    StoreScreenshot(3, "home_accounts"),
+    StoreScreenshot(2, "home_accounts"),
+    StoreScreenshot(3, "account_add"),
     StoreScreenshot(4, "home_selection"),
     StoreScreenshot(5, "settings"),
     StoreScreenshot(6, "about"),
