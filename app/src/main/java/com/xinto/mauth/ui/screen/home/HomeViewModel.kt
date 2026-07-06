@@ -157,6 +157,7 @@ class HomeViewModel(
 
         val contentResolver = application.contentResolver
         val bitmap = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+            @Suppress("DEPRECATION")
             MediaStore.Images.Media.getBitmap(contentResolver, uri)
         } else {
             val source = ImageDecoder.createSource(contentResolver, uri)
