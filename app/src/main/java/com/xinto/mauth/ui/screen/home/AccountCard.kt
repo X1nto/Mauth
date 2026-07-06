@@ -93,7 +93,7 @@ fun AccountCard(
                         Text(account.shortLabel, style = MaterialTheme.typography.titleLarge)
                     }
                 },
-                iconShape = if (account.icon != null) MaterialTheme.shapes.medium else MaterialShapes.Clover4Leaf.toShape(),
+                iconShape = if (account.icon != null) MaterialTheme.shapes.medium else MaterialShapes.Cookie4Sided.toShape(),
                 name = {
                     Text(
                         text = account.label,
