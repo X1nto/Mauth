@@ -60,7 +60,6 @@ fun PinBoard(
                                     is PinBoardState.PinBoardButton.Backspace -> state.onBackspaceClick
                                     is PinBoardState.PinBoardButton.Fingerprint -> state.onFingerprintClick
                                     is PinBoardState.PinBoardButton.Enter -> state.onEnterClick
-                                    else -> throw NoSuchElementException()
                                 },
                                 onLongClick =
                                     if (button is PinBoardState.PinBoardButton.Backspace)
@@ -75,7 +74,6 @@ fun PinBoard(
                                             is PinBoardState.PinBoardButton.Backspace -> R.drawable.ic_backspace
                                             is PinBoardState.PinBoardButton.Fingerprint -> R.drawable.ic_fingerprint
                                             is PinBoardState.PinBoardButton.Enter -> R.drawable.ic_tab
-                                            else -> throw NoSuchElementException()
                                         }
                                     ),
                                     contentDescription = null
