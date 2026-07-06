@@ -31,7 +31,7 @@ import com.xinto.mauth.ui.screen.qrscan.QrScanViewModel
 import com.xinto.mauth.ui.screen.settings.SettingsViewModel
 import com.xinto.mauth.ui.screen.theme.ThemeViewModel
 import org.koin.android.ext.koin.androidContext
-import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
