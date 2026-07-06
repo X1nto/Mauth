@@ -92,6 +92,7 @@ private fun HomeAccountsFixture(
         onGroupSelectedClick = {},
         searchAccounts = persistentListOf(),
         modifier = Modifier.fillMaxSize(),
+        showScanButton = false
     )
 }
 
