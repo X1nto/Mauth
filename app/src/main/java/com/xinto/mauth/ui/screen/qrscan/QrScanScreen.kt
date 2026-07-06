@@ -1,7 +1,6 @@
 package com.xinto.mauth.ui.screen.qrscan
 
 import android.Manifest
-import androidx.activity.compose.BackHandler
 import androidx.camera.core.ImageAnalysis
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -99,7 +98,6 @@ fun QrScanScreen(
             showPermissionDeniedDialogRationale = permissionStatus.shouldShowRationale
         }
     }
-    BackHandler(onBack = onBack)
     Scaffold(
         modifier = modifier,
         topBar = {

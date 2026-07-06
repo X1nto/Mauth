@@ -3,7 +3,6 @@ package com.xinto.mauth.ui.screen.about
 import android.content.ClipData
 import android.os.Build
 import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -112,8 +111,6 @@ fun AboutScreen(
     onCopyBuildInfo: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    BackHandler(onBack = onBack)
-
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
         modifier = modifier,

@@ -1,6 +1,5 @@
 package com.xinto.mauth.ui.screen.theme
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -45,7 +44,6 @@ fun ThemeScreen(
     onExit: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    BackHandler(onBack = onExit)
     val viewModel: ThemeViewModel = koinViewModel()
     val theme by viewModel.theme.collectAsStateWithLifecycle()
     val color by viewModel.color.collectAsStateWithLifecycle()
