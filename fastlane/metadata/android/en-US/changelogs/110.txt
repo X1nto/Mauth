@@ -17,5 +17,5 @@ Changes
 Fixes
 =====
 - Content is no longer stretched on large screens
-- Minor performance and stability improvements
 - Fixed QR scan crash on devices with no/non-standard cameras
+- Minor performance and stability improvements
