@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
@@ -727,7 +728,14 @@ private fun AccountAvatar(
             } else {
                 Text(
                     text = account.shortLabel,
-                    style = MaterialTheme.typography.titleMedium
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    softWrap = false,
+                    autoSize = TextAutoSize.StepBased(
+                        minFontSize = 9.sp,
+                        maxFontSize = MaterialTheme.typography.titleMedium.fontSize,
+                    )
                 )
             }
         }
