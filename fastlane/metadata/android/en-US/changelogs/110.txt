@@ -15,5 +15,5 @@ Changes
 
 Fixes
 =====
-- Content is no longer streched on large screens
+- Content is no longer stretched on large screens
 - Minor performance and stability improvements
