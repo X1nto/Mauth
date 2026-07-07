@@ -1,6 +1,5 @@
 package com.xinto.mauth.ui.screen.pinremove
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -29,7 +28,6 @@ fun PinRemoveScreen(
 ) {
     val viewModel: PinRemoveViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
-    BackHandler(onBack = onExit)
     PinRemoveScreen(
         modifier = modifier,
         state = state,

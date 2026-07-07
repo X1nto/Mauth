@@ -10,5 +10,5 @@ data class DomainExportAccount(
     val issuer: String,
     val url: String
 ) {
-    val shortLabel = label.take(1)
+    val shortLabel = issuer.ifEmpty { label }.take(1)
 }

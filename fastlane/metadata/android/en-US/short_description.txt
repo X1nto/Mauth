@@ -1,1 +1,1 @@
-A Material You Two-factor Authentication app.
+A Beautiful Two-factor Authentication app.

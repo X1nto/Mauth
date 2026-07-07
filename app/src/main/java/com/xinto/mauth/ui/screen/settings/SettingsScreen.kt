@@ -1,8 +1,6 @@
 package com.xinto.mauth.ui.screen.settings
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -67,7 +65,6 @@ fun SettingsScreen(
         negativeButtonText = stringResource(R.string.settings_biometrics_disable_cancel)
     )
 
-    BackHandler(onBack = onBack)
     SettingsScreen(
         modifier = modifier,
         onBack = onBack,

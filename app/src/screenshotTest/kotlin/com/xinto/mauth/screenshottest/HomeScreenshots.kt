@@ -43,6 +43,7 @@ class HomeScreenshots {
             onGroupSelectedClick = {},
             searchAccounts = persistentListOf(),
             modifier = Modifier.fillMaxSize(),
+            showScanButton = false
         )
     }
 
@@ -72,6 +73,7 @@ class HomeScreenshots {
             onGroupSelectedClick = {},
             searchAccounts = persistentListOf(),
             modifier = Modifier.fillMaxSize(),
+            showScanButton = false
         )
     }
 
@@ -91,7 +93,7 @@ class HomeScreenshots {
             onAccountCopyCode = { _, _, _ -> },
             state = HomeScreenState.Success(PreviewFixtures.accounts),
             accountRealtimeData = PreviewFixtures.rememberRealtimeData(),
-            selectedAccounts = remember { mutableStateListOf(PreviewFixtures.totp.id) },
+            selectedAccounts = remember { mutableStateListOf(PreviewFixtures.github.id) },
             activeSortSetting = SortSetting.DEFAULT,
             onActiveSortChange = {},
             groups = persistentListOf(),
@@ -101,6 +103,7 @@ class HomeScreenshots {
             onGroupSelectedClick = {},
             searchAccounts = persistentListOf(),
             modifier = Modifier.fillMaxSize(),
+            showScanButton = false
         )
     }
 
@@ -130,6 +133,7 @@ class HomeScreenshots {
             onGroupSelectedClick = {},
             searchAccounts = persistentListOf(),
             modifier = Modifier.fillMaxSize(),
+            showScanButton = false
         )
     }
 }

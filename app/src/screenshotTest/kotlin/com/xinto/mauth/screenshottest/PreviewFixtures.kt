@@ -24,30 +24,42 @@ internal fun ScreenshotSurface(content: @Composable () -> Unit) {
 
 internal object PreviewFixtures {
 
-    val totp = DomainAccount.Totp(
+    val github = DomainAccount.Totp(
         id = UUID.fromString("00000000-0000-0000-0000-000000000001"),
         icon = null,
         secret = "JBSWY3DPEHPK3PXP",
-        label = "GitHub",
-        issuer = "github.com",
+        label = "X1nto",
+        issuer = "GitHub",
         algorithm = OtpDigest.SHA1,
         digits = 6,
         createdMillis = 0L,
         period = 30,
     )
 
-    val hotp = DomainAccount.Hotp(
+    val fortinet = DomainAccount.Hotp(
         id = UUID.fromString("00000000-0000-0000-0000-000000000002"),
         icon = null,
         secret = "JBSWY3DPEHPK3PXP",
-        label = "Fortinet",
-        issuer = "fortinet.com",
+        label = "alex@fortinet.com",
+        issuer = "Fortinet",
         algorithm = OtpDigest.SHA1,
         digits = 6,
         createdMillis = 0L,
     )
 
-    val accounts = persistentListOf(totp, hotp)
+    val aws = DomainAccount.Totp(
+        id = UUID.fromString("00000000-0000-0000-0000-000000000003"),
+        icon = null,
+        secret = "JBSWY3DPEHPK3PXP",
+        label = "alice@example.com",
+        issuer = "Amazon Web Services",
+        algorithm = OtpDigest.SHA1,
+        digits = 6,
+        createdMillis = 0L,
+        period = 30,
+    )
+
+    val accounts = persistentListOf(github, fortinet, aws)
 
     val groups = persistentListOf(
         DomainGroup(
@@ -83,8 +95,9 @@ internal object PreviewFixtures {
     @Composable
     fun rememberRealtimeData() = remember {
         mutableStateMapOf(
-            totp.id to DomainOtpRealtimeData.Totp(code = "123456", progress = 0.6f, countdown = 18),
-            hotp.id to DomainOtpRealtimeData.Hotp(code = "654321", count = 3),
+            github.id to DomainOtpRealtimeData.Totp(code = "123456", progress = 0.6f, countdown = 18),
+            fortinet.id to DomainOtpRealtimeData.Hotp(code = "654321", count = 3),
+            aws.id to DomainOtpRealtimeData.Totp(code = "424242", progress = 0.3f, countdown = 9),
         )
     }
 }

@@ -53,11 +53,14 @@
 
     <string name="qrscan_title">Scan a QR code</string>
     <string name="qrscan_permissions_title">Missing permissions</string>
-    <string name="qrscan_permissions_subtitle">Camera permission not granted.</string>
-    <string name="qrscan_permissions_subtitle_rationale">The camera permission is required for this app to scan and analyze the QR code, without it, Mauth cannot scan and import your accounts.</string>
+    <string name="qrscan_permissions_subtitle">Camera permission not granted</string>
+    <string name="qrscan_permissions_subtitle_rationale">The camera permission is required for Mauth to scan and import your accounts</string>
+    <string name="qrscan_permissions_subtitle_permanent">Camera permission was permanently denied. Grant it via the system app settings to continue</string>
     <string name="qrscan_permissions_button_grant">Grant</string>
+    <string name="qrscan_permissions_button_settings">Open settings</string>
     <string name="qrscan_permissions_button_cancel">Cancel</string>
     <string name="qrscan_error">Insufficient permissions</string>
+    <string name="qrscan_camera_unavailable">Camera unavailable</string>
     <string name="qrscan_error_batch">Scanned QR code does not match previous.</string>
     <string name="qrscan_error_order">Scan QR codes in the correct order.</string>
     <string name="qrscan_info_batch">Scanned %1$d out of %2$d</string>
@@ -124,9 +127,17 @@
     <string name="export_batch_hint">Scan this QR code using any Google Authenticator compatible app</string>
 
     <string name="about_title">About</string>
-    <string name="about_version">Version v%1$s</string>
     <string name="about_links_source">Source</string>
     <string name="about_links_feedback">Feedback</string>
+    <string name="about_info_version">Version</string>
+    <string name="about_info_version_description">v%1$s</string>
+    <string name="about_info_version_copied">Copied build info</string>
+    <string name="about_info_source">Installed from</string>
+    <string name="about_info_source_gplay">Google Play</string>
+    <string name="about_info_source_fdroid">F-Droid</string>
+    <string name="about_info_source_other">Other source</string>
+    <string name="about_info_privacy">Privacy policy</string>
+    <string name="about_info_license">License</string>
 
     <string name="groups_title">Groups</string>
     <string name="groups_state_empty">No groups yet</string>

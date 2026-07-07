@@ -1,6 +1,5 @@
 package com.xinto.mauth.ui.screen.export
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -60,7 +59,6 @@ fun ExportScreen(
     accounts: List<UUID>,
     modifier: Modifier = Modifier
 ) {
-    BackHandler(onBack = onBackNavigate)
     val viewModel: ExportViewModel = koinViewModel {
         parametersOf(accounts)
     }

@@ -18,12 +18,7 @@ While there are many 2FA authenticator apps out there, most of them come with an
 - Security
   - [x] Biometrics
   - [x] PIN
-- Ways to add your accounts
-  - [x] Scanning a QR code
-    - [x] Using a camera
-    - [x] From an image
-  - [x] Manually
-  - [x] Deeplinks
+  - [ ] Encrypted account DB
 - Algorithms
   - [x] TOTP
   - [x] HOTP
@@ -40,11 +35,24 @@ While there are many 2FA authenticator apps out there, most of them come with an
   - [x] otpauth:// URIs
   - [ ] Encrypted data
 - Importing
-  - [x] Google Authenticator
-  - [ ] Authy
-  - [ ] Aegis (Yes, via Export for Google Authenticator in settings)
-  - [ ] Microsoft Authenticator
-  - [x] Other authenticators that support exporting to Google Authenticator
+  - Methods
+    - [x] Scanning a QR code
+      - [x] Using a camera
+      - [x] From an image
+    - [x] Manually
+    - [x] Deeplinks
+  - From other apps
+    - [x] Google Authenticator
+    - [ ] Authy
+    - [ ] Aegis (Yes, via Export for Google Authenticator in settings)
+    - [ ] Microsoft Authenticator
+    - [x] Other authenticators that support exporting to Google Authenticator
+- Backup
+  - [ ] Nextcloud
+  - [ ] ownCloud
+  - [ ] Google Drive
+  - [ ] Dropbox
+  - [ ] OneDrive
 
 # Screenshots
 <img width=200 alt="Auth screen" 
@@ -59,14 +67,6 @@ src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png?raw=true">
 src="fastlane/metadata/android/en-US/images/phoneScreenshots/5.png?raw=true">
 <img width=200 alt="Edit account screen" 
 src="fastlane/metadata/android/en-US/images/phoneScreenshots/6.png?raw=true">
-<img width=200 alt="Sort options" 
-src="fastlane/metadata/android/en-US/images/phoneScreenshots/7.png?raw=true">
-<img width=200 alt="Account selection"
-src="fastlane/metadata/android/en-US/images/phoneScreenshots/8.png?raw=true">
-<img width=200 alt="Settings screen"
-src="fastlane/metadata/android/en-US/images/phoneScreenshots/9.png?raw=true">
-<img width=200 alt="About screen"
-src="fastlane/metadata/android/en-US/images/phoneScreenshots/10.png?raw=true">
 
 # Download
 Mauth is available on F-Droid and GitHub Releases page.  

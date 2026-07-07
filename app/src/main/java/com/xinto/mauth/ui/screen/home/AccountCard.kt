@@ -10,7 +10,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +17,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
@@ -54,6 +54,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.xinto.mauth.R
 import com.xinto.mauth.domain.account.model.DomainAccount
 import com.xinto.mauth.domain.otp.model.DomainOtpRealtimeData
@@ -90,10 +91,20 @@ fun AccountCard(
                     if (account.icon != null) {
                         UriImage(uri = account.icon!!)
                     } else {
-                        Text(account.shortLabel, style = MaterialTheme.typography.titleLarge)
+                        Text(
+                            text = account.shortLabel,
+                            modifier = Modifier.padding(horizontal = 10.dp),
+                            style = MaterialTheme.typography.titleLarge,
+                            maxLines = 1,
+                            softWrap = false,
+                            autoSize = TextAutoSize.StepBased(
+                                minFontSize = 10.sp,
+                                maxFontSize = MaterialTheme.typography.titleLarge.fontSize,
+                            )
+                        )
                     }
                 },
-                iconShape = if (account.icon != null) MaterialTheme.shapes.medium else MaterialShapes.Clover4Leaf.toShape(),
+                iconShape = if (account.icon != null) MaterialTheme.shapes.medium else MaterialShapes.Cookie4Sided.toShape(),
                 name = {
                     Text(
                         text = account.label,

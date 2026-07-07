@@ -1,5 +1,6 @@
 package com.xinto.mauth.ui.screen.home
 
+import android.content.pm.PackageManager
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -100,6 +101,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
@@ -154,6 +156,11 @@ fun HomeScreen(
         viewModel.getAccountInfoFromQrUri(uri)?.let {
             onAddAccountFromImage(it)
         }
+    }
+
+    val context = LocalContext.current
+    val hasCamera = remember(context) {
+        context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
     }
 
     var showGroupCreateDialog by remember { mutableStateOf(false) }
@@ -240,6 +247,7 @@ fun HomeScreen(
             }
         },
         searchAccounts = searchAccounts,
+        showScanButton = hasCamera,
     )
 }
 
@@ -266,7 +274,8 @@ fun HomeScreen(
     onCreateGroupClick: () -> Unit,
     onGroupSelectedClick: () -> Unit,
     searchAccounts: ImmutableList<DomainAccount>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showScanButton: Boolean
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
 
@@ -358,6 +367,7 @@ fun HomeScreen(
                     expanded = isFabMenuExpanded,
                     onExpandedChange = { isFabMenuExpanded = it },
                     onAddAccountNavigate = onAddAccountNavigate,
+                    showScanButton = showScanButton
                 )
             }
         }
@@ -1000,6 +1010,7 @@ private fun AccountAddFab(
     onExpandedChange: (Boolean) -> Unit,
     onAddAccountNavigate: (HomeAddAccountMenu) -> Unit,
     modifier: Modifier = Modifier,
+    showScanButton: Boolean,
 ) {
     FloatingActionButtonMenu(
         modifier = modifier,
@@ -1019,16 +1030,19 @@ private fun AccountAddFab(
             }
         },
     ) {
-        HomeAddAccountMenu.entries.forEach { menu ->
+        HomeAddAccountMenu.entries.forEach { entry ->
+            if (!showScanButton && entry == HomeAddAccountMenu.ScanQR)
+                return@forEach
+
             FloatingActionButtonMenuItem(
                 onClick = {
                     onExpandedChange(false)
-                    onAddAccountNavigate(menu)
+                    onAddAccountNavigate(entry)
                 },
-                text = { Text(stringResource(menu.title)) },
+                text = { Text(stringResource(entry.title)) },
                 icon = {
                     Icon(
-                        painter = painterResource(menu.icon),
+                        painter = painterResource(entry.icon),
                         contentDescription = null,
                     )
                 },
@@ -1091,7 +1105,8 @@ private fun HomeScreen_Loading_Preview() {
                 onCreateGroupClick = {},
                 onGroupSelectedClick = {},
                 searchAccounts = persistentListOf(),
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                showScanButton = false
             )
         }
     }
@@ -1123,7 +1138,8 @@ private fun HomeScreen_Empty_Preview() {
                 onCreateGroupClick = {},
                 onGroupSelectedClick = {},
                 searchAccounts = persistentListOf(),
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                showScanButton = false
             )
         }
     }
@@ -1181,7 +1197,8 @@ private fun HomeScreen_Success_Preview() {
                 onCreateGroupClick = {},
                 onGroupSelectedClick = {},
                 searchAccounts = persistentListOf(),
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                showScanButton = false
             )
         }
     }
@@ -1239,7 +1256,8 @@ private fun HomeScreen_Selection_Preview() {
                 onCreateGroupClick = {},
                 onGroupSelectedClick = {},
                 searchAccounts = persistentListOf(),
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                showScanButton = false
             )
         }
     }
@@ -1310,7 +1328,8 @@ private fun HomeScreen_Groups_Preview() {
                 onCreateGroupClick = {},
                 onGroupSelectedClick = {},
                 searchAccounts = persistentListOf(),
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                showScanButton = false
             )
         }
     }
@@ -1342,7 +1361,8 @@ private fun HomeScreen_Error_Preview() {
                 onCreateGroupClick = {},
                 onGroupSelectedClick = {},
                 searchAccounts = persistentListOf(),
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                showScanButton = false
             )
         }
     }
