@@ -31,6 +31,7 @@ import androidx.core.os.BundleCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
@@ -57,6 +58,7 @@ import com.xinto.mauth.ui.screen.qrscan.QrScanScreen
 import com.xinto.mauth.ui.screen.settings.SettingsScreen
 import com.xinto.mauth.ui.screen.theme.ThemeScreen
 import com.xinto.mauth.ui.theme.MauthTheme
+import com.xinto.mauth.util.dropUnlessResumed
 import com.xinto.mauth.util.launchInLifecycle
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
@@ -209,14 +211,14 @@ class MainActivity : FragmentActivity() {
                             entry<MauthDestination.Auth> { key ->
                                 AuthScreen(
                                     modifier = Modifier.fillMaxSize(),
-                                    onAuthSuccess = {
+                                    onAuthSuccess = dropUnlessResumed {
                                         when {
                                             key.nextDestination != null -> navigator.replaceLast(key.nextDestination)
                                             navigator.backStack.size > 1 -> navigator.pop()
                                             else -> navigator.replaceAll(MauthDestination.Home)
                                         }
                                     },
-                                    onBackPress = if (key.nextDestination == null) null else { ->
+                                    onBackPress = if (key.nextDestination == null) null else dropUnlessResumed {
                                         navigator.pop()
                                     }
                                 )
@@ -224,30 +226,30 @@ class MainActivity : FragmentActivity() {
                             entry<MauthDestination.Home> {
                                 HomeScreen(
                                     modifier = Modifier.fillMaxSize(),
-                                    onAddAccountManually = { groupId ->
+                                    onAddAccountManually = dropUnlessResumed { groupId ->
                                         navigator.navigate(
                                             MauthDestination.AddAccount(DomainAccountInfo.new().copy(groupId = groupId))
                                         )
                                     },
-                                    onAddAccountViaScanning = {
+                                    onAddAccountViaScanning = dropUnlessResumed {
                                         navigator.navigate(MauthDestination.QrScanner)
                                     },
-                                    onAddAccountFromImage = {
-                                        navigator.navigate(MauthDestination.AddAccount(it))
+                                    onAddAccountFromImage = dropUnlessResumed { accountInfo ->
+                                        navigator.navigate(MauthDestination.AddAccount(accountInfo))
                                     },
-                                    onAccountEdit = {
-                                        navigator.navigate(MauthDestination.EditAccount(it))
+                                    onAccountEdit = dropUnlessResumed { id ->
+                                        navigator.navigate(MauthDestination.EditAccount(id))
                                     },
-                                    onSettingsNavigate = {
+                                    onSettingsNavigate = dropUnlessResumed {
                                         navigator.navigate(MauthDestination.Settings)
                                     },
-                                    onExportNavigate = { accounts ->
+                                    onExportNavigate = dropUnlessResumed { accounts ->
                                         navigator.navigateSecure(MauthDestination.Export(accounts))
                                     },
-                                    onAboutNavigate = {
+                                    onAboutNavigate = dropUnlessResumed {
                                         navigator.navigate(MauthDestination.About)
                                     },
-                                    onManageGroups = {
+                                    onManageGroups = dropUnlessResumed {
                                         navigator.navigate(MauthDestination.Groups)
                                     }
                                 )
@@ -255,23 +257,23 @@ class MainActivity : FragmentActivity() {
                             entry<MauthDestination.QrScanner> {
                                 QrScanScreen(
                                     modifier = Modifier.fillMaxSize(),
-                                    onBack = navigator::pop,
-                                    onScan = {
-                                        navigator.replaceLast(MauthDestination.AddAccount(it))
+                                    onBack = dropUnlessResumed { navigator.pop() },
+                                    onScan = dropUnlessResumed { accountInfo ->
+                                        navigator.replaceLast(MauthDestination.AddAccount(accountInfo))
                                     }
                                 )
                             }
                             entry<MauthDestination.Settings> {
                                 SettingsScreen(
                                     modifier = Modifier.fillMaxSize(),
-                                    onBack = navigator::pop,
-                                    onSetupPinCode = {
+                                    onBack = dropUnlessResumed { navigator.pop() },
+                                    onSetupPinCode = dropUnlessResumed {
                                         navigator.navigate(MauthDestination.PinSetup)
                                     },
-                                    onDisablePinCode = {
+                                    onDisablePinCode = dropUnlessResumed {
                                         navigator.navigate(MauthDestination.PinRemove)
                                     },
-                                    onThemeNavigate = {
+                                    onThemeNavigate = dropUnlessResumed {
                                         navigator.navigate(MauthDestination.Theme)
                                     }
                                 )
@@ -279,14 +281,14 @@ class MainActivity : FragmentActivity() {
                             entry<MauthDestination.About> {
                                 AboutScreen(
                                     modifier = Modifier.fillMaxSize(),
-                                    onBack = navigator::pop
+                                    onBack = dropUnlessResumed { navigator.pop() }
                                 )
                             }
                             entry<MauthDestination.Groups> {
                                 GroupsScreen(
                                     modifier = Modifier.fillMaxSize(),
-                                    onBack = navigator::pop,
-                                    onAddAccount = { groupId ->
+                                    onBack = dropUnlessResumed { navigator.pop() },
+                                    onAddAccount = dropUnlessResumed { groupId ->
                                         navigator.navigate(
                                             MauthDestination.AddAccount(DomainAccountInfo.new().copy(groupId = groupId))
                                         )
@@ -297,39 +299,39 @@ class MainActivity : FragmentActivity() {
                                 AddAccountScreen(
                                     modifier = Modifier.fillMaxSize(),
                                     prefilled = key.params,
-                                    onExit = navigator::pop
+                                    onExit = dropUnlessResumed { navigator.pop() }
                                 )
                             }
                             entry<MauthDestination.EditAccount> { key ->
                                 EditAccountScreen(
                                     modifier = Modifier.fillMaxSize(),
                                     id = key.id,
-                                    onExit = navigator::pop
+                                    onExit = dropUnlessResumed { navigator.pop() }
                                 )
                             }
                             entry<MauthDestination.PinSetup> {
                                 PinSetupScreen(
                                     modifier = Modifier.fillMaxSize(),
-                                    onExit = navigator::pop
+                                    onExit = dropUnlessResumed { navigator.pop() }
                                 )
                             }
                             entry<MauthDestination.PinRemove> {
                                 PinRemoveScreen(
                                     modifier = Modifier.fillMaxSize(),
-                                    onExit = navigator::pop
+                                    onExit = dropUnlessResumed { navigator.pop() }
                                 )
                             }
                             entry<MauthDestination.Theme> {
                                 ThemeScreen(
                                     modifier = Modifier.fillMaxSize(),
-                                    onExit = navigator::pop
+                                    onExit = dropUnlessResumed { navigator.pop() }
                                 )
                             }
                             entry<MauthDestination.Export> { key ->
                                 ExportScreen(
                                     modifier = Modifier.fillMaxSize(),
                                     accounts = key.accounts,
-                                    onBackNavigate = navigator::pop
+                                    onBackNavigate = dropUnlessResumed { navigator.pop() }
                                 )
                             }
                         }

@@ -10,7 +10,9 @@ class MauthNavigator(
 ) {
 
     fun navigate(destination: MauthDestination) {
-        backStack.add(destination)
+        if (backStack.lastOrNull() != destination) {
+            backStack.add(destination)
+        }
     }
 
     fun pop() {
@@ -31,10 +33,13 @@ class MauthNavigator(
     }
 
     fun navigateSecure(destination: MauthDestination) {
-        if (isProtected()) {
-            backStack.add(MauthDestination.Auth(nextDestination = destination))
+        val target = if (isProtected()) {
+            MauthDestination.Auth(nextDestination = destination)
         } else {
-            backStack.add(destination)
+            destination
+        }
+        if (backStack.lastOrNull() != target) {
+            backStack.add(target)
         }
     }
 }
