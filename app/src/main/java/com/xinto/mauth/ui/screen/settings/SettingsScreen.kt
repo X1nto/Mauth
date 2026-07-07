@@ -22,6 +22,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -30,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
+import com.xinto.mauth.core.settings.model.FontSetting
 import com.xinto.mauth.ui.component.rememberBiometricHandler
 import com.xinto.mauth.ui.component.rememberBiometricPromptData
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
@@ -45,7 +49,6 @@ fun SettingsScreen(
     onSetupPinCode: () -> Unit,
     onDisablePinCode: () -> Unit,
     onThemeNavigate: () -> Unit,
-    onFontNavigate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel: SettingsViewModel = koinViewModel()
@@ -53,6 +56,7 @@ fun SettingsScreen(
     val lockOnResume by viewModel.lockOnResume.collectAsStateWithLifecycle()
     val pinLock by viewModel.pinLock.collectAsStateWithLifecycle()
     val biometrics by viewModel.biometrics.collectAsStateWithLifecycle()
+    val font by viewModel.font.collectAsStateWithLifecycle()
 
     val biometricHandler = rememberBiometricHandler(
         onAuthSuccess = viewModel::toggleBiometrics
@@ -88,7 +92,8 @@ fun SettingsScreen(
             biometricHandler.requestBiometrics(promptData)
         },
         onThemeNavigate = onThemeNavigate,
-        onFontNavigate = onFontNavigate
+        font = font,
+        onFontChange = viewModel::updateFont
     )
 }
 
@@ -106,10 +111,12 @@ fun SettingsScreen(
     biometrics: Boolean,
     onBiometricsChange: (Boolean) -> Unit,
     onThemeNavigate: () -> Unit,
-    onFontNavigate: () -> Unit,
+    font: FontSetting,
+    onFontChange: (FontSetting) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    var fontDialogIsOpen by rememberSaveable { mutableStateOf(false) }
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -210,7 +217,7 @@ fun SettingsScreen(
                     shapes = ListItemDefaults.segmentedShapes(index = 0, count = 2)
                 )
                 SettingsNavigateItem(
-                    onClick = onFontNavigate,
+                    onClick = { fontDialogIsOpen = true },
                     title = { Text(stringResource(R.string.settings_prefs_font)) },
                     icon = {
                         Icon(
@@ -222,6 +229,16 @@ fun SettingsScreen(
                 )
             }
         }
+    }
+    if (fontDialogIsOpen) {
+        FontDialog(
+            initialFont = font,
+            onConfirm = { newFont ->
+                onFontChange(newFont)
+                fontDialogIsOpen = false
+            },
+            onDismissRequest = { fontDialogIsOpen = false }
+        )
     }
 }
 
@@ -243,7 +260,8 @@ private fun SettingsScreen_Default_Preview() {
                 biometrics = false,
                 onBiometricsChange = {},
                 onThemeNavigate = {},
-                onFontNavigate = {}
+                font = FontSetting.DEFAULT,
+                onFontChange = {}
             )
         }
     }
@@ -267,7 +285,8 @@ private fun SettingsScreen_AllEnabled_Preview() {
                 biometrics = true,
                 onBiometricsChange = {},
                 onThemeNavigate = {},
-                onFontNavigate = {}
+                font = FontSetting.DEFAULT,
+                onFontChange = {}
             )
         }
     }

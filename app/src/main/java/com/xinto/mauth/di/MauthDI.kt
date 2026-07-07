@@ -23,7 +23,6 @@ import com.xinto.mauth.domain.otp.OtpRepository
 import com.xinto.mauth.ui.screen.account.AccountViewModel
 import com.xinto.mauth.ui.screen.auth.AuthViewModel
 import com.xinto.mauth.ui.screen.export.ExportViewModel
-import com.xinto.mauth.ui.screen.font.FontViewModel
 import com.xinto.mauth.ui.screen.groups.GroupsViewModel
 import com.xinto.mauth.ui.screen.home.HomeViewModel
 import com.xinto.mauth.ui.screen.pinremove.PinRemoveViewModel
@@ -92,7 +91,6 @@ object MauthDI {
         viewModelOf(::ThemeViewModel)
         viewModelOf(::ExportViewModel)
         viewModelOf(::GroupsViewModel)
-        viewModelOf(::FontViewModel)
     }
 
     val all = listOf(CoreModule, DbModule, DomainModule, UiModule)

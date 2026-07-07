@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
+import com.xinto.mauth.core.settings.model.FontSetting
 import com.xinto.mauth.core.settings.model.SortSetting
 import com.xinto.mauth.ui.screen.account.AccountForm
 import com.xinto.mauth.ui.screen.account.AccountScreen
@@ -128,7 +129,8 @@ private fun SettingsFixture() {
         biometrics = true,
         onBiometricsChange = {},
         onThemeNavigate = {},
-        onFontNavigate = {},
+        font = FontSetting.DEFAULT,
+        onFontChange = {},
         modifier = Modifier.fillMaxSize(),
     )
 }

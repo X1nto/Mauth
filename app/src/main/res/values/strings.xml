@@ -125,6 +125,8 @@
     <string name="font_title">Font</string>
     <string name="font_font_roboto">Roboto</string>
     <string name="font_font_google_sans">Google Sans</string>
+    <string name="font_dialog_action_confirm">Confirm</string>
+    <string name="font_dialog_action_cancel">Cancel</string>
 
     <string name="export_title">Export</string>
     <string name="export_state_empty">No accounts to export</string>
