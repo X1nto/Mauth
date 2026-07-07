@@ -3,13 +3,11 @@ package com.xinto.mauth.ui.theme
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Typography
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.text.font.FontFamily
 import com.xinto.mauth.core.settings.model.ColorSetting
 import com.xinto.mauth.core.settings.model.FontSetting
 import com.xinto.mauth.core.settings.model.ThemeSetting
@@ -74,7 +72,7 @@ fun MauthTheme(
     }
     val typography = when (font) {
         FontSetting.Roboto -> DefaultTypography
-        FontSetting.GoogleSans -> rememberGoogleSansTypography()
+        FontSetting.GoogleSans -> GoogleSansTypography
     }
     MaterialTheme(
         colorScheme = colorScheme,

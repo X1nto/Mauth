@@ -8,12 +8,7 @@ import androidx.compose.ui.text.font.FontFamily
 import com.xinto.mauth.R
 
 val DefaultTypography = Typography()
-
-@Composable
-fun rememberGoogleSansTypography(): Typography {
-    val font = Font(resId = R.font.google_sans)
-    return remember { FontFamily(font).typography() }
-}
+val GoogleSansTypography = FontFamily(Font(resId = R.font.google_sans)).typography()
 
 fun FontFamily.typography(): Typography {
     return Typography(
