@@ -25,6 +25,7 @@ class SettingsScreenshots {
             biometrics = false,
             onBiometricsChange = {},
             onThemeNavigate = {},
+            onFontNavigate = {},
         )
     }
 
@@ -45,6 +46,7 @@ class SettingsScreenshots {
             biometrics = true,
             onBiometricsChange = {},
             onThemeNavigate = {},
+            onFontNavigate = {},
         )
     }
 
@@ -65,6 +67,7 @@ class SettingsScreenshots {
             biometrics = true,
             onBiometricsChange = {},
             onThemeNavigate = {},
+            onFontNavigate = {},
         )
     }
 
@@ -85,6 +88,7 @@ class SettingsScreenshots {
             biometrics = false,
             onBiometricsChange = {},
             onThemeNavigate = {},
+            onFontNavigate = {},
         )
     }
 }

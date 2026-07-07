@@ -128,6 +128,7 @@ private fun SettingsFixture() {
         biometrics = true,
         onBiometricsChange = {},
         onThemeNavigate = {},
+        onFontNavigate = {},
         modifier = Modifier.fillMaxSize(),
     )
 }

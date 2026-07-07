@@ -45,6 +45,7 @@ fun SettingsScreen(
     onSetupPinCode: () -> Unit,
     onDisablePinCode: () -> Unit,
     onThemeNavigate: () -> Unit,
+    onFontNavigate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel: SettingsViewModel = koinViewModel()
@@ -86,7 +87,8 @@ fun SettingsScreen(
             val promptData = if (it) setupPromptData else disablePromptData
             biometricHandler.requestBiometrics(promptData)
         },
-        onThemeNavigate = onThemeNavigate
+        onThemeNavigate = onThemeNavigate,
+        onFontNavigate = onFontNavigate
     )
 }
 
@@ -104,6 +106,7 @@ fun SettingsScreen(
     biometrics: Boolean,
     onBiometricsChange: (Boolean) -> Unit,
     onThemeNavigate: () -> Unit,
+    onFontNavigate: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -204,11 +207,18 @@ fun SettingsScreen(
                             contentDescription = null
                         )
                     },
-                    shapes = ListItemDefaults.segmentedShapes(
-                        index = 0,
-                        count = 1,
-                        defaultShapes = ListItemDefaults.shapes(shape = MaterialTheme.shapes.large)
-                    )
+                    shapes = ListItemDefaults.segmentedShapes(index = 0, count = 2)
+                )
+                SettingsNavigateItem(
+                    onClick = onFontNavigate,
+                    title = { Text(stringResource(R.string.settings_prefs_font)) },
+                    icon = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_font),
+                            contentDescription = null
+                        )
+                    },
+                    shapes = ListItemDefaults.segmentedShapes(index = 1,  count = 2)
                 )
             }
         }
@@ -232,7 +242,8 @@ private fun SettingsScreen_Default_Preview() {
                 showBiometrics = false,
                 biometrics = false,
                 onBiometricsChange = {},
-                onThemeNavigate = {}
+                onThemeNavigate = {},
+                onFontNavigate = {}
             )
         }
     }
@@ -255,7 +266,8 @@ private fun SettingsScreen_AllEnabled_Preview() {
                 showBiometrics = true,
                 biometrics = true,
                 onBiometricsChange = {},
-                onThemeNavigate = {}
+                onThemeNavigate = {},
+                onFontNavigate = {}
             )
         }
     }

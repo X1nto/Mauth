@@ -47,6 +47,9 @@ sealed interface MauthDestination : Parcelable {
     data object Theme : MauthDestination
 
     @Parcelize
+    data object Font : MauthDestination
+
+    @Parcelize
     data object About : MauthDestination
 
     @Parcelize

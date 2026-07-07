@@ -49,6 +49,7 @@ import com.xinto.mauth.ui.screen.account.AddAccountScreen
 import com.xinto.mauth.ui.screen.account.EditAccountScreen
 import com.xinto.mauth.ui.screen.auth.AuthScreen
 import com.xinto.mauth.ui.screen.export.ExportScreen
+import com.xinto.mauth.ui.screen.font.FontScreen
 import com.xinto.mauth.ui.screen.groups.GroupsScreen
 import com.xinto.mauth.ui.screen.home.HomeScreen
 import com.xinto.mauth.ui.screen.pinremove.PinRemoveScreen
@@ -112,9 +113,11 @@ class MainActivity : FragmentActivity() {
         setContent {
             val theme by settings.getTheme().collectAsStateWithLifecycle()
             val color by settings.getColor().collectAsStateWithLifecycle()
+            val font by settings.getFont().collectAsStateWithLifecycle()
             MauthTheme(
                 theme = theme,
-                color = color
+                color = color,
+                font = font
             ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -273,6 +276,9 @@ class MainActivity : FragmentActivity() {
                                     },
                                     onThemeNavigate = {
                                         navigator.navigate(MauthDestination.Theme)
+                                    },
+                                    onFontNavigate = {
+                                        navigator.navigate(MauthDestination.Font)
                                     }
                                 )
                             }
@@ -321,6 +327,12 @@ class MainActivity : FragmentActivity() {
                             }
                             entry<MauthDestination.Theme> {
                                 ThemeScreen(
+                                    modifier = Modifier.fillMaxSize(),
+                                    onExit = navigator::pop
+                                )
+                            }
+                            entry<MauthDestination.Font> {
+                                FontScreen(
                                     modifier = Modifier.fillMaxSize(),
                                     onExit = navigator::pop
                                 )
