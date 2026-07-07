@@ -22,9 +22,7 @@ fun SettingsRadioItem(
     shapes: ListItemShapes = ListItemDefaults.shapes(),
     description: (@Composable () -> Unit)? = null,
     enabled: Boolean = true,
-    interactionSource: MutableInteractionSource = remember {
-        MutableInteractionSource()
-    },
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
     SettingsItem(
         onClick = onClick,
