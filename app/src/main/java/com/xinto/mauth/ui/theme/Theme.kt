@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import com.xinto.mauth.core.settings.model.ColorSetting
+import com.xinto.mauth.core.settings.model.FontSetting
 import com.xinto.mauth.core.settings.model.ThemeSetting
 import com.xinto.mauth.ui.theme.color.BlueberryBlueDark
 import com.xinto.mauth.ui.theme.color.LimeGreenDark
@@ -27,6 +28,7 @@ import com.xinto.mauth.ui.theme.color.SkyCyanLight
 fun MauthTheme(
     theme: ThemeSetting = ThemeSetting.DEFAULT,
     color: ColorSetting = ColorSetting.DEFAULT,
+    font: FontSetting = FontSetting.DEFAULT,
     content: @Composable () -> Unit
 ) {
     val isDark = when (theme) {
@@ -68,9 +70,13 @@ fun MauthTheme(
             false -> MothPurpleLight
         }
     }
+    val typography = when (font) {
+        FontSetting.Roboto -> DefaultTypography
+        FontSetting.GoogleSans -> GoogleSansTypography
+    }
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = typography,
         content = content
     )
 }

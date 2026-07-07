@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.android.tools.screenshot.PreviewTest
+import com.xinto.mauth.core.settings.model.FontSetting
 import com.xinto.mauth.ui.screen.settings.SettingsScreen
 
 class SettingsScreenshots {
@@ -25,6 +26,8 @@ class SettingsScreenshots {
             biometrics = false,
             onBiometricsChange = {},
             onThemeNavigate = {},
+            font = FontSetting.DEFAULT,
+            onFontChange = {}
         )
     }
 
@@ -45,6 +48,8 @@ class SettingsScreenshots {
             biometrics = true,
             onBiometricsChange = {},
             onThemeNavigate = {},
+            font = FontSetting.DEFAULT,
+            onFontChange = {}
         )
     }
 
@@ -65,6 +70,8 @@ class SettingsScreenshots {
             biometrics = true,
             onBiometricsChange = {},
             onThemeNavigate = {},
+            font = FontSetting.DEFAULT,
+            onFontChange = {}
         )
     }
 
@@ -85,6 +92,8 @@ class SettingsScreenshots {
             biometrics = false,
             onBiometricsChange = {},
             onThemeNavigate = {},
+            font = FontSetting.DEFAULT,
+            onFontChange = {}
         )
     }
 }

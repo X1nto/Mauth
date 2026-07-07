@@ -22,6 +22,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -30,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
+import com.xinto.mauth.core.settings.model.FontSetting
 import com.xinto.mauth.ui.component.rememberBiometricHandler
 import com.xinto.mauth.ui.component.rememberBiometricPromptData
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
@@ -52,6 +56,7 @@ fun SettingsScreen(
     val lockOnResume by viewModel.lockOnResume.collectAsStateWithLifecycle()
     val pinLock by viewModel.pinLock.collectAsStateWithLifecycle()
     val biometrics by viewModel.biometrics.collectAsStateWithLifecycle()
+    val font by viewModel.font.collectAsStateWithLifecycle()
 
     val biometricHandler = rememberBiometricHandler(
         onAuthSuccess = viewModel::toggleBiometrics
@@ -86,7 +91,9 @@ fun SettingsScreen(
             val promptData = if (it) setupPromptData else disablePromptData
             biometricHandler.requestBiometrics(promptData)
         },
-        onThemeNavigate = onThemeNavigate
+        onThemeNavigate = onThemeNavigate,
+        font = font,
+        onFontChange = viewModel::updateFont
     )
 }
 
@@ -104,9 +111,12 @@ fun SettingsScreen(
     biometrics: Boolean,
     onBiometricsChange: (Boolean) -> Unit,
     onThemeNavigate: () -> Unit,
+    font: FontSetting,
+    onFontChange: (FontSetting) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    var fontDialogIsOpen by rememberSaveable { mutableStateOf(false) }
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -204,14 +214,31 @@ fun SettingsScreen(
                             contentDescription = null
                         )
                     },
-                    shapes = ListItemDefaults.segmentedShapes(
-                        index = 0,
-                        count = 1,
-                        defaultShapes = ListItemDefaults.shapes(shape = MaterialTheme.shapes.large)
-                    )
+                    shapes = ListItemDefaults.segmentedShapes(index = 0, count = 2)
+                )
+                SettingsNavigateItem(
+                    onClick = { fontDialogIsOpen = true },
+                    title = { Text(stringResource(R.string.settings_prefs_font)) },
+                    icon = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_font),
+                            contentDescription = null
+                        )
+                    },
+                    shapes = ListItemDefaults.segmentedShapes(index = 1,  count = 2)
                 )
             }
         }
+    }
+    if (fontDialogIsOpen) {
+        FontDialog(
+            initialFont = font,
+            onConfirm = { newFont ->
+                onFontChange(newFont)
+                fontDialogIsOpen = false
+            },
+            onDismissRequest = { fontDialogIsOpen = false }
+        )
     }
 }
 
@@ -232,7 +259,9 @@ private fun SettingsScreen_Default_Preview() {
                 showBiometrics = false,
                 biometrics = false,
                 onBiometricsChange = {},
-                onThemeNavigate = {}
+                onThemeNavigate = {},
+                font = FontSetting.DEFAULT,
+                onFontChange = {}
             )
         }
     }
@@ -255,7 +284,9 @@ private fun SettingsScreen_AllEnabled_Preview() {
                 showBiometrics = true,
                 biometrics = true,
                 onBiometricsChange = {},
-                onThemeNavigate = {}
+                onThemeNavigate = {},
+                font = FontSetting.DEFAULT,
+                onFontChange = {}
             )
         }
     }

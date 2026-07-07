@@ -114,9 +114,11 @@ class MainActivity : FragmentActivity() {
         setContent {
             val theme by settings.getTheme().collectAsStateWithLifecycle()
             val color by settings.getColor().collectAsStateWithLifecycle()
+            val font by settings.getFont().collectAsStateWithLifecycle()
             MauthTheme(
                 theme = theme,
-                color = color
+                color = color,
+                font = font
             ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
