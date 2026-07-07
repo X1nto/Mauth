@@ -2,6 +2,7 @@
 
 package com.xinto.mauth.ui.screen.settings.component
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemColors
@@ -49,6 +50,7 @@ fun SettingsItem(
     colors: ListItemColors = SettingsItemDefaults.colors(),
     shapes: ListItemShapes = ListItemDefaults.shapes(),
     enabled: Boolean = true,
+    interactionSource: MutableInteractionSource? = null
 ) {
     ListItem(
         onClick = onClick,
@@ -61,6 +63,7 @@ fun SettingsItem(
         colors = colors,
         verticalAlignment = Alignment.CenterVertically,
         content = title,
+        interactionSource = interactionSource,
     )
 }
 

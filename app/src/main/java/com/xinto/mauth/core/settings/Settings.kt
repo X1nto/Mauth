@@ -1,6 +1,7 @@
 package com.xinto.mauth.core.settings
 
 import com.xinto.mauth.core.settings.model.ColorSetting
+import com.xinto.mauth.core.settings.model.FontSetting
 import com.xinto.mauth.core.settings.model.SortSetting
 import com.xinto.mauth.core.settings.model.ThemeSetting
 import kotlinx.coroutines.flow.StateFlow
@@ -12,6 +13,7 @@ interface Settings {
     fun getSortMode(): StateFlow<SortSetting>
     fun getTheme(): StateFlow<ThemeSetting>
     fun getColor(): StateFlow<ColorSetting>
+    fun getFont(): StateFlow<FontSetting>
 
     suspend fun setSecureMode(value: Boolean)
     suspend fun setLockOnResume(value: Boolean)
@@ -19,4 +21,5 @@ interface Settings {
     suspend fun setSortMode(value: SortSetting)
     suspend fun setTheme(value: ThemeSetting)
     suspend fun setColor(value: ColorSetting)
+    suspend fun setFont(value: FontSetting)
 }

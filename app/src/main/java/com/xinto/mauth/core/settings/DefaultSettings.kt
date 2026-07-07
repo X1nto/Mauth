@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.xinto.mauth.core.settings.model.ColorSetting
+import com.xinto.mauth.core.settings.model.FontSetting
 import com.xinto.mauth.core.settings.model.SortSetting
 import com.xinto.mauth.core.settings.model.ThemeSetting
 import kotlin.enums.enumEntries
@@ -34,6 +35,7 @@ class DefaultSettings(context: Context) : Settings {
     private val sortMode = preferenceStateFlow { it[KEY_SORT_MODE].toEnumOr(SortSetting.DEFAULT) }
     private val theme = preferenceStateFlow { it[KEY_THEME].toEnumOr(ThemeSetting.DEFAULT) }
     private val color = preferenceStateFlow { it[KEY_COLOR].toEnumOr(ColorSetting.DEFAULT) }
+    private val font = preferenceStateFlow { it[KEY_FONT].toEnumOr(FontSetting.DEFAULT) }
 
     override fun getSecureMode(): StateFlow<Boolean> = secureMode
     override fun getLockOnResume(): StateFlow<Boolean> = lockOnResume
@@ -41,6 +43,7 @@ class DefaultSettings(context: Context) : Settings {
     override fun getSortMode(): StateFlow<SortSetting> = sortMode
     override fun getTheme(): StateFlow<ThemeSetting> = theme
     override fun getColor(): StateFlow<ColorSetting> = color
+    override fun getFont(): StateFlow<FontSetting> = font
 
     override suspend fun setSecureMode(value: Boolean) {
         preferences.edit {
@@ -78,6 +81,12 @@ class DefaultSettings(context: Context) : Settings {
         }
     }
 
+    override suspend fun setFont(value: FontSetting) {
+        preferences.edit {
+            it[KEY_FONT] = value.name
+        }
+    }
+
     private inline fun <T> preferenceStateFlow(crossinline transform: (Preferences) -> T): StateFlow<T> {
         return preferences.data
             .map(transform)
@@ -99,6 +108,7 @@ class DefaultSettings(context: Context) : Settings {
         val KEY_SORT_MODE = stringPreferencesKey("sort_mode")
         val KEY_THEME = stringPreferencesKey("theme")
         val KEY_COLOR = stringPreferencesKey("color")
+        val KEY_FONT = stringPreferencesKey("font")
     }
 
 }

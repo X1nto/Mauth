@@ -16,17 +16,19 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SettingsGroup(
-    header: @Composable () -> Unit,
     modifier: Modifier = Modifier,
+    header: (@Composable () -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        Box(modifier = Modifier.padding(start = 12.dp)) {
-            CompositionLocalProvider(
-                LocalTextStyle provides MaterialTheme.typography.titleMedium,
-                LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant,
-            ) {
-                header()
+        if (header != null) {
+            Box(modifier = Modifier.padding(start = 12.dp)) {
+                CompositionLocalProvider(
+                    LocalTextStyle provides MaterialTheme.typography.titleMedium,
+                    LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant,
+                ) {
+                    header()
+                }
             }
         }
         Column(
