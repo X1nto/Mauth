@@ -77,6 +77,10 @@ Mauth is available on F-Droid and GitHub Releases page.
 
 For translations use https://toolate.othing.xyz/projects/mauth/
 
+# Support
+
+[<img src="github/support_me_on_kofi_dark.png" height="75">](https://ko-fi.com/xinto)
+
 # License
 ```
 Mauth is free software: you can redistribute it and/or modify
