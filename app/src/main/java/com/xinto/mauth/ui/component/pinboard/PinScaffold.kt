@@ -78,7 +78,7 @@ fun PinScaffold(
             Box(
                 modifier = modifier
                     .fillMaxWidth()
-                    .paint(getGraidentPainter())
+                    .paint(getGradientPainter())
                     .blur(64.dp)
                     .fillMaxSize()
             )
@@ -183,7 +183,7 @@ fun PinScaffold(
 }
 
 @Composable
-fun getGraidentPainter(): MeshGradientPainter {
+fun getGradientPainter(): MeshGradientPainter {
     // https://developer.android.com/develop/ui/compose/graphics/draw/mesh-gradient#animate-mesh-gradient
 
     val infiniteTransition = rememberInfiniteTransition(label = "meshMovement")
