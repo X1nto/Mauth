@@ -123,6 +123,8 @@ private fun SettingsFixture() {
         onSecureModeChange = {},
         pinCode = true,
         onPinCodeChange = {},
+        meshGradientBackground = false,
+        onMeshGradientBackgroundChange = {},
         lockOnResume = false,
         onLockOnResumeChange = {},
         showBiometrics = true,

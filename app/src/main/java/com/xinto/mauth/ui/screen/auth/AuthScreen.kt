@@ -1,7 +1,11 @@
 package com.xinto.mauth.ui.screen.auth
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -9,15 +13,19 @@ import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
 import com.xinto.mauth.ui.component.pinboard.PinScaffold
@@ -37,6 +45,7 @@ fun AuthScreen(
     val viewModel: AuthViewModel = koinViewModel()
     val code by viewModel.code.collectAsStateWithLifecycle()
     val useBiometrics by viewModel.useBiometrics.collectAsStateWithLifecycle()
+    val useMeshGradientBackground by viewModel.useMeshGradientBackground.collectAsStateWithLifecycle()
 
     val biometricHandler = rememberBiometricHandler(
         onAuthSuccess = onAuthSuccess,
@@ -78,13 +87,15 @@ fun AuthScreen(
         onFingerprintClick = {
             biometricHandler.requestBiometrics(promptData)
         },
-        onBackPress = onBackPress
+        onBackPress = onBackPress,
+        useMeshGradientBackground = useMeshGradientBackground
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthScreen(
+    modifier: Modifier = Modifier,
     code: String,
     onNumberAdd: (Char) -> Unit,
     onNumberDelete: () -> Unit,
@@ -92,7 +103,7 @@ fun AuthScreen(
     showFingerprint: Boolean,
     onFingerprintClick: () -> Unit,
     onBackPress: (() -> Unit)? = null,
-    modifier: Modifier = Modifier
+    useMeshGradientBackground: Boolean? = false
 ) {
     val pinBoardState = rememberPinBoardState(
         showFingerprint = showFingerprint,
@@ -103,11 +114,6 @@ fun AuthScreen(
     )
     PinScaffold(
         modifier = modifier,
-        description = {
-            if (onBackPress == null) {
-                Text(stringResource(R.string.auth_title))
-            }
-        },
         topBar = {
             if (onBackPress != null) {
                 LargeTopAppBar(
@@ -123,10 +129,34 @@ fun AuthScreen(
                         }
                     }
                 )
+            } else {
+                CenterAlignedTopAppBar(
+                    modifier = Modifier.padding(top = 32.dp),
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = androidx.compose.ui.graphics.Color.Transparent
+                    ),
+                    title = {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                stringResource(R.string.two_step_verificationn),
+                                fontSize = 21.sp
+                            )
+
+                            Text(
+                                stringResource(R.string.auth_title),
+                                fontSize = 16.sp
+                            )
+                        }
+                    }
+                )
             }
         },
         codeLength = code.length,
-        state = pinBoardState
+        state = pinBoardState,
+        useMeshGradientBackground = useMeshGradientBackground
     )
 }
 

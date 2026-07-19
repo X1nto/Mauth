@@ -2,6 +2,7 @@
     <string name="app_name" translatable="false">Mauth</string>
 
     <string name="auth_title">Enter your PIN</string>
+    <string name="two_step_verificationn">2-step verification</string>
     <string name="auth_biometrics_title">Biometric Authentication</string>
     <string name="auth_biometrics_cancel">Cancel</string>
 
@@ -94,6 +95,8 @@
     <string name="settings_prefs_securemode_description">Prevent screenshots within the app</string>
     <string name="settings_prefs_pincode">PIN Lock</string>
     <string name="settings_prefs_pincode_description">Require authentication on startup</string>
+    <string name="settings_prefs_mesh_gradient">Use mesh gradient background on PIN lock screen</string>
+    <string name="settings_prefs_mesh_gradient_description">Only available on Android 12 or higher</string>
     <string name="settings_prefs_autolock">Auto-lock</string>
     <string name="settings_prefs_autolock_description">Require authentication every time you re-enter the app</string>
     <string name="settings_prefs_biometrics">Biometric Authentication</string>

@@ -1,5 +1,6 @@
 package com.xinto.mauth.ui.screen.settings
 
+import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -57,6 +58,7 @@ fun SettingsScreen(
     val pinLock by viewModel.pinLock.collectAsStateWithLifecycle()
     val biometrics by viewModel.biometrics.collectAsStateWithLifecycle()
     val font by viewModel.font.collectAsStateWithLifecycle()
+    val meshGradientBackground by viewModel.meshGradientBackground.collectAsStateWithLifecycle()
 
     val biometricHandler = rememberBiometricHandler(
         onAuthSuccess = viewModel::toggleBiometrics
@@ -83,6 +85,8 @@ fun SettingsScreen(
                 onDisablePinCode()
             }
         },
+        meshGradientBackground = meshGradientBackground,
+        onMeshGradientBackgroundChange = viewModel::updateUseMeshGradient,
         lockOnResume = lockOnResume,
         onLockOnResumeChange = viewModel::updateLockOnResume,
         showBiometrics = biometricHandler.canUseBiometrics(),
@@ -105,6 +109,8 @@ fun SettingsScreen(
     onSecureModeChange: (Boolean) -> Unit,
     pinCode: Boolean,
     onPinCodeChange: (Boolean) -> Unit,
+    meshGradientBackground: Boolean,
+    onMeshGradientBackgroundChange: (Boolean) -> Unit,
     lockOnResume: Boolean,
     onLockOnResumeChange: (Boolean) -> Unit,
     showBiometrics: Boolean,
@@ -174,6 +180,19 @@ fun SettingsScreen(
                     },
                     shapes = ListItemDefaults.segmentedShapes(index = 1, count = count)
                 )
+                SettingsSwitchItem(
+                    onCheckedChange = onMeshGradientBackgroundChange,
+                    checked = meshGradientBackground && pinCode && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S,
+                    title = { Text(stringResource(R.string.settings_prefs_mesh_gradient)) },
+                    description = { Text(stringResource(R.string.settings_prefs_mesh_gradient_description)) },
+                    icon = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_gradient),
+                            contentDescription = null
+                        )
+                    },
+                    shapes = ListItemDefaults.segmentedShapes(index = 2, count = count)
+                )
                 if (showBiometrics) {
                     SettingsSwitchItem(
                         onCheckedChange = onBiometricsChange,
@@ -186,7 +205,7 @@ fun SettingsScreen(
                             )
                         },
                         enabled = pinCode,
-                        shapes = ListItemDefaults.segmentedShapes(index = 2, count = count)
+                        shapes = ListItemDefaults.segmentedShapes(index = 3, count = count)
                     )
                 }
                 SettingsSwitchItem(
@@ -201,7 +220,7 @@ fun SettingsScreen(
                         )
                     },
                     enabled = pinCode,
-                    shapes = ListItemDefaults.segmentedShapes(index = if (showBiometrics) 3 else 2, count = count)
+                    shapes = ListItemDefaults.segmentedShapes(index = if (showBiometrics) 4 else 3, count = count)
                 )
             }
             SettingsGroup(header = { Text(stringResource(R.string.settings_category_appearance)) }) {
@@ -254,6 +273,8 @@ private fun SettingsScreen_Default_Preview() {
                 onSecureModeChange = {},
                 pinCode = false,
                 onPinCodeChange = {},
+                meshGradientBackground = false,
+                onMeshGradientBackgroundChange = {},
                 lockOnResume = false,
                 onLockOnResumeChange = {},
                 showBiometrics = false,
@@ -279,6 +300,8 @@ private fun SettingsScreen_AllEnabled_Preview() {
                 onSecureModeChange = {},
                 pinCode = true,
                 onPinCodeChange = {},
+                meshGradientBackground = false,
+                onMeshGradientBackgroundChange = {},
                 lockOnResume = true,
                 onLockOnResumeChange = {},
                 showBiometrics = true,

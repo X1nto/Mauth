@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -19,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,13 +33,12 @@ fun PinDisplay(
 ) {
     val inspectionMode = LocalInspectionMode.current
     val color = when (error) {
-        true -> MaterialTheme.colorScheme.errorContainer
-        false -> MaterialTheme.colorScheme.secondaryContainer
+        true -> MaterialTheme.colorScheme.error
+        false -> MaterialTheme.colorScheme.secondary
     }
     Surface(
         modifier = modifier,
-        color = color,
-        shape = CircleShape
+        color = Color.Transparent
     ) {
         Row(
             modifier = Modifier
@@ -65,9 +64,10 @@ fun PinDisplay(
                     exit = scaleOut()
                 ) {
                     Text(
-                        text = "•",
+                        text = "●",
                         style = MaterialTheme.typography.headlineMedium,
                         textAlign = TextAlign.Center,
+                        color = color
                     )
                 }
             }
