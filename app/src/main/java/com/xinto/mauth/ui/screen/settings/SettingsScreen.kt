@@ -182,7 +182,8 @@ fun SettingsScreen(
                 )
                 SettingsSwitchItem(
                     onCheckedChange = onMeshGradientBackgroundChange,
-                    checked = meshGradientBackground && pinCode && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S,
+                    checked = meshGradientBackground,
+                    enabled = pinCode && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S,
                     title = { Text(stringResource(R.string.settings_prefs_mesh_gradient)) },
                     description = { Text(stringResource(R.string.settings_prefs_mesh_gradient_description)) },
                     icon = {
