@@ -124,6 +124,12 @@ fun SettingsScreen(
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     var fontDialogIsOpen by rememberSaveable { mutableStateOf(false) }
     val showMeshGradient = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    val autoLockIndex = when {
+        showBiometrics && showMeshGradient -> 4
+        showBiometrics || showMeshGradient -> 3
+        else -> 2
+    }
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -223,7 +229,7 @@ fun SettingsScreen(
                         )
                     },
                     enabled = pinCode,
-                    shapes = ListItemDefaults.segmentedShapes(index = if (showBiometrics) 4 else if (showMeshGradient) 3 else 2, count = count)
+                    shapes = ListItemDefaults.segmentedShapes(index = autoLockIndex, count = count)
                 )
             }
             SettingsGroup(header = { Text(stringResource(R.string.settings_category_appearance)) }) {
