@@ -103,7 +103,7 @@ fun AuthScreen(
     showFingerprint: Boolean,
     onFingerprintClick: () -> Unit,
     onBackPress: (() -> Unit)? = null,
-    useMeshGradientBackground: Boolean? = false
+    useMeshGradientBackground: Boolean
 ) {
     val pinBoardState = rememberPinBoardState(
         showFingerprint = showFingerprint,
@@ -112,6 +112,7 @@ fun AuthScreen(
         onBackspaceClick = onNumberDelete,
         onBackspaceLongClick = onClear
     )
+
     PinScaffold(
         modifier = modifier,
         topBar = {
@@ -141,13 +142,8 @@ fun AuthScreen(
                             verticalArrangement = Arrangement.Center
                         ) {
                             Text(
-                                stringResource(R.string.two_step_verificationn),
-                                fontSize = 21.sp
-                            )
-
-                            Text(
                                 stringResource(R.string.auth_title),
-                                fontSize = 16.sp
+                                fontSize = 21.sp
                             )
                         }
                     }
@@ -173,7 +169,8 @@ private fun AuthScreen_Empty_Preview() {
                 onClear = {},
                 showFingerprint = false,
                 onFingerprintClick = {},
-                onBackPress = null
+                onBackPress = null,
+                useMeshGradientBackground = false
             )
         }
     }
@@ -192,7 +189,8 @@ private fun AuthScreen_Fingerprint_Preview() {
                 onClear = {},
                 showFingerprint = true,
                 onFingerprintClick = {},
-                onBackPress = null
+                onBackPress = null,
+                useMeshGradientBackground = false
             )
         }
     }
@@ -211,7 +209,8 @@ private fun AuthScreen_PartialCode_Preview() {
                 onClear = {},
                 showFingerprint = true,
                 onFingerprintClick = {},
-                onBackPress = null
+                onBackPress = null,
+                useMeshGradientBackground = false
             )
         }
     }
@@ -230,7 +229,8 @@ private fun AuthScreen_WithBackButton_Preview() {
                 onClear = {},
                 showFingerprint = false,
                 onFingerprintClick = {},
-                onBackPress = {}
+                onBackPress = {},
+                useMeshGradientBackground = false
             )
         }
     }

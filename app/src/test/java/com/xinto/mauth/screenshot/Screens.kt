@@ -63,6 +63,7 @@ private fun AuthPinFixture() {
         onFingerprintClick = {},
         onBackPress = null,
         modifier = Modifier.fillMaxSize(),
+        useMeshGradientBackground = false
     )
 }
 
