@@ -185,7 +185,6 @@ fun PinScaffold(
 @Composable
 fun getGradientPainter(): MeshGradientPainter {
     // https://developer.android.com/develop/ui/compose/graphics/draw/mesh-gradient#animate-mesh-gradient
-
     val infiniteTransition = rememberInfiniteTransition(label = "meshMovement")
     val animatedOffset by infiniteTransition.animateFloat(
         initialValue = -0.1f,
@@ -205,7 +204,6 @@ fun getGradientPainter(): MeshGradientPainter {
 
     val gradientPainter = remember {
         MeshGradientPainter(rows = 3, columns = 3) {
-
             setVertex(0, 0, Offset(0.0f, 0.0f), surfaceContainerLow)
             setVertex(0, 1, Offset(0.3f, 0.0f), surfaceContainer)
             setVertex(0, 2, Offset(0.7f, 0.0f), surfaceContainerHigh)
