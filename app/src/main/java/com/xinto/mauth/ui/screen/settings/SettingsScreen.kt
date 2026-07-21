@@ -124,11 +124,6 @@ fun SettingsScreen(
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     var fontDialogIsOpen by rememberSaveable { mutableStateOf(false) }
     val showMeshGradient = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-    val autoLockIndex = when {
-        showBiometrics && showMeshGradient -> 4
-        showBiometrics || showMeshGradient -> 3
-        else -> 2
-    }
 
     Scaffold(
         modifier = modifier,
@@ -187,21 +182,6 @@ fun SettingsScreen(
                     },
                     shapes = ListItemDefaults.segmentedShapes(index = 1, count = count)
                 )
-                if (showMeshGradient) {
-                    SettingsSwitchItem(
-                        onCheckedChange = onMeshGradientBackgroundChange,
-                        checked = meshGradientBackground,
-                        enabled = pinCode,
-                        title = { Text(stringResource(R.string.settings_prefs_mesh_gradient)) },
-                        icon = {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_gradient),
-                                contentDescription = null
-                            )
-                        },
-                        shapes = ListItemDefaults.segmentedShapes(index = 2, count = count)
-                    )
-                }
                 if (showBiometrics) {
                     SettingsSwitchItem(
                         onCheckedChange = onBiometricsChange,
@@ -214,7 +194,7 @@ fun SettingsScreen(
                             )
                         },
                         enabled = pinCode,
-                        shapes = ListItemDefaults.segmentedShapes(index = 3, count = count)
+                        shapes = ListItemDefaults.segmentedShapes(index = 2, count = count)
                     )
                 }
                 SettingsSwitchItem(
@@ -229,7 +209,7 @@ fun SettingsScreen(
                         )
                     },
                     enabled = pinCode,
-                    shapes = ListItemDefaults.segmentedShapes(index = autoLockIndex, count = count)
+                    shapes = ListItemDefaults.segmentedShapes(index = if (showBiometrics) 3 else 2, count = count)
                 )
             }
             SettingsGroup(header = { Text(stringResource(R.string.settings_category_appearance)) }) {
@@ -253,8 +233,23 @@ fun SettingsScreen(
                             contentDescription = null
                         )
                     },
-                    shapes = ListItemDefaults.segmentedShapes(index = 1,  count = 2)
+                    shapes = ListItemDefaults.segmentedShapes(index = 1, count = 2)
                 )
+                if (showMeshGradient) {
+                    SettingsSwitchItem(
+                        onCheckedChange = onMeshGradientBackgroundChange,
+                        checked = meshGradientBackground,
+                        enabled = pinCode,
+                        title = { Text(stringResource(R.string.settings_prefs_mesh_gradient)) },
+                        icon = {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_gradient),
+                                contentDescription = null
+                            )
+                        },
+                        shapes = ListItemDefaults.segmentedShapes(index = 2, count = 3)
+                    )
+                }
             }
         }
     }

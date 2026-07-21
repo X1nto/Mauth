@@ -78,7 +78,8 @@ fun PinRemoveScreen(
             onBackspaceClick = onNumberDelete,
             onEnterClick = onEnter,
             onBackspaceLongClick = onAllDelete
-        )
+        ),
+        useMeshGradientBackground = false
     )
 }
 

@@ -56,7 +56,7 @@ fun PinScaffold(
     floatingActionButtonPosition: FabPosition = FabPosition.End,
     containerColor: Color = MaterialTheme.colorScheme.background,
     contentColor: Color = contentColorFor(containerColor),
-    useMeshGradientBackground: Boolean? = false,
+    useMeshGradientBackground: Boolean,
     contentWindowInsets: WindowInsets = ScaffoldDefaults.contentWindowInsets,
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfoV2(),
     description: (@Composable () -> Unit)? = null,
@@ -70,11 +70,11 @@ fun PinScaffold(
         snackbarHost = snackbarHost,
         floatingActionButton = floatingActionButton,
         floatingActionButtonPosition = floatingActionButtonPosition,
-        containerColor = if (useMeshGradientBackground == true) Color.Transparent else containerColor,
+        containerColor = if (useMeshGradientBackground) Color.Transparent else containerColor,
         contentColor = contentColor,
         contentWindowInsets = contentWindowInsets,
     ) {
-        if (useMeshGradientBackground == true) {
+        if (useMeshGradientBackground) {
             Box(
                 modifier = modifier
                     .fillMaxWidth()
@@ -240,7 +240,8 @@ fun PinScaffold_WithDescription() {
     MauthTheme {
         PinScaffold(
             description = { Text("Enter PIN") },
-            codeLength = 5
+            codeLength = 5,
+            useMeshGradientBackground = false
         )
     }
 }
@@ -249,6 +250,6 @@ fun PinScaffold_WithDescription() {
 @PreviewAllConfigurations
 fun PinScaffold_WithoutDescription() {
     MauthTheme {
-        PinScaffold(codeLength = 5)
+        PinScaffold(codeLength = 5, useMeshGradientBackground = false)
     }
 }
