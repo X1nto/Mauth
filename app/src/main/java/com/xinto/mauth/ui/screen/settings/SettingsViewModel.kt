@@ -18,6 +18,7 @@ class SettingsViewModel(
     val lockOnResume = settings.getLockOnResume()
     val biometrics = settings.getUseBiometrics()
     val font = settings.getFont()
+    val meshGradientBackground = settings.getUseMeshGradientBackground()
 
     val pinLock = authRepository.observeIsProtected()
         .stateIn(
@@ -47,6 +48,12 @@ class SettingsViewModel(
     fun updateFont(newFont: FontSetting) {
         viewModelScope.launch {
             settings.setFont(newFont)
+        }
+    }
+
+    fun updateUseMeshGradient(value: Boolean) {
+        viewModelScope.launch {
+            settings.setUseMeshGradientBackground(value)
         }
     }
 }

@@ -21,6 +21,7 @@ class AuthScreenshots {
             showFingerprint = false,
             onFingerprintClick = {},
             onBackPress = null,
+            useMeshGradientBackground = false
         )
     }
 
@@ -37,6 +38,7 @@ class AuthScreenshots {
             showFingerprint = true,
             onFingerprintClick = {},
             onBackPress = null,
+            useMeshGradientBackground = false
         )
     }
 
@@ -53,6 +55,7 @@ class AuthScreenshots {
             showFingerprint = true,
             onFingerprintClick = {},
             onBackPress = null,
+            useMeshGradientBackground = false
         )
     }
 }

@@ -32,6 +32,7 @@ class DefaultSettings(context: Context) : Settings {
     private val secureMode = preferenceStateFlow { it[KEY_SECURE_MODE] ?: false }
     private val lockOnResume = preferenceStateFlow { it[KEY_LOCK_ON_RESUME] ?: false }
     private val useBiometrics = preferenceStateFlow { it[KEY_USE_BIOMETRICS] ?: false }
+    private val useMeshGradientBackground = preferenceStateFlow { it[KEY_USE_MESH_GRADIENT_BACKGROUND] ?: false }
     private val sortMode = preferenceStateFlow { it[KEY_SORT_MODE].toEnumOr(SortSetting.DEFAULT) }
     private val theme = preferenceStateFlow { it[KEY_THEME].toEnumOr(ThemeSetting.DEFAULT) }
     private val color = preferenceStateFlow { it[KEY_COLOR].toEnumOr(ColorSetting.DEFAULT) }
@@ -40,6 +41,7 @@ class DefaultSettings(context: Context) : Settings {
     override fun getSecureMode(): StateFlow<Boolean> = secureMode
     override fun getLockOnResume(): StateFlow<Boolean> = lockOnResume
     override fun getUseBiometrics(): StateFlow<Boolean> = useBiometrics
+    override fun getUseMeshGradientBackground(): StateFlow<Boolean> = useMeshGradientBackground
     override fun getSortMode(): StateFlow<SortSetting> = sortMode
     override fun getTheme(): StateFlow<ThemeSetting> = theme
     override fun getColor(): StateFlow<ColorSetting> = color
@@ -60,6 +62,12 @@ class DefaultSettings(context: Context) : Settings {
     override suspend fun setUseBiometrics(value: Boolean) {
         preferences.edit {
             it[KEY_USE_BIOMETRICS] = value
+        }
+    }
+
+    override suspend fun setUseMeshGradientBackground(value: Boolean) {
+        preferences.edit {
+            it[KEY_USE_MESH_GRADIENT_BACKGROUND] = value
         }
     }
 
@@ -105,6 +113,7 @@ class DefaultSettings(context: Context) : Settings {
         val KEY_SECURE_MODE = booleanPreferencesKey("private_mode")
         val KEY_LOCK_ON_RESUME = booleanPreferencesKey("lock_on_resume")
         val KEY_USE_BIOMETRICS = booleanPreferencesKey("use_biometrics")
+        val KEY_USE_MESH_GRADIENT_BACKGROUND = booleanPreferencesKey("use_mesh_gradient_background")
         val KEY_SORT_MODE = stringPreferencesKey("sort_mode")
         val KEY_THEME = stringPreferencesKey("theme")
         val KEY_COLOR = stringPreferencesKey("color")

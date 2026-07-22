@@ -11,9 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -33,43 +31,38 @@ fun PinDisplay(
 ) {
     val inspectionMode = LocalInspectionMode.current
     val color = when (error) {
-        true -> MaterialTheme.colorScheme.errorContainer
-        false -> MaterialTheme.colorScheme.secondaryContainer
+        true -> MaterialTheme.colorScheme.error
+        false -> MaterialTheme.colorScheme.secondary
     }
-    Surface(
-        modifier = modifier,
-        color = color,
-        shape = CircleShape
+    Row(
+        modifier = modifier
+            .height(64.dp)
+            .padding(horizontal = 8.dp)
+            .animateContentSize(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier
-                .height(64.dp)
-                .padding(horizontal = 8.dp)
-                .animateContentSize(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            for (i in 0..<length) {
-                val transitionState = remember(i, inspectionMode) {
-                    if (inspectionMode) {
-                        MutableTransitionState(true)
-                    } else {
-                        MutableTransitionState(false).apply {
-                            targetState = true
-                        }
+        for (i in 0..<length) {
+            val transitionState = remember(i, inspectionMode) {
+                if (inspectionMode) {
+                    MutableTransitionState(true)
+                } else {
+                    MutableTransitionState(false).apply {
+                        targetState = true
                     }
                 }
-                AnimatedVisibility(
-                    visibleState = transitionState,
-                    enter = scaleIn(),
-                    exit = scaleOut()
-                ) {
-                    Text(
-                        text = "•",
-                        style = MaterialTheme.typography.headlineMedium,
-                        textAlign = TextAlign.Center,
-                    )
-                }
+            }
+            AnimatedVisibility(
+                visibleState = transitionState,
+                enter = scaleIn(),
+                exit = scaleOut()
+            ) {
+                Text(
+                    text = "●",
+                    style = MaterialTheme.typography.headlineMedium,
+                    textAlign = TextAlign.Center,
+                    color = color
+                )
             }
         }
     }

@@ -112,7 +112,8 @@ fun PinSetupScreen(
             onBackspaceClick = onNumberDelete,
             onEnterClick = onNext,
             onBackspaceLongClick = onAllDelete
-        )
+        ),
+        useMeshGradientBackground = false
     )
 }
 
