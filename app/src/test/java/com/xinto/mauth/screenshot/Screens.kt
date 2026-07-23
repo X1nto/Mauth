@@ -63,6 +63,7 @@ private fun AuthPinFixture() {
         onFingerprintClick = {},
         onBackPress = null,
         modifier = Modifier.fillMaxSize(),
+        useMeshGradientBackground = false
     )
 }
 
@@ -123,6 +124,8 @@ private fun SettingsFixture() {
         onSecureModeChange = {},
         pinCode = true,
         onPinCodeChange = {},
+        meshGradientBackground = false,
+        onMeshGradientBackgroundChange = {},
         lockOnResume = false,
         onLockOnResumeChange = {},
         showBiometrics = true,

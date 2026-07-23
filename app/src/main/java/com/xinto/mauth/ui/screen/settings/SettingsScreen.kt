@@ -1,5 +1,6 @@
 package com.xinto.mauth.ui.screen.settings
 
+import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -57,6 +58,7 @@ fun SettingsScreen(
     val pinLock by viewModel.pinLock.collectAsStateWithLifecycle()
     val biometrics by viewModel.biometrics.collectAsStateWithLifecycle()
     val font by viewModel.font.collectAsStateWithLifecycle()
+    val meshGradientBackground by viewModel.meshGradientBackground.collectAsStateWithLifecycle()
 
     val biometricHandler = rememberBiometricHandler(
         onAuthSuccess = viewModel::toggleBiometrics
@@ -83,6 +85,8 @@ fun SettingsScreen(
                 onDisablePinCode()
             }
         },
+        meshGradientBackground = meshGradientBackground,
+        onMeshGradientBackgroundChange = viewModel::updateUseMeshGradient,
         lockOnResume = lockOnResume,
         onLockOnResumeChange = viewModel::updateLockOnResume,
         showBiometrics = biometricHandler.canUseBiometrics(),
@@ -105,6 +109,8 @@ fun SettingsScreen(
     onSecureModeChange: (Boolean) -> Unit,
     pinCode: Boolean,
     onPinCodeChange: (Boolean) -> Unit,
+    meshGradientBackground: Boolean,
+    onMeshGradientBackgroundChange: (Boolean) -> Unit,
     lockOnResume: Boolean,
     onLockOnResumeChange: (Boolean) -> Unit,
     showBiometrics: Boolean,
@@ -117,6 +123,8 @@ fun SettingsScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     var fontDialogIsOpen by rememberSaveable { mutableStateOf(false) }
+    val showMeshGradient = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -225,8 +233,23 @@ fun SettingsScreen(
                             contentDescription = null
                         )
                     },
-                    shapes = ListItemDefaults.segmentedShapes(index = 1,  count = 2)
+                    shapes = ListItemDefaults.segmentedShapes(index = 1, count = 2)
                 )
+                if (showMeshGradient) {
+                    SettingsSwitchItem(
+                        onCheckedChange = onMeshGradientBackgroundChange,
+                        checked = meshGradientBackground,
+                        enabled = pinCode,
+                        title = { Text(stringResource(R.string.settings_prefs_mesh_gradient)) },
+                        icon = {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_gradient),
+                                contentDescription = null
+                            )
+                        },
+                        shapes = ListItemDefaults.segmentedShapes(index = 2, count = 3)
+                    )
+                }
             }
         }
     }
@@ -254,6 +277,8 @@ private fun SettingsScreen_Default_Preview() {
                 onSecureModeChange = {},
                 pinCode = false,
                 onPinCodeChange = {},
+                meshGradientBackground = false,
+                onMeshGradientBackgroundChange = {},
                 lockOnResume = false,
                 onLockOnResumeChange = {},
                 showBiometrics = false,
@@ -279,6 +304,8 @@ private fun SettingsScreen_AllEnabled_Preview() {
                 onSecureModeChange = {},
                 pinCode = true,
                 onPinCodeChange = {},
+                meshGradientBackground = false,
+                onMeshGradientBackgroundChange = {},
                 lockOnResume = true,
                 onLockOnResumeChange = {},
                 showBiometrics = true,

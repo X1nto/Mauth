@@ -28,7 +28,7 @@ import com.xinto.mauth.ui.theme.MauthTheme
 @Composable
 fun PinBoard(
     modifier: Modifier = Modifier,
-    horizontalButtonSpace: Dp = 16.dp,
+    horizontalButtonSpace: Dp = 4.dp,
     minButtonSize: Dp = PinButtonDefaults.PinButtonNormalMinSize,
     state: PinBoardState = rememberPinBoardState()
 ) {
@@ -36,7 +36,7 @@ fun PinBoard(
 
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         buttonRows.forEach { buttons ->
             Row(horizontalArrangement = Arrangement.spacedBy(horizontalButtonSpace)) {

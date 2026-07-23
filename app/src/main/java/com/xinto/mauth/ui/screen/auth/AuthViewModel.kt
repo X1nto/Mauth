@@ -16,6 +16,7 @@ class AuthViewModel(
     val code = _code.asStateFlow()
 
     val useBiometrics = settingsRepository.getUseBiometrics()
+    val useMeshGradientBackground = settingsRepository.getUseMeshGradientBackground()
 
     fun insertNumber(number: Char) {
         _code.update { it + number }
