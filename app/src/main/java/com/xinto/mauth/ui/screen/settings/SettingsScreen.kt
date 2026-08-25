@@ -34,7 +34,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
+import com.xinto.mauth.core.settings.model.ColorSetting
 import com.xinto.mauth.core.settings.model.FontSetting
+import com.xinto.mauth.core.settings.model.ThemeSetting
 import com.xinto.mauth.ui.component.rememberBiometricHandler
 import com.xinto.mauth.ui.component.rememberBiometricPromptData
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
@@ -58,6 +60,8 @@ fun SettingsScreen(
     val pinLock by viewModel.pinLock.collectAsStateWithLifecycle()
     val biometrics by viewModel.biometrics.collectAsStateWithLifecycle()
     val font by viewModel.font.collectAsStateWithLifecycle()
+    val theme by viewModel.theme.collectAsStateWithLifecycle()
+    val color by viewModel.color.collectAsStateWithLifecycle()
     val meshGradientBackground by viewModel.meshGradientBackground.collectAsStateWithLifecycle()
 
     val biometricHandler = rememberBiometricHandler(
@@ -96,6 +100,8 @@ fun SettingsScreen(
             biometricHandler.requestBiometrics(promptData)
         },
         onThemeNavigate = onThemeNavigate,
+        theme = theme,
+        color = color,
         font = font,
         onFontChange = viewModel::updateFont
     )
@@ -117,6 +123,8 @@ fun SettingsScreen(
     biometrics: Boolean,
     onBiometricsChange: (Boolean) -> Unit,
     onThemeNavigate: () -> Unit,
+    theme: ThemeSetting,
+    color: ColorSetting,
     font: FontSetting,
     onFontChange: (FontSetting) -> Unit,
     modifier: Modifier = Modifier
@@ -213,41 +221,47 @@ fun SettingsScreen(
                 )
             }
             SettingsGroup(header = { Text(stringResource(R.string.settings_category_appearance)) }) {
+                val count = if (showMeshGradient) 3 else 2
                 SettingsNavigateItem(
                     onClick = onThemeNavigate,
                     title = { Text(stringResource(R.string.settings_prefs_theme)) },
+                    description = {
+                        Text(stringResource(R.string.settings_prefs_theme_description, stringResource(theme.labelRes), stringResource(color.labelRes)))
+                    },
                     icon = {
                         Icon(
                             painter = painterResource(R.drawable.ic_brush),
                             contentDescription = null
                         )
                     },
-                    shapes = ListItemDefaults.segmentedShapes(index = 0, count = 2)
+                    shapes = ListItemDefaults.segmentedShapes(index = 0, count = count)
                 )
                 SettingsNavigateItem(
                     onClick = { fontDialogIsOpen = true },
                     title = { Text(stringResource(R.string.settings_prefs_font)) },
+                    description = { Text(stringResource(font.labelRes)) },
                     icon = {
                         Icon(
                             painter = painterResource(R.drawable.ic_font),
                             contentDescription = null
                         )
                     },
-                    shapes = ListItemDefaults.segmentedShapes(index = 1, count = 2)
+                    shapes = ListItemDefaults.segmentedShapes(index = 1, count = count)
                 )
                 if (showMeshGradient) {
                     SettingsSwitchItem(
                         onCheckedChange = onMeshGradientBackgroundChange,
                         checked = meshGradientBackground,
                         enabled = pinCode,
-                        title = { Text(stringResource(R.string.settings_prefs_mesh_gradient)) },
+                        title = { Text(stringResource(R.string.settings_prefs_animatedbackground)) },
+                        description = { Text(stringResource(R.string.settings_prefs_animatedbackground_description)) },
                         icon = {
                             Icon(
                                 painter = painterResource(R.drawable.ic_gradient),
                                 contentDescription = null
                             )
                         },
-                        shapes = ListItemDefaults.segmentedShapes(index = 2, count = 3)
+                        shapes = ListItemDefaults.segmentedShapes(index = 2, count = count)
                     )
                 }
             }
@@ -285,6 +299,8 @@ private fun SettingsScreen_Default_Preview() {
                 biometrics = false,
                 onBiometricsChange = {},
                 onThemeNavigate = {},
+                theme = ThemeSetting.DEFAULT,
+                color = ColorSetting.MothPurple,
                 font = FontSetting.DEFAULT,
                 onFontChange = {}
             )
@@ -312,6 +328,8 @@ private fun SettingsScreen_AllEnabled_Preview() {
                 biometrics = true,
                 onBiometricsChange = {},
                 onThemeNavigate = {},
+                theme = ThemeSetting.DEFAULT,
+                color = ColorSetting.MothPurple,
                 font = FontSetting.DEFAULT,
                 onFontChange = {}
             )

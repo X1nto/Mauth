@@ -82,22 +82,18 @@ kotlin {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_11)
 
-        val buildDir = layout.buildDirectory.asFile.get().absolutePath
-        if (project.findProperty("composeCompilerReports") == "true") {
-            freeCompilerArgs.add(
-                "-P plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${buildDir}/compose_compiler"
-            )
-        }
-        if (project.findProperty("composeCompilerMetrics") == "true") {
-            freeCompilerArgs.add(
-                "-P plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=${buildDir}/compose_compiler"
-            )
-        }
     }
 }
 
 composeCompiler {
     stabilityConfigurationFiles.add(project.layout.projectDirectory.file("compose_stability.conf"))
+
+    if (project.findProperty("composeCompilerReports") == "true") {
+        reportsDestination = layout.buildDirectory.dir("compose_compiler")
+    }
+    if (project.findProperty("composeCompilerMetrics") == "true") {
+        metricsDestination = layout.buildDirectory.dir("compose_compiler")
+    }
 }
 
 ksp {

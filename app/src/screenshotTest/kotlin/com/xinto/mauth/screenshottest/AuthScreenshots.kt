@@ -58,4 +58,38 @@ class AuthScreenshots {
             useMeshGradientBackground = false
         )
     }
+
+    @PreviewTest
+    @Composable
+    @PreviewAllConfigurations
+    fun MeshGradient() = ScreenshotSurface {
+        AuthScreen(
+            modifier = Modifier.fillMaxSize(),
+            code = "",
+            onNumberAdd = {},
+            onNumberDelete = {},
+            onClear = {},
+            showFingerprint = true,
+            onFingerprintClick = {},
+            onBackPress = null,
+            useMeshGradientBackground = true
+        )
+    }
+
+    @PreviewTest
+    @Composable
+    @PreviewAllConfigurations
+    fun MeshGradientWithCode() = ScreenshotSurface {
+        AuthScreen(
+            modifier = Modifier.fillMaxSize(),
+            code = "123",
+            onNumberAdd = {},
+            onNumberDelete = {},
+            onClear = {},
+            showFingerprint = true,
+            onFingerprintClick = {},
+            onBackPress = null,
+            useMeshGradientBackground = true
+        )
+    }
 }

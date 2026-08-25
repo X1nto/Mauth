@@ -1,9 +1,6 @@
 package com.xinto.mauth.ui.component.pinboard
 
-import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationVector
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -19,27 +16,29 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.RoundRect
+import androidx.compose.ui.geometry.toRect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.xinto.mauth.ui.component.Animatable
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.channels.Channel
+import androidx.compose.ui.util.lerp
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.filterIsInstance
 
 @Composable
 fun PrimaryPinButton(
@@ -48,8 +47,10 @@ fun PrimaryPinButton(
     onLongClick: (() -> Unit)? = null,
     enabled: Boolean = true,
     colors: PinButtonColors = PinButtonDefaults.primaryPinButtonColors(),
-    shapes: PinButtonShapes = PinButtonDefaults.plainPinButtonShapes(),
+    shapes: PinButtonShapes = PinButtonDefaults.PrimaryShapes,
     minButtonSize: Dp = PinButtonDefaults.PinButtonNormalMinSize,
+    pressHaptic: HapticFeedbackType = PinButtonDefaults.PressHaptic,
+    longClickHaptic: HapticFeedbackType = PinButtonDefaults.LongClickHaptic,
     content: @Composable () -> Unit
 ) = PinButton(
     onClick = onClick,
@@ -59,6 +60,8 @@ fun PrimaryPinButton(
     colors = colors,
     shapes = shapes,
     minButtonSize = minButtonSize,
+    pressHaptic = pressHaptic,
+    longClickHaptic = longClickHaptic,
     content = content
 )
 
@@ -69,14 +72,15 @@ fun PinButton(
     onLongClick: (() -> Unit)? = null,
     enabled: Boolean = true,
     colors: PinButtonColors = PinButtonDefaults.plainPinButtonColors(),
-    shapes: PinButtonShapes = PinButtonDefaults.plainPinButtonShapes(),
+    shapes: PinButtonShapes = PinButtonDefaults.PlainShapes,
     minButtonSize: Dp = PinButtonDefaults.PinButtonNormalMinSize,
+    pressHaptic: HapticFeedbackType = PinButtonDefaults.PressHaptic,
+    longClickHaptic: HapticFeedbackType = PinButtonDefaults.LongClickHaptic,
     content: @Composable () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    val shape by shapes.getButtonShape(interactionSource, minButtonSize)
-    val backgroundColor by colors.getBackgroundColor(interactionSource)
-    val contentColor by colors.getForegroundColor(interactionSource)
+    val pressProgress = animatePressProgress(interactionSource, pressHaptic)
+    val haptics = LocalHapticFeedback.current
     Box(
         modifier = modifier
             .sizeIn(
@@ -84,36 +88,81 @@ fun PinButton(
                 minHeight = minButtonSize
             )
             .aspectRatio(1f)
-            .graphicsLayer {
-                clip = true
-                this.shape = shape
-            }
             .drawBehind {
-                drawRect(backgroundColor)
+                val progress = pressProgress.value.coerceIn(0f, 1f)
+                drawPinButtonBackground(
+                    shapes = shapes,
+                    color = lerp(colors.backgroundColor, colors.backgroundColorPressed, progress),
+                    progress = progress
+                )
             }
             .combinedClickable(
                 onClick = onClick,
                 enabled = enabled,
                 indication = null,
                 interactionSource = interactionSource,
-                onLongClick = onLongClick
+                onLongClick = if (onLongClick == null) null else { ->
+                    haptics.performHapticFeedback(longClickHaptic)
+                    onLongClick()
+                },
+                hapticFeedbackEnabled = false
             ),
         contentAlignment = Alignment.Center
     ) {
-        CompositionLocalProvider(
-            LocalTextStyle provides MaterialTheme.typography.headlineLarge,
-            LocalContentColor provides contentColor,
+        PinButtonContent(
+            colors = colors,
+            pressProgress = pressProgress,
             content = content
         )
     }
+}
+
+@Composable
+private fun PinButtonContent(
+    colors: PinButtonColors,
+    pressProgress: State<Float>,
+    content: @Composable () -> Unit
+) {
+    CompositionLocalProvider(
+        LocalTextStyle provides MaterialTheme.typography.headlineLarge,
+        LocalContentColor provides lerp(
+            colors.foregroundColor,
+            colors.foregroundColorPressed,
+            pressProgress.value.coerceIn(0f, 1f)
+        ),
+        content = content
+    )
 }
 
 object PinButtonDefaults {
 
     val PinButtonSmallMinSize = 48.dp
     val PinButtonNormalMinSize = 72.dp
-    const val AnimationDurationPress = 200
-    const val AnimationDurationRelease = 150
+
+    /**
+     * `VIRTUAL_KEY`, documented as "the user has pressed a virtual on-screen key" and what
+     * the AOSP keypad's `NumPadKey.doHapticKeyClick()` performs. Fired on press rather than
+     * on click, matching the constant's own wording and the platform keypress guidance,
+     * which pairs `VIRTUAL_KEY` on ACTION_DOWN with `VIRTUAL_KEY_RELEASE` on ACTION_UP.
+     */
+    val PressHaptic = HapticFeedbackType.VirtualKey
+
+    /** What `combinedClickable` would have played on its own. */
+    val LongClickHaptic = HapticFeedbackType.LongPress
+
+    val CircleShape = RoundedCornerShape(50)
+
+    val SquircleShape = RoundedCornerShape(30)
+
+    val PlainShapes = PinButtonShapes(
+        shape = CircleShape,
+        shapePressed = SquircleShape
+    )
+
+    val PrimaryShapes = PinButtonShapes(
+        shape = SquircleShape,
+        shapePressed = CircleShape
+    )
 
     @Composable
     fun plainPinButtonColors(
@@ -145,113 +194,79 @@ object PinButtonDefaults {
         )
     }
 
-    @Composable
-    fun plainPinButtonShapes(
-        shape: CornerBasedShape = RoundedCornerShape(50),
-        shapePressed: CornerBasedShape = MaterialTheme.shapes.large
-    ): PinButtonShapes {
-        return PinButtonShapes(
-            shape = shape,
-            shapePressed = shapePressed
-        )
-    }
-
 }
 
-@Stable
+@Immutable
 data class PinButtonColors(
     val backgroundColor: Color,
     val backgroundColorPressed: Color,
     val foregroundColor: Color,
     val foregroundColorPressed: Color
-) {
-    @Composable
-    fun getBackgroundColor(interactionSource: InteractionSource): State<Color> {
-        val animatable = remember(backgroundColor) { Animatable(backgroundColor) }
-        return animatePressValue(
-            animatable = animatable,
-            initialValue = backgroundColor,
-            targetValue = backgroundColorPressed,
-            interactionSource = interactionSource
-        )
-    }
+)
 
-    @Composable
-    fun getForegroundColor(interactionSource: InteractionSource): State<Color> {
-        val animatable = remember(foregroundColor) { Animatable(foregroundColor) }
-        return animatePressValue(
-            animatable = animatable,
-            initialValue = foregroundColor,
-            targetValue = foregroundColorPressed,
-            interactionSource = interactionSource
-        )
-    }
-}
-
-@Stable
+@Immutable
 data class PinButtonShapes(
     val shape: CornerBasedShape,
     val shapePressed: CornerBasedShape
+)
+
+private fun DrawScope.drawPinButtonBackground(
+    shapes: PinButtonShapes,
+    color: Color,
+    progress: Float
 ) {
+    val rest = shapes.shape
+    val pressed = shapes.shapePressed
+    val topStart = lerp(rest.topStart.toPx(size, this), pressed.topStart.toPx(size, this), progress)
+    val topEnd = lerp(rest.topEnd.toPx(size, this), pressed.topEnd.toPx(size, this), progress)
+    val bottomEnd = lerp(rest.bottomEnd.toPx(size, this), pressed.bottomEnd.toPx(size, this), progress)
+    val bottomStart = lerp(rest.bottomStart.toPx(size, this), pressed.bottomStart.toPx(size, this), progress)
 
-    @Composable
-    fun getButtonShape(interactionSource: InteractionSource, minButtonSize: Dp = PinButtonDefaults.PinButtonNormalMinSize): State<CornerBasedShape> {
-        val density = LocalDensity.current
-        val size = with(density) {
-            val shapeSize = minButtonSize.toPx()
-            Size(shapeSize, shapeSize)
-        }
-
-        val animatable = remember(density, size, minButtonSize) {
-            Animatable(shape, density, size)
-        }
-        return animatePressValue(
-            animatable = animatable,
-            initialValue = shape,
-            targetValue = shapePressed,
-            interactionSource = interactionSource
-        )
+    if (topStart == topEnd && topEnd == bottomEnd && bottomEnd == bottomStart) {
+        drawRoundRect(color = color, cornerRadius = CornerRadius(topStart))
+        return
     }
 
+    val ltr = layoutDirection == LayoutDirection.Ltr
+    drawOutline(
+        outline = Outline.Rounded(
+            RoundRect(
+                rect = size.toRect(),
+                topLeft = CornerRadius(if (ltr) topStart else topEnd),
+                topRight = CornerRadius(if (ltr) topEnd else topStart),
+                bottomRight = CornerRadius(if (ltr) bottomEnd else bottomStart),
+                bottomLeft = CornerRadius(if (ltr) bottomStart else bottomEnd)
+            )
+        ),
+        color = color
+    )
 }
 
 @Composable
-private fun <T, V : AnimationVector> animatePressValue(
-    animatable: Animatable<T, V>,
-    initialValue: T,
-    targetValue: T,
-    interactionSource: InteractionSource
-): State<T> {
-    LaunchedEffect(interactionSource, initialValue, targetValue) {
-        val channel = Channel<Boolean>(1, onBufferOverflow = BufferOverflow.DROP_LATEST)
-        launch {
-            interactionSource.interactions.collect {
-                if (it is PressInteraction.Press) {
-                    if (animatable.value != targetValue) { //fix animation deadlock
-                        animatable.animateTo(
-                            targetValue = targetValue,
-                            animationSpec = tween(PinButtonDefaults.AnimationDurationPress),
-                        )
+private fun animatePressProgress(
+    interactionSource: InteractionSource,
+    pressHaptic: HapticFeedbackType
+): State<Float> {
+    val spec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
+    val haptics = LocalHapticFeedback.current
+    val animatable = remember { Animatable(0f) }
+    LaunchedEffect(interactionSource, animatable, spec, haptics, pressHaptic) {
+        interactionSource.interactions
+            .filterIsInstance<PressInteraction>()
+            .collectLatest { interaction ->
+                if (interaction is PressInteraction.Press) {
+                    // Played here rather than from onClick so the key answers the finger
+                    // landing instead of lifting. This collector already owns the press
+                    // stream, so it costs no extra coroutine.
+                    haptics.performHapticFeedback(pressHaptic)
+                    animatable.animateTo(targetValue = 1f, animationSpec = spec)
+                } else {
+                    if (animatable.value < 1f) {
+                        animatable.animateTo(targetValue = 1f, animationSpec = spec)
                     }
-                }
-
-                channel.send(it is PressInteraction.Cancel || it is PressInteraction.Release)
-            }
-        }
-        launch {
-            channel.receiveAsFlow().collectLatest { shouldReset ->
-                if (shouldReset) {
-                    try {
-                        animatable.animateTo(
-                            targetValue = initialValue,
-                            animationSpec = tween(PinButtonDefaults.AnimationDurationRelease)
-                        )
-                    } catch (e: CancellationException) {
-                        e.printStackTrace()
-                    }
+                    animatable.animateTo(targetValue = 0f, animationSpec = spec)
                 }
             }
-        }
     }
     return animatable.asState()
 }

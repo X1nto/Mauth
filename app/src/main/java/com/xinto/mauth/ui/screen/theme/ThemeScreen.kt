@@ -24,7 +24,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
@@ -37,6 +36,7 @@ import com.xinto.mauth.core.settings.model.ThemeSetting
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
 import com.xinto.mauth.ui.screen.theme.component.ThemeColorCard
 import com.xinto.mauth.ui.theme.MauthTheme
+import com.xinto.mauth.ui.screen.settings.labelRes
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -121,14 +121,7 @@ fun ThemeScreen(
                                 )
                             }
                         ) {
-                            val textRes = remember(it) {
-                                when (it) {
-                                    ThemeSetting.System -> R.string.theme_theme_system
-                                    ThemeSetting.Dark -> R.string.theme_theme_dark
-                                    ThemeSetting.Light -> R.string.theme_theme_light
-                                }
-                            }
-                            Text(stringResource(textRes))
+                            Text(stringResource(it.labelRes))
                         }
                     }
                 }
@@ -143,18 +136,7 @@ fun ThemeScreen(
                             onColorChange(colorSetting)
                         },
                         name = {
-                            val nameRes = remember(colorSetting) {
-                                when (colorSetting) {
-                                    ColorSetting.Dynamic -> R.string.theme_colors_dynamic
-                                    ColorSetting.MothPurple -> R.string.theme_colors_purple
-                                    ColorSetting.BlueberryBlue -> R.string.theme_colors_blue
-                                    ColorSetting.PickleYellow -> R.string.theme_colors_yellow
-                                    ColorSetting.ToxicGreen -> R.string.theme_colors_green
-                                    ColorSetting.LeatherOrange -> R.string.theme_colors_orange
-                                    ColorSetting.OceanTurquoise -> R.string.theme_colors_turquoise
-                                }
-                            }
-                            Text(stringResource(nameRes))
+                            Text(stringResource(colorSetting.labelRes))
                         },
                         selected = color == colorSetting
                     )

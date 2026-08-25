@@ -85,31 +85,27 @@ object SettingsItemDefaults {
     ): ListItemColors {
         val containerColor = containerColor.takeOrElse { MaterialTheme.colorScheme.surfaceContainer }
         val titleColor = titleColor.takeOrElse { MaterialTheme.colorScheme.onSurface }
-        val descriptionColor = descriptionColor.takeOrElse { MaterialTheme.colorScheme.onSurface }
-        val iconColor = iconColor.takeOrElse { MaterialTheme.colorScheme.onSurface }
-        val trailingColor = trailingColor.takeOrElse { MaterialTheme.colorScheme.onSurface }
+        val descriptionColor = descriptionColor.takeOrElse { MaterialTheme.colorScheme.onSurfaceVariant }
+        val iconColor = iconColor.takeOrElse { MaterialTheme.colorScheme.onSurfaceVariant }
+        val trailingColor = trailingColor.takeOrElse { MaterialTheme.colorScheme.onSurfaceVariant }
         return ListItemColors(
             containerColor = containerColor,
             contentColor = titleColor,
             supportingContentColor = descriptionColor,
             leadingContentColor = iconColor,
             trailingContentColor = trailingColor,
-            disabledContainerColor = disabledContainerColor.takeOrElse { MaterialTheme.colorScheme.surfaceContainerLow },
-            disabledContentColor = disabledTitleColor.takeOrElse { MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f) },
+            disabledContainerColor = disabledContainerColor.takeOrElse { containerColor },
+            disabledContentColor = disabledTitleColor.takeOrElse {
+                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+            },
             disabledSupportingContentColor = disabledDescriptionColor.takeOrElse {
-                MaterialTheme.colorScheme.onSurface.copy(
-                    alpha = 0.5f
-                )
+                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
             },
             disabledLeadingContentColor = disabledIconColor.takeOrElse {
-                MaterialTheme.colorScheme.onSurface.copy(
-                    alpha = 0.38f
-                )
+                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
             },
             disabledTrailingContentColor = disabledTrailingColor.takeOrElse {
-                MaterialTheme.colorScheme.onSurface.copy(
-                    alpha = 0.38f
-                )
+                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
             },
             overlineContentColor = Color.Unspecified,
             disabledOverlineContentColor = Color.Unspecified,

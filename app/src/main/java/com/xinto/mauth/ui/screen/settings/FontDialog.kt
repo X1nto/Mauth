@@ -19,7 +19,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.xinto.mauth.R
@@ -93,12 +92,6 @@ private fun FontRow(
         ),
         contentPadding = PaddingValues(vertical = 12.dp)
     ) {
-        val textRes = remember(font) {
-            when (font) {
-                FontSetting.Roboto -> R.string.font_font_roboto
-                FontSetting.GoogleSans -> R.string.font_font_google_sans
-            }
-        }
-        Text(stringResource(textRes))
+        Text(stringResource(font.labelRes))
     }
 }

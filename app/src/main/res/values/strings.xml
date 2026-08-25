@@ -95,7 +95,8 @@
     <string name="settings_prefs_securemode_description">Prevent screenshots within the app</string>
     <string name="settings_prefs_pincode">PIN Lock</string>
     <string name="settings_prefs_pincode_description">Require authentication on startup</string>
-    <string name="settings_prefs_mesh_gradient">Use mesh gradient background on PIN lock screen</string>
+    <string name="settings_prefs_animatedbackground">Animated background</string>
+    <string name="settings_prefs_animatedbackground_description">Show a slowly drifting gradient behind the PIN screen</string>
     <string name="settings_prefs_autolock">Auto-lock</string>
     <string name="settings_prefs_autolock_description">Require authentication every time you re-enter the app</string>
     <string name="settings_prefs_biometrics">Biometric Authentication</string>
@@ -105,6 +106,7 @@
     <string name="settings_biometrics_disable_cancel">Cancel</string>
     <string name="settings_category_appearance">Appearance</string>
     <string name="settings_prefs_theme">Theme</string>
+    <string name="settings_prefs_theme_description">%1$s, %2$s</string>
     <string name="settings_prefs_font">Font</string>
 
     <string name="pinsetup_title_create">Set a PIN</string>

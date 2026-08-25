@@ -1,9 +1,11 @@
 package com.xinto.mauth.domain
 
 import com.xinto.mauth.core.auth.AuthManager
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 class AuthRepository(
     private val authManager: AuthManager
@@ -20,7 +22,9 @@ class AuthRepository(
     }
 
     suspend fun validate(code: String): Boolean {
-        return liveCode.first() == code
+        return withContext(Dispatchers.IO) {
+            liveCode.first() == code
+        }
     }
 
     fun updateCode(code: String) {

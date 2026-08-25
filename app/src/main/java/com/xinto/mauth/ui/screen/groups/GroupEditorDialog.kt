@@ -36,7 +36,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -47,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.emoji2.emojipicker.EmojiPickerView
 import com.xinto.mauth.R
+import com.xinto.mauth.ui.theme.isDark
 import androidx.emoji2.emojipicker.R as EmojiPickerR
 
 @Composable
@@ -181,7 +181,7 @@ private fun EmojiPickerSheet(
     onRemove: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    val dark = MaterialTheme.colorScheme.surface.luminance() < 0.5f
+    val dark = MaterialTheme.colorScheme.isDark
     val selectedTint = MaterialTheme.colorScheme.primary.toArgb()
     val unselectedTint = MaterialTheme.colorScheme.onSurfaceVariant.toArgb()
     ModalBottomSheet(

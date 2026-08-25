@@ -18,6 +18,8 @@ class SettingsViewModel(
     val lockOnResume = settings.getLockOnResume()
     val biometrics = settings.getUseBiometrics()
     val font = settings.getFont()
+    val theme = settings.getTheme()
+    val color = settings.getColor()
     val meshGradientBackground = settings.getUseMeshGradientBackground()
 
     val pinLock = authRepository.observeIsProtected()

@@ -1,14 +1,12 @@
 package com.xinto.mauth.ui.component.pinboard
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.ExperimentalGridApi
+import androidx.compose.foundation.layout.Grid
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -16,7 +14,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -24,78 +24,78 @@ import androidx.compose.ui.unit.dp
 import com.xinto.mauth.R
 import com.xinto.mauth.ui.theme.MauthTheme
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalGridApi::class)
 @Composable
 fun PinBoard(
     modifier: Modifier = Modifier,
-    horizontalButtonSpace: Dp = 4.dp,
+    horizontalButtonSpace: Dp = PinBoardDefaults.HorizontalButtonSpace,
+    verticalButtonSpace: Dp = PinBoardDefaults.VerticalButtonSpace,
     minButtonSize: Dp = PinButtonDefaults.PinButtonNormalMinSize,
+    maxButtonSize: Dp = PinBoardDefaults.MaxButtonSize,
     state: PinBoardState = rememberPinBoardState()
 ) {
-    val buttonRows = state.buttons.chunked(3)
-
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+    Grid(
+        modifier = modifier
+            .wrapContentWidth(Alignment.CenterHorizontally)
+            .widthIn(max = maxButtonSize * 3 + horizontalButtonSpace * 2),
+        config = {
+            repeat(3) { column(1.fr) }
+            gap(row = verticalButtonSpace, column = horizontalButtonSpace)
+        }
     ) {
-        buttonRows.forEach { buttons ->
-            Row(horizontalArrangement = Arrangement.spacedBy(horizontalButtonSpace)) {
-                buttons.forEach { button ->
-                    when (button) {
-                        is PinBoardState.PinBoardButton.Number -> {
-                            PinButton(
-                                modifier = Modifier.weight(1f),
-                                onClick = { state.onNumberClick(button.number) },
-                                minButtonSize = minButtonSize
-                            ) {
-                                Text(button.toString())
-                            }
-                        }
-                        is PinBoardState.PinBoardButton.Backspace,
-                        is PinBoardState.PinBoardButton.Fingerprint,
-                        is PinBoardState.PinBoardButton.Enter -> {
-                            PrimaryPinButton(
-                                modifier = Modifier.weight(1f),
-                                onClick = when (button) {
-                                    is PinBoardState.PinBoardButton.Backspace -> state.onBackspaceClick
-                                    is PinBoardState.PinBoardButton.Fingerprint -> state.onFingerprintClick
-                                    is PinBoardState.PinBoardButton.Enter -> state.onEnterClick
-                                },
-                                onLongClick =
-                                    if (button is PinBoardState.PinBoardButton.Backspace)
-                                        state.onBackspaceLongClick
-                                    else null,
-                                minButtonSize = minButtonSize
-                            ) {
-                                Icon(
-                                    modifier = Modifier.fillMaxSize(0.4f),
-                                    painter = painterResource(
-                                        id = when (button) {
-                                            is PinBoardState.PinBoardButton.Backspace -> R.drawable.ic_backspace
-                                            is PinBoardState.PinBoardButton.Fingerprint -> R.drawable.ic_fingerprint
-                                            is PinBoardState.PinBoardButton.Enter -> R.drawable.ic_tab
-                                        }
-                                    ),
-                                    contentDescription = null
-                                )
-                            }
-                        }
-                        is PinBoardState.PinBoardButton.Empty -> {
-                            Spacer(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .sizeIn(
-                                        minWidth = minButtonSize,
-                                        minHeight = minButtonSize
-                                    )
-                                    .aspectRatio(1f)
-                            )
-                        }
+        state.buttons.forEach { button ->
+            when (button) {
+                is PinBoardState.PinBoardButton.Number -> {
+                    PinButton(
+                        onClick = { state.onNumberClick(button.number) },
+                        minButtonSize = minButtonSize
+                    ) {
+                        Text(button.toString())
                     }
+                }
+                is PinBoardState.PinBoardButton.Backspace,
+                is PinBoardState.PinBoardButton.Fingerprint,
+                is PinBoardState.PinBoardButton.Enter -> {
+                    PrimaryPinButton(
+                        onClick = when (button) {
+                            is PinBoardState.PinBoardButton.Backspace -> state.onBackspaceClick
+                            is PinBoardState.PinBoardButton.Fingerprint -> state.onFingerprintClick
+                            is PinBoardState.PinBoardButton.Enter -> state.onEnterClick
+                        },
+                        onLongClick =
+                            if (button is PinBoardState.PinBoardButton.Backspace)
+                                state.onBackspaceLongClick
+                            else null,
+                        longClickHaptic = PinBoardDefaults.ClearAllHaptic,
+                        minButtonSize = minButtonSize
+                    ) {
+                        val iconRes = when (button) {
+                            is PinBoardState.PinBoardButton.Backspace -> R.drawable.ic_backspace
+                            is PinBoardState.PinBoardButton.Fingerprint -> R.drawable.ic_fingerprint
+                            is PinBoardState.PinBoardButton.Enter -> R.drawable.ic_tab
+                        }
+                        Icon(
+                            modifier = Modifier.fillMaxSize(0.4f),
+                            painter = painterResource(iconRes),
+                            contentDescription = null
+                        )
+                    }
+                }
+                is PinBoardState.PinBoardButton.Empty -> {
+                    Spacer(Modifier)
                 }
             }
         }
     }
+}
+
+object PinBoardDefaults {
+
+    val MaxButtonSize = 92.dp
+    val HorizontalButtonSpace = 14.dp
+    val VerticalButtonSpace = 10.dp
+
+    val ClearAllHaptic = HapticFeedbackType.Confirm
 }
 
 @Composable
