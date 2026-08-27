@@ -74,8 +74,8 @@ class DefaultOtpExporter : OtpExporter {
             .newBuilder()
 
         var counter = 0
-        protoData.forEachIndexed { i, otpData ->
-            if (counter > 300 || i == protoData.lastIndex) {
+        protoData.forEach { otpData ->
+            if (counter > 0 && counter + otpData.serializedSize > 300) {
                 migrationBuilders.add(migrationBuilder)
                 migrationBuilder = GoogleAuthenticator.MigrationPayload.newBuilder()
                 counter = 0
@@ -83,6 +83,10 @@ class DefaultOtpExporter : OtpExporter {
 
             counter += otpData.serializedSize
             migrationBuilder.addOtpData(otpData)
+        }
+
+        if (counter > 0) {
+            migrationBuilders.add(migrationBuilder)
         }
 
         val randomBatchId = Random.nextInt()
