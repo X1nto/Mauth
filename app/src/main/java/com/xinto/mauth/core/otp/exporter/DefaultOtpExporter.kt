@@ -29,12 +29,12 @@ class DefaultOtpExporter : OtpExporter {
             OtpType.TOTP -> {
                 uriBuilder
                     .authority("totp")
-                    .appendQueryParameter("period", data.period.toString())
+                    .appendQueryParameter("period", (data.period ?: 30).toString())
             }
             OtpType.HOTP -> {
                 uriBuilder
                     .authority("hotp")
-                    .appendQueryParameter("counter", data.period.toString())
+                    .appendQueryParameter("counter", (data.counter ?: 0).toString())
             }
         }.toString()
     }
