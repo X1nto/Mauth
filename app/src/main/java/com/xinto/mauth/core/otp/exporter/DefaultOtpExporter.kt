@@ -36,7 +36,7 @@ class DefaultOtpExporter : OtpExporter {
                     .authority("hotp")
                     .appendQueryParameter("counter", data.period.toString())
             }
-        }.toString().also(::println)
+        }.toString()
     }
 
     override fun exportBatch(data: List<OtpData>): List<String> {
