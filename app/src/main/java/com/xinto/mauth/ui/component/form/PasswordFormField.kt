@@ -62,7 +62,7 @@ class PasswordFormField(
             },
             trailingIcon = {
                 val toggleLabel = stringResource(
-                    if (showPassword) R.string.account_action_code_hide else R.string.account_action_code_show
+                    if (showPassword) R.string.account_action_secret_hide else R.string.account_action_secret_show
                 )
                 TooltipBox(
                     modifier = Modifier,
