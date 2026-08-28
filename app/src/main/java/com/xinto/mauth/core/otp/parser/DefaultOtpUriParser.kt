@@ -7,13 +7,11 @@ import com.xinto.mauth.core.otp.model.OtpType
 import androidx.core.net.toUri
 import com.google.protobuf.InvalidProtocolBufferException
 import com.xinto.mauth.GoogleAuthenticator
-import com.xinto.mauth.util.Base64
+import kotlin.io.encoding.Base64
 import org.apache.commons.codec.binary.Base32
-import kotlin.io.encoding.ExperimentalEncodingApi
 
 class DefaultOtpUriParser : OtpUriParser {
 
-    @OptIn(ExperimentalEncodingApi::class)
     override fun parseOtpUri(keyUri: String): OtpUriParserResult {
         val uri = keyUri.toUri()
         val protocol = uri.scheme?.lowercase()
@@ -91,7 +89,7 @@ class DefaultOtpUriParser : OtpUriParser {
             ?: return OtpUriParserResult.Failure.ERROR_INVALID_MULTIPART
 
         val payload = try {
-            GoogleAuthenticator.MigrationPayload.parseFrom(Base64.decode(data))
+            GoogleAuthenticator.MigrationPayload.parseFrom(Base64.Mime.decode(data))
         } catch (e: InvalidProtocolBufferException) {
             e.printStackTrace()
             return OtpUriParserResult.Failure.ERROR_INVALID_MULTIPART

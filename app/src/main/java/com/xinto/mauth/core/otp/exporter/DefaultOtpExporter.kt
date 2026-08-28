@@ -6,7 +6,7 @@ import com.xinto.mauth.GoogleAuthenticator
 import com.xinto.mauth.core.otp.model.OtpData
 import com.xinto.mauth.core.otp.model.OtpDigest
 import com.xinto.mauth.core.otp.model.OtpType
-import com.xinto.mauth.util.Base64
+import kotlin.io.encoding.Base64
 import org.apache.commons.codec.binary.Base32
 import java.net.URLEncoder
 import kotlin.random.Random
@@ -104,7 +104,7 @@ class DefaultOtpExporter : OtpExporter {
             buildString {
                 append("otpauth-migration://offline?data=")
 
-                val migration = Base64.encodeString(it.toByteArray())
+                val migration = Base64.encode(it.toByteArray())
                 append(URLEncoder.encode(migration, "UTF-8"))
             }
         }
