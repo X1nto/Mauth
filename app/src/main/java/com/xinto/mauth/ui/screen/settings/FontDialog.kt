@@ -22,12 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.xinto.mauth.R
-import com.xinto.mauth.core.settings.model.FontSetting
+import com.xinto.mauth.domain.settings.model.Font
 
 @Composable
 fun FontDialog(
-    initialFont: FontSetting,
-    onConfirm: (FontSetting) -> Unit,
+    initialFont: Font,
+    onConfirm: (Font) -> Unit,
     onDismissRequest: () -> Unit
 ) {
     var font by remember { mutableStateOf(initialFont) }
@@ -40,7 +40,7 @@ fun FontDialog(
                     .selectableGroup()
                     .fillMaxWidth()
             ) {
-                FontSetting.entries.forEach {
+                Font.entries.forEach {
                     FontRow(
                         font = it,
                         isSelected = font == it,
@@ -68,7 +68,7 @@ fun FontDialog(
 
 @Composable
 private fun FontRow(
-    font: FontSetting,
+    font: Font,
     isSelected: Boolean,
     onClick: () -> Unit,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }

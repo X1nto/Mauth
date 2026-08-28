@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
 import com.xinto.mauth.ui.component.pinboard.PinScaffold
@@ -28,14 +29,17 @@ fun PinRemoveScreen(
 ) {
     val viewModel: PinRemoveViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val finished by viewModel.finished.collectAsStateWithLifecycle()
+    LifecycleResumeEffect(finished) {
+        if (finished) {
+            onExit()
+        }
+        onPauseOrDispose {}
+    }
     PinRemoveScreen(
         modifier = modifier,
         state = state,
-        onEnter = {
-            if (viewModel.removePin()) {
-                onExit()
-            }
-        },
+        onEnter = viewModel::removePin,
         onBack = onExit,
         onNumberEnter = viewModel::addNumber,
         onNumberDelete = viewModel::deleteLast,
@@ -108,7 +112,7 @@ private fun PinRemoveScreen_Error_Preview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             PinRemoveScreen(
                 modifier = Modifier.fillMaxSize(),
-                state = PinRemoveScreenState.Error,
+                state = PinRemoveScreenState.Error("123"),
                 onEnter = {},
                 onBack = {},
                 onNumberEnter = {},

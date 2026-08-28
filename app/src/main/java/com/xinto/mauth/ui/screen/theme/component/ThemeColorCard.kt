@@ -31,7 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.unit.dp
 import com.xinto.mauth.R
-import com.xinto.mauth.core.settings.model.ColorSetting
+import com.xinto.mauth.domain.settings.model.ColorScheme
 import com.xinto.mauth.ui.theme.MauthTheme
 
 @Composable
@@ -105,7 +105,7 @@ fun ThemeColorCard(
 @Composable
 @PreviewDynamicColors
 fun ThemeColorCard_Preview_Unselected() {
-    MauthTheme(color = ColorSetting.Dynamic) {
+    MauthTheme(color = ColorScheme.Dynamic) {
         ThemeColorCard(
             modifier = Modifier
                 .width(200.dp)
@@ -122,7 +122,7 @@ fun ThemeColorCard_Preview_Unselected() {
 @Composable
 @PreviewDynamicColors
 fun ThemeColorCard_Preview_Selected() {
-    MauthTheme(color = ColorSetting.Dynamic) {
+    MauthTheme(color = ColorScheme.Dynamic) {
         ThemeColorCard(
             modifier = Modifier
                 .width(200.dp)

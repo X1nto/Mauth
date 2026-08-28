@@ -1,10 +1,12 @@
 package com.xinto.mauth.ui.screen.pinsetup
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.xinto.mauth.domain.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class PinSetupViewModel(
     private val authRepository: AuthRepository
@@ -21,24 +23,29 @@ class PinSetupViewModel(
     private val _state = MutableStateFlow<PinSetupScreenState>(PinSetupScreenState.Initial)
     val state = _state.asStateFlow()
 
-    /**
-     * @return true if the screen should exit
-     */
-    fun next(): Boolean {
+    private val _finished = MutableStateFlow(false)
+    val finished = _finished.asStateFlow()
+
+    fun next() {
         if (_code.value.isEmpty()) {
             _error.value = true
-            return false
+            return
         }
 
         if (state.value is PinSetupScreenState.Confirm) {
-            val matches = initialCode == code.value
-            if (matches) {
-                authRepository.updateCode(code.value)
-            } else {
+            val expected = initialCode ?: return
+            if (expected != _code.value) {
                 _error.value = true
-                clear()
+                return
             }
-            return matches
+
+            val confirmed = _code.value
+            initialCode = null
+            viewModelScope.launch {
+                authRepository.updateCode(confirmed)
+                _finished.value = true
+            }
+            return
         }
 
         _state.value = PinSetupScreenState.Confirm
@@ -46,32 +53,41 @@ class PinSetupViewModel(
             initialCode = it
             ""
         }
-        return false
     }
 
-    /**
-     * @return true if the screen should exit
-     */
-    fun previous(): Boolean {
+    fun previous() {
         if (state.value is PinSetupScreenState.Initial) {
-            return true
+            _finished.value = true
+            return
         }
 
         clear()
+        initialCode = null
         _state.value = PinSetupScreenState.Initial
-        return false
     }
 
     fun addNumber(number: Char) {
+        val retrying = _error.value
         _error.value = false
-        _code.update { it + number }
+        _code.update {
+            if (retrying) {
+                number.toString()
+            } else {
+                it + number
+            }
+        }
     }
 
     fun deleteLast() {
+        if (_error.value) {
+            clear()
+            return
+        }
         _code.update { it.dropLast(1) }
     }
 
     fun clear() {
+        _error.value = false
         _code.value = ""
     }
 

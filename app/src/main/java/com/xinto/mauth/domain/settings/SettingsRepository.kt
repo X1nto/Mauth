@@ -1,0 +1,131 @@
+package com.xinto.mauth.domain.settings
+
+import android.content.Context
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStoreFile
+import com.xinto.mauth.domain.settings.model.AccountsLayout
+import com.xinto.mauth.domain.settings.model.ColorScheme
+import com.xinto.mauth.domain.settings.model.Font
+import com.xinto.mauth.domain.settings.model.AccountsSort
+import com.xinto.mauth.domain.settings.model.Theme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlin.enums.enumEntries
+
+class SettingsRepository(context: Context) {
+
+    private val preferences = PreferenceDataStoreFactory.create {
+        context.applicationContext.preferencesDataStoreFile("preferences")
+    }
+
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
+    val secureMode = preferenceStateFlow { it[KEY_SECURE_MODE] ?: false }
+    val lockOnResume = preferenceStateFlow { it[KEY_LOCK_ON_RESUME] ?: false }
+    val useBiometrics = preferenceStateFlow { it[KEY_USE_BIOMETRICS] ?: false }
+    val useMeshGradientBackground = preferenceStateFlow { it[KEY_USE_MESH_GRADIENT_BACKGROUND] ?: false }
+    val showCodesByDefault = preferenceStateFlow { it[KEY_SHOW_CODES_BY_DEFAULT] ?: false }
+    val sortMode = preferenceStateFlow { it[KEY_SORT_MODE].toEnumOr(AccountsSort.DEFAULT) }
+    val accountsLayout = preferenceStateFlow { it[KEY_ACCOUNTS_LAYOUT].toEnumOr(AccountsLayout.DEFAULT) }
+    val theme = preferenceStateFlow { it[KEY_THEME].toEnumOr(Theme.DEFAULT) }
+    val color = preferenceStateFlow { it[KEY_COLOR].toEnumOr(ColorScheme.DEFAULT) }
+    val font = preferenceStateFlow { it[KEY_FONT].toEnumOr(Font.DEFAULT) }
+
+    suspend fun setSecureMode(value: Boolean) {
+        preferences.edit {
+            it[KEY_SECURE_MODE] = value
+        }
+    }
+
+    suspend fun setLockOnResume(value: Boolean) {
+        preferences.edit {
+            it[KEY_LOCK_ON_RESUME] = value
+        }
+    }
+
+    suspend fun setUseBiometrics(value: Boolean) {
+        preferences.edit {
+            it[KEY_USE_BIOMETRICS] = value
+        }
+    }
+
+    suspend fun setUseMeshGradientBackground(value: Boolean) {
+        preferences.edit {
+            it[KEY_USE_MESH_GRADIENT_BACKGROUND] = value
+        }
+    }
+
+    suspend fun setShowCodesByDefault(value: Boolean) {
+        preferences.edit {
+            it[KEY_SHOW_CODES_BY_DEFAULT] = value
+        }
+    }
+
+    suspend fun setSortMode(value: AccountsSort) {
+        preferences.edit {
+            it[KEY_SORT_MODE] = value.name
+        }
+    }
+
+    suspend fun setAccountsLayout(value: AccountsLayout) {
+        preferences.edit {
+            it[KEY_ACCOUNTS_LAYOUT] = value.name
+        }
+    }
+
+    suspend fun setTheme(value: Theme) {
+        preferences.edit {
+            it[KEY_THEME] = value.name
+        }
+    }
+
+    suspend fun setColor(value: ColorScheme) {
+        preferences.edit {
+            it[KEY_COLOR] = value.name
+        }
+    }
+
+    suspend fun setFont(value: Font) {
+        preferences.edit {
+            it[KEY_FONT] = value.name
+        }
+    }
+
+    private inline fun <T> preferenceStateFlow(crossinline transform: (Preferences) -> T): StateFlow<T> {
+        return preferences.data
+            .map(transform)
+            .stateIn(
+                scope = scope,
+                started = SharingStarted.Eagerly,
+                initialValue = transform(emptyPreferences())
+            )
+    }
+
+    private inline fun <reified T : Enum<T>> String?.toEnumOr(default: T): T {
+        return this?.let { name -> enumEntries<T>().find { it.name == name } } ?: default
+    }
+
+    private companion object {
+        val KEY_SECURE_MODE = booleanPreferencesKey("private_mode")
+        val KEY_LOCK_ON_RESUME = booleanPreferencesKey("lock_on_resume")
+        val KEY_USE_BIOMETRICS = booleanPreferencesKey("use_biometrics")
+        val KEY_USE_MESH_GRADIENT_BACKGROUND = booleanPreferencesKey("use_mesh_gradient_background")
+        val KEY_SHOW_CODES_BY_DEFAULT = booleanPreferencesKey("show_codes_by_default")
+        val KEY_SORT_MODE = stringPreferencesKey("sort_mode")
+        val KEY_ACCOUNTS_LAYOUT = stringPreferencesKey("accounts_layout")
+        val KEY_THEME = stringPreferencesKey("theme")
+        val KEY_COLOR = stringPreferencesKey("color")
+        val KEY_FONT = stringPreferencesKey("font")
+    }
+
+}

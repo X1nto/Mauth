@@ -1,12 +1,13 @@
 package com.xinto.mauth.ui.screen.pinremove
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.xinto.mauth.domain.AuthRepository
-import com.xinto.mauth.domain.SettingsRepository
+import com.xinto.mauth.domain.settings.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 
 class PinRemoveViewModel(
     private val authRepository: AuthRepository,
@@ -16,22 +17,22 @@ class PinRemoveViewModel(
     private val _state = MutableStateFlow<PinRemoveScreenState>(PinRemoveScreenState.Stale(""))
     val state = _state.asStateFlow()
 
-    /**
-     * @return true if the screen should exit
-     */
-    fun removePin(): Boolean {
-        return state.value.let {
-            runBlocking {
-                authRepository.validate(it.code).also { valid ->
-                    if (valid) {
-                        authRepository.removeCode()
-                        settingsRepository.setUseBiometrics(false)
-                    }
-                }
-            }.also { valid ->
-                if (!valid) {
-                    _state.value = PinRemoveScreenState.Error
-                }
+    private val _finished = MutableStateFlow(false)
+    val finished = _finished.asStateFlow()
+
+    fun removePin() {
+        val current = _state.value
+        if (current !is PinRemoveScreenState.Stale) {
+            return
+        }
+
+        viewModelScope.launch {
+            if (authRepository.validate(current.code)) {
+                settingsRepository.setUseBiometrics(false)
+                authRepository.removeCode()
+                _finished.value = true
+            } else {
+                _state.value = PinRemoveScreenState.Error(current.code)
             }
         }
     }
@@ -47,9 +48,10 @@ class PinRemoveViewModel(
 
     fun deleteLast() {
         _state.update {
-            if (it is PinRemoveScreenState.Stale) {
-                PinRemoveScreenState.Stale(it.code.dropLast(1))
-            } else it
+            when (it) {
+                is PinRemoveScreenState.Stale -> PinRemoveScreenState.Stale(it.code.dropLast(1))
+                is PinRemoveScreenState.Error -> PinRemoveScreenState.Stale("")
+            }
         }
     }
 

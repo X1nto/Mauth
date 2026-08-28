@@ -31,8 +31,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
-import com.xinto.mauth.core.settings.model.ColorSetting
-import com.xinto.mauth.core.settings.model.ThemeSetting
+import com.xinto.mauth.domain.settings.model.ColorScheme
+import com.xinto.mauth.domain.settings.model.Theme
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
 import com.xinto.mauth.ui.screen.theme.component.ThemeColorCard
 import com.xinto.mauth.ui.theme.MauthTheme
@@ -61,10 +61,10 @@ fun ThemeScreen(
 @Composable
 fun ThemeScreen(
     onBack: () -> Unit,
-    theme: ThemeSetting,
-    onThemeChange: (ThemeSetting) -> Unit,
-    color: ColorSetting,
-    onColorChange: (ColorSetting) -> Unit,
+    theme: Theme,
+    onThemeChange: (Theme) -> Unit,
+    color: ColorScheme,
+    onColorChange: (ColorScheme) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -98,19 +98,19 @@ fun ThemeScreen(
         ) {
             item(span = { GridItemSpan(maxCurrentLineSpan) }) {
                 SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-                    ThemeSetting.entries.forEachIndexed { i, it ->
+                    Theme.entries.forEachIndexed { i, it ->
                         SegmentedButton(
                             selected = theme == it,
                             onClick = { onThemeChange(it) },
-                            shape = SegmentedButtonDefaults.itemShape(index = i, count = ThemeSetting.entries.size),
+                            shape = SegmentedButtonDefaults.itemShape(index = i, count = Theme.entries.size),
                             icon = {
                                 SegmentedButtonDefaults.Icon(
                                     active = theme == it,
                                     inactiveContent = {
                                         val drawableRes = when (it) {
-                                            ThemeSetting.System -> R.drawable.ic_contrast
-                                            ThemeSetting.Dark -> R.drawable.ic_moon
-                                            ThemeSetting.Light -> R.drawable.ic_sun
+                                            Theme.System -> R.drawable.ic_contrast
+                                            Theme.Dark -> R.drawable.ic_moon
+                                            Theme.Light -> R.drawable.ic_sun
                                         }
                                         Icon(
                                             modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
@@ -126,7 +126,7 @@ fun ThemeScreen(
                     }
                 }
             }
-            items(ColorSetting.validEntries) { colorSetting ->
+            items(ColorScheme.validEntries) { colorSetting ->
                 MauthTheme(
                     theme = theme,
                     color = colorSetting
@@ -154,9 +154,9 @@ private fun ThemeScreen_System_Preview() {
             ThemeScreen(
                 modifier = Modifier.fillMaxSize(),
                 onBack = {},
-                theme = ThemeSetting.System,
+                theme = Theme.System,
                 onThemeChange = {},
-                color = ColorSetting.MothPurple,
+                color = ColorScheme.MothPurple,
                 onColorChange = {}
             )
         }
@@ -171,9 +171,9 @@ private fun ThemeScreen_BlueSelected_Preview() {
             ThemeScreen(
                 modifier = Modifier.fillMaxSize(),
                 onBack = {},
-                theme = ThemeSetting.System,
+                theme = Theme.System,
                 onThemeChange = {},
-                color = ColorSetting.BlueberryBlue,
+                color = ColorScheme.BlueberryBlue,
                 onColorChange = {}
             )
         }

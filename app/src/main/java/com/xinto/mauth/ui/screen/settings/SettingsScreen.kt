@@ -34,13 +34,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
-import com.xinto.mauth.core.settings.model.ColorSetting
-import com.xinto.mauth.core.settings.model.FontSetting
-import com.xinto.mauth.core.settings.model.ThemeSetting
+import com.xinto.mauth.domain.settings.model.AccountsLayout
+import com.xinto.mauth.domain.settings.model.ColorScheme
+import com.xinto.mauth.domain.settings.model.Font
+import com.xinto.mauth.domain.settings.model.Theme
 import com.xinto.mauth.ui.component.rememberBiometricHandler
 import com.xinto.mauth.ui.component.rememberBiometricPromptData
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
 import com.xinto.mauth.ui.screen.settings.component.SettingsGroup
+import com.xinto.mauth.ui.screen.settings.component.SettingsItem
 import com.xinto.mauth.ui.screen.settings.component.SettingsNavigateItem
 import com.xinto.mauth.ui.screen.settings.component.SettingsSwitchItem
 import com.xinto.mauth.ui.theme.MauthTheme
@@ -63,6 +65,8 @@ fun SettingsScreen(
     val theme by viewModel.theme.collectAsStateWithLifecycle()
     val color by viewModel.color.collectAsStateWithLifecycle()
     val meshGradientBackground by viewModel.meshGradientBackground.collectAsStateWithLifecycle()
+    val accountsLayout by viewModel.accountsLayout.collectAsStateWithLifecycle()
+    val showCodesByDefault by viewModel.showCodesByDefault.collectAsStateWithLifecycle()
 
     val biometricHandler = rememberBiometricHandler(
         onAuthSuccess = viewModel::toggleBiometrics
@@ -103,7 +107,11 @@ fun SettingsScreen(
         theme = theme,
         color = color,
         font = font,
-        onFontChange = viewModel::updateFont
+        onFontChange = viewModel::updateFont,
+        accountsLayout = accountsLayout,
+        onAccountsLayoutChange = viewModel::updateAccountsLayout,
+        showCodesByDefault = showCodesByDefault,
+        onShowCodesByDefaultChange = viewModel::updateShowCodesByDefault
     )
 }
 
@@ -123,14 +131,19 @@ fun SettingsScreen(
     biometrics: Boolean,
     onBiometricsChange: (Boolean) -> Unit,
     onThemeNavigate: () -> Unit,
-    theme: ThemeSetting,
-    color: ColorSetting,
-    font: FontSetting,
-    onFontChange: (FontSetting) -> Unit,
+    theme: Theme,
+    color: ColorScheme,
+    font: Font,
+    onFontChange: (Font) -> Unit,
+    accountsLayout: AccountsLayout,
+    onAccountsLayoutChange: (AccountsLayout) -> Unit,
+    showCodesByDefault: Boolean,
+    onShowCodesByDefaultChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     var fontDialogIsOpen by rememberSaveable { mutableStateOf(false) }
+    var accountsLayoutDialogIsOpen by rememberSaveable { mutableStateOf(false) }
     val showMeshGradient = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 
     Scaffold(
@@ -163,7 +176,7 @@ fun SettingsScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             SettingsGroup(header = { Text(stringResource(R.string.settings_category_security)) }) {
-                val count = if (showBiometrics) 4 else 3
+                val count = if (showBiometrics) 5 else 4
                 SettingsSwitchItem(
                     onCheckedChange = onSecureModeChange,
                     checked = secureMode,
@@ -178,6 +191,18 @@ fun SettingsScreen(
                     shapes = ListItemDefaults.segmentedShapes(index = 0, count = count)
                 )
                 SettingsSwitchItem(
+                    onCheckedChange = onShowCodesByDefaultChange,
+                    checked = showCodesByDefault,
+                    title = { Text(stringResource(R.string.settings_prefs_showcodes)) },
+                    icon = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_visibility),
+                            contentDescription = null
+                        )
+                    },
+                    shapes = ListItemDefaults.segmentedShapes(index = 1, count = count)
+                )
+                SettingsSwitchItem(
                     onCheckedChange = onPinCodeChange,
                     checked = pinCode,
                     title = { Text(stringResource(R.string.settings_prefs_pincode)) },
@@ -188,7 +213,7 @@ fun SettingsScreen(
                             contentDescription = null
                         )
                     },
-                    shapes = ListItemDefaults.segmentedShapes(index = 1, count = count)
+                    shapes = ListItemDefaults.segmentedShapes(index = 2, count = count)
                 )
                 if (showBiometrics) {
                     SettingsSwitchItem(
@@ -202,7 +227,7 @@ fun SettingsScreen(
                             )
                         },
                         enabled = pinCode,
-                        shapes = ListItemDefaults.segmentedShapes(index = 2, count = count)
+                        shapes = ListItemDefaults.segmentedShapes(index = 3, count = count)
                     )
                 }
                 SettingsSwitchItem(
@@ -217,11 +242,11 @@ fun SettingsScreen(
                         )
                     },
                     enabled = pinCode,
-                    shapes = ListItemDefaults.segmentedShapes(index = if (showBiometrics) 3 else 2, count = count)
+                    shapes = ListItemDefaults.segmentedShapes(index = if (showBiometrics) 4 else 3, count = count)
                 )
             }
             SettingsGroup(header = { Text(stringResource(R.string.settings_category_appearance)) }) {
-                val count = if (showMeshGradient) 3 else 2
+                val count = if (showMeshGradient) 4 else 3
                 SettingsNavigateItem(
                     onClick = onThemeNavigate,
                     title = { Text(stringResource(R.string.settings_prefs_theme)) },
@@ -236,7 +261,7 @@ fun SettingsScreen(
                     },
                     shapes = ListItemDefaults.segmentedShapes(index = 0, count = count)
                 )
-                SettingsNavigateItem(
+                SettingsItem(
                     onClick = { fontDialogIsOpen = true },
                     title = { Text(stringResource(R.string.settings_prefs_font)) },
                     description = { Text(stringResource(font.labelRes)) },
@@ -247,6 +272,18 @@ fun SettingsScreen(
                         )
                     },
                     shapes = ListItemDefaults.segmentedShapes(index = 1, count = count)
+                )
+                SettingsItem(
+                    onClick = { accountsLayoutDialogIsOpen = true },
+                    title = { Text(stringResource(R.string.settings_prefs_accountslayout)) },
+                    description = { Text(stringResource(accountsLayout.labelRes)) },
+                    icon = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_view_agenda),
+                            contentDescription = null
+                        )
+                    },
+                    shapes = ListItemDefaults.segmentedShapes(index = 2, count = count)
                 )
                 if (showMeshGradient) {
                     SettingsSwitchItem(
@@ -261,11 +298,21 @@ fun SettingsScreen(
                                 contentDescription = null
                             )
                         },
-                        shapes = ListItemDefaults.segmentedShapes(index = 2, count = count)
+                        shapes = ListItemDefaults.segmentedShapes(index = 3, count = count)
                     )
                 }
             }
         }
+    }
+    if (accountsLayoutDialogIsOpen) {
+        AccountLayoutDialog(
+            initialLayout = accountsLayout,
+            onConfirm = { newLayout ->
+                onAccountsLayoutChange(newLayout)
+                accountsLayoutDialogIsOpen = false
+            },
+            onDismissRequest = { accountsLayoutDialogIsOpen = false }
+        )
     }
     if (fontDialogIsOpen) {
         FontDialog(
@@ -299,10 +346,14 @@ private fun SettingsScreen_Default_Preview() {
                 biometrics = false,
                 onBiometricsChange = {},
                 onThemeNavigate = {},
-                theme = ThemeSetting.DEFAULT,
-                color = ColorSetting.MothPurple,
-                font = FontSetting.DEFAULT,
-                onFontChange = {}
+                theme = Theme.DEFAULT,
+                color = ColorScheme.MothPurple,
+                font = Font.DEFAULT,
+                onFontChange = {},
+                accountsLayout = AccountsLayout.DEFAULT,
+                onAccountsLayoutChange = {},
+                showCodesByDefault = false,
+                onShowCodesByDefaultChange = {}
             )
         }
     }
@@ -328,10 +379,14 @@ private fun SettingsScreen_AllEnabled_Preview() {
                 biometrics = true,
                 onBiometricsChange = {},
                 onThemeNavigate = {},
-                theme = ThemeSetting.DEFAULT,
-                color = ColorSetting.MothPurple,
-                font = FontSetting.DEFAULT,
-                onFontChange = {}
+                theme = Theme.DEFAULT,
+                color = ColorScheme.MothPurple,
+                font = Font.DEFAULT,
+                onFontChange = {},
+                accountsLayout = AccountsLayout.DEFAULT,
+                onAccountsLayoutChange = {},
+                showCodesByDefault = true,
+                onShowCodesByDefaultChange = {}
             )
         }
     }

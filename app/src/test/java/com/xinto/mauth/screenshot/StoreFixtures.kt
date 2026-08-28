@@ -4,10 +4,12 @@ import androidx.compose.runtime.mutableStateMapOf
 import com.xinto.mauth.core.otp.model.OtpDigest
 import com.xinto.mauth.core.otp.model.OtpType
 import com.xinto.mauth.domain.account.model.DomainAccount
+import com.xinto.mauth.domain.account.model.DomainAccountCounts
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.domain.group.model.DomainGroup
 import com.xinto.mauth.domain.otp.model.DomainOtpRealtimeData
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 import java.util.UUID
 
 internal object StoreFixtures {
@@ -61,6 +63,21 @@ internal object StoreFixtures {
             name = "Personal",
             emoji = null,
             sortIndex = 1,
+        ),
+    )
+
+    val sampleAccountCounts = DomainAccountCounts(
+        total = 3,
+        ungrouped = 3,
+        byGroup = persistentMapOf(),
+    )
+
+    val groupedAccountCounts = DomainAccountCounts(
+        total = 3,
+        ungrouped = 1,
+        byGroup = persistentMapOf(
+            groups[0].id to 1,
+            groups[1].id to 1,
         ),
     )
 

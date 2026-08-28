@@ -37,9 +37,9 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.xinto.mauth.core.otp.parser.OtpUriParserResult
-import com.xinto.mauth.core.settings.model.ThemeSetting
+import com.xinto.mauth.domain.settings.model.Theme
 import com.xinto.mauth.domain.AuthRepository
-import com.xinto.mauth.domain.SettingsRepository
+import com.xinto.mauth.domain.settings.SettingsRepository
 import com.xinto.mauth.domain.account.AccountRepository
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.domain.otp.OtpRepository
@@ -61,7 +61,6 @@ import com.xinto.mauth.ui.theme.MauthTheme
 import com.xinto.mauth.util.dropUnlessResumed
 import com.xinto.mauth.util.launchInLifecycle
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 
 class MainActivity : FragmentActivity() {
@@ -71,7 +70,7 @@ class MainActivity : FragmentActivity() {
     private val accounts: AccountRepository by inject()
     private val auth: AuthRepository by inject()
 
-    private val lockOnResume: StateFlow<Boolean> = settings.getLockOnResume()
+    private val lockOnResume: StateFlow<Boolean> = settings.lockOnResume
 
     private lateinit var navigator: MauthNavigator
 
@@ -79,17 +78,17 @@ class MainActivity : FragmentActivity() {
         installSplashScreen()
         super.onCreate(savedInstanceState)
 
-        settings.getTheme()
+        settings.theme
             .launchInLifecycle(lifecycle) {
                 val systemBarStyle = when (it) {
-                    ThemeSetting.System -> SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT)
-                    ThemeSetting.Dark -> SystemBarStyle.dark(Color.TRANSPARENT)
-                    ThemeSetting.Light -> SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+                    Theme.System -> SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT)
+                    Theme.Dark -> SystemBarStyle.dark(Color.TRANSPARENT)
+                    Theme.Light -> SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
                 }
                 enableEdgeToEdge(systemBarStyle, systemBarStyle)
             }
 
-        settings.getSecureMode()
+        settings.secureMode
             .launchInLifecycle(lifecycle) {
                 if (it) {
                     window.setFlags(
@@ -105,16 +104,16 @@ class MainActivity : FragmentActivity() {
             ?.let { BundleCompat.getParcelableArrayList(it, KEY_BACKSTACK, MauthDestination::class.java) }
             ?.toMutableStateList()
             ?: mutableStateListOf(
-                if (runBlocking { auth.isProtected() }) MauthDestination.Auth() else MauthDestination.Home
+                if (auth.isProtected.value) MauthDestination.Auth() else MauthDestination.Home
             )
         navigator = MauthNavigator(backStack) {
-            runBlocking { auth.isProtected() }
+            auth.isProtected.value
         }
 
         setContent {
-            val theme by settings.getTheme().collectAsStateWithLifecycle()
-            val color by settings.getColor().collectAsStateWithLifecycle()
-            val font by settings.getFont().collectAsStateWithLifecycle()
+            val theme by settings.theme.collectAsStateWithLifecycle()
+            val color by settings.color.collectAsStateWithLifecycle()
+            val font by settings.font.collectAsStateWithLifecycle()
             MauthTheme(
                 theme = theme,
                 color = color,
@@ -349,7 +348,7 @@ class MainActivity : FragmentActivity() {
         if (lockOnResume.value &&
             !isChangingConfigurations &&
             navigator.backStack.lastOrNull() !is MauthDestination.Auth &&
-            runBlocking { auth.isProtected() }
+            auth.isProtected.value
         ) {
             navigator.navigate(MauthDestination.Auth())
         }

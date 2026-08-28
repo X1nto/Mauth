@@ -2,26 +2,26 @@ package com.xinto.mauth.ui.screen.theme
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.xinto.mauth.core.settings.model.ColorSetting
-import com.xinto.mauth.core.settings.model.ThemeSetting
-import com.xinto.mauth.domain.SettingsRepository
+import com.xinto.mauth.domain.settings.model.ColorScheme
+import com.xinto.mauth.domain.settings.model.Theme
+import com.xinto.mauth.domain.settings.SettingsRepository
 import kotlinx.coroutines.launch
 
 class ThemeViewModel(
     private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
-    val theme = settingsRepository.getTheme()
+    val theme = settingsRepository.theme
 
-    val color = settingsRepository.getColor()
+    val color = settingsRepository.color
 
-    fun updateTheme(newTheme: ThemeSetting) {
+    fun updateTheme(newTheme: Theme) {
         viewModelScope.launch {
             settingsRepository.setTheme(newTheme)
         }
     }
 
-    fun updateColor(newColor: ColorSetting) {
+    fun updateColor(newColor: ColorScheme) {
         viewModelScope.launch {
             settingsRepository.setColor(newColor)
         }

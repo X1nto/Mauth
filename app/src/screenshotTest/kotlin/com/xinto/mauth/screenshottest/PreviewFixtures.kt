@@ -8,11 +8,13 @@ import androidx.compose.runtime.remember
 import com.xinto.mauth.core.otp.model.OtpDigest
 import com.xinto.mauth.core.otp.model.OtpType
 import com.xinto.mauth.domain.account.model.DomainAccount
+import com.xinto.mauth.domain.account.model.DomainAccountCounts
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.domain.group.model.DomainGroup
 import com.xinto.mauth.domain.otp.model.DomainOtpRealtimeData
 import com.xinto.mauth.ui.theme.MauthTheme
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 import java.util.UUID
 
 @Composable
@@ -73,6 +75,21 @@ internal object PreviewFixtures {
             name = "Personal",
             emoji = null,
             sortIndex = 1,
+        ),
+    )
+
+    val accountCounts = DomainAccountCounts(
+        total = 3,
+        ungrouped = 3,
+        byGroup = persistentMapOf(),
+    )
+
+    val groupedAccountCounts = DomainAccountCounts(
+        total = 3,
+        ungrouped = 1,
+        byGroup = persistentMapOf(
+            groups[0].id to 1,
+            groups[1].id to 1,
         ),
     )
 

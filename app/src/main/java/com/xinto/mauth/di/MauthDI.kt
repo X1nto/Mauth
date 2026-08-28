@@ -1,8 +1,6 @@
 package com.xinto.mauth.di
 
 import androidx.room.Room
-import com.xinto.mauth.core.auth.AuthManager
-import com.xinto.mauth.core.auth.DefaultAuthManager
 import com.xinto.mauth.core.otp.exporter.DefaultOtpExporter
 import com.xinto.mauth.core.otp.exporter.OtpExporter
 import com.xinto.mauth.core.otp.generator.DefaultOtpGenerator
@@ -11,12 +9,10 @@ import com.xinto.mauth.core.otp.parser.DefaultOtpUriParser
 import com.xinto.mauth.core.otp.parser.OtpUriParser
 import com.xinto.mauth.core.otp.transformer.DefaultKeyTransformer
 import com.xinto.mauth.core.otp.transformer.KeyTransformer
-import com.xinto.mauth.core.settings.DefaultSettings
-import com.xinto.mauth.core.settings.Settings
 import com.xinto.mauth.db.AccountDatabase
 import com.xinto.mauth.domain.AuthRepository
 import com.xinto.mauth.domain.QrRepository
-import com.xinto.mauth.domain.SettingsRepository
+import com.xinto.mauth.domain.settings.SettingsRepository
 import com.xinto.mauth.domain.account.AccountRepository
 import com.xinto.mauth.domain.group.GroupRepository
 import com.xinto.mauth.domain.otp.OtpRepository
@@ -42,8 +38,6 @@ object MauthDI {
         singleOf(::DefaultOtpGenerator) bind OtpGenerator::class
         singleOf(::DefaultOtpUriParser) bind OtpUriParser::class
         singleOf(::DefaultKeyTransformer) bind KeyTransformer::class
-        singleOf(::DefaultSettings) bind Settings::class
-        singleOf(::DefaultAuthManager) bind AuthManager::class
         singleOf(::DefaultOtpExporter) bind OtpExporter::class
     }
 

@@ -11,7 +11,6 @@ sealed interface PinRemoveScreenState {
     value class Stale(override val code: String) : PinRemoveScreenState
 
     @Immutable
-    data object Error : PinRemoveScreenState {
-        override val code: String = ""
-    }
+    @JvmInline
+    value class Error(override val code: String) : PinRemoveScreenState
 }

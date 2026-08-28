@@ -2,7 +2,7 @@ package com.xinto.mauth.ui.screen.auth
 
 import androidx.lifecycle.ViewModel
 import com.xinto.mauth.domain.AuthRepository
-import com.xinto.mauth.domain.SettingsRepository
+import com.xinto.mauth.domain.settings.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -15,8 +15,8 @@ class AuthViewModel(
     private val _code = MutableStateFlow("")
     val code = _code.asStateFlow()
 
-    val useBiometrics = settingsRepository.getUseBiometrics()
-    val useMeshGradientBackground = settingsRepository.getUseMeshGradientBackground()
+    val useBiometrics = settingsRepository.useBiometrics
+    val useMeshGradientBackground = settingsRepository.useMeshGradientBackground
 
     fun insertNumber(number: Char) {
         _code.update { it + number }

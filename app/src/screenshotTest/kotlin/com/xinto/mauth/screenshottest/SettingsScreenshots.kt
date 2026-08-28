@@ -4,9 +4,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.android.tools.screenshot.PreviewTest
-import com.xinto.mauth.core.settings.model.ColorSetting
-import com.xinto.mauth.core.settings.model.FontSetting
-import com.xinto.mauth.core.settings.model.ThemeSetting
+import com.xinto.mauth.domain.settings.model.AccountsLayout
+import com.xinto.mauth.domain.settings.model.ColorScheme
+import com.xinto.mauth.domain.settings.model.Font
+import com.xinto.mauth.domain.settings.model.Theme
 import com.xinto.mauth.ui.screen.settings.SettingsScreen
 
 class SettingsScreenshots {
@@ -30,10 +31,14 @@ class SettingsScreenshots {
             biometrics = false,
             onBiometricsChange = {},
             onThemeNavigate = {},
-            theme = ThemeSetting.DEFAULT,
-            color = ColorSetting.MothPurple,
-            font = FontSetting.DEFAULT,
-            onFontChange = {}
+            theme = Theme.DEFAULT,
+            color = ColorScheme.MothPurple,
+            font = Font.DEFAULT,
+            onFontChange = {},
+            accountsLayout = AccountsLayout.DEFAULT,
+            onAccountsLayoutChange = {},
+            showCodesByDefault = false,
+            onShowCodesByDefaultChange = {}
         )
     }
 
@@ -56,10 +61,14 @@ class SettingsScreenshots {
             biometrics = true,
             onBiometricsChange = {},
             onThemeNavigate = {},
-            theme = ThemeSetting.DEFAULT,
-            color = ColorSetting.MothPurple,
-            font = FontSetting.DEFAULT,
-            onFontChange = {}
+            theme = Theme.DEFAULT,
+            color = ColorScheme.MothPurple,
+            font = Font.DEFAULT,
+            onFontChange = {},
+            accountsLayout = AccountsLayout.DEFAULT,
+            onAccountsLayoutChange = {},
+            showCodesByDefault = false,
+            onShowCodesByDefaultChange = {}
         )
     }
 
@@ -82,10 +91,14 @@ class SettingsScreenshots {
             biometrics = true,
             onBiometricsChange = {},
             onThemeNavigate = {},
-            theme = ThemeSetting.DEFAULT,
-            color = ColorSetting.MothPurple,
-            font = FontSetting.DEFAULT,
-            onFontChange = {}
+            theme = Theme.DEFAULT,
+            color = ColorScheme.MothPurple,
+            font = Font.DEFAULT,
+            onFontChange = {},
+            accountsLayout = AccountsLayout.DEFAULT,
+            onAccountsLayoutChange = {},
+            showCodesByDefault = true,
+            onShowCodesByDefaultChange = {}
         )
     }
 
@@ -108,10 +121,14 @@ class SettingsScreenshots {
             biometrics = false,
             onBiometricsChange = {},
             onThemeNavigate = {},
-            theme = ThemeSetting.DEFAULT,
-            color = ColorSetting.MothPurple,
-            font = FontSetting.DEFAULT,
-            onFontChange = {}
+            theme = Theme.DEFAULT,
+            color = ColorScheme.MothPurple,
+            font = Font.DEFAULT,
+            onFontChange = {},
+            accountsLayout = AccountsLayout.DEFAULT,
+            onAccountsLayoutChange = {},
+            showCodesByDefault = false,
+            onShowCodesByDefaultChange = {}
         )
     }
 }

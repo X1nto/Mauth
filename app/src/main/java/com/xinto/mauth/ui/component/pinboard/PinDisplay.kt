@@ -3,9 +3,11 @@
 package com.xinto.mauth.ui.component.pinboard
 
 import android.content.res.Configuration
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -19,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.center
@@ -26,7 +29,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
@@ -61,15 +66,38 @@ fun PinDisplay(
     modifier: Modifier = Modifier,
     error: Boolean = false,
 ) {
-    val color = when (error) {
-        true -> MaterialTheme.colorScheme.error
-        false -> MaterialTheme.colorScheme.secondary
-    }
+    val color by animateColorAsState(
+        targetValue = if (error) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.secondary,
+        label = "PinSlotColor"
+    )
     val settleSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
+    val shake = remember { Animatable(0f) }
+    val haptics = LocalHapticFeedback.current
+    LaunchedEffect(error) {
+        if (error) {
+            haptics.performHapticFeedback(HapticFeedbackType.Reject)
+            shake.snapTo(0f)
+            shake.animateTo(targetValue = 0f, animationSpec = keyframes {
+                durationMillis = 420
+                0f at 0
+                (-1f) at 60
+                0.9f at 120
+                (-0.65f) at 180
+                0.45f at 240
+                (-0.25f) at 300
+                0f at 420
+            })
+        } else {
+            shake.snapTo(0f)
+        }
+    }
     Layout(
         modifier = modifier
             .height(PinDisplayDefaults.Height)
-            .padding(horizontal = 8.dp),
+            .padding(horizontal = 8.dp)
+            .graphicsLayer {
+                translationX = shake.value * PinDisplayDefaults.ShakeDistance.toPx()
+            },
         content = {
             repeat(length) { i ->
                 key(i) {
@@ -182,10 +210,11 @@ private fun inspectedSettle(
     else -> 1f
 }
 
-object PinDisplayDefaults {
+private object PinDisplayDefaults {
     val Height = 64.dp
     val SlotSize = 24.dp
     val SlotSpacing = 10.dp
+    val ShakeDistance = 8.dp
 
     const val ShapeHoldMillis = 120L
 

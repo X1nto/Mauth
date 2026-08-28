@@ -2,33 +2,41 @@ package com.xinto.mauth.ui.screen.settings
 
 import androidx.annotation.StringRes
 import com.xinto.mauth.R
-import com.xinto.mauth.core.settings.model.ColorSetting
-import com.xinto.mauth.core.settings.model.FontSetting
-import com.xinto.mauth.core.settings.model.ThemeSetting
+import com.xinto.mauth.domain.settings.model.AccountsLayout
+import com.xinto.mauth.domain.settings.model.ColorScheme
+import com.xinto.mauth.domain.settings.model.Font
+import com.xinto.mauth.domain.settings.model.Theme
 
 @get:StringRes
-val FontSetting.labelRes: Int
+val Font.labelRes: Int
     get() = when (this) {
-        FontSetting.Roboto -> R.string.font_font_roboto
-        FontSetting.GoogleSans -> R.string.font_font_google_sans
+        Font.Roboto -> R.string.font_font_roboto
+        Font.GoogleSans -> R.string.font_font_google_sans
     }
 
 @get:StringRes
-val ThemeSetting.labelRes: Int
+val Theme.labelRes: Int
     get() = when (this) {
-        ThemeSetting.System -> R.string.theme_theme_system
-        ThemeSetting.Dark -> R.string.theme_theme_dark
-        ThemeSetting.Light -> R.string.theme_theme_light
+        Theme.System -> R.string.theme_theme_system
+        Theme.Dark -> R.string.theme_theme_dark
+        Theme.Light -> R.string.theme_theme_light
     }
 
 @get:StringRes
-val ColorSetting.labelRes: Int
+val ColorScheme.labelRes: Int
     get() = when (this) {
-        ColorSetting.Dynamic -> R.string.theme_colors_dynamic
-        ColorSetting.MothPurple -> R.string.theme_colors_purple
-        ColorSetting.BlueberryBlue -> R.string.theme_colors_blue
-        ColorSetting.PickleYellow -> R.string.theme_colors_yellow
-        ColorSetting.ToxicGreen -> R.string.theme_colors_green
-        ColorSetting.LeatherOrange -> R.string.theme_colors_orange
-        ColorSetting.OceanTurquoise -> R.string.theme_colors_turquoise
+        ColorScheme.Dynamic -> R.string.theme_colors_dynamic
+        ColorScheme.MothPurple -> R.string.theme_colors_purple
+        ColorScheme.BlueberryBlue -> R.string.theme_colors_blue
+        ColorScheme.PickleYellow -> R.string.theme_colors_yellow
+        ColorScheme.ToxicGreen -> R.string.theme_colors_green
+        ColorScheme.LeatherOrange -> R.string.theme_colors_orange
+        ColorScheme.OceanTurquoise -> R.string.theme_colors_turquoise
+    }
+
+@get:StringRes
+val AccountsLayout.labelRes: Int
+    get() = when (this) {
+        AccountsLayout.Cards -> R.string.accountslayout_layout_cards
+        AccountsLayout.Compact -> R.string.accountslayout_layout_compact
     }

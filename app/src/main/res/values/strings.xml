@@ -32,13 +32,19 @@
     <string name="home_more_groups">Groups</string>
     <string name="home_more_options">More options</string>
     <string name="home_action_edit">Edit</string>
+    <string name="home_action_counter_increase">Generate next code</string>
+    <string name="home_action_more">More actions</string>
     <string name="home_action_code_copy">Copy code</string>
     <string name="home_action_code_show">Show code</string>
     <string name="home_action_code_hide">Hide code</string>
     <string name="home_code_copy_success">Successfully copied the code to clipboard</string>
     <string name="home_code_copy_fail">Failed to copy the code</string>
     <string name="home_image_parse_fail">Failed to parse the QR code</string>
-    <string name="home_search_placeholder">Search accounts</string>
+    <string name="home_search_placeholder_empty">Search accounts</string>
+    <plurals name="home_search_placeholder">
+        <item quantity="one">Search %1$d account</item>
+        <item quantity="other">Search %1$d accounts</item>
+    </plurals>
     <string name="home_search_clear">Clear search</string>
     <string name="home_search_collapse">Close search</string>
     <string name="home_search_empty">No matching accounts</string>
@@ -95,6 +101,7 @@
     <string name="settings_prefs_securemode_description">Prevent screenshots within the app</string>
     <string name="settings_prefs_pincode">PIN Lock</string>
     <string name="settings_prefs_pincode_description">Require authentication on startup</string>
+    <string name="settings_prefs_showcodes">Show codes by default</string>
     <string name="settings_prefs_animatedbackground">Animated background</string>
     <string name="settings_prefs_animatedbackground_description">Show a slowly drifting gradient behind the PIN screen</string>
     <string name="settings_prefs_autolock">Auto-lock</string>
@@ -108,6 +115,7 @@
     <string name="settings_prefs_theme">Theme</string>
     <string name="settings_prefs_theme_description">%1$s, %2$s</string>
     <string name="settings_prefs_font">Font</string>
+    <string name="settings_prefs_accountslayout">Account layout</string>
 
     <string name="pinsetup_title_create">Set a PIN</string>
     <string name="pinsetup_title_confirm">Confirm your PIN</string>
@@ -131,6 +139,12 @@
     <string name="font_font_google_sans">Google Sans</string>
     <string name="font_dialog_action_confirm">Confirm</string>
     <string name="font_dialog_action_cancel">Cancel</string>
+
+    <string name="accountslayout_title">Account layout</string>
+    <string name="accountslayout_layout_cards">Cards</string>
+    <string name="accountslayout_layout_compact">Compact</string>
+    <string name="accountslayout_dialog_action_confirm">Confirm</string>
+    <string name="accountslayout_dialog_action_cancel">Cancel</string>
 
     <string name="export_title">Export</string>
     <string name="export_state_empty">No accounts to export</string>

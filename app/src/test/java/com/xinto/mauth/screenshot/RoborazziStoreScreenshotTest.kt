@@ -8,8 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import com.github.takahirom.roborazzi.captureRoboImage
-import com.xinto.mauth.core.settings.model.ColorSetting
-import com.xinto.mauth.core.settings.model.ThemeSetting
+import com.xinto.mauth.domain.settings.model.ColorScheme
+import com.xinto.mauth.domain.settings.model.Theme
 import com.xinto.mauth.ui.theme.MauthTheme
 import org.junit.Rule
 import org.junit.Test
@@ -29,7 +29,7 @@ abstract class RoborazziStoreScreenshotTest(
     fun capture() {
         composeRule.mainClock.autoAdvance = false
         composeRule.setContent {
-            MauthTheme(theme = ThemeSetting.Dark, color = ColorSetting.BlueberryBlue) {
+            MauthTheme(theme = Theme.Dark, color = ColorScheme.BlueberryBlue) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,

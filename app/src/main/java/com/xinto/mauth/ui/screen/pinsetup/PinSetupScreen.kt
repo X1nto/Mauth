@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
 import com.xinto.mauth.ui.component.pinboard.PinScaffold
@@ -35,26 +36,21 @@ fun PinSetupScreen(
     val code by viewModel.code.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val error by viewModel.error.collectAsStateWithLifecycle()
-    BackHandler(onBack = {
-        if (viewModel.previous()) {
+    val finished by viewModel.finished.collectAsStateWithLifecycle()
+    LifecycleResumeEffect(finished) {
+        if (finished) {
             onExit()
         }
-    })
+        onPauseOrDispose { }
+    }
+    BackHandler(onBack = viewModel::previous)
     PinSetupScreen(
         modifier = modifier,
         code = code,
         state = state,
         error = error,
-        onNext = {
-            if (viewModel.next()) {
-                onExit()
-            }
-        },
-        onPrevious = {
-            if (viewModel.previous()) {
-                onExit()
-            }
-        },
+        onNext = viewModel::next,
+        onPrevious = viewModel::previous,
         onNumberEnter = viewModel::addNumber,
         onNumberDelete = viewModel::deleteLast,
         onAllDelete = viewModel::clear

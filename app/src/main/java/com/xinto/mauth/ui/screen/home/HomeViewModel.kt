@@ -16,10 +16,11 @@ import androidx.lifecycle.viewModelScope
 import com.xinto.mauth.Mauth
 import com.xinto.mauth.R
 import com.xinto.mauth.core.otp.parser.OtpUriParserResult
-import com.xinto.mauth.core.settings.Settings
-import com.xinto.mauth.core.settings.model.SortSetting
+import com.xinto.mauth.domain.settings.model.AccountsSort
 import com.xinto.mauth.domain.QrRepository
+import com.xinto.mauth.domain.settings.SettingsRepository
 import com.xinto.mauth.domain.account.AccountRepository
+import com.xinto.mauth.domain.account.model.DomainAccountCounts
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.domain.group.GroupRepository
 import com.xinto.mauth.domain.group.model.GroupFilter
@@ -41,7 +42,7 @@ import java.util.UUID
 class HomeViewModel(
     application: Application,
 
-    private val settings: Settings,
+    private val settings: SettingsRepository,
     private val accounts: AccountRepository,
     private val otp: OtpRepository,
     private val qr: QrRepository,
@@ -75,6 +76,13 @@ class HomeViewModel(
             initialValue = persistentListOf()
         )
 
+    val accountCounts = accounts.getAccountCounts()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = DomainAccountCounts.Empty
+        )
+
     val groups = groupRepository.getGroups()
         .map { ImmutableListAdapter(it) }
         .stateIn(
@@ -105,7 +113,10 @@ class HomeViewModel(
             initialValue = emptyMap()
         )
 
-    val activeSortSetting = settings.getSortMode()
+    val activeSortSetting = settings.sortMode
+
+    val accountsLayout = settings.accountsLayout
+    val showCodesByDefault = settings.showCodesByDefault
 
     fun copyCodeToClipboard(label: String, code: String, visible: Boolean) {
         val application = getApplication<Mauth>()
@@ -179,7 +190,7 @@ class HomeViewModel(
         }
     }
 
-    fun setActiveSort(value: SortSetting) {
+    fun setActiveSort(value: AccountsSort) {
         viewModelScope.launch {
             settings.setSortMode(value)
         }

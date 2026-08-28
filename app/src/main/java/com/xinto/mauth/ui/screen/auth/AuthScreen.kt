@@ -15,9 +15,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -27,6 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
 import com.xinto.mauth.ui.component.pinboard.PinScaffold
@@ -55,10 +54,8 @@ fun AuthScreen(
         title = stringResource(R.string.auth_biometrics_title),
         negativeButtonText = stringResource(R.string.auth_biometrics_cancel)
     )
-    val canUseBiometrics by remember(biometricHandler) {
-        derivedStateOf {
-            useBiometrics && biometricHandler.canUseBiometrics()
-        }
+    val canUseBiometrics = remember(useBiometrics, biometricHandler) {
+        useBiometrics && biometricHandler.canUseBiometrics()
     }
 
     BackHandler(enabled = onBackPress != null) {
@@ -69,12 +66,12 @@ fun AuthScreen(
             onAuthSuccess()
         }
     }
-    DisposableEffect(biometricHandler, canUseBiometrics) {
+    LifecycleResumeEffect(biometricHandler, canUseBiometrics) {
         if (canUseBiometrics) {
             biometricHandler.requestBiometrics(promptData)
         }
 
-        onDispose {
+        onPauseOrDispose {
             biometricHandler.cancelRequest()
         }
     }

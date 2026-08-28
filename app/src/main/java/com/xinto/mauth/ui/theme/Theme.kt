@@ -8,9 +8,9 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
-import com.xinto.mauth.core.settings.model.ColorSetting
-import com.xinto.mauth.core.settings.model.FontSetting
-import com.xinto.mauth.core.settings.model.ThemeSetting
+import com.xinto.mauth.domain.settings.model.ColorScheme
+import com.xinto.mauth.domain.settings.model.Font
+import com.xinto.mauth.domain.settings.model.Theme
 import com.xinto.mauth.ui.theme.color.BlueberryBlueDark
 import com.xinto.mauth.ui.theme.color.LimeGreenDark
 import com.xinto.mauth.ui.theme.color.MothPurpleDark
@@ -26,42 +26,42 @@ import com.xinto.mauth.ui.theme.color.SkyCyanLight
 
 @Composable
 fun MauthTheme(
-    theme: ThemeSetting = ThemeSetting.DEFAULT,
-    color: ColorSetting = ColorSetting.DEFAULT,
-    font: FontSetting = FontSetting.DEFAULT,
+    theme: Theme = Theme.DEFAULT,
+    color: ColorScheme = ColorScheme.DEFAULT,
+    font: Font = Font.DEFAULT,
     content: @Composable () -> Unit
 ) {
     val isDark = when (theme) {
-        ThemeSetting.System -> isSystemInDarkTheme()
-        ThemeSetting.Dark -> true
-        ThemeSetting.Light -> false
+        Theme.System -> isSystemInDarkTheme()
+        Theme.Dark -> true
+        Theme.Light -> false
     }
     val isInPreview = LocalInspectionMode.current
     val colorScheme = when {
-        color == ColorSetting.Dynamic && (isInPreview || Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) -> {
+        color == ColorScheme.Dynamic && (isInPreview || Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) -> {
             val context = LocalContext.current
             when (isDark) {
                 true -> dynamicDarkColorScheme(context)
                 false -> dynamicLightColorScheme(context)
             }
         }
-        color == ColorSetting.BlueberryBlue -> when (isDark) {
+        color == ColorScheme.BlueberryBlue -> when (isDark) {
             true -> BlueberryBlueDark
             false -> BlueberryBlueLight
         }
-        color == ColorSetting.PickleYellow -> when (isDark) {
+        color == ColorScheme.PickleYellow -> when (isDark) {
             true -> LemonYellowDark
             false -> LemonYellowLight
         }
-        color == ColorSetting.ToxicGreen -> when (isDark) {
+        color == ColorScheme.ToxicGreen -> when (isDark) {
             true -> LimeGreenDark
             false -> LimeGreenLight
         }
-        color == ColorSetting.LeatherOrange -> when (isDark) {
+        color == ColorScheme.LeatherOrange -> when (isDark) {
             true -> OrangeOrangeDark
             false -> OrangeOrangeLight
         }
-        color == ColorSetting.OceanTurquoise -> when (isDark) {
+        color == ColorScheme.OceanTurquoise -> when (isDark) {
             true -> SkyCyanDark
             false -> SkyCyanLight
         }
@@ -71,8 +71,8 @@ fun MauthTheme(
         }
     }
     val typography = when (font) {
-        FontSetting.Roboto -> DefaultTypography
-        FontSetting.GoogleSans -> GoogleSansTypography
+        Font.Roboto -> DefaultTypography
+        Font.GoogleSans -> GoogleSansTypography
     }
     MaterialTheme(
         colorScheme = colorScheme,

@@ -28,9 +28,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.input.TextFieldState
@@ -58,6 +55,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LoadingIndicator
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.ModalBottomSheet
@@ -113,8 +111,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
 import com.xinto.mauth.core.otp.model.OtpDigest
-import com.xinto.mauth.core.settings.model.SortSetting
+import com.xinto.mauth.domain.settings.model.AccountsLayout
+import com.xinto.mauth.domain.settings.model.AccountsSort
 import com.xinto.mauth.domain.account.model.DomainAccount
+import com.xinto.mauth.domain.account.model.DomainAccountCounts
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.domain.group.model.DomainGroup
 import com.xinto.mauth.domain.group.model.GroupFilter
@@ -126,6 +126,7 @@ import com.xinto.mauth.ui.util.collectAsStateListWithLifecycle
 import com.xinto.mauth.ui.util.collectAsStateMapWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -151,6 +152,9 @@ fun HomeScreen(
     val groups by viewModel.groups.collectAsStateWithLifecycle()
     val activeGroup by viewModel.activeGroup.collectAsStateWithLifecycle()
     val searchAccounts by viewModel.searchAccounts.collectAsStateWithLifecycle()
+    val accountCounts by viewModel.accountCounts.collectAsStateWithLifecycle()
+    val accountsLayout by viewModel.accountsLayout.collectAsStateWithLifecycle()
+    val showCodesByDefault by viewModel.showCodesByDefault.collectAsStateWithLifecycle()
 
     val photoPickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         viewModel.getAccountInfoFromQrUri(uri)?.let {
@@ -233,7 +237,7 @@ fun HomeScreen(
         state = state,
         accountRealtimeData = realTimeData,
         selectedAccounts = selectedAccounts,
-        activeSortSetting = activeSortSetting,
+        activeAccountsSort = activeSortSetting,
         onActiveSortChange = viewModel::setActiveSort,
         groups = groups,
         activeGroup = activeGroup,
@@ -247,6 +251,9 @@ fun HomeScreen(
             }
         },
         searchAccounts = searchAccounts,
+        accountCounts = accountCounts,
+        accountsLayout = accountsLayout,
+        showCodesByDefault = showCodesByDefault,
         showScanButton = hasCamera,
     )
 }
@@ -266,14 +273,17 @@ fun HomeScreen(
     state: HomeScreenState,
     accountRealtimeData: SnapshotStateMap<UUID, DomainOtpRealtimeData>,
     selectedAccounts: SnapshotStateList<UUID>,
-    activeSortSetting: SortSetting,
-    onActiveSortChange: (SortSetting) -> Unit,
+    activeAccountsSort: AccountsSort,
+    onActiveSortChange: (AccountsSort) -> Unit,
     groups: ImmutableList<DomainGroup>,
     activeGroup: GroupFilter,
     onActiveGroupChange: (GroupFilter) -> Unit,
     onCreateGroupClick: () -> Unit,
     onGroupSelectedClick: () -> Unit,
     searchAccounts: ImmutableList<DomainAccount>,
+    accountCounts: DomainAccountCounts,
+    accountsLayout: AccountsLayout,
+    showCodesByDefault: Boolean,
     modifier: Modifier = Modifier,
     showScanButton: Boolean
 ) {
@@ -288,7 +298,7 @@ fun HomeScreen(
 
     val topBarActions: @Composable RowScope.() -> Unit = {
         SortAction(
-            activeSortSetting = activeSortSetting,
+            activeAccountsSort = activeAccountsSort,
             onActiveSortChange = onActiveSortChange,
         )
         MoreAction(onMenuNavigate = onMoreMenuNavigate)
@@ -298,6 +308,7 @@ fun HomeScreen(
         SearchInputField(
             searchBarState = searchBarState,
             textFieldState = searchTextFieldState,
+            accountCount = accountCounts.total,
             inlineActions = if (isExpandedWidth) null else { -> Row { topBarActions() } }
         )
     }
@@ -383,6 +394,7 @@ fun HomeScreen(
                         modifier = Modifier.padding(top = 8.dp),
                         groups = groups,
                         activeGroup = activeGroup,
+                        accountCounts = accountCounts,
                         onActiveGroupChange = onActiveGroupChange,
                         onAddGroup = onCreateGroupClick,
                     )
@@ -426,34 +438,32 @@ fun HomeScreen(
                     }
                 }
                 is HomeScreenState.Success -> {
-                    LazyVerticalGrid(
-                        modifier = contentModifier,
-                        contentPadding = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 88.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        columns = GridCells.Adaptive(minSize = 250.dp),
-                    ) {
-                        items(items = state.accounts, key = { it.id }) { account ->
-                            val realtimeData = accountRealtimeData[account.id]
-                            if (realtimeData != null) {
-                                AccountCard(
-                                    onClick = {
-                                        if (selectedAccounts.isNotEmpty()) {
-                                            onAccountSelect(account.id)
-                                        }
-                                    },
-                                    onLongClick = { onAccountSelect(account.id) },
-                                    onEdit = { onAccountEdit(account.id) },
-                                    onCounterClick = { onAccountCounterIncrease(account.id) },
-                                    onCopyCode = { onAccountCopyCode(account.label, realtimeData.code, it) },
-                                    account = account,
-                                    realtimeData = realtimeData,
-                                    selected = selectedAccounts.contains(account.id),
-                                    selectionActive = selectedAccounts.isNotEmpty(),
-                                    colors = CardDefaults.elevatedCardColors(),
-                                    elevation = CardDefaults.elevatedCardElevation()
-                                )
-                            }
+                    when (accountsLayout) {
+                        AccountsLayout.Cards -> {
+                            AccountCardGrid(
+                                modifier = contentModifier,
+                                accounts = state.accounts,
+                                accountRealtimeData = accountRealtimeData,
+                                selectedAccounts = selectedAccounts,
+                                onAccountSelect = onAccountSelect,
+                                onAccountEdit = onAccountEdit,
+                                onAccountCounterIncrease = onAccountCounterIncrease,
+                                onAccountCopyCode = onAccountCopyCode,
+                                showCodesByDefault = showCodesByDefault,
+                            )
+                        }
+                        AccountsLayout.Compact -> {
+                            AccountCompactGrid(
+                                modifier = contentModifier,
+                                accounts = state.accounts,
+                                accountRealtimeData = accountRealtimeData,
+                                selectedAccounts = selectedAccounts,
+                                onAccountSelect = onAccountSelect,
+                                onAccountEdit = onAccountEdit,
+                                onAccountCounterIncrease = onAccountCounterIncrease,
+                                onAccountCopyCode = onAccountCopyCode,
+                                showCodesByDefault = showCodesByDefault,
+                            )
                         }
                     }
                 }
@@ -483,6 +493,8 @@ fun HomeScreen(
             onAccountCopyCode = onAccountCopyCode,
             selectedAccounts = selectedAccounts,
             accountRealtimeData = accountRealtimeData,
+            accountsLayout = accountsLayout,
+            showCodesByDefault = showCodesByDefault,
         )
     }
     if (isExpandedWidth) {
@@ -515,6 +527,7 @@ fun HomeScreen(
 private fun SearchInputField(
     searchBarState: SearchBarState,
     textFieldState: TextFieldState,
+    accountCount: Int,
     inlineActions: (@Composable () -> Unit)? = null,
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -524,7 +537,13 @@ private fun SearchInputField(
         textFieldState = textFieldState,
         searchBarState = searchBarState,
         onSearch = { keyboardController?.hide() },
-        placeholder = { Text(stringResource(R.string.home_search_placeholder)) },
+        placeholder = {
+            if (accountCount > 0) {
+                Text(pluralStringResource(R.plurals.home_search_placeholder, accountCount, accountCount))
+            } else {
+                Text(stringResource(R.string.home_search_placeholder_empty))
+            }
+        },
         leadingIcon = {
             if (expanded) {
                 IconButton(onClick = { coroutineScope.launch { searchBarState.animateToCollapsed() } }) {
@@ -559,8 +578,8 @@ private fun SearchInputField(
 
 @Composable
 private fun SortAction(
-    activeSortSetting: SortSetting,
-    onActiveSortChange: (SortSetting) -> Unit,
+    activeAccountsSort: AccountsSort,
+    onActiveSortChange: (AccountsSort) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isSortVisible by remember { mutableStateOf(false) }
@@ -581,21 +600,21 @@ private fun SortAction(
                     onDismissRequest = { isSortVisible = false },
                 ) {
                     DropdownMenuGroup(shapes = MenuDefaults.groupShapes()) {
-                        SortSetting.entries.forEachIndexed { index, sortSetting ->
+                        AccountsSort.entries.forEachIndexed { index, sortSetting ->
                             DropdownMenuItem(
-                                selected = activeSortSetting == sortSetting,
+                                selected = activeAccountsSort == sortSetting,
                                 onClick = {
                                     isSortVisible = false
                                     onActiveSortChange(sortSetting)
                                 },
                                 text = {
                                     val resource = when (sortSetting) {
-                                        SortSetting.DateAsc -> R.string.home_sort_date_ascending
-                                        SortSetting.DateDesc -> R.string.home_sort_date_descending
-                                        SortSetting.LabelAsc -> R.string.home_sort_label_ascending
-                                        SortSetting.LabelDesc -> R.string.home_sort_label_descending
-                                        SortSetting.IssuerAsc -> R.string.home_sort_issuer_ascending
-                                        SortSetting.IssuerDesc -> R.string.home_sort_issuer_descending
+                                        AccountsSort.DateAsc -> R.string.home_sort_date_ascending
+                                        AccountsSort.DateDesc -> R.string.home_sort_date_descending
+                                        AccountsSort.LabelAsc -> R.string.home_sort_label_ascending
+                                        AccountsSort.LabelDesc -> R.string.home_sort_label_descending
+                                        AccountsSort.IssuerAsc -> R.string.home_sort_issuer_ascending
+                                        AccountsSort.IssuerDesc -> R.string.home_sort_issuer_descending
                                     }
                                     Text(stringResource(resource))
                                 },
@@ -607,7 +626,7 @@ private fun SortAction(
                                 },
                                 shapes = MenuDefaults.itemShape(
                                     index = index,
-                                    count = SortSetting.entries.size
+                                    count = AccountsSort.entries.size
                                 ),
                             )
                         }
@@ -689,6 +708,8 @@ private fun ColumnScope.SearchResults(
     onAccountCopyCode: (String, String, Boolean) -> Unit,
     selectedAccounts: SnapshotStateList<UUID>,
     accountRealtimeData: SnapshotStateMap<UUID, DomainOtpRealtimeData>,
+    accountsLayout: AccountsLayout,
+    showCodesByDefault: Boolean,
 ) {
     val query = searchTextFieldState.text.toString().trim()
     val filteredAccounts = remember(searchAccounts, query) {
@@ -700,26 +721,36 @@ private fun ColumnScope.SearchResults(
         }
     }
     if (filteredAccounts.isNotEmpty()) {
-        LazyColumn(
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            items(items = filteredAccounts, key = { it.id }) { account ->
-                val realtimeData = accountRealtimeData[account.id]
-                if (realtimeData != null) {
-                    AccountCard(
-                        onClick = {},
-                        onLongClick = {},
-                        onEdit = { onAccountEdit(account.id) },
-                        onCounterClick = { onAccountCounterIncrease(account.id) },
-                        onCopyCode = { onAccountCopyCode(account.label, realtimeData.code, it) },
-                        account = account,
-                        realtimeData = realtimeData,
-                        selected = selectedAccounts.contains(account.id),
-                        selectionActive = selectedAccounts.isNotEmpty(),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
-                    )
-                }
+        when (accountsLayout) {
+            AccountsLayout.Cards -> {
+                AccountCardGrid(
+                    accounts = filteredAccounts,
+                    accountRealtimeData = accountRealtimeData,
+                    selectedAccounts = selectedAccounts,
+                    onAccountSelect = {},
+                    onAccountEdit = onAccountEdit,
+                    onAccountCounterIncrease = onAccountCounterIncrease,
+                    onAccountCopyCode = onAccountCopyCode,
+                    showCodesByDefault = showCodesByDefault,
+                    contentPadding = PaddingValues(16.dp),
+                    selectionEnabled = false,
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+                    elevation = CardDefaults.cardElevation(),
+                )
+            }
+            AccountsLayout.Compact -> {
+                AccountCompactGrid(
+                    accounts = filteredAccounts,
+                    accountRealtimeData = accountRealtimeData,
+                    selectedAccounts = selectedAccounts,
+                    onAccountSelect = {},
+                    onAccountEdit = onAccountEdit,
+                    onAccountCounterIncrease = onAccountCounterIncrease,
+                    onAccountCopyCode = onAccountCopyCode,
+                    showCodesByDefault = showCodesByDefault,
+                    contentPadding = PaddingValues(vertical = 8.dp),
+                    selectionEnabled = false,
+                )
             }
         }
     } else if (query.isNotEmpty()) {
@@ -811,11 +842,26 @@ private fun SelectionTopBar(
 }
 
 
+@Composable
+private fun GroupChipLabel(text: String, count: Int) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(text)
+        Text(
+            text = count.toString(),
+            color = LocalContentColor.current.copy(alpha = 0.7f),
+        )
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun GroupFilterRow(
     groups: ImmutableList<DomainGroup>,
     activeGroup: GroupFilter,
+    accountCounts: DomainAccountCounts,
     onActiveGroupChange: (GroupFilter) -> Unit,
     onAddGroup: () -> Unit,
     modifier: Modifier = Modifier,
@@ -841,20 +887,27 @@ private fun GroupFilterRow(
                 }
             )
         }
-        item(key = "ungrouped", contentType = 0) {
-            val selected = activeGroup is GroupFilter.Ungrouped
-            FilterChip(
-                selected = selected,
-                onClick = { onActiveGroupChange(GroupFilter.Ungrouped) },
-                label = { Text(stringResource(R.string.home_groups_ungrouped)) },
-                leadingIcon = if (!selected) null else { ->
-                    Icon(
-                        modifier = Modifier.size(FilterChipDefaults.IconSize),
-                        painter = painterResource(R.drawable.ic_check),
-                        contentDescription = null
-                    )
-                }
-            )
+        val ungroupedSelected = activeGroup is GroupFilter.Ungrouped
+        if (accountCounts.ungrouped > 0 || ungroupedSelected) {
+            item(key = "ungrouped", contentType = 0) {
+                FilterChip(
+                    selected = ungroupedSelected,
+                    onClick = { onActiveGroupChange(GroupFilter.Ungrouped) },
+                    label = {
+                        GroupChipLabel(
+                            text = stringResource(R.string.home_groups_ungrouped),
+                            count = accountCounts[GroupFilter.Ungrouped],
+                        )
+                    },
+                    leadingIcon = if (!ungroupedSelected) null else { ->
+                        Icon(
+                            modifier = Modifier.size(FilterChipDefaults.IconSize),
+                            painter = painterResource(R.drawable.ic_check),
+                            contentDescription = null
+                        )
+                    }
+                )
+            }
         }
         item(key = "divider", contentType = 1) {
             VerticalDivider(modifier = Modifier.height(24.dp))
@@ -865,7 +918,12 @@ private fun GroupFilterRow(
             FilterChip(
                 selected = selected,
                 onClick = { onActiveGroupChange(GroupFilter.Specific(group.id)) },
-                label = { Text(group.name) },
+                label = {
+                    GroupChipLabel(
+                        text = group.name,
+                        count = accountCounts.byGroup[group.id] ?: 0,
+                    )
+                },
                 leadingIcon = when {
                     selected -> { ->
                         Icon(
@@ -1079,6 +1137,21 @@ private fun DeleteDialog(
     )
 }
 
+private val PreviewAccountCounts = DomainAccountCounts(
+    total = 2,
+    ungrouped = 2,
+    byGroup = persistentMapOf()
+)
+
+private val PreviewGroupedAccountCounts = DomainAccountCounts(
+    total = 2,
+    ungrouped = 0,
+    byGroup = persistentMapOf(
+        UUID.fromString("00000000-0000-0000-0000-0000000000a1") to 1,
+        UUID.fromString("00000000-0000-0000-0000-0000000000a2") to 1
+    )
+)
+
 @Composable
 @PreviewAllConfigurations
 private fun HomeScreen_Loading_Preview() {
@@ -1097,7 +1170,7 @@ private fun HomeScreen_Loading_Preview() {
                 state = HomeScreenState.Loading,
                 accountRealtimeData = remember { mutableStateMapOf<UUID, DomainOtpRealtimeData>() },
                 selectedAccounts = remember { mutableStateListOf<UUID>() },
-                activeSortSetting = SortSetting.entries.first(),
+                activeAccountsSort = AccountsSort.entries.first(),
                 onActiveSortChange = {},
                 groups = persistentListOf(),
                 activeGroup = GroupFilter.All,
@@ -1105,6 +1178,9 @@ private fun HomeScreen_Loading_Preview() {
                 onCreateGroupClick = {},
                 onGroupSelectedClick = {},
                 searchAccounts = persistentListOf(),
+                accountCounts = DomainAccountCounts.Empty,
+                accountsLayout = AccountsLayout.DEFAULT,
+                showCodesByDefault = false,
                 modifier = Modifier.fillMaxSize(),
                 showScanButton = false
             )
@@ -1130,7 +1206,7 @@ private fun HomeScreen_Empty_Preview() {
                 state = HomeScreenState.Empty,
                 accountRealtimeData = remember { mutableStateMapOf<UUID, DomainOtpRealtimeData>() },
                 selectedAccounts = remember { mutableStateListOf<UUID>() },
-                activeSortSetting = SortSetting.entries.first(),
+                activeAccountsSort = AccountsSort.entries.first(),
                 onActiveSortChange = {},
                 groups = persistentListOf(),
                 activeGroup = GroupFilter.All,
@@ -1138,6 +1214,9 @@ private fun HomeScreen_Empty_Preview() {
                 onCreateGroupClick = {},
                 onGroupSelectedClick = {},
                 searchAccounts = persistentListOf(),
+                accountCounts = DomainAccountCounts.Empty,
+                accountsLayout = AccountsLayout.DEFAULT,
+                showCodesByDefault = false,
                 modifier = Modifier.fillMaxSize(),
                 showScanButton = false
             )
@@ -1189,7 +1268,7 @@ private fun HomeScreen_Success_Preview() {
                     )
                 },
                 selectedAccounts = remember { mutableStateListOf<UUID>() },
-                activeSortSetting = SortSetting.entries.first(),
+                activeAccountsSort = AccountsSort.entries.first(),
                 onActiveSortChange = {},
                 groups = persistentListOf(),
                 activeGroup = GroupFilter.All,
@@ -1197,6 +1276,71 @@ private fun HomeScreen_Success_Preview() {
                 onCreateGroupClick = {},
                 onGroupSelectedClick = {},
                 searchAccounts = persistentListOf(),
+                accountCounts = PreviewAccountCounts,
+                accountsLayout = AccountsLayout.DEFAULT,
+                showCodesByDefault = false,
+                modifier = Modifier.fillMaxSize(),
+                showScanButton = false
+            )
+        }
+    }
+}
+
+@Composable
+@PreviewAllConfigurations
+private fun HomeScreen_Compact_Preview() {
+    val totp = DomainAccount.Totp(
+        id = UUID.fromString("00000000-0000-0000-0000-000000000001"),
+        icon = null,
+        secret = "JBSWY3DPEHPK3PXP",
+        label = "GitHub",
+        issuer = "github.com",
+        algorithm = OtpDigest.SHA1,
+        digits = 6,
+        createdMillis = 0L,
+        period = 30
+    )
+    val hotp = DomainAccount.Hotp(
+        id = UUID.fromString("00000000-0000-0000-0000-000000000002"),
+        icon = null,
+        secret = "JBSWY3DPEHPK3PXP",
+        label = "Amazon",
+        issuer = "amazon.com",
+        algorithm = OtpDigest.SHA1,
+        digits = 6,
+        createdMillis = 0L
+    )
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            HomeScreen(
+                onAddAccountNavigate = {},
+                onMoreMenuNavigate = {},
+                onAccountSelect = {},
+                onCancelAccountSelection = {},
+                onDeleteSelectedAccounts = {},
+                onExportSelectedAccounts = {},
+                onAccountEdit = {},
+                onAccountCounterIncrease = {},
+                onAccountCopyCode = { _, _, _ -> },
+                state = HomeScreenState.Success(persistentListOf(totp, hotp)),
+                accountRealtimeData = remember {
+                    mutableStateMapOf(
+                        totp.id to DomainOtpRealtimeData.Totp(code = "123456", progress = 0.6f, countdown = 18),
+                        hotp.id to DomainOtpRealtimeData.Hotp(code = "654321", count = 3)
+                    )
+                },
+                selectedAccounts = remember { mutableStateListOf<UUID>() },
+                activeAccountsSort = AccountsSort.entries.first(),
+                onActiveSortChange = {},
+                groups = persistentListOf(),
+                activeGroup = GroupFilter.All,
+                onActiveGroupChange = {},
+                onCreateGroupClick = {},
+                onGroupSelectedClick = {},
+                searchAccounts = persistentListOf(),
+                accountCounts = PreviewAccountCounts,
+                accountsLayout = AccountsLayout.Compact,
+                showCodesByDefault = false,
                 modifier = Modifier.fillMaxSize(),
                 showScanButton = false
             )
@@ -1248,7 +1392,7 @@ private fun HomeScreen_Selection_Preview() {
                     )
                 },
                 selectedAccounts = remember { mutableStateListOf(totp.id) },
-                activeSortSetting = SortSetting.entries.first(),
+                activeAccountsSort = AccountsSort.entries.first(),
                 onActiveSortChange = {},
                 groups = persistentListOf(),
                 activeGroup = GroupFilter.All,
@@ -1256,6 +1400,9 @@ private fun HomeScreen_Selection_Preview() {
                 onCreateGroupClick = {},
                 onGroupSelectedClick = {},
                 searchAccounts = persistentListOf(),
+                accountCounts = PreviewAccountCounts,
+                accountsLayout = AccountsLayout.DEFAULT,
+                showCodesByDefault = false,
                 modifier = Modifier.fillMaxSize(),
                 showScanButton = false
             )
@@ -1307,7 +1454,7 @@ private fun HomeScreen_Groups_Preview() {
                     )
                 },
                 selectedAccounts = remember { mutableStateListOf<UUID>() },
-                activeSortSetting = SortSetting.entries.first(),
+                activeAccountsSort = AccountsSort.entries.first(),
                 onActiveSortChange = {},
                 groups = persistentListOf(
                     DomainGroup(
@@ -1328,6 +1475,9 @@ private fun HomeScreen_Groups_Preview() {
                 onCreateGroupClick = {},
                 onGroupSelectedClick = {},
                 searchAccounts = persistentListOf(),
+                accountCounts = PreviewGroupedAccountCounts,
+                accountsLayout = AccountsLayout.DEFAULT,
+                showCodesByDefault = false,
                 modifier = Modifier.fillMaxSize(),
                 showScanButton = false
             )
@@ -1353,7 +1503,7 @@ private fun HomeScreen_Error_Preview() {
                 state = HomeScreenState.Error("Something went wrong"),
                 accountRealtimeData = remember { mutableStateMapOf<UUID, DomainOtpRealtimeData>() },
                 selectedAccounts = remember { mutableStateListOf<UUID>() },
-                activeSortSetting = SortSetting.entries.first(),
+                activeAccountsSort = AccountsSort.entries.first(),
                 onActiveSortChange = {},
                 groups = persistentListOf(),
                 activeGroup = GroupFilter.All,
@@ -1361,6 +1511,9 @@ private fun HomeScreen_Error_Preview() {
                 onCreateGroupClick = {},
                 onGroupSelectedClick = {},
                 searchAccounts = persistentListOf(),
+                accountCounts = DomainAccountCounts.Empty,
+                accountsLayout = AccountsLayout.DEFAULT,
+                showCodesByDefault = false,
                 modifier = Modifier.fillMaxSize(),
                 showScanButton = false
             )

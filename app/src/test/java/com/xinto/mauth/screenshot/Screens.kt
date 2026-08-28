@@ -5,10 +5,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
-import com.xinto.mauth.core.settings.model.ColorSetting
-import com.xinto.mauth.core.settings.model.FontSetting
-import com.xinto.mauth.core.settings.model.ThemeSetting
-import com.xinto.mauth.core.settings.model.SortSetting
+import com.xinto.mauth.domain.settings.model.AccountsLayout
+import com.xinto.mauth.domain.settings.model.ColorScheme
+import com.xinto.mauth.domain.settings.model.Font
+import com.xinto.mauth.domain.settings.model.Theme
+import com.xinto.mauth.domain.settings.model.AccountsSort
 import com.xinto.mauth.ui.screen.account.AccountForm
 import com.xinto.mauth.ui.screen.account.AccountScreen
 import com.xinto.mauth.ui.screen.account.AccountScreenState
@@ -17,6 +18,7 @@ import com.xinto.mauth.ui.screen.about.AboutScreen
 import com.xinto.mauth.ui.screen.home.HomeScreen
 import com.xinto.mauth.ui.screen.home.HomeScreenState
 import com.xinto.mauth.ui.screen.settings.SettingsScreen
+import com.xinto.mauth.domain.account.model.DomainAccountCounts
 import com.xinto.mauth.domain.group.model.DomainGroup
 import com.xinto.mauth.domain.group.model.GroupFilter
 import kotlinx.collections.immutable.ImmutableList
@@ -46,7 +48,7 @@ fun StoreScreenshotContent(id: String) {
     when (id) {
         "auth_pin" -> AuthPinFixture()
         "account_add" -> AccountAddFixture()
-        "home_accounts" -> HomeAccountsFixture(selected = emptyList(), groups = StoreFixtures.groups)
+        "home_accounts" -> HomeAccountsFixture(selected = emptyList(), groups = StoreFixtures.groups, accountCounts = StoreFixtures.groupedAccountCounts)
         "home_selection" -> HomeAccountsFixture(selected = listOf(StoreFixtures.discordAccount.id, StoreFixtures.hotpAccount.id))
         "settings" -> SettingsFixture()
         "about" -> AboutFixture()
@@ -73,6 +75,7 @@ private fun AuthPinFixture() {
 private fun HomeAccountsFixture(
     selected: List<UUID>,
     groups: ImmutableList<DomainGroup> = persistentListOf(),
+    accountCounts: DomainAccountCounts = StoreFixtures.sampleAccountCounts,
 ) {
     HomeScreen(
         onAddAccountNavigate = {},
@@ -87,7 +90,7 @@ private fun HomeAccountsFixture(
         state = HomeScreenState.Success(StoreFixtures.sampleAccounts),
         accountRealtimeData = remember { StoreFixtures.sampleRealtimeData },
         selectedAccounts = remember { selected.toMutableStateList() },
-        activeSortSetting = SortSetting.DEFAULT,
+        activeAccountsSort = AccountsSort.DEFAULT,
         onActiveSortChange = {},
         groups = groups,
         activeGroup = GroupFilter.All,
@@ -95,6 +98,9 @@ private fun HomeAccountsFixture(
         onCreateGroupClick = {},
         onGroupSelectedClick = {},
         searchAccounts = persistentListOf(),
+        accountCounts = accountCounts,
+        accountsLayout = AccountsLayout.DEFAULT,
+        showCodesByDefault = false,
         modifier = Modifier.fillMaxSize(),
         showScanButton = false
     )
@@ -134,10 +140,14 @@ private fun SettingsFixture() {
         biometrics = true,
         onBiometricsChange = {},
         onThemeNavigate = {},
-        theme = ThemeSetting.DEFAULT,
-        color = ColorSetting.MothPurple,
-        font = FontSetting.DEFAULT,
+        theme = Theme.DEFAULT,
+        color = ColorScheme.MothPurple,
+        font = Font.DEFAULT,
         onFontChange = {},
+        accountsLayout = AccountsLayout.DEFAULT,
+        onAccountsLayoutChange = {},
+        showCodesByDefault = false,
+        onShowCodesByDefaultChange = {},
         modifier = Modifier.fillMaxSize(),
     )
 }

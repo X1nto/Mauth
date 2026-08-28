@@ -194,3 +194,10 @@ dependencies {
     screenshotTestImplementation("androidx.compose.ui:ui-tooling")
     screenshotTestImplementation("com.android.tools.screenshot:screenshot-validation-api:0.0.1-alpha15")
 }
+
+// The more screenshots I add the hungrier it gets
+tasks.withType<Test>()
+    .matching { it.name.endsWith("ScreenshotTest") }
+    .configureEach {
+        maxHeapSize = "4g"
+    }

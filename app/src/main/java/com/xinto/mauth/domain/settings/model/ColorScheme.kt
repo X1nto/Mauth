@@ -1,0 +1,21 @@
+package com.xinto.mauth.domain.settings.model
+
+import android.os.Build
+
+enum class ColorScheme {
+    Dynamic,
+    MothPurple,
+    BlueberryBlue,
+    PickleYellow,
+    ToxicGreen,
+    LeatherOrange,
+    OceanTurquoise;
+
+    companion object {
+        val DEFAULT = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) Dynamic else MothPurple
+
+        val validEntries = entries.filter {
+            it != Dynamic || Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+        }
+    }
+}
