@@ -12,6 +12,7 @@ import android.provider.MediaStore
 import android.widget.Toast
 import androidx.core.content.getSystemService
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import com.xinto.mauth.Mauth
 import com.xinto.mauth.R
@@ -119,7 +120,6 @@ class HomeViewModel(
     val showCodesByDefault = settings.showCodesByDefault
 
     fun copyCodeToClipboard(label: String, code: String, visible: Boolean) {
-        val application = getApplication<Mauth>()
         val clipboardService = application.getSystemService<ClipboardManager>() ?: return
         val clipData = ClipData.newPlainText(label, code).apply {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -129,7 +129,9 @@ class HomeViewModel(
             }
         }
         clipboardService.setPrimaryClip(clipData)
-        Toast.makeText(application, R.string.home_code_copy_success, Toast.LENGTH_LONG).show()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            Toast.makeText(application, R.string.home_code_copy_success, Toast.LENGTH_SHORT).show()
+        }
     }
 
     fun toggleAccountSelection(id: UUID) {
