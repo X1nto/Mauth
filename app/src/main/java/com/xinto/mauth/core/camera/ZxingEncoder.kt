@@ -13,28 +13,29 @@ object ZxingEncoder {
 
     fun encodeToBitmap(
         data: String,
-        size: Int,
         @ColorInt backgroundColor: Int,
         @ColorInt dataColor: Int
     ): Bitmap {
         val bitMatrix = writer.encode(
             /* contents = */ data,
             /* format = */ BarcodeFormat.QR_CODE,
-            /* width = */ size,
-            /* height = */ size,
-            /* hints = */ mapOf(EncodeHintType.MARGIN to 2)
+            /* width = */ 0,
+            /* height = */ 0,
+            /* hints = */ mapOf(EncodeHintType.MARGIN to 0)
         )
 
-        val pixels = IntArray(size * size)
-        for (y in 0 until size) {
-            val row = y * size
-            for (x in 0 until size) {
+        val width = bitMatrix.width
+        val height = bitMatrix.height
+        val pixels = IntArray(width * height)
+        for (y in 0 until height) {
+            val row = y * width
+            for (x in 0 until width) {
                 pixels[row + x] = if (bitMatrix.get(x, y)) dataColor else backgroundColor
             }
         }
 
-        return createBitmap(size, size).apply {
-            setPixels(pixels, 0, size, 0, 0, size, size)
+        return createBitmap(width, height).apply {
+            setPixels(pixels, 0, width, 0, 0, width, height)
         }
     }
 }

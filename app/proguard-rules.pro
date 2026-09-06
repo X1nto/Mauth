@@ -25,4 +25,7 @@
 -dontwarn com.google.errorprone.annotations.CheckReturnValue
 -dontwarn com.google.errorprone.annotations.RestrictedApi
 
+-dontwarn javax.naming.**
+-dontwarn org.bouncycastle.jsse.**
+
 -keep class * extends com.google.protobuf.GeneratedMessageLite { *; }

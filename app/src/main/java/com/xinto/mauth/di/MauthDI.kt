@@ -1,6 +1,11 @@
 package com.xinto.mauth.di
 
 import androidx.room.Room
+import com.xinto.mauth.core.backup.crypto.BackupCrypto
+import com.xinto.mauth.core.backup.exporter.AegisExporter
+import com.xinto.mauth.core.backup.exporter.FreeOtpPlusExporter
+import com.xinto.mauth.core.backup.exporter.MauthExporter
+import com.xinto.mauth.core.backup.exporter.UriListExporter
 import com.xinto.mauth.core.otp.exporter.DefaultOtpExporter
 import com.xinto.mauth.core.otp.exporter.OtpExporter
 import com.xinto.mauth.core.otp.generator.DefaultOtpGenerator
@@ -14,11 +19,15 @@ import com.xinto.mauth.domain.AuthRepository
 import com.xinto.mauth.domain.QrRepository
 import com.xinto.mauth.domain.settings.SettingsRepository
 import com.xinto.mauth.domain.account.AccountRepository
+import com.xinto.mauth.domain.backup.BackupRepository
 import com.xinto.mauth.domain.group.GroupRepository
 import com.xinto.mauth.domain.otp.OtpRepository
 import com.xinto.mauth.ui.screen.account.AccountViewModel
 import com.xinto.mauth.ui.screen.auth.AuthViewModel
+import com.xinto.mauth.ui.screen.export.AccountExportViewModel
+import com.xinto.mauth.ui.screen.export.GoogleAuthenticatorExportViewModel
 import com.xinto.mauth.ui.screen.export.ExportViewModel
+import com.xinto.mauth.ui.screen.export.FileExportViewModel
 import com.xinto.mauth.ui.screen.groups.GroupsViewModel
 import com.xinto.mauth.ui.screen.home.HomeViewModel
 import com.xinto.mauth.ui.screen.pinremove.PinRemoveViewModel
@@ -39,6 +48,12 @@ object MauthDI {
         singleOf(::DefaultOtpUriParser) bind OtpUriParser::class
         singleOf(::DefaultKeyTransformer) bind KeyTransformer::class
         singleOf(::DefaultOtpExporter) bind OtpExporter::class
+
+        singleOf(::BackupCrypto)
+        singleOf(::MauthExporter)
+        singleOf(::AegisExporter)
+        singleOf(::FreeOtpPlusExporter)
+        singleOf(::UriListExporter)
     }
 
     val DbModule = module {
@@ -72,6 +87,7 @@ object MauthDI {
         singleOf(::SettingsRepository)
         singleOf(::AuthRepository)
         singleOf(::GroupRepository)
+        single { BackupRepository(androidContext(), get(), get(), get(), get(), get(), get(), get()) }
     }
 
     val UiModule = module {
@@ -84,6 +100,9 @@ object MauthDI {
         viewModelOf(::AuthViewModel)
         viewModelOf(::ThemeViewModel)
         viewModelOf(::ExportViewModel)
+        viewModelOf(::FileExportViewModel)
+        viewModelOf(::GoogleAuthenticatorExportViewModel)
+        viewModelOf(::AccountExportViewModel)
         viewModelOf(::GroupsViewModel)
     }
 

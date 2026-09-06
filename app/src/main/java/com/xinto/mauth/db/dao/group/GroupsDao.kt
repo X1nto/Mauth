@@ -11,8 +11,14 @@ interface GroupsDao {
     @Query("SELECT * FROM `groups` ORDER BY sort_index")
     fun observeAll(): Flow<List<EntityGroup>>
 
+    @Query("SELECT * FROM `groups` ORDER BY sort_index")
+    suspend fun getAll(): List<EntityGroup>
+
     @Query("SELECT * FROM `groups` WHERE id = :id")
     suspend fun getById(id: UUID): EntityGroup?
+
+    @Query("SELECT * FROM `groups` WHERE name = :name LIMIT 1")
+    suspend fun getByName(name: String): EntityGroup?
 
     @Query("SELECT COALESCE(MAX(sort_index), -1) + 1 FROM `groups`")
     suspend fun nextSortIndex(): Int

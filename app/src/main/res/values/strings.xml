@@ -147,9 +147,39 @@
     <string name="accountslayout_dialog_action_cancel">Cancel</string>
 
     <string name="export_title">Export</string>
+    <plurals name="export_subtitle">
+        <item quantity="one">%1$d account</item>
+        <item quantity="other">%1$d accounts</item>
+    </plurals>
     <string name="export_state_empty">No accounts to export</string>
     <string name="export_url_copy_success">Successfully copied the OTP URL to the clipboard</string>
     <string name="export_batch_hint">Scan this QR code using any Google Authenticator compatible app</string>
+    <string name="export_file_button">Export to file</string>
+    <string name="export_file_title">Export to file</string>
+    <string name="export_category_batch">All accounts</string>
+    <string name="export_category_individual">Individual accounts</string>
+    <string name="export_method_googleauth">Google Authenticator QR</string>
+    <string name="export_method_googleauth_description">Scan with any Google Authenticator compatible app</string>
+    <string name="export_method_mauth">Mauth JSON</string>
+    <string name="export_method_aegis">Aegis Vault</string>
+    <string name="export_method_freeotpplus">FreeOTP+ JSON</string>
+    <string name="export_method_urilist">otpauth:// list</string>
+    <string name="export_method_urilist_description">A plain list of account URIs</string>
+    <string name="export_account_period_value">%1$ds</string>
+    <string name="export_account_copy">Copy link</string>
+    <string name="export_file_title_mauth">Export for Mauth</string>
+    <string name="export_file_title_aegis">Export for Aegis</string>
+    <string name="export_file_title_freeotpplus">Export for FreeOTP+</string>
+    <string name="export_file_title_otpauth">Export URIs</string>
+    <string name="export_file_input_password">Password</string>
+    <string name="export_file_action_password_show">Show password</string>
+    <string name="export_file_action_password_hide">Hide password</string>
+    <string name="export_file_action_encrypt">Encrypt with a password</string>
+    <string name="export_file_action_cancel">Cancel</string>
+    <string name="export_file_action_export">Export</string>
+    <string name="export_file_status_success">Successfully exported!</string>
+    <string name="export_file_status_failure">Failed to export</string>
+
 
     <string name="about_title">About</string>
     <string name="about_links_source">Source</string>

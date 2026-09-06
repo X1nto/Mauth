@@ -6,6 +6,7 @@ plugins {
     id("com.google.devtools.ksp")
     kotlin("plugin.compose")
     id("com.google.protobuf")
+    kotlin("plugin.serialization")
     id("io.github.takahirom.roborazzi")
     id("com.android.compose.screenshot")
 }
@@ -144,10 +145,9 @@ dependencies {
     ksp("androidx.room:room-compiler:$roomVersion")
     androidTestImplementation("androidx.room:room-testing:$roomVersion")
 
-    // Needed for room-testing
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core") {
-        version { strictly("1.8.1") }
-    }
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
+
+    implementation("org.bouncycastle:bcprov-jdk18on:1.80")
 
     implementation("androidx.biometric:biometric:1.1.0")
     implementation("androidx.security:security-crypto-ktx:1.1.0")
