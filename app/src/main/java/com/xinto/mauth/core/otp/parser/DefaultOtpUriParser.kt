@@ -24,10 +24,10 @@ class DefaultOtpUriParser : OtpUriParser {
     }
 
     private fun decodeSingle(uri: Uri): OtpUriParserResult {
-        val type = when (uri.host?.lowercase()) {
-            "hotp" -> OtpType.HOTP
-            "totp" -> OtpType.TOTP
-            else -> return OtpUriParserResult.Failure.ERROR_INVALID_TYPE
+        val type = try {
+            OtpType.valueOf(uri.host.orEmpty().uppercase())
+        } catch (e: IllegalArgumentException) {
+            return OtpUriParserResult.Failure.ERROR_INVALID_TYPE
         }
 
         val label = try {
@@ -43,7 +43,7 @@ class DefaultOtpUriParser : OtpUriParser {
 
         val paramAlgorithm = uri.getQueryParameter("algorithm") ?: "SHA1"
         val algorithm = try {
-            OtpDigest.valueOf(paramAlgorithm)
+            OtpDigest.valueOf(paramAlgorithm.uppercase())
         } catch (e: IllegalArgumentException) {
             return OtpUriParserResult.Failure.ERROR_INVALID_ALGORITHM
         }
