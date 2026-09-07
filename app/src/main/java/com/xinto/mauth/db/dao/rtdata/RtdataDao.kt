@@ -14,6 +14,9 @@ interface RtdataDao {
     @Query("SELECT * FROM countdata WHERE account_id = :accountId")
     fun observeAccountCountData(accountId: UUID): Flow<EntityCountData>
 
+    @Query("SELECT * FROM countdata")
+    suspend fun getAll(): List<EntityCountData>
+
     @Query("SELECT count FROM countdata WHERE account_id = :accountId")
     suspend fun getAccountCounter(accountId: UUID): Int
 

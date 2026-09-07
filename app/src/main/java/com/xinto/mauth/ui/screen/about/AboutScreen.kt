@@ -85,8 +85,12 @@ fun AboutScreen(
         onLicenseClick = { uriHandler.openUrl("https://github.com/X1nto/Mauth/blob/master/LICENSE") },
         onCopyBuildInfo = {
             scope.launch {
-                clipboard.setClipEntry(ClipEntry(ClipData.newPlainText("Mauth build info", buildInfo)))
-                Toast.makeText(context, R.string.about_info_version_copied, Toast.LENGTH_SHORT).show()
+                val clipData = ClipData.newPlainText("Mauth build", buildInfo)
+                clipboard.setClipEntry(ClipEntry(clipData))
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                    Toast.makeText(context, R.string.about_info_version_copied, Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
         },
     )

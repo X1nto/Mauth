@@ -6,18 +6,14 @@ import com.xinto.mauth.domain.account.model.DomainExportAccount
 @Immutable
 sealed interface ExportScreenState {
 
-    @Immutable
     data object Loading : ExportScreenState
 
-    @Immutable
     data class Success(
-        val batchUris: List<String>,
-        val individualAccounts: List<DomainExportAccount>
+        val accounts: List<DomainExportAccount>,
+        val isAll: Boolean
     ) : ExportScreenState
 
     data object Empty : ExportScreenState
 
-    @Immutable
     data object Error : ExportScreenState
-
 }

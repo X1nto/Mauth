@@ -6,4 +6,5 @@ plugins {
     id("io.github.takahirom.roborazzi") version "1.65.0" apply false
     kotlin("plugin.compose") version "2.4.0" apply false
     kotlin("plugin.parcelize") version "2.4.0" apply false
+    kotlin("plugin.serialization") version "2.4.0" apply false
 }

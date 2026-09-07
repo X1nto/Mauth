@@ -108,14 +108,36 @@ class AccountRepository(
         accountsDao.delete(ids.toSet())
     }
 
-    suspend fun DomainAccount.toExportAccount(): DomainExportAccount {
-        return DomainExportAccount(
-            id = id,
-            label = label,
-            issuer = issuer,
-            icon = icon,
-            url = otpExporter.exportOtp(this.toOtpData())
-        )
+    fun getExportAccounts(): Flow<List<DomainExportAccount>> {
+        return combine(getAccounts(GroupFilter.All), rtdataDao.observeCountData()) { accounts, countData ->
+            val counters = countData.associate { it.accountId to it.count }
+            accounts.map { account ->
+                when (account) {
+                    is DomainAccount.Totp -> {
+                        DomainExportAccount.Totp(
+                            id = account.id,
+                            label = account.label,
+                            issuer = account.issuer,
+                            icon = account.icon,
+                            period = account.period
+                        )
+                    }
+                    is DomainAccount.Hotp -> {
+                        DomainExportAccount.Hotp(
+                            id = account.id,
+                            label = account.label,
+                            issuer = account.issuer,
+                            icon = account.icon,
+                            counter = counters[account.id] ?: 0
+                        )
+                    }
+                }
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun DomainAccount.toOtpUrl(): String {
+        return otpExporter.exportOtp(toOtpData())
     }
 
     fun OtpData.toAccountInfo(): DomainAccountInfo {

@@ -6,7 +6,7 @@ import com.xinto.mauth.GoogleAuthenticator
 import com.xinto.mauth.core.otp.model.OtpData
 import com.xinto.mauth.core.otp.model.OtpDigest
 import com.xinto.mauth.core.otp.model.OtpType
-import com.xinto.mauth.util.Base64
+import kotlin.io.encoding.Base64
 import org.apache.commons.codec.binary.Base32
 import java.net.URLEncoder
 import kotlin.random.Random
@@ -29,14 +29,14 @@ class DefaultOtpExporter : OtpExporter {
             OtpType.TOTP -> {
                 uriBuilder
                     .authority("totp")
-                    .appendQueryParameter("period", data.period.toString())
+                    .appendQueryParameter("period", (data.period ?: 30).toString())
             }
             OtpType.HOTP -> {
                 uriBuilder
                     .authority("hotp")
-                    .appendQueryParameter("counter", data.period.toString())
+                    .appendQueryParameter("counter", (data.counter ?: 0).toString())
             }
-        }.toString().also(::println)
+        }.toString()
     }
 
     override fun exportBatch(data: List<OtpData>): List<String> {
@@ -74,8 +74,8 @@ class DefaultOtpExporter : OtpExporter {
             .newBuilder()
 
         var counter = 0
-        protoData.forEachIndexed { i, otpData ->
-            if (counter > 300 || i == protoData.lastIndex) {
+        protoData.forEach { otpData ->
+            if (counter > 0 && counter + otpData.serializedSize > 300) {
                 migrationBuilders.add(migrationBuilder)
                 migrationBuilder = GoogleAuthenticator.MigrationPayload.newBuilder()
                 counter = 0
@@ -83,6 +83,10 @@ class DefaultOtpExporter : OtpExporter {
 
             counter += otpData.serializedSize
             migrationBuilder.addOtpData(otpData)
+        }
+
+        if (counter > 0) {
+            migrationBuilders.add(migrationBuilder)
         }
 
         val randomBatchId = Random.nextInt()
@@ -100,7 +104,7 @@ class DefaultOtpExporter : OtpExporter {
             buildString {
                 append("otpauth-migration://offline?data=")
 
-                val migration = Base64.encodeString(it.toByteArray())
+                val migration = Base64.encode(it.toByteArray())
                 append(URLEncoder.encode(migration, "UTF-8"))
             }
         }
