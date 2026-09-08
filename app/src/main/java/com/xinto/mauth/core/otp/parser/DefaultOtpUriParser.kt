@@ -24,13 +24,13 @@ class DefaultOtpUriParser : OtpUriParser {
     }
 
     private fun decodeSingle(uri: Uri): OtpUriParserResult {
-        val type = when (uri.host?.lowercase()) {
-            "hotp" -> OtpType.HOTP
-            "totp" -> OtpType.TOTP
-            else -> return OtpUriParserResult.Failure.ERROR_INVALID_TYPE
+        val type = try {
+            OtpType.valueOf(uri.host.orEmpty().uppercase())
+        } catch (e: IllegalArgumentException) {
+            return OtpUriParserResult.Failure.ERROR_INVALID_TYPE
         }
 
-        val label = try {
+        val rawLabel = try {
             uri.pathSegments[0]
         } catch (e: IndexOutOfBoundsException) {
             return OtpUriParserResult.Failure.ERROR_MISSING_LABEL
@@ -39,11 +39,11 @@ class DefaultOtpUriParser : OtpUriParser {
         val paramSecret = uri.getQueryParameter("secret")
             ?: return OtpUriParserResult.Failure.ERROR_MISSING_SECRET
 
-        val paramIssuer = uri.getQueryParameter("issuer") ?: ""
+        val (label, paramIssuer) = pairLabelAndIssuer(rawLabel, uri.getQueryParameter("issuer"))
 
         val paramAlgorithm = uri.getQueryParameter("algorithm") ?: "SHA1"
         val algorithm = try {
-            OtpDigest.valueOf(paramAlgorithm)
+            OtpDigest.valueOf(paramAlgorithm.uppercase())
         } catch (e: IllegalArgumentException) {
             return OtpUriParserResult.Failure.ERROR_INVALID_ALGORITHM
         }
@@ -84,6 +84,15 @@ class DefaultOtpUriParser : OtpUriParser {
         return OtpUriParserResult.Success(otpData)
     }
 
+    private fun pairLabelAndIssuer(rawLabel: String, paramIssuer: String?): Pair<String, String> {
+        val issuer = paramIssuer.orEmpty()
+        val account = rawLabel.substringAfter(':', missingDelimiterValue = "").trimStart()
+        if (account.isEmpty())
+            return rawLabel to issuer
+
+        return account to issuer.ifEmpty { rawLabel.substringBefore(':').trim() }
+    }
+
     private fun decodeMultipart(uri: Uri): OtpUriParserResult {
         val data = uri.getQueryParameter("data")
             ?: return OtpUriParserResult.Failure.ERROR_INVALID_MULTIPART
@@ -96,9 +105,10 @@ class DefaultOtpUriParser : OtpUriParser {
         }
 
         val otpData = payload.otpDataList.map {
+            val (label, issuer) = pairLabelAndIssuer(it.name, it.issuer)
             OtpData(
-                label = it.name,
-                issuer = it.issuer,
+                label = label,
+                issuer = issuer,
                 secret = Base32().encodeAsString(it.secret.toByteArray()),
                 algorithm = when (it.algorithm) {
                     GoogleAuthenticator.MigrationPayload.Algorithm.ALGORITHM_SHA1 -> OtpDigest.SHA1
