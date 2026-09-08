@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_title">Masukkan PIN Anda</string>
+    <string name="auth_biometrics_title">Otentikasi Biometrik</string>
+    <string name="auth_biometrics_cancel">Batalkan</string>
+    <string name="home_dashboard_empty">Belum ada apa-apa di sini</string>
+    <string name="home_dashboard_empty_group">Tidak ada akun di grup ini</string>
+    <string name="home_dashboard_error">Gagal memuat akun</string>
+    <string name="home_addaccount_title">Tambahkan akun</string>
+    <string name="home_addaccount_subtitle">Pindai kode QR atau masukkan kunci secara manual</string>
+    <string name="home_addaccount_data_scanqr">Pindai kode QR</string>
+    <string name="home_addaccount_data_imageqr">Pilih gambar</string>
+</resources>
