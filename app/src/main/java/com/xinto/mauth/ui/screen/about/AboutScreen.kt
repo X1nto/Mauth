@@ -81,6 +81,7 @@ fun AboutScreen(
         installSource = installSource,
         onSourceClick = { uriHandler.openUrl("https://github.com/X1nto/Mauth") },
         onFeedbackClick = { uriHandler.openUrl("https://github.com/X1nto/Mauth/issues") },
+        onDonateClick = { uriHandler.openUrl("https://ko-fi.com/xinto") },
         onPrivacyClick = { uriHandler.openUrl("https://raw.githubusercontent.com/X1nto/Mauth/refs/heads/master/POLICY") },
         onLicenseClick = { uriHandler.openUrl("https://github.com/X1nto/Mauth/blob/master/LICENSE") },
         onCopyBuildInfo = {
@@ -110,6 +111,7 @@ fun AboutScreen(
     installSource: InstallSource,
     onSourceClick: () -> Unit,
     onFeedbackClick: () -> Unit,
+    onDonateClick: () -> Unit,
     onPrivacyClick: () -> Unit,
     onLicenseClick: () -> Unit,
     onCopyBuildInfo: () -> Unit,
@@ -164,28 +166,28 @@ fun AboutScreen(
                     style = MaterialTheme.typography.headlineMedium
                 )
             }
-            val sourceLabel = stringResource(R.string.about_links_source)
             val feedbackLabel = stringResource(R.string.about_links_feedback)
+            val donateLabel = stringResource(R.string.about_links_donate)
             ButtonGroup(
                 modifier = Modifier.fillMaxWidth(),
                 overflowIndicator = { ButtonGroupDefaults.OverflowIndicator(it) }
             ) {
-                mediumClickableItem(
-                    onClick = onSourceClick,
-                    label = sourceLabel,
-                    icon = {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_folder_code),
-                            contentDescription = null
-                        )
-                    }
-                )
                 mediumClickableItem(
                     onClick = onFeedbackClick,
                     label = feedbackLabel,
                     icon = {
                         Icon(
                             painter = painterResource(R.drawable.ic_bug),
+                            contentDescription = null
+                        )
+                    }
+                )
+                mediumClickableItem(
+                    onClick = onDonateClick,
+                    label = donateLabel,
+                    icon = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_volunteer_activism),
                             contentDescription = null
                         )
                     }
@@ -213,10 +215,30 @@ fun AboutScreen(
                             contentDescription = null
                         )
                     },
-                    shapes = ListItemDefaults.segmentedShapes(index = 0, count = 3),
+                    shapes = ListItemDefaults.segmentedShapes(index = 0, count = 4),
                     colors = listItemColors,
                     verticalAlignment = Alignment.CenterVertically,
                     content = { Text(stringResource(R.string.about_info_version)) }
+                )
+                ListItem(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = onSourceClick,
+                    leadingContent = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_folder_code),
+                            contentDescription = null
+                        )
+                    },
+                    trailingContent = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_open_in_new),
+                            contentDescription = null
+                        )
+                    },
+                    shapes = ListItemDefaults.segmentedShapes(index = 1, count = 4),
+                    colors = listItemColors,
+                    verticalAlignment = Alignment.CenterVertically,
+                    content = { Text(stringResource(R.string.about_links_source)) }
                 )
                 ListItem(
                     modifier = Modifier.fillMaxWidth(),
@@ -233,7 +255,7 @@ fun AboutScreen(
                             contentDescription = null
                         )
                     },
-                    shapes = ListItemDefaults.segmentedShapes(index = 1, count = 3),
+                    shapes = ListItemDefaults.segmentedShapes(index = 2, count = 4),
                     colors = listItemColors,
                     verticalAlignment = Alignment.CenterVertically,
                     content = { Text(stringResource(R.string.about_info_privacy)) }
@@ -253,7 +275,7 @@ fun AboutScreen(
                             contentDescription = null
                         )
                     },
-                    shapes = ListItemDefaults.segmentedShapes(index = 2, count = 3),
+                    shapes = ListItemDefaults.segmentedShapes(index = 3, count = 4),
                     colors = listItemColors,
                     verticalAlignment = Alignment.CenterVertically,
                     content = { Text(stringResource(R.string.about_info_license)) }
@@ -294,6 +316,7 @@ private fun AboutScreen_FDroid_Preview() {
                 installSource = InstallSource.FDroid,
                 onSourceClick = {},
                 onFeedbackClick = {},
+                onDonateClick = {},
                 onPrivacyClick = {},
                 onLicenseClick = {},
                 onCopyBuildInfo = {},
@@ -314,6 +337,7 @@ private fun AboutScreen_GooglePlay_Preview() {
                 installSource = InstallSource.GooglePlay,
                 onSourceClick = {},
                 onFeedbackClick = {},
+                onDonateClick = {},
                 onPrivacyClick = {},
                 onLicenseClick = {},
                 onCopyBuildInfo = {},
@@ -334,6 +358,7 @@ private fun AboutScreen_Manual_Preview() {
                 installSource = InstallSource.Manual,
                 onSourceClick = {},
                 onFeedbackClick = {},
+                onDonateClick = {},
                 onPrivacyClick = {},
                 onLicenseClick = {},
                 onCopyBuildInfo = {},

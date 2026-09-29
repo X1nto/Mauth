@@ -20,6 +20,7 @@ class AboutScreenshots {
             installSource = InstallSource.GooglePlay,
             onSourceClick = {},
             onFeedbackClick = {},
+            onDonateClick = {},
             onPrivacyClick = {},
             onLicenseClick = {},
             onCopyBuildInfo = {},
