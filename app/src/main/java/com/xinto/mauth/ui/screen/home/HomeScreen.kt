@@ -121,6 +121,7 @@ import com.xinto.mauth.domain.group.model.DomainGroup
 import com.xinto.mauth.domain.group.model.GroupFilter
 import com.xinto.mauth.domain.otp.model.DomainOtpRealtimeData
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
+import com.xinto.mauth.ui.preview.Screenshot
 import com.xinto.mauth.ui.screen.groups.CreateGroupDialog
 import com.xinto.mauth.ui.theme.MauthTheme
 import com.xinto.mauth.ui.util.collectAsStateListWithLifecycle
@@ -1140,22 +1141,84 @@ private fun DeleteDialog(
     )
 }
 
+private val PreviewGithub = DomainAccount.Totp(
+    id = UUID.fromString("00000000-0000-0000-0000-000000000001"),
+    icon = null,
+    secret = "JBSWY3DPEHPK3PXP",
+    label = "X1nto",
+    issuer = "GitHub",
+    algorithm = OtpDigest.SHA1,
+    digits = 6,
+    createdMillis = 0L,
+    period = 30
+)
+
+private val PreviewFortinet = DomainAccount.Hotp(
+    id = UUID.fromString("00000000-0000-0000-0000-000000000002"),
+    icon = null,
+    secret = "JBSWY3DPEHPK3PXP",
+    label = "alex@fortinet.com",
+    issuer = "Fortinet",
+    algorithm = OtpDigest.SHA1,
+    digits = 6,
+    createdMillis = 0L
+)
+
+private val PreviewAws = DomainAccount.Totp(
+    id = UUID.fromString("00000000-0000-0000-0000-000000000003"),
+    icon = null,
+    secret = "JBSWY3DPEHPK3PXP",
+    label = "alice@example.com",
+    issuer = "Amazon Web Services",
+    algorithm = OtpDigest.SHA1,
+    digits = 6,
+    createdMillis = 0L,
+    period = 30
+)
+
+private val PreviewAccounts = persistentListOf(PreviewGithub, PreviewFortinet, PreviewAws)
+
+private val PreviewGroups = persistentListOf(
+    DomainGroup(
+        id = UUID.fromString("00000000-0000-0000-0000-0000000000a1"),
+        name = "Work",
+        emoji = "💼",
+        sortIndex = 0
+    ),
+    DomainGroup(
+        id = UUID.fromString("00000000-0000-0000-0000-0000000000a2"),
+        name = "Personal",
+        emoji = null,
+        sortIndex = 1
+    )
+)
+
 private val PreviewAccountCounts = DomainAccountCounts(
-    total = 2,
-    ungrouped = 2,
+    total = 3,
+    ungrouped = 3,
     byGroup = persistentMapOf()
 )
 
 private val PreviewGroupedAccountCounts = DomainAccountCounts(
-    total = 2,
-    ungrouped = 0,
+    total = 3,
+    ungrouped = 1,
     byGroup = persistentMapOf(
-        UUID.fromString("00000000-0000-0000-0000-0000000000a1") to 1,
-        UUID.fromString("00000000-0000-0000-0000-0000000000a2") to 1
+        PreviewGroups[0].id to 1,
+        PreviewGroups[1].id to 1
     )
 )
 
 @Composable
+private fun rememberPreviewRealtimeData() = remember {
+    mutableStateMapOf(
+        PreviewGithub.id to DomainOtpRealtimeData.Totp(code = "123456", progress = 0.6f, countdown = 18),
+        PreviewFortinet.id to DomainOtpRealtimeData.Hotp(code = "654321", count = 3),
+        PreviewAws.id to DomainOtpRealtimeData.Totp(code = "424242", progress = 0.3f, countdown = 9)
+    )
+}
+
+@Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun HomeScreen_Loading_Preview() {
     MauthTheme {
@@ -1192,6 +1255,7 @@ private fun HomeScreen_Loading_Preview() {
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun HomeScreen_Empty_Preview() {
     MauthTheme {
@@ -1228,29 +1292,9 @@ private fun HomeScreen_Empty_Preview() {
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun HomeScreen_Success_Preview() {
-    val totp = DomainAccount.Totp(
-        id = UUID.fromString("00000000-0000-0000-0000-000000000001"),
-        icon = null,
-        secret = "JBSWY3DPEHPK3PXP",
-        label = "GitHub",
-        issuer = "github.com",
-        algorithm = OtpDigest.SHA1,
-        digits = 6,
-        createdMillis = 0L,
-        period = 30
-    )
-    val hotp = DomainAccount.Hotp(
-        id = UUID.fromString("00000000-0000-0000-0000-000000000002"),
-        icon = null,
-        secret = "JBSWY3DPEHPK3PXP",
-        label = "Amazon",
-        issuer = "amazon.com",
-        algorithm = OtpDigest.SHA1,
-        digits = 6,
-        createdMillis = 0L
-    )
     MauthTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             HomeScreen(
@@ -1263,15 +1307,10 @@ private fun HomeScreen_Success_Preview() {
                 onAccountEdit = {},
                 onAccountCounterIncrease = {},
                 onAccountCopyCode = { _, _, _ -> },
-                state = HomeScreenState.Success(persistentListOf(totp, hotp)),
-                accountRealtimeData = remember {
-                    mutableStateMapOf(
-                        totp.id to DomainOtpRealtimeData.Totp(code = "123456", progress = 0.6f, countdown = 18),
-                        hotp.id to DomainOtpRealtimeData.Hotp(code = "654321", count = 3)
-                    )
-                },
+                state = HomeScreenState.Success(PreviewAccounts),
+                accountRealtimeData = rememberPreviewRealtimeData(),
                 selectedAccounts = remember { mutableStateListOf<UUID>() },
-                activeAccountsSort = AccountsSort.entries.first(),
+                activeAccountsSort = AccountsSort.DEFAULT,
                 onActiveSortChange = {},
                 groups = persistentListOf(),
                 activeGroup = GroupFilter.All,
@@ -1290,29 +1329,9 @@ private fun HomeScreen_Success_Preview() {
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun HomeScreen_Compact_Preview() {
-    val totp = DomainAccount.Totp(
-        id = UUID.fromString("00000000-0000-0000-0000-000000000001"),
-        icon = null,
-        secret = "JBSWY3DPEHPK3PXP",
-        label = "GitHub",
-        issuer = "github.com",
-        algorithm = OtpDigest.SHA1,
-        digits = 6,
-        createdMillis = 0L,
-        period = 30
-    )
-    val hotp = DomainAccount.Hotp(
-        id = UUID.fromString("00000000-0000-0000-0000-000000000002"),
-        icon = null,
-        secret = "JBSWY3DPEHPK3PXP",
-        label = "Amazon",
-        issuer = "amazon.com",
-        algorithm = OtpDigest.SHA1,
-        digits = 6,
-        createdMillis = 0L
-    )
     MauthTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             HomeScreen(
@@ -1325,15 +1344,10 @@ private fun HomeScreen_Compact_Preview() {
                 onAccountEdit = {},
                 onAccountCounterIncrease = {},
                 onAccountCopyCode = { _, _, _ -> },
-                state = HomeScreenState.Success(persistentListOf(totp, hotp)),
-                accountRealtimeData = remember {
-                    mutableStateMapOf(
-                        totp.id to DomainOtpRealtimeData.Totp(code = "123456", progress = 0.6f, countdown = 18),
-                        hotp.id to DomainOtpRealtimeData.Hotp(code = "654321", count = 3)
-                    )
-                },
+                state = HomeScreenState.Success(PreviewAccounts),
+                accountRealtimeData = rememberPreviewRealtimeData(),
                 selectedAccounts = remember { mutableStateListOf<UUID>() },
-                activeAccountsSort = AccountsSort.entries.first(),
+                activeAccountsSort = AccountsSort.DEFAULT,
                 onActiveSortChange = {},
                 groups = persistentListOf(),
                 activeGroup = GroupFilter.All,
@@ -1352,29 +1366,9 @@ private fun HomeScreen_Compact_Preview() {
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun HomeScreen_Selection_Preview() {
-    val totp = DomainAccount.Totp(
-        id = UUID.fromString("00000000-0000-0000-0000-000000000001"),
-        icon = null,
-        secret = "JBSWY3DPEHPK3PXP",
-        label = "GitHub",
-        issuer = "github.com",
-        algorithm = OtpDigest.SHA1,
-        digits = 6,
-        createdMillis = 0L,
-        period = 30
-    )
-    val hotp = DomainAccount.Hotp(
-        id = UUID.fromString("00000000-0000-0000-0000-000000000002"),
-        icon = null,
-        secret = "JBSWY3DPEHPK3PXP",
-        label = "Amazon",
-        issuer = "amazon.com",
-        algorithm = OtpDigest.SHA1,
-        digits = 6,
-        createdMillis = 0L
-    )
     MauthTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             HomeScreen(
@@ -1387,15 +1381,10 @@ private fun HomeScreen_Selection_Preview() {
                 onAccountEdit = {},
                 onAccountCounterIncrease = {},
                 onAccountCopyCode = { _, _, _ -> },
-                state = HomeScreenState.Success(persistentListOf(totp, hotp)),
-                accountRealtimeData = remember {
-                    mutableStateMapOf(
-                        totp.id to DomainOtpRealtimeData.Totp(code = "123456", progress = 0.6f, countdown = 18),
-                        hotp.id to DomainOtpRealtimeData.Hotp(code = "654321", count = 3)
-                    )
-                },
-                selectedAccounts = remember { mutableStateListOf(totp.id) },
-                activeAccountsSort = AccountsSort.entries.first(),
+                state = HomeScreenState.Success(PreviewAccounts),
+                accountRealtimeData = rememberPreviewRealtimeData(),
+                selectedAccounts = remember { mutableStateListOf(PreviewGithub.id) },
+                activeAccountsSort = AccountsSort.DEFAULT,
                 onActiveSortChange = {},
                 groups = persistentListOf(),
                 activeGroup = GroupFilter.All,
@@ -1414,29 +1403,9 @@ private fun HomeScreen_Selection_Preview() {
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun HomeScreen_Groups_Preview() {
-    val totp = DomainAccount.Totp(
-        id = UUID.fromString("00000000-0000-0000-0000-000000000001"),
-        icon = null,
-        secret = "JBSWY3DPEHPK3PXP",
-        label = "GitHub",
-        issuer = "github.com",
-        algorithm = OtpDigest.SHA1,
-        digits = 6,
-        createdMillis = 0L,
-        period = 30
-    )
-    val hotp = DomainAccount.Hotp(
-        id = UUID.fromString("00000000-0000-0000-0000-000000000002"),
-        icon = null,
-        secret = "JBSWY3DPEHPK3PXP",
-        label = "Amazon",
-        issuer = "amazon.com",
-        algorithm = OtpDigest.SHA1,
-        digits = 6,
-        createdMillis = 0L
-    )
     MauthTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             HomeScreen(
@@ -1449,30 +1418,12 @@ private fun HomeScreen_Groups_Preview() {
                 onAccountEdit = {},
                 onAccountCounterIncrease = {},
                 onAccountCopyCode = { _, _, _ -> },
-                state = HomeScreenState.Success(persistentListOf(totp, hotp)),
-                accountRealtimeData = remember {
-                    mutableStateMapOf(
-                        totp.id to DomainOtpRealtimeData.Totp(code = "123456", progress = 0.6f, countdown = 18),
-                        hotp.id to DomainOtpRealtimeData.Hotp(code = "654321", count = 3)
-                    )
-                },
+                state = HomeScreenState.Success(PreviewAccounts),
+                accountRealtimeData = rememberPreviewRealtimeData(),
                 selectedAccounts = remember { mutableStateListOf<UUID>() },
-                activeAccountsSort = AccountsSort.entries.first(),
+                activeAccountsSort = AccountsSort.DEFAULT,
                 onActiveSortChange = {},
-                groups = persistentListOf(
-                    DomainGroup(
-                        id = UUID.fromString("00000000-0000-0000-0000-0000000000a1"),
-                        name = "Work",
-                        emoji = "💼",
-                        sortIndex = 0
-                    ),
-                    DomainGroup(
-                        id = UUID.fromString("00000000-0000-0000-0000-0000000000a2"),
-                        name = "Personal",
-                        emoji = null,
-                        sortIndex = 1
-                    )
-                ),
+                groups = PreviewGroups,
                 activeGroup = GroupFilter.All,
                 onActiveGroupChange = {},
                 onCreateGroupClick = {},
@@ -1489,6 +1440,7 @@ private fun HomeScreen_Groups_Preview() {
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun HomeScreen_Error_Preview() {
     MauthTheme {
@@ -1516,6 +1468,80 @@ private fun HomeScreen_Error_Preview() {
                 searchAccounts = persistentListOf(),
                 accountCounts = DomainAccountCounts.Empty,
                 accountsLayout = AccountsLayout.DEFAULT,
+                showCodesByDefault = false,
+                modifier = Modifier.fillMaxSize(),
+                showScanButton = false
+            )
+        }
+    }
+}
+
+@Composable
+@Screenshot
+@PreviewAllConfigurations
+private fun HomeScreen_CompactSelection_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            HomeScreen(
+                onAddAccountNavigate = {},
+                onMoreMenuNavigate = {},
+                onAccountSelect = {},
+                onCancelAccountSelection = {},
+                onDeleteSelectedAccounts = {},
+                onExportSelectedAccounts = {},
+                onAccountEdit = {},
+                onAccountCounterIncrease = {},
+                onAccountCopyCode = { _, _, _ -> },
+                state = HomeScreenState.Success(PreviewAccounts),
+                accountRealtimeData = rememberPreviewRealtimeData(),
+                selectedAccounts = remember { mutableStateListOf(PreviewGithub.id) },
+                activeAccountsSort = AccountsSort.DEFAULT,
+                onActiveSortChange = {},
+                groups = persistentListOf(),
+                activeGroup = GroupFilter.All,
+                onActiveGroupChange = {},
+                onCreateGroupClick = {},
+                onGroupSelectedClick = {},
+                searchAccounts = persistentListOf(),
+                accountCounts = PreviewAccountCounts,
+                accountsLayout = AccountsLayout.Compact,
+                showCodesByDefault = false,
+                modifier = Modifier.fillMaxSize(),
+                showScanButton = false
+            )
+        }
+    }
+}
+
+@Composable
+@Screenshot
+@PreviewAllConfigurations
+private fun HomeScreen_CompactGroups_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            HomeScreen(
+                onAddAccountNavigate = {},
+                onMoreMenuNavigate = {},
+                onAccountSelect = {},
+                onCancelAccountSelection = {},
+                onDeleteSelectedAccounts = {},
+                onExportSelectedAccounts = {},
+                onAccountEdit = {},
+                onAccountCounterIncrease = {},
+                onAccountCopyCode = { _, _, _ -> },
+                state = HomeScreenState.Success(PreviewAccounts),
+                accountRealtimeData = rememberPreviewRealtimeData(),
+                selectedAccounts = remember { mutableStateListOf<UUID>() },
+                activeAccountsSort = AccountsSort.DEFAULT,
+                onActiveSortChange = {},
+                groups = PreviewGroups,
+                activeGroup = GroupFilter.All,
+                onActiveGroupChange = {},
+                onCreateGroupClick = {},
+                onGroupSelectedClick = {},
+                searchAccounts = persistentListOf(),
+                accountCounts = PreviewGroupedAccountCounts,
+                accountsLayout = AccountsLayout.Compact,
                 showCodesByDefault = false,
                 modifier = Modifier.fillMaxSize(),
                 showScanButton = false

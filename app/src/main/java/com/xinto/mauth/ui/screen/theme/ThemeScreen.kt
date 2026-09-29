@@ -34,6 +34,7 @@ import com.xinto.mauth.R
 import com.xinto.mauth.domain.settings.model.ColorScheme
 import com.xinto.mauth.domain.settings.model.Theme
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
+import com.xinto.mauth.ui.preview.Screenshot
 import com.xinto.mauth.ui.screen.theme.component.ThemeColorCard
 import com.xinto.mauth.ui.theme.MauthTheme
 import com.xinto.mauth.ui.screen.settings.labelRes
@@ -147,6 +148,7 @@ fun ThemeScreen(
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun ThemeScreen_System_Preview() {
     MauthTheme {
@@ -164,6 +166,7 @@ private fun ThemeScreen_System_Preview() {
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun ThemeScreen_BlueSelected_Preview() {
     MauthTheme {

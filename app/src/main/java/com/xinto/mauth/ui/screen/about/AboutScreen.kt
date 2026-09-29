@@ -47,6 +47,7 @@ import com.xinto.mauth.R
 import com.xinto.mauth.ui.component.mediumClickableItem
 import com.xinto.mauth.ui.component.rememberUriHandler
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
+import com.xinto.mauth.ui.preview.Screenshot
 import com.xinto.mauth.ui.theme.MauthTheme
 import com.xinto.mauth.util.installerPackageName
 
@@ -305,6 +306,7 @@ fun AboutScreen(
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun AboutScreen_FDroid_Preview() {
     MauthTheme {
@@ -312,7 +314,7 @@ private fun AboutScreen_FDroid_Preview() {
             AboutScreen(
                 modifier = Modifier.fillMaxSize(),
                 onBack = {},
-                versionName = BuildConfig.VERSION_NAME,
+                versionName = "0.10.0",
                 installSource = InstallSource.FDroid,
                 onSourceClick = {},
                 onFeedbackClick = {},
@@ -326,6 +328,7 @@ private fun AboutScreen_FDroid_Preview() {
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun AboutScreen_GooglePlay_Preview() {
     MauthTheme {
@@ -333,7 +336,7 @@ private fun AboutScreen_GooglePlay_Preview() {
             AboutScreen(
                 modifier = Modifier.fillMaxSize(),
                 onBack = {},
-                versionName = BuildConfig.VERSION_NAME,
+                versionName = "0.10.0",
                 installSource = InstallSource.GooglePlay,
                 onSourceClick = {},
                 onFeedbackClick = {},
@@ -347,6 +350,7 @@ private fun AboutScreen_GooglePlay_Preview() {
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun AboutScreen_Manual_Preview() {
     MauthTheme {
@@ -354,7 +358,7 @@ private fun AboutScreen_Manual_Preview() {
             AboutScreen(
                 modifier = Modifier.fillMaxSize(),
                 onBack = {},
-                versionName = BuildConfig.VERSION_NAME,
+                versionName = "0.10.0",
                 installSource = InstallSource.Manual,
                 onSourceClick = {},
                 onFeedbackClick = {},

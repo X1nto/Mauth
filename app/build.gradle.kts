@@ -1,3 +1,5 @@
+import com.github.takahirom.roborazzi.AnnotationFilter
+import com.github.takahirom.roborazzi.ExperimentalRoborazziApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -8,7 +10,6 @@ plugins {
     id("com.google.protobuf")
     kotlin("plugin.serialization")
     id("io.github.takahirom.roborazzi")
-    id("com.android.compose.screenshot")
 }
 
 android {
@@ -56,9 +57,6 @@ android {
         buildConfig = true
     }
 
-    @Suppress("UnstableApiUsage")
-    experimentalProperties["android.experimental.enableScreenshotTest"] = true
-
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -73,6 +71,9 @@ android {
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
+            all {
+                it.systemProperties["robolectric.pixelCopyRenderMode"] = "hardware"
+            }
         }
     }
 
@@ -98,6 +99,27 @@ composeCompiler {
     }
     if (project.findProperty("composeCompilerMetrics") == "true") {
         metricsDestination = layout.buildDirectory.dir("compose_compiler")
+    }
+}
+
+roborazzi {
+    outputDir.set(file("src/test/screenshots"))
+
+    @OptIn(ExperimentalRoborazziApi::class)
+    generateComposePreviewRobolectricTests {
+        enable = true
+        packages = listOf("com.xinto.mauth")
+        includePrivatePreviews = true
+        annotationFilter = AnnotationFilter.Include("com.xinto.mauth.ui.preview.Screenshot")
+        testerQualifiedClassName = "com.xinto.mauth.screenshot.PreviewScreenshotTester"
+        // PreviewScreenshotTester delegates scanning to AndroidComposePreviewTester, which applies the options above
+        useScanOptionParametersInTester = true
+        robolectricConfig = mapOf(
+            "sdk" to "[36]",
+            "qualifiers" to "RobolectricDeviceQualifiers.Pixel4a",
+            // Skip the app's Application, which starts Koin once per process
+            "application" to "android.app.Application::class",
+        )
     }
 }
 
@@ -192,16 +214,13 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.16.1")
     testImplementation("io.github.takahirom.roborazzi:roborazzi:1.75.0")
     testImplementation("io.github.takahirom.roborazzi:roborazzi-compose:1.75.0")
+    testImplementation("io.github.takahirom.roborazzi:roborazzi-compose-preview-scanner-support:1.75.0")
+    testImplementation("io.github.sergio-sastre.ComposablePreviewScanner:android:0.9.3")
+    testImplementation("io.github.darkxanter:webp-imageio:0.3.3")
     testImplementation("androidx.test.ext:junit:1.3.0")
-
-    screenshotTestImplementation(composeBom)
-    screenshotTestImplementation("androidx.compose.ui:ui-tooling")
-    screenshotTestImplementation("com.android.tools.screenshot:screenshot-validation-api:0.0.1-alpha16")
 }
 
 // The more screenshots I add the hungrier it gets
-tasks.withType<Test>()
-    .matching { it.name.endsWith("ScreenshotTest") }
-    .configureEach {
-        maxHeapSize = "4g"
-    }
+tasks.withType<Test>().configureEach {
+    maxHeapSize = "4g"
+}

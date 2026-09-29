@@ -24,6 +24,7 @@ import com.xinto.mauth.R
 import com.xinto.mauth.ui.component.pinboard.PinScaffold
 import com.xinto.mauth.ui.component.pinboard.rememberPinBoardState
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
+import com.xinto.mauth.ui.preview.Screenshot
 import com.xinto.mauth.ui.theme.MauthTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -114,6 +115,7 @@ fun PinSetupScreen(
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun PinSetupScreen_Initial_Preview() {
     MauthTheme {
@@ -134,6 +136,7 @@ private fun PinSetupScreen_Initial_Preview() {
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun PinSetupScreen_Confirm_Preview() {
     MauthTheme {
@@ -154,6 +157,7 @@ private fun PinSetupScreen_Confirm_Preview() {
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun PinSetupScreen_ConfirmError_Preview() {
     MauthTheme {

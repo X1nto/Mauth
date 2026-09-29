@@ -75,6 +75,7 @@ import com.xinto.mauth.domain.group.model.DomainGroup
 import com.xinto.mauth.ui.component.UriImage
 import com.xinto.mauth.ui.component.lazygroup.GroupedItemType
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
+import com.xinto.mauth.ui.preview.Screenshot
 import com.xinto.mauth.ui.theme.MauthTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -791,6 +792,7 @@ private fun AddAccountRow(
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun GroupsScreen_Empty_Preview() {
     MauthTheme {
@@ -813,6 +815,7 @@ private fun GroupsScreen_Empty_Preview() {
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun GroupsScreen_Populated_Preview() {
     val totp = DomainAccount.Totp(

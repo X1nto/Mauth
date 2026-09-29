@@ -50,6 +50,7 @@ import com.xinto.mauth.R
 import com.xinto.mauth.core.camera.QrCodeAnalyzer
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
+import com.xinto.mauth.ui.preview.Screenshot
 import com.xinto.mauth.ui.theme.MauthTheme
 import org.koin.androidx.compose.koinViewModel
 import java.util.concurrent.Executors
@@ -245,6 +246,7 @@ fun QrScanScreen(
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun QrScanScreen_PermissionDenied_Preview() {
     MauthTheme {
@@ -266,6 +268,7 @@ private fun QrScanScreen_PermissionDenied_Preview() {
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun QrScanScreen_PermissionDeniedRationale_Preview() {
     MauthTheme {
@@ -287,6 +290,7 @@ private fun QrScanScreen_PermissionDeniedRationale_Preview() {
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun QrScanScreen_PermissionPermanentlyDenied_Preview() {
     MauthTheme {

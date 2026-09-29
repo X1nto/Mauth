@@ -44,6 +44,7 @@ import com.xinto.mauth.core.otp.model.OtpType
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.ui.component.form.form
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
+import com.xinto.mauth.ui.preview.Screenshot
 import com.xinto.mauth.ui.theme.MauthTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.androidx.compose.koinViewModel
@@ -235,6 +236,7 @@ private fun AccountExitDialog(
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun AccountScreen_Loading_Preview() {
     MauthTheme {
@@ -251,6 +253,7 @@ private fun AccountScreen_Loading_Preview() {
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun AccountScreen_Success_Preview() {
     val form = remember {
@@ -287,6 +290,7 @@ private fun AccountScreen_Success_Preview() {
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun AccountScreen_Error_Preview() {
     MauthTheme {

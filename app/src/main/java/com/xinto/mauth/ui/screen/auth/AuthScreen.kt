@@ -33,6 +33,7 @@ import com.xinto.mauth.ui.component.pinboard.rememberPinBoardState
 import com.xinto.mauth.ui.component.rememberBiometricHandler
 import com.xinto.mauth.ui.component.rememberBiometricPromptData
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
+import com.xinto.mauth.ui.preview.Screenshot
 import com.xinto.mauth.ui.theme.MauthTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -155,6 +156,7 @@ fun AuthScreen(
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun AuthScreen_Empty_Preview() {
     MauthTheme {
@@ -175,6 +177,7 @@ private fun AuthScreen_Empty_Preview() {
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun AuthScreen_Fingerprint_Preview() {
     MauthTheme {
@@ -195,6 +198,7 @@ private fun AuthScreen_Fingerprint_Preview() {
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun AuthScreen_PartialCode_Preview() {
     MauthTheme {
@@ -215,6 +219,7 @@ private fun AuthScreen_PartialCode_Preview() {
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun AuthScreen_WithBackButton_Preview() {
     MauthTheme {
@@ -229,6 +234,48 @@ private fun AuthScreen_WithBackButton_Preview() {
                 onFingerprintClick = {},
                 onBackPress = {},
                 useMeshGradientBackground = false
+            )
+        }
+    }
+}
+
+// Robolectric can't render MeshSpecification, so this one isn't screenshot tested
+@Composable
+@PreviewAllConfigurations
+private fun AuthScreen_MeshGradient_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            AuthScreen(
+                modifier = Modifier.fillMaxSize(),
+                code = "",
+                onNumberAdd = {},
+                onNumberDelete = {},
+                onClear = {},
+                showFingerprint = true,
+                onFingerprintClick = {},
+                onBackPress = null,
+                useMeshGradientBackground = true
+            )
+        }
+    }
+}
+
+// Robolectric can't render MeshSpecification, so this one isn't screenshot tested
+@Composable
+@PreviewAllConfigurations
+private fun AuthScreen_MeshGradientPartialCode_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            AuthScreen(
+                modifier = Modifier.fillMaxSize(),
+                code = "123",
+                onNumberAdd = {},
+                onNumberDelete = {},
+                onClear = {},
+                showFingerprint = true,
+                onFingerprintClick = {},
+                onBackPress = null,
+                useMeshGradientBackground = true
             )
         }
     }

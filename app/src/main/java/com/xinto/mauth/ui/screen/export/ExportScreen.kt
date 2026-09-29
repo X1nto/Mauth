@@ -50,6 +50,7 @@ import com.xinto.mauth.core.backup.model.BackupFormat
 import com.xinto.mauth.domain.account.model.DomainExportAccount
 import com.xinto.mauth.ui.component.UriImage
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
+import com.xinto.mauth.ui.preview.Screenshot
 import com.xinto.mauth.ui.theme.MauthTheme
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -420,6 +421,7 @@ private fun OtpTypeBadge(
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun ExportScreen_Default_Preview() {
     MauthTheme {
@@ -435,8 +437,15 @@ private fun ExportScreen_Default_Preview() {
                             issuer = "GitHub",
                             period = 30
                         ),
-                        DomainExportAccount.Hotp(
+                        DomainExportAccount.Totp(
                             id = UUID.fromString("00000000-0000-0000-0000-000000000002"),
+                            icon = null,
+                            label = "alex@fortinet.com",
+                            issuer = "Fortinet",
+                            period = 60
+                        ),
+                        DomainExportAccount.Hotp(
+                            id = UUID.fromString("00000000-0000-0000-0000-000000000003"),
                             icon = null,
                             label = "alice@example.com",
                             issuer = "Amazon Web Services",
@@ -458,6 +467,7 @@ private fun ExportScreen_Default_Preview() {
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun ExportScreen_Empty_Preview() {
     MauthTheme {

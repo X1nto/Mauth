@@ -41,6 +41,7 @@ import com.xinto.mauth.domain.settings.model.Theme
 import com.xinto.mauth.ui.component.rememberBiometricHandler
 import com.xinto.mauth.ui.component.rememberBiometricPromptData
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
+import com.xinto.mauth.ui.preview.Screenshot
 import com.xinto.mauth.ui.screen.settings.component.SettingsGroup
 import com.xinto.mauth.ui.screen.settings.component.SettingsItem
 import com.xinto.mauth.ui.screen.settings.component.SettingsNavigateItem
@@ -327,6 +328,7 @@ fun SettingsScreen(
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun SettingsScreen_Default_Preview() {
     MauthTheme {
@@ -360,6 +362,7 @@ private fun SettingsScreen_Default_Preview() {
 }
 
 @Composable
+@Screenshot
 @PreviewAllConfigurations
 private fun SettingsScreen_AllEnabled_Preview() {
     MauthTheme {
@@ -386,6 +389,74 @@ private fun SettingsScreen_AllEnabled_Preview() {
                 accountsLayout = AccountsLayout.DEFAULT,
                 onAccountsLayoutChange = {},
                 showCodesByDefault = true,
+                onShowCodesByDefaultChange = {}
+            )
+        }
+    }
+}
+
+@Composable
+@Screenshot
+@PreviewAllConfigurations
+private fun SettingsScreen_Mixed_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            SettingsScreen(
+                modifier = Modifier.fillMaxSize(),
+                onBack = {},
+                secureMode = false,
+                onSecureModeChange = {},
+                pinCode = true,
+                onPinCodeChange = {},
+                meshGradientBackground = false,
+                onMeshGradientBackgroundChange = {},
+                lockOnResume = false,
+                onLockOnResumeChange = {},
+                showBiometrics = true,
+                biometrics = true,
+                onBiometricsChange = {},
+                onThemeNavigate = {},
+                theme = Theme.DEFAULT,
+                color = ColorScheme.MothPurple,
+                font = Font.DEFAULT,
+                onFontChange = {},
+                accountsLayout = AccountsLayout.DEFAULT,
+                onAccountsLayoutChange = {},
+                showCodesByDefault = false,
+                onShowCodesByDefaultChange = {}
+            )
+        }
+    }
+}
+
+@Composable
+@Screenshot
+@PreviewAllConfigurations
+private fun SettingsScreen_WithoutBiometrics_Preview() {
+    MauthTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            SettingsScreen(
+                modifier = Modifier.fillMaxSize(),
+                onBack = {},
+                secureMode = false,
+                onSecureModeChange = {},
+                pinCode = true,
+                onPinCodeChange = {},
+                meshGradientBackground = false,
+                onMeshGradientBackgroundChange = {},
+                lockOnResume = false,
+                onLockOnResumeChange = {},
+                showBiometrics = false,
+                biometrics = false,
+                onBiometricsChange = {},
+                onThemeNavigate = {},
+                theme = Theme.DEFAULT,
+                color = ColorScheme.MothPurple,
+                font = Font.DEFAULT,
+                onFontChange = {},
+                accountsLayout = AccountsLayout.DEFAULT,
+                onAccountsLayoutChange = {},
+                showCodesByDefault = false,
                 onShowCodesByDefaultChange = {}
             )
         }
