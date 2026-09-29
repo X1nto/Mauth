@@ -1,7 +1,6 @@
 package com.xinto.mauth.ui.component.pinboard
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.ExperimentalGridApi
 import androidx.compose.foundation.layout.Grid
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import com.xinto.mauth.R
 import com.xinto.mauth.ui.theme.MauthTheme
 
-@OptIn(ExperimentalGridApi::class)
 @Composable
 fun PinBoard(
     modifier: Modifier = Modifier,

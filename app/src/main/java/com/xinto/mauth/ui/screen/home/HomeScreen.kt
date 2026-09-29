@@ -65,6 +65,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.SearchBarValue
+import androidx.compose.material3.SelectableDropdownMenuItem
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -576,6 +577,7 @@ private fun SearchInputField(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SortAction(
     activeAccountsSort: AccountsSort,
@@ -601,7 +603,7 @@ private fun SortAction(
                 ) {
                     DropdownMenuGroup(shapes = MenuDefaults.groupShapes()) {
                         AccountsSort.entries.forEachIndexed { index, sortSetting ->
-                            DropdownMenuItem(
+                            SelectableDropdownMenuItem(
                                 selected = activeAccountsSort == sortSetting,
                                 onClick = {
                                     isSortVisible = false
@@ -637,6 +639,7 @@ private fun SortAction(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MoreAction(
     onMenuNavigate: (HomeMoreMenu) -> Unit,

@@ -13,12 +13,16 @@ plugins {
 
 android {
     namespace = "com.xinto.mauth"
-    compileSdk = 37
+    compileSdk {
+        version = release(37) {
+            minorApiLevel = 1
+        }
+    }
 
     defaultConfig {
         applicationId = "com.xinto.mauth"
-        minSdk = 23
-        targetSdk = 36
+        minSdk = 24
+        targetSdk = 37
         versionCode = 110
         versionName = "0.11.0"
 
@@ -103,7 +107,7 @@ ksp {
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:3.25.3"
+        artifact = "com.google.protobuf:protoc:4.36.2"
     }
     generateProtoTasks {
         all().forEach { task ->
@@ -117,14 +121,14 @@ protobuf {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.19.0")
+    implementation("androidx.core:core-ktx:1.19.1")
     implementation("androidx.core:core-splashscreen:1.2.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.11.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.11.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-navigation3:2.11.0")
     implementation("androidx.activity:activity-compose:1.13.0")
 
-    val composeBom = platform("androidx.compose:compose-bom-alpha:2026.06.01")
+    val composeBom = platform("androidx.compose:compose-bom-alpha:2026.09.01")
     implementation(composeBom)
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.material3:material3")
@@ -133,40 +137,40 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    val cameraxVersion = "1.6.1"
+    val cameraxVersion = "1.6.2"
     implementation("androidx.camera:camera-core:$cameraxVersion")
     implementation("androidx.camera:camera-camera2:$cameraxVersion")
     implementation("androidx.camera:camera-view:$cameraxVersion")
     implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
 
-    val roomVersion = "2.8.4"
+    val roomVersion = "2.8.5"
     implementation("androidx.room:room-common:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
     androidTestImplementation("androidx.room:room-testing:$roomVersion")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
 
-    implementation("org.bouncycastle:bcprov-jdk18on:1.80")
+    implementation("org.bouncycastle:bcprov-jdk18on:1.86")
 
     implementation("androidx.biometric:biometric:1.1.0")
     implementation("androidx.security:security-crypto-ktx:1.1.0")
 
     implementation("androidx.datastore:datastore-preferences:1.2.1")
 
-    implementation("androidx.emoji2:emoji2-emojipicker:1.6.0")
+    implementation("androidx.emoji2:emoji2-emojipicker:1.7.0")
 
     implementation("sh.calvin.reorderable:reorderable:3.1.0")
 
-    implementation("com.google.protobuf:protobuf-javalite:4.35.1")
+    implementation("com.google.protobuf:protobuf-javalite:4.36.2")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.5.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.5.2")
 
-    val navigationVersion = "1.1.4"
+    val navigationVersion = "1.2.0"
     implementation("androidx.navigation3:navigation3-runtime:$navigationVersion")
     implementation("androidx.navigation3:navigation3-ui:$navigationVersion")
 
-    implementation("commons-codec:commons-codec:1.22.0")
+    implementation("commons-codec:commons-codec:1.22.1")
 
     implementation("com.google.zxing:core:3.5.4")
 
@@ -186,13 +190,13 @@ dependencies {
     testImplementation(composeBom)
     testImplementation("androidx.compose.ui:ui-test-junit4")
     testImplementation("org.robolectric:robolectric:4.16.1")
-    testImplementation("io.github.takahirom.roborazzi:roborazzi:1.65.0")
-    testImplementation("io.github.takahirom.roborazzi:roborazzi-compose:1.65.0")
+    testImplementation("io.github.takahirom.roborazzi:roborazzi:1.75.0")
+    testImplementation("io.github.takahirom.roborazzi:roborazzi-compose:1.75.0")
     testImplementation("androidx.test.ext:junit:1.3.0")
 
     screenshotTestImplementation(composeBom)
     screenshotTestImplementation("androidx.compose.ui:ui-tooling")
-    screenshotTestImplementation("com.android.tools.screenshot:screenshot-validation-api:0.0.1-alpha15")
+    screenshotTestImplementation("com.android.tools.screenshot:screenshot-validation-api:0.0.1-alpha16")
 }
 
 // The more screenshots I add the hungrier it gets

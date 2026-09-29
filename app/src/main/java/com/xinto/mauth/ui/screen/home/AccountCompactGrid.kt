@@ -30,6 +30,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.DropdownMenuPopup
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -270,6 +271,7 @@ private fun rememberDrainProgress(target: Float): () -> Float {
     return remember(progress) { { progress.value } }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MoreActions(
     showCode: Boolean,

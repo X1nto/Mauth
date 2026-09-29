@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -127,10 +128,10 @@ fun QrScanScreen(
         },
         snackbarHost = {
             val snackbarHostState = remember { SnackbarHostState() }
-            val context = LocalContext.current
-            LaunchedEffect(scanError, context) {
+            val resources = LocalResources.current
+            LaunchedEffect(scanError) {
                 if (scanError != null) {
-                    snackbarHostState.showSnackbar(context.getString(scanError.stringRes))
+                    snackbarHostState.showSnackbar(resources.getString(scanError.stringRes))
                 }
             }
             SnackbarHost(hostState = snackbarHostState)

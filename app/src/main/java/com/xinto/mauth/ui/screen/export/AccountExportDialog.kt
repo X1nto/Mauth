@@ -57,10 +57,8 @@ fun AccountExportDialog(
         state = state,
         onUriClick = { label, data ->
             val clipData = ClipData.newPlainText(label, data).apply {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    description.extras = PersistableBundle().apply {
-                        putBoolean("android.content.extra.IS_SENSITIVE", true)
-                    }
+                description.extras = PersistableBundle().apply {
+                    putBoolean("android.content.extra.IS_SENSITIVE", true)
                 }
             }
             coroutineScope.launch {

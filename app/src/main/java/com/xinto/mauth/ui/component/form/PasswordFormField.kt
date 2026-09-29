@@ -2,9 +2,12 @@ package com.xinto.mauth.ui.component.form
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.TextObfuscationMode
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedSecureTextField
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
@@ -12,16 +15,15 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import com.xinto.mauth.R
 
 class PasswordFormField(
@@ -35,22 +37,20 @@ class PasswordFormField(
     private val required: Boolean = false
 ) : FormField<String>(initial, id = label) {
 
+    private val fieldState = TextFieldState(initial)
+
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun invoke(modifier: Modifier) {
         var showPassword by rememberSaveable { mutableStateOf(false) }
-        val visualTransformation = remember(showPassword) {
-            if (showPassword) {
-                VisualTransformation.None
-            } else {
-                PasswordVisualTransformation()
+        LaunchedEffect(fieldState) {
+            snapshotFlow { fieldState.text.toString() }.collect {
+                value = it
             }
         }
-        OutlinedTextField(
+        OutlinedSecureTextField(
             modifier = modifier,
-            value = value,
-            onValueChange = {
-                value = it
-            },
+            state = fieldState,
             label = {
                 Text(stringResource(label))
             },
@@ -84,7 +84,7 @@ class PasswordFormField(
             supportingText = if (!required) null else { ->
                 Text(stringResource(R.string.account_data_status_required))
             },
-            visualTransformation = visualTransformation,
+            textObfuscationMode = if (showPassword) TextObfuscationMode.Visible else TextObfuscationMode.System,
             isError = error
         )
     }

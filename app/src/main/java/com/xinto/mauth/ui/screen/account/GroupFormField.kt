@@ -18,6 +18,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SelectableDropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -90,7 +91,7 @@ class GroupFormField(
                         .verticalScroll(groupListScrollState),
                 ) {
                     val selected = value == null
-                    DropdownMenuItem(
+                    SelectableDropdownMenuItem(
                         selected = selected,
                         onClick = {
                             setExpanded(false)
@@ -104,7 +105,7 @@ class GroupFormField(
                                 contentDescription = null
                             )
                         },
-                        trailingIcon = if (!selected) null else { ->
+                        trailingContent = if (!selected) null else { ->
                             Icon(
                                 painter = painterResource(R.drawable.ic_check),
                                 contentDescription = null
@@ -115,7 +116,7 @@ class GroupFormField(
                         HorizontalDivider(modifier = Modifier.padding(MenuDefaults.HorizontalDividerPadding))
                         groupList.forEachIndexed { index, group ->
                             val selected = value == group.id
-                            DropdownMenuItem(
+                            SelectableDropdownMenuItem(
                                 selected = selected,
                                 onClick = {
                                     setExpanded(false)
@@ -136,7 +137,7 @@ class GroupFormField(
                                         )
                                     }
                                 },
-                                trailingIcon = if (!selected) null else { ->
+                                trailingContent = if (!selected) null else { ->
                                     Icon(
                                         painter = painterResource(R.drawable.ic_check),
                                         contentDescription = null
@@ -148,7 +149,7 @@ class GroupFormField(
                 }
                 Spacer(Modifier.height(MenuDefaults.GroupSpacing))
                 DropdownMenuGroup(shapes = MenuDefaults.groupShapes(MenuDefaults.trailingGroupShape)) {
-                    DropdownMenuItem(
+                    SelectableDropdownMenuItem(
                         selected = false,
                         onClick = {
                             setExpanded(false)

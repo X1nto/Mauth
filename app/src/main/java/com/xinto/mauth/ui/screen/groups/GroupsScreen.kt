@@ -391,6 +391,7 @@ private fun GroupsTree(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ReorderableCollectionItemScope.GroupHeaderRow(
     group: DomainGroup,
@@ -563,7 +564,7 @@ private fun UngroupedHeaderRow(count: Int, isDropTarget: Boolean) {
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun AccountRowItem(
     account: DomainAccount,

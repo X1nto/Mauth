@@ -11,6 +11,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SelectableDropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -68,7 +69,7 @@ class ComboBoxFormField<E: Enum<E>>(
                 DropdownMenuGroup(shapes = MenuDefaults.groupShapes()) {
                     val entries = clazz.enumConstants!!
                     entries.forEachIndexed { index, entry ->
-                        DropdownMenuItem(
+                        SelectableDropdownMenuItem(
                             selected = value == entry,
                             onClick = {
                                 setExpanded(false)

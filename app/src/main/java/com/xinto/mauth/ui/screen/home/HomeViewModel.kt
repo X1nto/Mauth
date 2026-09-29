@@ -122,10 +122,8 @@ class HomeViewModel(
     fun copyCodeToClipboard(label: String, code: String, visible: Boolean) {
         val clipboardService = application.getSystemService<ClipboardManager>() ?: return
         val clipData = ClipData.newPlainText(label, code).apply {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                description.extras = PersistableBundle().apply {
-                    putBoolean("android.content.extra.IS_SENSITIVE", !visible)
-                }
+            description.extras = PersistableBundle().apply {
+                putBoolean("android.content.extra.IS_SENSITIVE", !visible)
             }
         }
         clipboardService.setPrimaryClip(clipData)
