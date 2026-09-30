@@ -24,6 +24,7 @@ import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedSecureTextField
 import androidx.compose.material3.PlainTooltip
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TooltipAnchorPosition
@@ -48,6 +49,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
 import com.xinto.mauth.core.backup.model.BackupFormat
+import com.xinto.mauth.ui.preview.PreviewAllConfigurations
+import com.xinto.mauth.ui.preview.Screenshot
+import com.xinto.mauth.ui.theme.MauthTheme
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import java.util.UUID
@@ -213,3 +217,40 @@ private fun FileExportDialog(
     )
 }
 
+@Composable
+@Screenshot
+@PreviewAllConfigurations
+private fun FileExportDialog_Idle_Preview() {
+    MauthTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            FileExportDialog(
+                state = FileExportState.Idle,
+                format = BackupFormat.MauthJson,
+                onExport = {},
+                onDismissRequest = {}
+            )
+        }
+    }
+}
+
+@Composable
+@Screenshot
+@PreviewAllConfigurations
+private fun FileExportDialog_Working_Preview() {
+    MauthTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            FileExportDialog(
+                state = FileExportState.Working,
+                format = BackupFormat.MauthJson,
+                onExport = {},
+                onDismissRequest = {}
+            )
+        }
+    }
+}

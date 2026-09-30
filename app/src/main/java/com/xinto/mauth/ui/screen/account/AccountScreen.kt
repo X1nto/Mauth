@@ -305,3 +305,20 @@ private fun AccountScreen_Error_Preview() {
         }
     }
 }
+
+@Composable
+@Screenshot
+@PreviewAllConfigurations
+private fun AccountExitDialog_Preview() {
+    MauthTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            AccountExitDialog(
+                onCancel = {},
+                onConfirm = {}
+            )
+        }
+    }
+}

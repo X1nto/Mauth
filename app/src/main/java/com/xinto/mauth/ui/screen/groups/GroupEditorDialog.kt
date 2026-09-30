@@ -25,6 +25,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TooltipAnchorPosition
@@ -49,6 +50,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.emoji2.emojipicker.EmojiPickerView
 import com.xinto.mauth.R
+import com.xinto.mauth.ui.preview.PreviewAllConfigurations
+import com.xinto.mauth.ui.preview.Screenshot
+import com.xinto.mauth.ui.theme.MauthTheme
 import com.xinto.mauth.ui.theme.isDark
 import androidx.emoji2.emojipicker.R as EmojiPickerR
 
@@ -99,10 +103,10 @@ private fun CreateEditGroupDialog(
     onConfirm: (name: String, emoji: String?) -> Unit,
     onDismissRequest: () -> Unit
 ) {
-    var name by remember { mutableStateOf(initialName) }
+    val nameState = rememberTextFieldState(initialName)
     var emoji by remember { mutableStateOf(initialEmoji) }
     var showEmojiPicker by remember { mutableStateOf(false) }
-    val trimmed = name.trim()
+    val trimmed = nameState.text.toString().trim()
     val duplicate = isNameTaken(trimmed)
     AlertDialog(
         onDismissRequest = onDismissRequest,
@@ -110,10 +114,9 @@ private fun CreateEditGroupDialog(
         text = {
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = name,
-                onValueChange = { name = it },
+                state = nameState,
                 label = { Text(stringResource(R.string.groups_dialog_field_name)) },
-                singleLine = true,
+                lineLimits = TextFieldLineLimits.SingleLine,
                 isError = duplicate,
                 supportingText = if (!duplicate) null else { -> Text(stringResource(R.string.groups_dialog_error_duplicate)) },
                 trailingIcon = {
@@ -257,6 +260,83 @@ private fun EmojiPickerView.applyTheme(selectedColor: Int, unselectedColor: Int)
             if (headerUnderline != null && headerUnderline.backgroundTintList !== tint) {
                 headerUnderline.backgroundTintList = tint
             }
+        }
+    }
+}
+
+@Composable
+@Screenshot
+@PreviewAllConfigurations
+private fun CreateGroupDialog_Preview() {
+    MauthTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            CreateGroupDialog(
+                isNameTaken = { false },
+                onConfirm = { _, _ -> },
+                onDismissRequest = {}
+            )
+        }
+    }
+}
+
+@Composable
+@Screenshot
+@PreviewAllConfigurations
+private fun EditGroupDialog_Preview() {
+    MauthTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            EditGroupDialog(
+                initialName = "Work",
+                initialEmoji = "💼",
+                isNameTaken = { false },
+                onConfirm = { _, _ -> },
+                onDismissRequest = {}
+            )
+        }
+    }
+}
+
+@Composable
+@Screenshot
+@PreviewAllConfigurations
+private fun EditGroupDialog_DuplicateName_Preview() {
+    MauthTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            EditGroupDialog(
+                initialName = "Personal",
+                initialEmoji = null,
+                isNameTaken = { true },
+                onConfirm = { _, _ -> },
+                onDismissRequest = {}
+            )
+        }
+    }
+}
+
+@Composable
+@Screenshot
+@PreviewAllConfigurations
+private fun EmojiPickerSheet_Preview() {
+    MauthTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            EmojiPickerSheet(
+                canRemove = true,
+                onPick = {},
+                onRemove = {},
+                onDismiss = {}
+            )
         }
     }
 }

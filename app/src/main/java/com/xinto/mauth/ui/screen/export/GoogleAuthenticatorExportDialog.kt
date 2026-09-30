@@ -28,12 +28,12 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
 import com.xinto.mauth.ui.component.AlertDialog
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
+import com.xinto.mauth.ui.preview.Screenshot
 import com.xinto.mauth.ui.screen.export.component.ExportError
 import com.xinto.mauth.ui.screen.export.component.ExportQrCode
 import com.xinto.mauth.ui.screen.export.component.ExportQrLayout
@@ -186,11 +186,15 @@ private val PreviewURIs = List(3) {
     "otpauth://totp/account${it}?secret=secret&issuer=issuer&algorithm=sha1&digits=6&period=30".repeat(3 - it)
 }
 
-@PreviewAllConfigurations
 @Composable
+@Screenshot
+@PreviewAllConfigurations
 private fun GoogleAuthenticatorExportDialog_SinglePage_Preview() {
     MauthTheme {
-        Surface(modifier = Modifier.fillMaxSize()) {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
             GoogleAuthenticatorExportDialog(
                 onDismissRequest = {},
                 state = GoogleAuthenticatorExportState.Success(uris = PreviewURIs.take(1))
@@ -199,11 +203,15 @@ private fun GoogleAuthenticatorExportDialog_SinglePage_Preview() {
     }
 }
 
-@PreviewAllConfigurations
 @Composable
+@Screenshot
+@PreviewAllConfigurations
 private fun GoogleAuthenticatorExportDialog_MultiPage_Preview() {
     MauthTheme {
-        Surface(modifier = Modifier.fillMaxSize()) {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
             GoogleAuthenticatorExportDialog(
                 onDismissRequest = {},
                 state = GoogleAuthenticatorExportState.Success(uris = PreviewURIs)

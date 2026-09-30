@@ -1549,3 +1549,39 @@ private fun HomeScreen_CompactGroups_Preview() {
         }
     }
 }
+
+@Composable
+@Screenshot
+@PreviewAllConfigurations
+private fun DeleteDialog_Preview() {
+    MauthTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            DeleteDialog(
+                onDismissRequest = {},
+                onConfirm = {}
+            )
+        }
+    }
+}
+
+@Composable
+@Screenshot
+@PreviewAllConfigurations
+private fun MoveToGroupSheet_Preview() {
+    MauthTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            MoveToGroupSheet(
+                groups = PreviewGroups,
+                onSelectGroup = {},
+                onCreateGroup = {},
+                onDismiss = {}
+            )
+        }
+    }
+}

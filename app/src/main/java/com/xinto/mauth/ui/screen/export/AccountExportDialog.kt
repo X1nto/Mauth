@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
 import com.xinto.mauth.ui.component.AlertDialog
+import com.xinto.mauth.ui.preview.PreviewAllConfigurations
+import com.xinto.mauth.ui.preview.Screenshot
 import com.xinto.mauth.ui.screen.export.component.ExportError
 import com.xinto.mauth.ui.screen.export.component.ExportQrCode
 import com.xinto.mauth.ui.screen.export.component.ExportQrLayout
@@ -133,6 +136,64 @@ private fun AccountExportDialog(
             is AccountExportState.Error -> {
                 ExportError(onDismissRequest = onDismissRequest)
             }
+        }
+    }
+}
+
+@Composable
+@Screenshot
+@PreviewAllConfigurations
+private fun AccountExportDialog_Loading_Preview() {
+    MauthTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            AccountExportDialog(
+                onDismissRequest = {},
+                state = AccountExportState.Loading,
+                onUriClick = { _, _ -> }
+            )
+        }
+    }
+}
+
+@Composable
+@Screenshot
+@PreviewAllConfigurations
+private fun AccountExportDialog_Success_Preview() {
+    MauthTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            AccountExportDialog(
+                onDismissRequest = {},
+                state = AccountExportState.Success(
+                    label = "X1nto",
+                    issuer = "GitHub",
+                    url = "otpauth://totp/GitHub:X1nto?secret=JBSWY3DPEHPK3PXP&issuer=GitHub&algorithm=SHA1&digits=6&period=30"
+                ),
+                onUriClick = { _, _ -> }
+            )
+        }
+    }
+}
+
+@Composable
+@Screenshot
+@PreviewAllConfigurations
+private fun AccountExportDialog_Error_Preview() {
+    MauthTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            AccountExportDialog(
+                onDismissRequest = {},
+                state = AccountExportState.Error,
+                onUriClick = { _, _ -> }
+            )
         }
     }
 }

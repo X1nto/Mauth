@@ -3,6 +3,7 @@ package com.xinto.mauth.ui.screen.settings
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.AlertDialog
@@ -10,7 +11,9 @@ import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -23,6 +26,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.xinto.mauth.R
 import com.xinto.mauth.domain.settings.model.AccountsLayout
+import com.xinto.mauth.ui.preview.PreviewAllConfigurations
+import com.xinto.mauth.ui.preview.Screenshot
+import com.xinto.mauth.ui.theme.MauthTheme
 
 @Composable
 fun AccountLayoutDialog(
@@ -80,3 +86,20 @@ fun AccountLayoutDialog(
     )
 }
 
+@Composable
+@Screenshot
+@PreviewAllConfigurations
+private fun AccountLayoutDialog_Preview() {
+    MauthTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            AccountLayoutDialog(
+                initialLayout = AccountsLayout.DEFAULT,
+                onConfirm = {},
+                onDismissRequest = {}
+            )
+        }
+    }
+}
