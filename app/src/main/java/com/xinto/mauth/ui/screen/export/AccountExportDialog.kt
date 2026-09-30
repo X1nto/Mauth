@@ -6,7 +6,6 @@ import android.os.PersistableBundle
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,7 +31,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
 import com.xinto.mauth.ui.component.AlertDialog
+import com.xinto.mauth.ui.screen.export.component.ExportError
 import com.xinto.mauth.ui.screen.export.component.ExportQrCode
+import com.xinto.mauth.ui.screen.export.component.ExportQrLayout
+import com.xinto.mauth.ui.theme.MauthTheme
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -95,53 +97,41 @@ private fun AccountExportDialog(
                 }
             }
             is AccountExportState.Success -> {
-                Column(
+                ExportQrLayout(
                     modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    ExportQrCode(
-                        modifier = Modifier.fillMaxWidth(),
-                        data = state.url
-                    )
-
-                    Surface(
-                        onClick = { onUriClick(state.label, state.url) },
-                        color = MaterialTheme.colorScheme.surfaceContainerLowest,
-                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                        shape = MaterialTheme.shapes.medium
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(12.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    spacing = 8.dp,
+                    footer = {
+                        Surface(
+                            onClick = { onUriClick(state.label, state.url) },
+                            color = MaterialTheme.colorScheme.surfaceContainerLowest,
+                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            shape = MaterialTheme.shapes.medium
                         ) {
-                            Text(
-                                modifier = Modifier.weight(1f),
-                                text = stringResource(R.string.export_account_copy),
-                                style = MaterialTheme.typography.titleMedium,
-                            )
-                            Icon(
-                                painter = painterResource(R.drawable.ic_copy_all),
-                                contentDescription = null
-                            )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                Text(
+                                    modifier = Modifier.weight(1f),
+                                    text = stringResource(R.string.export_account_copy),
+                                    style = MaterialTheme.typography.titleMedium,
+                                )
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_copy_all),
+                                    contentDescription = null
+                                )
+                            }
                         }
                     }
+                ) {
+                    ExportQrCode(data = state.url)
                 }
             }
             is AccountExportState.Error -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_error),
-                        contentDescription = null
-                    )
-                }
+                ExportError(onDismissRequest = onDismissRequest)
             }
         }
     }

@@ -179,6 +179,9 @@
     <string name="export_file_action_export">Export</string>
     <string name="export_file_status_success">Successfully exported!</string>
     <string name="export_file_status_failure">Failed to export</string>
+    <string name="export_error_title">Couldn\'t export</string>
+    <string name="export_error_subtitle">Something went wrong while generating the QR code. Please try again.</string>
+    <string name="export_error_action_close">Close</string>
 
 
     <string name="about_title">About</string>

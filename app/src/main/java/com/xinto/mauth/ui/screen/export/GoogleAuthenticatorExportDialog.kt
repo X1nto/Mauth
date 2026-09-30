@@ -1,12 +1,9 @@
 package com.xinto.mauth.ui.screen.export
 
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,7 +16,6 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -31,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,7 +34,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
 import com.xinto.mauth.ui.component.AlertDialog
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
+import com.xinto.mauth.ui.screen.export.component.ExportError
 import com.xinto.mauth.ui.screen.export.component.ExportQrCode
+import com.xinto.mauth.ui.screen.export.component.ExportQrLayout
 import com.xinto.mauth.ui.theme.MauthTheme
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -100,47 +97,35 @@ private fun GoogleAuthenticatorExportDialog(
                 }
             }
             is GoogleAuthenticatorExportState.Success -> {
-                Column(
+                val pagerState = rememberPagerState { state.uris.size }
+                ExportQrLayout(
                     modifier = Modifier.padding(vertical = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalInset = 16.dp,
+                    spacing = 12.dp,
+                    footer = {
+                        if (state.uris.size > 1) {
+                            PageIndicators(
+                                modifier = Modifier.fillMaxWidth(),
+                                pagerState = pagerState
+                            )
+                        }
+                    }
                 ) {
-                    val pagerState = rememberPagerState { state.uris.size }
                     HorizontalPager(
                         state = pagerState,
+                        contentPadding = PaddingValues(horizontal = 16.dp),
+                        pageSpacing = 32.dp,
                         flingBehavior = PagerDefaults.flingBehavior(
                             state = pagerState,
                             pagerSnapDistance = PagerSnapDistance.atMost(1),
                         )
                     ) { page ->
-                        ExportQrCode(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp),
-                            data = state.uris[page]
-                        )
-                    }
-                    if (state.uris.size > 1) {
-                        PageIndicators(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp),
-                            pagerState = pagerState
-                        )
+                        ExportQrCode(data = state.uris[page])
                     }
                 }
             }
             is GoogleAuthenticatorExportState.Error -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_error),
-                        contentDescription = null
-                    )
-                }
+                ExportError(onDismissRequest = onDismissRequest)
             }
         }
     }
