@@ -1,7 +1,8 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
 
 package com.xinto.mauth.ui.screen.export
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,7 +15,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -39,16 +40,19 @@ import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
 import com.xinto.mauth.core.backup.model.BackupFormat
 import com.xinto.mauth.domain.account.model.DomainExportAccount
 import com.xinto.mauth.ui.component.UriImage
+import com.xinto.mauth.ui.component.adaptivePainterResource
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
 import com.xinto.mauth.ui.preview.Screenshot
 import com.xinto.mauth.ui.theme.MauthTheme
@@ -205,17 +209,93 @@ fun ExportScreen(
                         CategoryHeader(stringResource(R.string.export_category_batch))
                     }
 
-                    item(key = "batch-googleauth", contentType = "batch-method") {
+                    item(key = "batch-mauth", contentType = "batch-method") {
                         ListItem(
-                            onClick = onGoogleAuthQr,
+                            onClick = onMauthExport,
                             leadingContent = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_qr_code_2),
+                                Image(
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .clip(MaterialTheme.shapes.medium),
+                                    painter = adaptivePainterResource(id = R.mipmap.ic_launcher),
                                     contentDescription = null
                                 )
                             },
+                            supportingContent = { Text(BackupFormat.MauthJson.detail()) },
+                            shapes = ListItemDefaults.segmentedShapes(index = 0, count = 3),
+                            colors = ListItemDefaults.colors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainer
+                            ),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(stringResource(id = R.string.app_name))
+                        }
+                    }
+
+                    item(key = "batch-aegis", contentType = "batch-method") {
+                        ListItem(
+                            onClick = onAegisExport,
+                            leadingContent = {
+                                Image(
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .clip(MaterialTheme.shapes.medium),
+                                    painter = painterResource(id = R.drawable.ic_aegis),
+                                    contentDescription = null
+                                )
+                            },
+                            supportingContent = { Text(BackupFormat.AegisVault.detail()) },
+                            shapes = ListItemDefaults.segmentedShapes(index = 1, count = 3),
+                            colors = ListItemDefaults.colors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainer
+                            ),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(stringResource(id = R.string.backup_app_aegis))
+                        }
+                    }
+
+                    item(key = "batch-freeotpplus", contentType = "batch-method") {
+                        ListItem(
+                            onClick = onFreeOtpPlusExport,
+                            leadingContent = {
+                                Image(
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .clip(MaterialTheme.shapes.medium),
+                                    painter = painterResource(id = R.drawable.ic_freeotpplus),
+                                    contentDescription = null
+                                )
+                            },
+                            supportingContent = { Text(BackupFormat.FreeOtpPlusJson.detail()) },
+                            shapes = ListItemDefaults.segmentedShapes(index = 2, count = 3),
+                            colors = ListItemDefaults.colors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainer
+                            ),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(stringResource(id = R.string.backup_app_freeotpplus))
+                        }
+                    }
+
+                    item(key = "batch-googleauth", contentType = "batch-method") {
+                        ListItem(
+                            onClick = onGoogleAuthQr,
+                            modifier = Modifier.padding(top = 6.dp),
+                            leadingContent = {
+                                Box(
+                                    modifier = Modifier.size(40.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        modifier = Modifier.size(32.dp),
+                                        painter = painterResource(id = R.drawable.ic_qr_code_2),
+                                        contentDescription = null
+                                    )
+                                }
+                            },
                             supportingContent = { Text(stringResource(id = R.string.export_method_googleauth_description)) },
-                            shapes = ListItemDefaults.segmentedShapes(index = 0, count = 5),
+                            shapes = ListItemDefaults.segmentedShapes(index = 0, count = 2),
                             colors = ListItemDefaults.colors(
                                 containerColor = MaterialTheme.colorScheme.surfaceContainer
                             ),
@@ -225,75 +305,24 @@ fun ExportScreen(
                         }
                     }
 
-                    item(key = "batch-mauth", contentType = "batch-method") {
-                        ListItem(
-                            onClick = onMauthExport,
-                            leadingContent = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_mauth),
-                                    contentDescription = null
-                                )
-                            },
-                            shapes = ListItemDefaults.segmentedShapes(index = 1, count = 5),
-                            colors = ListItemDefaults.colors(
-                                containerColor = MaterialTheme.colorScheme.surfaceContainer
-                            ),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(stringResource(id = R.string.export_method_mauth))
-                        }
-                    }
-
-                    item(key = "batch-aegis", contentType = "batch-method") {
-                        ListItem(
-                            onClick = onAegisExport,
-                            leadingContent = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_aegis),
-                                    contentDescription = null
-                                )
-                            },
-                            shapes = ListItemDefaults.segmentedShapes(index = 2, count = 5),
-                            colors = ListItemDefaults.colors(
-                                containerColor = MaterialTheme.colorScheme.surfaceContainer
-                            ),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(stringResource(id = R.string.export_method_aegis))
-                        }
-                    }
-
-                    item(key = "batch-freeotpplus", contentType = "batch-method") {
-                        ListItem(
-                            onClick = onFreeOtpPlusExport,
-                            leadingContent = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_freeotpplus),
-                                    contentDescription = null
-                                )
-                            },
-                            shapes = ListItemDefaults.segmentedShapes(index = 3, count = 5),
-                            colors = ListItemDefaults.colors(
-                                containerColor = MaterialTheme.colorScheme.surfaceContainer
-                            ),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(stringResource(id = R.string.export_method_freeotpplus))
-                        }
-                    }
-
                     item(key = "batch-urilist", contentType = "batch-method") {
                         ListItem(
                             onClick = onUriListExport,
                             modifier = Modifier,
                             leadingContent = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_link),
-                                    contentDescription = null
-                                )
+                                Box(
+                                    modifier = Modifier.size(40.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        modifier = Modifier.size(32.dp),
+                                        painter = painterResource(id = R.drawable.ic_link),
+                                        contentDescription = null
+                                    )
+                                }
                             },
-                            supportingContent = { Text(stringResource(id = R.string.export_method_urilist_description)) },
-                            shapes = ListItemDefaults.segmentedShapes(index = 4, count = 5),
+                            supportingContent = { Text(BackupFormat.UriList.detail()) },
+                            shapes = ListItemDefaults.segmentedShapes(index = 1, count = 2),
                             colors = ListItemDefaults.colors(
                                 containerColor = MaterialTheme.colorScheme.surfaceContainer
                             ),
@@ -327,7 +356,7 @@ fun ExportScreen(
                                 index = index,
                                 count = state.accounts.size,
                                 defaultShapes = ListItemDefaults.shapes(
-                                    shape = if (state.accounts.isEmpty()) MaterialTheme.shapes.large else null
+                                    shape = if (state.accounts.size == 1) MaterialTheme.shapes.large else null
                                 )
                             ),
                             colors = ListItemDefaults.colors(
@@ -341,6 +370,12 @@ fun ExportScreen(
             }
         }
     }
+}
+
+@Composable
+private fun BackupFormat.detail(): String {
+    val encryption = if (supportsEncryption) stringResource(R.string.backup_encryption_both) else null
+    return listOfNotNull(mimeType.label, encryption).joinToString(" · ")
 }
 
 @Composable
@@ -379,9 +414,17 @@ private fun AccountBadge(
             if (icon != null) {
                 UriImage(uri = icon)
             } else {
+                val monogramStyle = MaterialTheme.typography.titleMedium
                 Text(
                     text = account.shortLabel,
-                    style = MaterialTheme.typography.titleMedium
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    style = monogramStyle,
+                    maxLines = 1,
+                    softWrap = false,
+                    autoSize = TextAutoSize.StepBased(
+                        minFontSize = 8.sp,
+                        maxFontSize = monogramStyle.fontSize,
+                    )
                 )
             }
         }

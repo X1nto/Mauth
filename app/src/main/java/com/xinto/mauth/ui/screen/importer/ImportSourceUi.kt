@@ -10,15 +10,15 @@ import com.xinto.mauth.core.backup.model.labels
 @get:StringRes
 val ImportSource.titleRes: Int
     get() = when (this) {
-        ImportSource.Mauth -> R.string.import_source_mauth
+        ImportSource.Mauth -> R.string.app_name
         ImportSource.UriList -> R.string.import_source_urilist
-        ImportSource.Aegis -> R.string.import_source_aegis
-        ImportSource.TwoFas -> R.string.import_source_2fas
-        ImportSource.AndOtp -> R.string.import_source_andotp
-        ImportSource.Bitwarden -> R.string.import_source_bitwarden
-        ImportSource.FreeOtpPlus -> R.string.import_source_freeotpplus
-        ImportSource.Stratum -> R.string.import_source_stratum
-        ImportSource.Proton -> R.string.import_source_proton
+        ImportSource.Aegis -> R.string.backup_app_aegis
+        ImportSource.TwoFas -> R.string.backup_app_2fas
+        ImportSource.AndOtp -> R.string.backup_app_andotp
+        ImportSource.Bitwarden -> R.string.backup_app_bitwarden
+        ImportSource.FreeOtpPlus -> R.string.backup_app_freeotpplus
+        ImportSource.Stratum -> R.string.backup_app_stratum
+        ImportSource.Proton -> R.string.backup_app_proton
         ImportSource.Unknown -> R.string.import_source_unknown
     }
 
@@ -33,9 +33,9 @@ val ImportSource.encryptionRes: Int?
         ImportSource.TwoFas,
         ImportSource.AndOtp,
         ImportSource.Bitwarden,
-        ImportSource.Proton -> R.string.import_encryption_both
+        ImportSource.Proton -> R.string.backup_encryption_both
 
-        ImportSource.Stratum -> R.string.import_encryption_unencrypted
+        ImportSource.Stratum -> R.string.backup_encryption_unencrypted
 
         ImportSource.FreeOtpPlus,
         ImportSource.UriList,

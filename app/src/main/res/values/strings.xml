@@ -148,6 +148,16 @@
     <string name="accountslayout_dialog_action_confirm">Confirm</string>
     <string name="accountslayout_dialog_action_cancel">Cancel</string>
 
+    <string name="backup_app_aegis" translatable="false">Aegis</string>
+    <string name="backup_app_2fas" translatable="false">2FAS</string>
+    <string name="backup_app_andotp" translatable="false">andOTP</string>
+    <string name="backup_app_bitwarden" translatable="false">Bitwarden</string>
+    <string name="backup_app_freeotpplus" translatable="false">FreeOTP+</string>
+    <string name="backup_app_stratum" translatable="false">Stratum</string>
+    <string name="backup_app_proton" translatable="false">Proton Authenticator</string>
+    <string name="backup_encryption_both">Encrypted, unencrypted</string>
+    <string name="backup_encryption_unencrypted">Unencrypted only</string>
+
     <string name="export_title">Export</string>
     <plurals name="export_subtitle">
         <item quantity="one">%1$d account</item>
@@ -162,11 +172,7 @@
     <string name="export_category_individual">Individual accounts</string>
     <string name="export_method_googleauth">Google Authenticator QR</string>
     <string name="export_method_googleauth_description">Scan with any Google Authenticator compatible app</string>
-    <string name="export_method_mauth">Mauth JSON</string>
-    <string name="export_method_aegis">Aegis Vault</string>
-    <string name="export_method_freeotpplus">FreeOTP+ JSON</string>
     <string name="export_method_urilist">otpauth:// list</string>
-    <string name="export_method_urilist_description">A plain list of account URIs</string>
     <string name="export_account_period_value">%1$ds</string>
     <string name="export_account_copy">Copy link</string>
     <string name="export_file_title_mauth">Export for Mauth</string>
@@ -189,16 +195,6 @@
     <string name="import_category_apps">From an app</string>
     <string name="import_category_other">Other formats</string>
     <string name="import_source_googleauth">Google Authenticator QR</string>
-    <string name="import_encryption_both">Encrypted, unencrypted</string>
-    <string name="import_encryption_unencrypted">Unencrypted only</string>
-    <string name="import_source_mauth" translatable="false">Mauth</string>
-    <string name="import_source_aegis" translatable="false">Aegis</string>
-    <string name="import_source_2fas" translatable="false">2FAS</string>
-    <string name="import_source_andotp" translatable="false">andOTP</string>
-    <string name="import_source_bitwarden" translatable="false">Bitwarden</string>
-    <string name="import_source_freeotpplus" translatable="false">FreeOTP+</string>
-    <string name="import_source_stratum" translatable="false">Stratum</string>
-    <string name="import_source_proton" translatable="false">Proton Authenticator</string>
     <string name="import_source_urilist">otpauth:// links</string>
     <string name="import_source_unknown">Unrecognized file</string>
     <string name="import_unlock_title">Enter the password</string>
