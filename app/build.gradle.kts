@@ -194,6 +194,8 @@ dependencies {
 
     implementation("commons-codec:commons-codec:1.22.1")
 
+    implementation("com.jsoizo:kotlin-csv-jvm:2.0.0")
+
     implementation("com.google.zxing:core:3.5.4")
 
     implementation("io.coil-kt:coil-compose:2.7.0")

@@ -46,6 +46,8 @@ import com.xinto.mauth.domain.otp.OtpRepository
 import com.xinto.mauth.ui.navigation.MauthDestination
 import com.xinto.mauth.ui.navigation.MauthNavigator
 import com.xinto.mauth.ui.screen.about.AboutScreen
+import com.xinto.mauth.ui.screen.importreview.ImportReviewScreen
+import com.xinto.mauth.ui.screen.importer.ImportScreen
 import com.xinto.mauth.ui.screen.account.AddAccountScreen
 import com.xinto.mauth.ui.screen.account.EditAccountScreen
 import com.xinto.mauth.ui.screen.auth.AuthScreen
@@ -252,6 +254,9 @@ class MainActivity : FragmentActivity() {
                                     },
                                     onManageGroups = dropUnlessResumed {
                                         navigator.navigate(MauthDestination.Groups)
+                                    },
+                                    onImportNavigate = dropUnlessResumed {
+                                        navigator.navigateSecure(MauthDestination.ImportFile)
                                     }
                                 )
                             }
@@ -276,6 +281,36 @@ class MainActivity : FragmentActivity() {
                                     },
                                     onThemeNavigate = dropUnlessResumed {
                                         navigator.navigate(MauthDestination.Theme)
+                                    }
+                                )
+                            }
+                            entry<MauthDestination.ImportFile> {
+                                ImportScreen(
+                                    modifier = Modifier.fillMaxSize(),
+                                    onBack = dropUnlessResumed { navigator.pop() },
+                                    onScanQrCode = dropUnlessResumed {
+                                        navigator.navigate(MauthDestination.QrScanner)
+                                    },
+                                    onParsed = dropUnlessResumed { outcome ->
+                                        navigator.replaceLast(
+                                            MauthDestination.ImportReview(
+                                                source = outcome.source,
+                                                candidates = outcome.candidates,
+                                                rejected = outcome.rejected
+                                            )
+                                        )
+                                    }
+                                )
+                            }
+                            entry<MauthDestination.ImportReview> { key ->
+                                ImportReviewScreen(
+                                    modifier = Modifier.fillMaxSize(),
+                                    source = key.source,
+                                    candidates = key.candidates,
+                                    rejected = key.rejected,
+                                    onBack = dropUnlessResumed { navigator.pop() },
+                                    onImported = dropUnlessResumed { _: Int ->
+                                        navigator.replaceAll(MauthDestination.Home)
                                     }
                                 )
                             }
@@ -332,7 +367,7 @@ class MainActivity : FragmentActivity() {
                                 ExportScreen(
                                     modifier = Modifier.fillMaxSize(),
                                     accounts = key.accounts,
-                                    onBackNavigate = dropUnlessResumed { navigator.pop() }
+                                    onBackNavigate = dropUnlessResumed { navigator.pop() },
                                 )
                             }
                         }

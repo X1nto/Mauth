@@ -4,6 +4,9 @@ package com.xinto.mauth.ui.screen.home
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
@@ -19,6 +22,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -84,7 +89,7 @@ fun OtpCode(
     code: String,
     visible: Boolean,
     modifier: Modifier = Modifier,
-    progress: (() -> Float)? = null,
+    progress: Float? = null,
     color: Color = LocalContentColor.current,
     style: TextStyle = MaterialTheme.typography.titleMedium,
     dotSize: TextUnit = style.fontSize * 0.36f,
@@ -108,11 +113,12 @@ fun OtpCode(
         contentAlignment = Alignment.CenterEnd,
         label = "OtpCode",
     ) { (show, animatedCode) ->
-        val drainModifier = if (progress == null) Modifier else Modifier
+        val drain = progress?.let { animateDrainAsState(it) }
+        val drainModifier = if (drain == null) Modifier else Modifier
             .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
             .drawWithContent {
                 drawContent()
-                val drained = size.width * (1f - progress().coerceIn(0f, 1f))
+                val drained = size.width * (1f - drain.value.coerceIn(0f, 1f))
                 if (drained > 0f) {
                     drawRect(
                         color = Color.Black.copy(alpha = 0.3f),
@@ -142,6 +148,19 @@ fun OtpCode(
             )
         }
     }
+}
+
+@Composable
+private fun animateDrainAsState(target: Float): State<Float> {
+    val progress = remember { Animatable(target) }
+    LaunchedEffect(target) {
+        if (target > progress.value) {
+            progress.snapTo(target)
+        } else {
+            progress.animateTo(target, tween(durationMillis = 1000, easing = LinearEasing))
+        }
+    }
+    return progress.asState()
 }
 
 @Composable

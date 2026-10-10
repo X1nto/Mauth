@@ -2,6 +2,9 @@ package com.xinto.mauth.ui.navigation
 
 import android.os.Parcelable
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
+import com.xinto.mauth.core.backup.importer.ImportSource
+import com.xinto.mauth.domain.backup.model.DomainImportCandidate
+import com.xinto.mauth.domain.backup.model.DomainRejectedEntry
 import kotlinx.parcelize.Parcelize
 import java.util.UUID
 
@@ -51,4 +54,14 @@ sealed interface MauthDestination : Parcelable {
 
     @Parcelize
     data object Groups : MauthDestination
+
+    @Parcelize
+    data object ImportFile : MauthDestination
+
+    @Parcelize
+    data class ImportReview(
+        val source: ImportSource,
+        val candidates: List<DomainImportCandidate>,
+        val rejected: List<DomainRejectedEntry>
+    ) : MauthDestination
 }

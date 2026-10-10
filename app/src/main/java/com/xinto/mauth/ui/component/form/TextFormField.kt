@@ -49,7 +49,7 @@ class TextFormField(
     override fun isValid(): Boolean {
         if (!required) return true
 
-        return value.isNotEmpty()
+        return value.isNotBlank()
     }
 
 

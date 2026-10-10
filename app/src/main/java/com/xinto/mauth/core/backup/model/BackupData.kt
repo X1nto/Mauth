@@ -28,11 +28,27 @@ data class BackupAccount(
 
 enum class BackupOtpType {
     TOTP,
-    HOTP,
+    HOTP;
+
+    companion object {
+        fun fromName(name: String?): BackupOtpType {
+            return if (name?.lowercase()?.contains("hotp") == true) HOTP else TOTP
+        }
+    }
 }
 
 enum class BackupOtpAlgorithm {
     SHA1,
     SHA256,
-    SHA512,
+    SHA512;
+
+    companion object {
+        fun fromName(name: String?): BackupOtpAlgorithm {
+            return when (name?.uppercase()?.removePrefix("HMAC-")?.replace("-", "")) {
+                "SHA256" -> SHA256
+                "SHA512" -> SHA512
+                else -> SHA1
+            }
+        }
+    }
 }

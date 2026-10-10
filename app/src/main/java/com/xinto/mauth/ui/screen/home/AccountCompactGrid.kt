@@ -4,9 +4,6 @@ package com.xinto.mauth.ui.screen.home
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -48,7 +45,6 @@ import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -218,10 +214,7 @@ private fun Account(
                             modifier = Modifier.padding(end = 4.dp),
                             code = realtimeData.code,
                             visible = showCode,
-                            progress = when (realtimeData) {
-                                is DomainOtpRealtimeData.Totp -> rememberDrainProgress(realtimeData.progress)
-                                is DomainOtpRealtimeData.Hotp -> null
-                            },
+                            progress = (realtimeData as? DomainOtpRealtimeData.Totp)?.progress,
                             color = codeColor,
                         )
                         MoreActions(
@@ -256,19 +249,6 @@ private fun Account(
             }
         }
     }
-}
-
-@Composable
-private fun rememberDrainProgress(target: Float): () -> Float {
-    val progress = remember { Animatable(target) }
-    LaunchedEffect(target) {
-        if (target > progress.value) {
-            progress.snapTo(target)
-        } else {
-            progress.animateTo(target, tween(durationMillis = 1000, easing = LinearEasing))
-        }
-    }
-    return remember(progress) { { progress.value } }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

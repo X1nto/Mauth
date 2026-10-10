@@ -16,14 +16,8 @@ sealed class DomainAccount {
     abstract val digits: Int
     abstract val createdMillis: Long
 
-    val shortLabel by lazy {
-        val source = issuer.ifEmpty { label }
-        source.filter {
-            it.isUpperCase()
-        }.ifEmpty {
-            source[0].uppercase()
-        }.take(3)
-    }
+    val shortLabel: String
+        get() = monogramOf(issuer, label)
 
     @Immutable
     data class Totp(
@@ -50,4 +44,15 @@ sealed class DomainAccount {
         override val createdMillis: Long,
     ) : DomainAccount()
 
+}
+
+fun monogramOf(issuer: String, label: String): String {
+    val source = issuer.ifEmpty { label }
+    if (source.isEmpty())
+        return ""
+
+    return source
+        .filter { it.isUpperCase() }
+        .ifEmpty { source[0].uppercase() }
+        .take(3)
 }

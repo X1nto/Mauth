@@ -11,9 +11,8 @@ sealed class DomainExportAccount {
     abstract val label: String
     abstract val issuer: String
 
-    val shortLabel by lazy {
-        issuer.ifEmpty { label }.take(1)
-    }
+    val shortLabel: String
+        get() = monogramOf(issuer, label)
 
     @Immutable
     data class Totp(

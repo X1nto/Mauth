@@ -1,12 +1,11 @@
 package com.xinto.mauth.core.backup.model
 
 enum class BackupFormat(
-    val mimeType: String,
-    val extension: String,
+    val mimeType: MimeType,
     val supportsEncryption: Boolean
 ) {
-    MauthJson("application/json", "json", true),
-    AegisVault("application/json", "json", true),
-    FreeOtpPlusJson("application/json", "json", false),
-    UriList("text/plain", "txt", false),
+    MauthJson(MimeType.Json, supportsEncryption = true),
+    AegisVault(MimeType.Json, supportsEncryption = true),
+    FreeOtpPlusJson(MimeType.Json, supportsEncryption = false),
+    UriList(MimeType.PlainText, supportsEncryption = false),
 }

@@ -6,6 +6,16 @@ import com.xinto.mauth.core.backup.exporter.AegisExporter
 import com.xinto.mauth.core.backup.exporter.FreeOtpPlusExporter
 import com.xinto.mauth.core.backup.exporter.MauthExporter
 import com.xinto.mauth.core.backup.exporter.UriListExporter
+import com.xinto.mauth.core.backup.importer.ImporterRegistry
+import com.xinto.mauth.core.backup.importer.AegisImporter
+import com.xinto.mauth.core.backup.importer.AndOtpImporter
+import com.xinto.mauth.core.backup.importer.BitwardenImporter
+import com.xinto.mauth.core.backup.importer.FreeOtpPlusImporter
+import com.xinto.mauth.core.backup.importer.MauthImporter
+import com.xinto.mauth.core.backup.importer.ProtonImporter
+import com.xinto.mauth.core.backup.importer.StratumImporter
+import com.xinto.mauth.core.backup.importer.TwoFasImporter
+import com.xinto.mauth.core.backup.importer.UriListImporter
 import com.xinto.mauth.core.otp.exporter.DefaultOtpExporter
 import com.xinto.mauth.core.otp.exporter.OtpExporter
 import com.xinto.mauth.core.otp.generator.DefaultOtpGenerator
@@ -24,6 +34,8 @@ import com.xinto.mauth.domain.group.GroupRepository
 import com.xinto.mauth.domain.otp.OtpRepository
 import com.xinto.mauth.ui.screen.account.AccountViewModel
 import com.xinto.mauth.ui.screen.auth.AuthViewModel
+import com.xinto.mauth.ui.screen.importreview.ImportReviewViewModel
+import com.xinto.mauth.ui.screen.importer.ImportViewModel
 import com.xinto.mauth.ui.screen.export.AccountExportViewModel
 import com.xinto.mauth.ui.screen.export.GoogleAuthenticatorExportViewModel
 import com.xinto.mauth.ui.screen.export.ExportViewModel
@@ -54,6 +66,32 @@ object MauthDI {
         singleOf(::AegisExporter)
         singleOf(::FreeOtpPlusExporter)
         singleOf(::UriListExporter)
+
+        singleOf(::MauthImporter)
+        singleOf(::AegisImporter)
+        singleOf(::TwoFasImporter)
+        singleOf(::AndOtpImporter)
+        singleOf(::BitwardenImporter)
+        singleOf(::FreeOtpPlusImporter)
+        singleOf(::StratumImporter)
+        singleOf(::ProtonImporter)
+        singleOf(::UriListImporter)
+        single {
+            //FIXME: garbage.
+            ImporterRegistry(
+                importers = listOf(
+                    get<MauthImporter>(),
+                    get<AegisImporter>(),
+                    get<TwoFasImporter>(),
+                    get<AndOtpImporter>(),
+                    get<BitwardenImporter>(),
+                    get<FreeOtpPlusImporter>(),
+                    get<StratumImporter>(),
+                    get<ProtonImporter>(),
+                    get<UriListImporter>(),
+                )
+            )
+        }
     }
 
     val DbModule = module {
@@ -87,7 +125,7 @@ object MauthDI {
         singleOf(::SettingsRepository)
         singleOf(::AuthRepository)
         singleOf(::GroupRepository)
-        single { BackupRepository(androidContext(), get(), get(), get(), get(), get(), get(), get()) }
+        single { BackupRepository(androidContext(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
     }
 
     val UiModule = module {
@@ -104,6 +142,8 @@ object MauthDI {
         viewModelOf(::GoogleAuthenticatorExportViewModel)
         viewModelOf(::AccountExportViewModel)
         viewModelOf(::GroupsViewModel)
+        viewModelOf(::ImportViewModel)
+        viewModelOf(::ImportReviewViewModel)
     }
 
     val all = listOf(CoreModule, DbModule, DomainModule, UiModule)

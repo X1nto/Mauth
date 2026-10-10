@@ -4,13 +4,18 @@ import org.bouncycastle.crypto.PBEParametersGenerator
 import org.bouncycastle.crypto.digests.SHA1Digest
 import org.bouncycastle.crypto.digests.SHA256Digest
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator
+import org.bouncycastle.crypto.generators.HKDFBytesGenerator
 import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator
 import org.bouncycastle.crypto.generators.SCrypt
 import org.bouncycastle.crypto.params.Argon2Parameters
+import org.bouncycastle.crypto.params.HKDFParameters
 import org.bouncycastle.crypto.params.KeyParameter
+import java.security.MessageDigest
 import java.security.SecureRandom
 import javax.crypto.Cipher
+import javax.crypto.Mac
 import javax.crypto.spec.GCMParameterSpec
+import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 class BackupCrypto {
@@ -37,7 +42,6 @@ class BackupCrypto {
             key.fill(0)
         }
     }
-
 
     /**
      * @return Ciphertext carrying the tag at its end.
@@ -69,6 +73,55 @@ class BackupCrypto {
         return gcm(Cipher.DECRYPT_MODE, key, nonce, ciphertext, aad = null)
     }
 
+    /**
+     * @param ciphertext must already have the tag appended.
+     */
+    fun decryptRaw(ciphertext: ByteArray, nonce: ByteArray, key: ByteArray, aad: ByteArray): ByteArray {
+        return gcm(Cipher.DECRYPT_MODE, key, nonce, ciphertext, aad)
+    }
+
+    /**
+     * @param prk must already be the key material rather than a secret to extract from
+     */
+    fun hkdfExpand(prk: ByteArray, info: ByteArray, length: Int): ByteArray {
+        val generator = HKDFBytesGenerator(SHA256Digest()).apply {
+            init(HKDFParameters.skipExtractParameters(prk, info))
+        }
+        return ByteArray(length).apply {
+            generator.generateBytes(this, 0, size)
+        }
+    }
+
+    /**
+     * AES-256-CBC with the MAC taken over the IV and ciphertext.
+     *
+     * @return null when the MAC does not match
+     */
+    fun decryptCbcHmac(
+        iv: ByteArray,
+        ciphertext: ByteArray,
+        mac: ByteArray,
+        encKey: ByteArray,
+        macKey: ByteArray
+    ): ByteArray? {
+        val hmac = Mac.getInstance("HmacSHA256").apply {
+            init(SecretKeySpec(macKey, "HmacSHA256"))
+            update(iv)
+        }
+
+        if (!MessageDigest.isEqual(hmac.doFinal(ciphertext), mac))
+            return null
+
+        val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding").apply {
+            init(Cipher.DECRYPT_MODE, SecretKeySpec(encKey, "AES"), IvParameterSpec(iv))
+        }
+        return cipher.doFinal(ciphertext)
+    }
+
+    fun sha256(input: ByteArray): ByteArray {
+        return MessageDigest.getInstance("SHA-256").digest(input)
+    }
+
     fun randomBytes(size: Int): ByteArray {
         return ByteArray(size).also(random::nextBytes)
     }
@@ -92,7 +145,8 @@ class BackupCrypto {
         password: CharArray,
         salt: ByteArray,
         iterations: Int,
-        hmac: Pbkdf2Hmac
+        hmac: Pbkdf2Hmac,
+        keyLength: Int = KEY_LENGTH
     ): ByteArray {
         val digest = when (hmac) {
             Pbkdf2Hmac.SHA1 -> SHA1Digest()
@@ -102,19 +156,20 @@ class BackupCrypto {
         val passwordBytes = PBEParametersGenerator.PKCS5PasswordToUTF8Bytes(password)
         try {
             generator.init(passwordBytes, salt, iterations)
-            val keyParameter = generator.generateDerivedParameters(KEY_LENGTH * 8) as KeyParameter
+            val keyParameter = generator.generateDerivedParameters(keyLength * 8) as KeyParameter
             return keyParameter.key
         } finally {
             passwordBytes.fill(0)
         }
     }
 
-    private fun deriveArgon2id(
+    fun deriveArgon2id(
         password: CharArray,
         salt: ByteArray,
         memoryKib: Int,
         iterations: Int,
-        parallelism: Int
+        parallelism: Int,
+        keyLength: Int = KEY_LENGTH
     ): ByteArray {
         val parameters = Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
             .withVersion(Argon2Parameters.ARGON2_VERSION_13)
@@ -124,12 +179,13 @@ class BackupCrypto {
             .withParallelism(parallelism)
             .build()
 
-        val generator = Argon2BytesGenerator()
-        generator.init(parameters)
+        val generator = Argon2BytesGenerator().apply {
+            init(parameters)
+        }
 
-        val key = ByteArray(KEY_LENGTH)
-        generator.generateBytes(password, key)
-        return key
+        return ByteArray(keyLength).apply {
+            generator.generateBytes(password, this)
+        }
     }
 
     private fun gcm(
@@ -158,7 +214,7 @@ class BackupCrypto {
         SHA256
     }
 
-    private companion object {
+   private companion object {
         const val KEY_LENGTH = 32
         const val SALT_LENGTH = 16
         const val NONCE_LENGTH = 12

@@ -79,6 +79,7 @@ private fun HomeAccountsFixture(
 ) {
     HomeScreen(
         onAddAccountNavigate = {},
+        onImportClick = {},
         onMoreMenuNavigate = {},
         onAccountSelect = {},
         onCancelAccountSelection = {},

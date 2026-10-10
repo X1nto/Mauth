@@ -154,6 +154,36 @@ class AccountRepository(
         )
     }
 
+    fun DomainAccountInfo.toDomainAccount(): DomainAccount {
+        return when (type) {
+            OtpType.TOTP -> {
+                DomainAccount.Totp(
+                    id = id,
+                    icon = icon,
+                    secret = secret,
+                    label = label,
+                    issuer = issuer,
+                    algorithm = algorithm,
+                    digits = digits,
+                    period = period,
+                    createdMillis = createdMillis
+                )
+            }
+            OtpType.HOTP -> {
+                DomainAccount.Hotp(
+                    id = id,
+                    icon = icon,
+                    secret = secret,
+                    label = label,
+                    issuer = issuer,
+                    algorithm = algorithm,
+                    digits = digits,
+                    createdMillis = createdMillis
+                )
+            }
+        }
+    }
+
     suspend fun List<DomainAccount>.toBatchOtpUrl(): List<String> {
         return otpExporter.exportBatch(this.map { it.toOtpData() })
     }

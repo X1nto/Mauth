@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -35,6 +36,7 @@ import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AppBarWithSearch
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
@@ -59,6 +61,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Scaffold
@@ -137,6 +140,7 @@ import java.util.UUID
 @Composable
 fun HomeScreen(
     onAddAccountManually: (groupId: UUID?) -> Unit,
+    onImportNavigate: () -> Unit,
     onAddAccountViaScanning: () -> Unit,
     onAddAccountFromImage: (DomainAccountInfo) -> Unit,
     onSettingsNavigate: () -> Unit,
@@ -221,11 +225,13 @@ fun HomeScreen(
                 HomeAddAccountMenu.Manual -> onAddAccountManually((activeGroup as? GroupFilter.Specific)?.id)
             }
         },
+        onImportClick = onImportNavigate,
         onMoreMenuNavigate = {
             when (it) {
                 HomeMoreMenu.Groups -> onManageGroups()
                 HomeMoreMenu.Settings -> onSettingsNavigate()
                 HomeMoreMenu.Export -> onExportNavigate(selectedAccounts)
+                HomeMoreMenu.Import -> onImportNavigate()
                 HomeMoreMenu.About -> onAboutNavigate()
             }
         },
@@ -264,6 +270,7 @@ fun HomeScreen(
 @Composable
 fun HomeScreen(
     onAddAccountNavigate: (HomeAddAccountMenu) -> Unit,
+    onImportClick: () -> Unit,
     onMoreMenuNavigate: (HomeMoreMenu) -> Unit,
     onAccountSelect: (UUID) -> Unit,
     onCancelAccountSelection: () -> Unit,
@@ -436,6 +443,20 @@ fun HomeScreen(
                         )
                         ProvideTextStyle(MaterialTheme.typography.headlineSmall) {
                             Text(stringResource(emptyMessage))
+                        }
+                        if (activeGroup == GroupFilter.All) {
+                            OutlinedButton(
+                                modifier = Modifier.padding(top = 8.dp),
+                                onClick = onImportClick
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                                    painter = painterResource(R.drawable.ic_import),
+                                    contentDescription = null
+                                )
+                                Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+                                Text(stringResource(R.string.home_dashboard_empty_action_import))
+                            }
                         }
                     }
                 }
@@ -663,15 +684,11 @@ private fun MoreAction(
                     expanded = isMoreVisible,
                     onDismissRequest = { isMoreVisible = false },
                 ) {
-                    val groupedActions = HomeMoreMenu.entries
-                        .partition { it != HomeMoreMenu.Settings && it != HomeMoreMenu.About }
-                        .toList()
-
-                    groupedActions.forEachIndexed { groupIndex, actions ->
+                    HomeMoreMenu.groups.forEachIndexed { groupIndex, actions ->
                         DropdownMenuGroup(
                             shapes = MenuDefaults.groupShape(
                                 index = groupIndex,
-                                count = groupedActions.size
+                                count = HomeMoreMenu.groups.size
                             )
                         ) {
                             actions.forEachIndexed { actionIndex, action ->
@@ -1208,14 +1225,11 @@ private val PreviewGroupedAccountCounts = DomainAccountCounts(
     )
 )
 
-@Composable
-private fun rememberPreviewRealtimeData() = remember {
-    mutableStateMapOf(
-        PreviewGithub.id to DomainOtpRealtimeData.Totp(code = "123456", progress = 0.6f, countdown = 18),
-        PreviewFortinet.id to DomainOtpRealtimeData.Hotp(code = "654321", count = 3),
-        PreviewAws.id to DomainOtpRealtimeData.Totp(code = "424242", progress = 0.3f, countdown = 9)
-    )
-}
+private val PreviewRealtimeData = mutableStateMapOf(
+    PreviewGithub.id to DomainOtpRealtimeData.Totp(code = "123456", progress = 0.6f, countdown = 18),
+    PreviewFortinet.id to DomainOtpRealtimeData.Hotp(code = "654321", count = 3),
+    PreviewAws.id to DomainOtpRealtimeData.Totp(code = "424242", progress = 0.3f, countdown = 9)
+)
 
 @Composable
 @Screenshot
@@ -1225,6 +1239,7 @@ private fun HomeScreen_Loading_Preview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             HomeScreen(
                 onAddAccountNavigate = {},
+                onImportClick = {},
                 onMoreMenuNavigate = {},
                 onAccountSelect = {},
                 onCancelAccountSelection = {},
@@ -1262,6 +1277,7 @@ private fun HomeScreen_Empty_Preview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             HomeScreen(
                 onAddAccountNavigate = {},
+                onImportClick = {},
                 onMoreMenuNavigate = {},
                 onAccountSelect = {},
                 onCancelAccountSelection = {},
@@ -1299,6 +1315,7 @@ private fun HomeScreen_Success_Preview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             HomeScreen(
                 onAddAccountNavigate = {},
+                onImportClick = {},
                 onMoreMenuNavigate = {},
                 onAccountSelect = {},
                 onCancelAccountSelection = {},
@@ -1308,7 +1325,7 @@ private fun HomeScreen_Success_Preview() {
                 onAccountCounterIncrease = {},
                 onAccountCopyCode = { _, _, _ -> },
                 state = HomeScreenState.Success(PreviewAccounts),
-                accountRealtimeData = rememberPreviewRealtimeData(),
+                accountRealtimeData = PreviewRealtimeData,
                 selectedAccounts = remember { mutableStateListOf<UUID>() },
                 activeAccountsSort = AccountsSort.DEFAULT,
                 onActiveSortChange = {},
@@ -1336,6 +1353,7 @@ private fun HomeScreen_Compact_Preview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             HomeScreen(
                 onAddAccountNavigate = {},
+                onImportClick = {},
                 onMoreMenuNavigate = {},
                 onAccountSelect = {},
                 onCancelAccountSelection = {},
@@ -1345,7 +1363,7 @@ private fun HomeScreen_Compact_Preview() {
                 onAccountCounterIncrease = {},
                 onAccountCopyCode = { _, _, _ -> },
                 state = HomeScreenState.Success(PreviewAccounts),
-                accountRealtimeData = rememberPreviewRealtimeData(),
+                accountRealtimeData = PreviewRealtimeData,
                 selectedAccounts = remember { mutableStateListOf<UUID>() },
                 activeAccountsSort = AccountsSort.DEFAULT,
                 onActiveSortChange = {},
@@ -1373,6 +1391,7 @@ private fun HomeScreen_Selection_Preview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             HomeScreen(
                 onAddAccountNavigate = {},
+                onImportClick = {},
                 onMoreMenuNavigate = {},
                 onAccountSelect = {},
                 onCancelAccountSelection = {},
@@ -1382,7 +1401,7 @@ private fun HomeScreen_Selection_Preview() {
                 onAccountCounterIncrease = {},
                 onAccountCopyCode = { _, _, _ -> },
                 state = HomeScreenState.Success(PreviewAccounts),
-                accountRealtimeData = rememberPreviewRealtimeData(),
+                accountRealtimeData = PreviewRealtimeData,
                 selectedAccounts = remember { mutableStateListOf(PreviewGithub.id) },
                 activeAccountsSort = AccountsSort.DEFAULT,
                 onActiveSortChange = {},
@@ -1410,6 +1429,7 @@ private fun HomeScreen_Groups_Preview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             HomeScreen(
                 onAddAccountNavigate = {},
+                onImportClick = {},
                 onMoreMenuNavigate = {},
                 onAccountSelect = {},
                 onCancelAccountSelection = {},
@@ -1419,7 +1439,7 @@ private fun HomeScreen_Groups_Preview() {
                 onAccountCounterIncrease = {},
                 onAccountCopyCode = { _, _, _ -> },
                 state = HomeScreenState.Success(PreviewAccounts),
-                accountRealtimeData = rememberPreviewRealtimeData(),
+                accountRealtimeData = PreviewRealtimeData,
                 selectedAccounts = remember { mutableStateListOf<UUID>() },
                 activeAccountsSort = AccountsSort.DEFAULT,
                 onActiveSortChange = {},
@@ -1447,6 +1467,7 @@ private fun HomeScreen_Error_Preview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             HomeScreen(
                 onAddAccountNavigate = {},
+                onImportClick = {},
                 onMoreMenuNavigate = {},
                 onAccountSelect = {},
                 onCancelAccountSelection = {},
@@ -1484,6 +1505,7 @@ private fun HomeScreen_CompactSelection_Preview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             HomeScreen(
                 onAddAccountNavigate = {},
+                onImportClick = {},
                 onMoreMenuNavigate = {},
                 onAccountSelect = {},
                 onCancelAccountSelection = {},
@@ -1493,7 +1515,7 @@ private fun HomeScreen_CompactSelection_Preview() {
                 onAccountCounterIncrease = {},
                 onAccountCopyCode = { _, _, _ -> },
                 state = HomeScreenState.Success(PreviewAccounts),
-                accountRealtimeData = rememberPreviewRealtimeData(),
+                accountRealtimeData = PreviewRealtimeData,
                 selectedAccounts = remember { mutableStateListOf(PreviewGithub.id) },
                 activeAccountsSort = AccountsSort.DEFAULT,
                 onActiveSortChange = {},
@@ -1521,6 +1543,7 @@ private fun HomeScreen_CompactGroups_Preview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             HomeScreen(
                 onAddAccountNavigate = {},
+                onImportClick = {},
                 onMoreMenuNavigate = {},
                 onAccountSelect = {},
                 onCancelAccountSelection = {},
@@ -1530,7 +1553,7 @@ private fun HomeScreen_CompactGroups_Preview() {
                 onAccountCounterIncrease = {},
                 onAccountCopyCode = { _, _, _ -> },
                 state = HomeScreenState.Success(PreviewAccounts),
-                accountRealtimeData = rememberPreviewRealtimeData(),
+                accountRealtimeData = PreviewRealtimeData,
                 selectedAccounts = remember { mutableStateListOf<UUID>() },
                 activeAccountsSort = AccountsSort.DEFAULT,
                 onActiveSortChange = {},

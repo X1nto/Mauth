@@ -8,6 +8,7 @@
 
     <string name="home_dashboard_empty">Nothing here yet</string>
     <string name="home_dashboard_empty_group">No accounts in this group</string>
+    <string name="home_dashboard_empty_action_import">Import accounts</string>
     <string name="home_dashboard_error">Failed to load accounts</string>
     <string name="home_addaccount_title">Add an account</string>
     <string name="home_addaccount_subtitle">Scan a QR code or enter the key manually</string>
@@ -30,6 +31,7 @@
     <string name="home_move_subtitle_existing">Existing groups</string>
     <string name="home_more_settings">Settings</string>
     <string name="home_more_groups">Groups</string>
+    <string name="home_more_import">Import</string>
     <string name="home_more_options">More options</string>
     <string name="home_action_edit">Edit</string>
     <string name="home_action_counter_increase">Generate next code</string>
@@ -183,6 +185,58 @@
     <string name="export_error_subtitle">Something went wrong while generating the QR code. Please try again.</string>
     <string name="export_error_action_close">Close</string>
 
+    <string name="import_title">Import</string>
+    <string name="import_category_apps">From an app</string>
+    <string name="import_category_other">Other formats</string>
+    <string name="import_source_googleauth">Google Authenticator QR</string>
+    <string name="import_encryption_both">Encrypted, unencrypted</string>
+    <string name="import_encryption_unencrypted">Unencrypted only</string>
+    <string name="import_source_mauth" translatable="false">Mauth</string>
+    <string name="import_source_aegis" translatable="false">Aegis</string>
+    <string name="import_source_2fas" translatable="false">2FAS</string>
+    <string name="import_source_andotp" translatable="false">andOTP</string>
+    <string name="import_source_bitwarden" translatable="false">Bitwarden</string>
+    <string name="import_source_freeotpplus" translatable="false">FreeOTP+</string>
+    <string name="import_source_stratum" translatable="false">Stratum</string>
+    <string name="import_source_proton" translatable="false">Proton Authenticator</string>
+    <string name="import_source_urilist">otpauth:// links</string>
+    <string name="import_source_unknown">Unrecognized file</string>
+    <string name="import_unlock_title">Enter the password</string>
+    <string name="import_unlock_subtitle">This backup was created by %1$s and is password protected.</string>
+    <string name="import_unlock_wrong">Wrong password</string>
+    <string name="import_unlock_action">Unlock</string>
+    <string name="import_working_title">Reading the backup</string>
+    <string name="import_working_subtitle">This can take a moment for encrypted files.</string>
+    <string name="import_failed_title">Could not import</string>
+    <string name="import_failed_action">OK</string>
+    <string name="import_wrongformat_title">That looks like a different backup</string>
+    <string name="import_wrongformat_message">This file looks like a %1$s backup, not %2$s.</string>
+    <string name="import_wrongformat_confirm">Import as %1$s</string>
+    <string name="import_wrongformat_cancel">Cancel</string>
+    <string name="import_rejected_reason_invalidsecret">The secret is not valid</string>
+    <string name="import_rejected_reason_malformed">The entry is incomplete</string>
+    <string name="import_rejected_reason_unsupported">This account type isn\'t supported</string>
+    <string name="import_rejected_reason_missingname">There is no name or issuer to tell what it\'s for</string>
+    <plurals name="import_none_importable">
+        <item quantity="one">The account in this file couldn\'t be imported</item>
+        <item quantity="other">None of the %1$d accounts in this file could be imported</item>
+    </plurals>
+    <string name="import_failure_unrecognized">This file is not a backup Mauth understands</string>
+    <string name="import_failure_malformed">The file is damaged or incomplete</string>
+    <string name="import_failure_unsupportedversion">This backup was made by a newer version of Mauth</string>
+    <string name="import_failure_wrongpassword">Wrong password</string>
+    <string name="import_empty">No accounts found in this file</string>
+
+    <string name="importreview_title">Review import</string>
+    <string name="importreview_verify_hint">Check the codes below against the app you are moving from, then import.</string>
+    <string name="importreview_verify_hint_app">Check the codes below against %1$s, then import.</string>
+    <string name="importreview_action_import">Import</string>
+    <string name="importreview_failed_message">The accounts could not be saved. Nothing was added, so it\'s safe to try again.</string>
+    <string name="importreview_failed_retry">Try again</string>
+    <string name="importreview_failed_cancel">Cancel</string>
+    <string name="importreview_duplicate">Already in Mauth</string>
+    <string name="importreview_rejected_header">Can\'t be imported</string>
+    <string name="importreview_rejected_unnamed">Unnamed account</string>
 
     <string name="about_title">About</string>
     <string name="about_links_source">Source</string>
@@ -230,4 +284,5 @@
         <item quantity="one">%1$d account</item>
         <item quantity="other">%1$d accounts</item>
     </plurals>
+
 </resources>

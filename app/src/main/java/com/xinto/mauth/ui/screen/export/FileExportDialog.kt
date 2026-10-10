@@ -71,7 +71,7 @@ fun FileExportDialog(
 
     var pendingPassword by rememberSaveable { mutableStateOf<CharSequence?>(null) }
 
-    val destinationLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(format.mimeType)) { uri ->
+    val destinationLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(format.mimeType.value)) { uri ->
         if (uri != null) {
             viewModel.export(
                 format = format,
@@ -102,12 +102,12 @@ fun FileExportDialog(
             onDismissRequest = onDismissRequest,
             onExport = {
                 pendingPassword = it
-                destinationLauncher.launch("mauth-export.${format.extension}")
+                destinationLauncher.launch("mauth-export.${format.mimeType.extension}")
             }
         )
     } else {
         LaunchedEffect(Unit) {
-            destinationLauncher.launch("mauth-export.${format.extension}")
+            destinationLauncher.launch("mauth-export.${format.mimeType.extension}")
         }
     }
 
