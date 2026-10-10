@@ -3,8 +3,8 @@ package com.xinto.mauth.core.backup.importer
 import com.xinto.mauth.core.backup.crypto.BackupCrypto
 import com.xinto.mauth.core.backup.model.toBackupAccount
 import com.xinto.mauth.core.backup.model.BackupAccount
-import com.xinto.mauth.core.otp.parser.OtpUriParser
-import com.xinto.mauth.core.otp.parser.OtpUriParserResult
+import com.xinto.mauth.core.otp.OtpUriParserResult
+import com.xinto.mauth.core.otp.parseOtpUri
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -12,7 +12,6 @@ import javax.crypto.AEADBadTagException
 import kotlin.io.encoding.Base64
 
 class ProtonImporter(
-    private val otpUriParser: OtpUriParser,
     private val crypto: BackupCrypto
 ) : AccountImporter {
 
@@ -61,7 +60,7 @@ class ProtonImporter(
                 continue
             }
 
-            when (val result = otpUriParser.parseOtpUri(uri)) {
+            when (val result = uri.parseOtpUri()) {
                 is OtpUriParserResult.Success -> {
                     accounts.add(result.data.toBackupAccount())
                 }

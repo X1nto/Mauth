@@ -36,13 +36,13 @@ import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDe
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import com.xinto.mauth.core.otp.parser.OtpUriParserResult
+import com.xinto.mauth.core.otp.OtpUriParserResult
+import com.xinto.mauth.core.otp.parseOtpUri
 import com.xinto.mauth.domain.settings.model.Theme
 import com.xinto.mauth.domain.AuthRepository
 import com.xinto.mauth.domain.settings.SettingsRepository
 import com.xinto.mauth.domain.account.AccountRepository
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
-import com.xinto.mauth.domain.otp.OtpRepository
 import com.xinto.mauth.ui.navigation.MauthDestination
 import com.xinto.mauth.ui.navigation.MauthNavigator
 import com.xinto.mauth.ui.screen.about.AboutScreen
@@ -68,7 +68,6 @@ import org.koin.android.ext.android.inject
 class MainActivity : FragmentActivity() {
 
     private val settings: SettingsRepository by inject()
-    private val otp: OtpRepository by inject()
     private val accounts: AccountRepository by inject()
     private val auth: AuthRepository by inject()
 
@@ -129,7 +128,7 @@ class MainActivity : FragmentActivity() {
                     LaunchedEffect(intent.data) {
                         val data = intent.data?.toString()
                         if (data == null || data == handledIntentData) return@LaunchedEffect
-                        val accountInfo = when (val parseResult = otp.parseUri(data)) {
+                        val accountInfo = when (val parseResult = data.parseOtpUri()) {
                             is OtpUriParserResult.Success -> with(accounts) { parseResult.data.toAccountInfo() }
                             else -> null
                         }

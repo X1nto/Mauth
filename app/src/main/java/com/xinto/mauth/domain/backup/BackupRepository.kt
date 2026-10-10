@@ -19,8 +19,8 @@ import com.xinto.mauth.core.backup.model.toBackupOtpAlgorithm
 import com.xinto.mauth.core.backup.model.toBackupOtpType
 import com.xinto.mauth.core.backup.model.toOtpDigest
 import com.xinto.mauth.core.backup.model.toOtpType
-import com.xinto.mauth.core.otp.model.OtpType
-import com.xinto.mauth.core.otp.transformer.KeyTransformer
+import com.xinto.mauth.core.otp.OtpType
+import com.xinto.mauth.core.otp.decodeOtpSecret
 import com.xinto.mauth.db.AccountDatabase
 import com.xinto.mauth.db.dao.account.AccountsDao
 import com.xinto.mauth.db.dao.account.entity.EntityAccount
@@ -45,8 +45,7 @@ class BackupRepository(
     private val aegisExporter: AegisExporter,
     private val freeOtpPlusExporter: FreeOtpPlusExporter,
     private val uriListExporter: UriListExporter,
-    private val importerRegistry: ImporterRegistry,
-    private val keyTransformer: KeyTransformer
+    private val importerRegistry: ImporterRegistry
 ) {
     suspend fun export(
         format: BackupFormat,
@@ -190,7 +189,7 @@ class BackupRepository(
             }
 
             val secret = account.secret.trim()
-            if (keyTransformer.transformToBytes(secret).isEmpty()) {
+            if (secret.decodeOtpSecret().isEmpty()) {
                 rejected.add(
                     DomainRejectedEntry(
                         name = account.name,

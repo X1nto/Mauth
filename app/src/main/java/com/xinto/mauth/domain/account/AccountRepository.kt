@@ -1,8 +1,9 @@
 package com.xinto.mauth.domain.account
 
-import com.xinto.mauth.core.otp.exporter.OtpExporter
-import com.xinto.mauth.core.otp.model.OtpData
-import com.xinto.mauth.core.otp.model.OtpType
+import com.xinto.mauth.core.otp.toMigrationUris
+import com.xinto.mauth.core.otp.toOtpUri
+import com.xinto.mauth.core.otp.OtpData
+import com.xinto.mauth.core.otp.OtpType
 import com.xinto.mauth.domain.settings.model.AccountsSort
 import com.xinto.mauth.db.dao.account.AccountsDao
 import com.xinto.mauth.db.dao.account.entity.EntityAccount
@@ -25,8 +26,7 @@ import java.util.UUID
 class AccountRepository(
     private val accountsDao: AccountsDao,
     private val rtdataDao: RtdataDao,
-    private val settingsRepository: SettingsRepository,
-    private val otpExporter: OtpExporter
+    private val settingsRepository: SettingsRepository
 ) {
 
     fun getAccounts(groupFilter: GroupFilter): Flow<List<DomainAccount>> {
@@ -137,7 +137,7 @@ class AccountRepository(
     }
 
     suspend fun DomainAccount.toOtpUrl(): String {
-        return otpExporter.exportOtp(toOtpData())
+        return toOtpData().toOtpUri()
     }
 
     fun OtpData.toAccountInfo(): DomainAccountInfo {
@@ -185,7 +185,7 @@ class AccountRepository(
     }
 
     suspend fun List<DomainAccount>.toBatchOtpUrl(): List<String> {
-        return otpExporter.exportBatch(this.map { it.toOtpData() })
+        return this.map { it.toOtpData() }.toMigrationUris()
     }
 
     suspend fun DomainAccount.toOtpData(): OtpData {

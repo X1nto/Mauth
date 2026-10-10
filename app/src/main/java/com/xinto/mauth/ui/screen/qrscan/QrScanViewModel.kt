@@ -2,11 +2,11 @@ package com.xinto.mauth.ui.screen.qrscan
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.xinto.mauth.core.otp.model.OtpData
-import com.xinto.mauth.core.otp.parser.OtpUriParserResult
+import com.xinto.mauth.core.otp.OtpData
+import com.xinto.mauth.core.otp.OtpUriParserResult
+import com.xinto.mauth.core.otp.parseOtpUri
 import com.xinto.mauth.domain.account.AccountRepository
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
-import com.xinto.mauth.domain.otp.OtpRepository
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class QrScanViewModel(
-    private val otpRepository: OtpRepository,
     private val accountRepository: AccountRepository
 ) : ViewModel() {
 
@@ -36,7 +35,7 @@ class QrScanViewModel(
     val parseEvent = _parseEvent.asSharedFlow()
 
     fun parseResult(result: com.google.zxing.Result) {
-        when (val parseResult = otpRepository.parseUri(result.text)) {
+        when (val parseResult = result.text.parseOtpUri()) {
             is OtpUriParserResult.Multipart -> {
                 if (parseResult.batchSize > 1) {
                     // Don't display errors if the newly scanned QR is the same as previous.

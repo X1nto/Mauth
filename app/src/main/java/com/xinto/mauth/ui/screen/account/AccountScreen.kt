@@ -39,8 +39,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
 import com.xinto.mauth.R.drawable.ic_error
 import com.xinto.mauth.R.string.account_error
-import com.xinto.mauth.core.otp.model.OtpDigest
-import com.xinto.mauth.core.otp.model.OtpType
+import com.xinto.mauth.core.otp.OtpDigest
+import com.xinto.mauth.core.otp.OtpType
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.ui.component.form.form
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations

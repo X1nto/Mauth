@@ -2,7 +2,7 @@ package com.xinto.mauth.ui.screen.importreview
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.xinto.mauth.core.otp.model.OtpType
+import com.xinto.mauth.core.otp.OtpType
 import com.xinto.mauth.domain.account.AccountRepository
 import com.xinto.mauth.domain.account.model.DomainAccount
 import com.xinto.mauth.domain.backup.BackupRepository

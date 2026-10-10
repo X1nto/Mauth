@@ -69,7 +69,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
-import com.xinto.mauth.core.otp.model.OtpDigest
+import com.xinto.mauth.core.otp.OtpDigest
 import com.xinto.mauth.domain.account.model.DomainAccount
 import com.xinto.mauth.domain.group.model.DomainGroup
 import com.xinto.mauth.ui.component.UriImage

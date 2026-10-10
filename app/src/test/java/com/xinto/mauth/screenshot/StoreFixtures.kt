@@ -1,8 +1,8 @@
 package com.xinto.mauth.screenshot
 
 import androidx.compose.runtime.mutableStateMapOf
-import com.xinto.mauth.core.otp.model.OtpDigest
-import com.xinto.mauth.core.otp.model.OtpType
+import com.xinto.mauth.core.otp.OtpDigest
+import com.xinto.mauth.core.otp.OtpType
 import com.xinto.mauth.domain.account.model.DomainAccount
 import com.xinto.mauth.domain.account.model.DomainAccountCounts
 import com.xinto.mauth.domain.account.model.DomainAccountInfo

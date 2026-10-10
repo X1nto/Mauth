@@ -16,7 +16,8 @@ import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import com.xinto.mauth.Mauth
 import com.xinto.mauth.R
-import com.xinto.mauth.core.otp.parser.OtpUriParserResult
+import com.xinto.mauth.core.otp.OtpUriParserResult
+import com.xinto.mauth.core.otp.parseOtpUri
 import com.xinto.mauth.domain.settings.model.AccountsSort
 import com.xinto.mauth.domain.QrRepository
 import com.xinto.mauth.domain.settings.SettingsRepository
@@ -181,7 +182,7 @@ class HomeViewModel(
             return null
         }
 
-        val parseResult = otp.parseUri(text)
+        val parseResult = text.parseOtpUri()
         if (parseResult !is OtpUriParserResult.Success)
             return null
 

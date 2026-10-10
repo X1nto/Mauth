@@ -1,8 +1,8 @@
 package com.xinto.mauth.core.backup.model
 
-import com.xinto.mauth.core.otp.model.OtpData
-import com.xinto.mauth.core.otp.model.OtpDigest
-import com.xinto.mauth.core.otp.model.OtpType
+import com.xinto.mauth.core.otp.OtpData
+import com.xinto.mauth.core.otp.OtpDigest
+import com.xinto.mauth.core.otp.OtpType
 import java.util.UUID
 
 fun OtpType.toBackupOtpType(): BackupOtpType {

@@ -1,4 +1,4 @@
-package com.xinto.mauth.core.otp.model
+package com.xinto.mauth.core.otp
 
 enum class OtpDigest {
     SHA1,

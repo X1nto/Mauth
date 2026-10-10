@@ -5,8 +5,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.xinto.mauth.core.otp.model.OtpDigest
-import com.xinto.mauth.core.otp.model.OtpType
+import com.xinto.mauth.core.otp.OtpDigest
+import com.xinto.mauth.core.otp.OtpType
 import java.util.UUID
 
 @Entity(

@@ -1,8 +1,8 @@
 package com.xinto.mauth
 
-import com.xinto.mauth.core.otp.model.OtpDigest
-import com.xinto.mauth.core.otp.parser.DefaultOtpUriParser
-import com.xinto.mauth.core.otp.parser.OtpUriParserResult
+import com.xinto.mauth.core.otp.OtpDigest
+import com.xinto.mauth.core.otp.OtpUriParserResult
+import com.xinto.mauth.core.otp.parseOtpUri
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -14,11 +14,9 @@ class OtpParseTest(
     private val uri: String,
 ) {
 
-    private val parser = DefaultOtpUriParser()
-
     @Test
     fun parsesIssuerAndAccount() {
-        val parseResult = parser.parseOtpUri(uri)
+        val parseResult = uri.parseOtpUri()
         Assert.assertTrue(parseResult.toString(), parseResult is OtpUriParserResult.Success)
 
         val data = (parseResult as OtpUriParserResult.Success).data

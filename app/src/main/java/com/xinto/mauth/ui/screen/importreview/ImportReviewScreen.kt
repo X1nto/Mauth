@@ -54,7 +54,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
 import com.xinto.mauth.core.backup.importer.ImportFailure
 import com.xinto.mauth.core.backup.importer.ImportSource
-import com.xinto.mauth.core.otp.model.OtpDigest
+import com.xinto.mauth.core.otp.OtpDigest
 import com.xinto.mauth.domain.account.model.DomainAccount
 import com.xinto.mauth.domain.backup.model.DomainImportCandidate
 import com.xinto.mauth.domain.backup.model.DomainRejectedEntry

@@ -1,10 +1,9 @@
 package com.xinto.mauth.domain.otp
 
-import com.xinto.mauth.core.otp.generator.OtpGenerator
-import com.xinto.mauth.core.otp.model.OtpType
-import com.xinto.mauth.core.otp.parser.OtpUriParser
-import com.xinto.mauth.core.otp.parser.OtpUriParserResult
-import com.xinto.mauth.core.otp.transformer.KeyTransformer
+import com.xinto.mauth.core.otp.generateHotp
+import com.xinto.mauth.core.otp.generateTotp
+import com.xinto.mauth.core.otp.OtpType
+import com.xinto.mauth.core.otp.decodeOtpSecret
 import com.xinto.mauth.db.dao.account.AccountsDao
 import com.xinto.mauth.db.dao.rtdata.RtdataDao
 import com.xinto.mauth.domain.otp.model.DomainOtpRealtimeData
@@ -21,10 +20,7 @@ import kotlin.time.Duration.Companion.seconds
 
 class OtpRepository(
     private val accountsDao: AccountsDao,
-    private val rtdataDao: RtdataDao,
-    private val otpGenerator: OtpGenerator,
-    private val otpKeyTransformer: KeyTransformer,
-    private val otpUriParser: OtpUriParser
+    private val rtdataDao: RtdataDao
 ) {
 
     fun getOtpRealtimeData(): Flow<Map<UUID, DomainOtpRealtimeData>> {
@@ -59,7 +55,7 @@ class OtpRepository(
         counters: Map<UUID, Int>
     ) {
         val secretBytes = specs.associate { spec ->
-            spec.id to otpKeyTransformer.transformToBytes(spec.secret)
+            spec.id to spec.secret.decodeOtpSecret()
         }
 
         val (hotpAccounts, totpAccounts) = specs.partition { it.type == OtpType.HOTP }
@@ -68,7 +64,7 @@ class OtpRepository(
             for (account in hotpAccounts) {
                 val count = counters[account.id] ?: continue
                 put(account.id, DomainOtpRealtimeData.Hotp(
-                    code = otpGenerator.generateHotp(
+                    code = generateHotp(
                         secret = secretBytes[account.id]!!,
                         counter = count.toLong(),
                         digits = account.digits,
@@ -87,7 +83,7 @@ class OtpRepository(
                     val period = account.period.coerceAtLeast(1)
                     val diff = seconds % period
                     put(account.id, DomainOtpRealtimeData.Totp(
-                        code = otpGenerator.generateTotp(
+                        code = generateTotp(
                             secret = secretBytes[account.id]!!,
                             interval = period.toLong(),
                             seconds = seconds,
@@ -102,9 +98,5 @@ class OtpRepository(
             emit(data)
             delay(1.seconds)
         }
-    }
-
-    fun parseUri(uri: String): OtpUriParserResult {
-        return otpUriParser.parseOtpUri(uri)
     }
 }

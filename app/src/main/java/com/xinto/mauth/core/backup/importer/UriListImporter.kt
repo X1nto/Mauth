@@ -3,10 +3,10 @@ package com.xinto.mauth.core.backup.importer
 import androidx.core.net.toUri
 import com.xinto.mauth.core.backup.model.toBackupAccount
 import com.xinto.mauth.core.backup.model.BackupAccount
-import com.xinto.mauth.core.otp.parser.OtpUriParser
-import com.xinto.mauth.core.otp.parser.OtpUriParserResult
+import com.xinto.mauth.core.otp.OtpUriParserResult
+import com.xinto.mauth.core.otp.parseOtpUri
 
-class UriListImporter(private val otpUriParser: OtpUriParser) : AccountImporter {
+class UriListImporter : AccountImporter {
 
     override val source = ImportSource.UriList
 
@@ -24,7 +24,7 @@ class UriListImporter(private val otpUriParser: OtpUriParser) : AccountImporter 
                 continue
             }
 
-            when (val result = otpUriParser.parseOtpUri(line)) {
+            when (val result = line.parseOtpUri()) {
                 is OtpUriParserResult.Success -> {
                     accounts.add(result.data.toBackupAccount())
                 }

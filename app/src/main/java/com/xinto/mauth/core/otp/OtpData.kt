@@ -1,4 +1,4 @@
-package com.xinto.mauth.core.otp.model
+package com.xinto.mauth.core.otp
 
 data class OtpData(
     val label: String,

@@ -6,11 +6,9 @@ import com.xinto.mauth.core.backup.model.BackupOtpType
 import com.xinto.mauth.core.backup.schema.FreeOtpBackup
 import com.xinto.mauth.core.backup.schema.FreeOtpPlusSchema
 import com.xinto.mauth.core.backup.schema.FreeOtpToken
-import com.xinto.mauth.core.otp.transformer.KeyTransformer
+import com.xinto.mauth.core.otp.decodeOtpSecret
 
-class FreeOtpPlusExporter(
-    private val keyTransformer: KeyTransformer
-) : BackupExporter {
+class FreeOtpPlusExporter : BackupExporter {
 
     override fun export(contents: BackupData, password: CharArray?): String {
         val groupNames = contents.groups.associate { it.id to it.name }
@@ -32,7 +30,7 @@ class FreeOtpPlusExporter(
                 BackupOtpType.HOTP -> "HOTP"
             },
             algo = algorithm.name,
-            secret = keyTransformer.transformToBytes(secret).map { it.toInt() },
+            secret = secret.decodeOtpSecret().map { it.toInt() },
             digits = digits,
             counter = counter ?: 0,
             period = period ?: 30,

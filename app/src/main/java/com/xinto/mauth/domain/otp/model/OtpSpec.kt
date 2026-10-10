@@ -1,7 +1,7 @@
 package com.xinto.mauth.domain.otp.model
 
-import com.xinto.mauth.core.otp.model.OtpDigest
-import com.xinto.mauth.core.otp.model.OtpType
+import com.xinto.mauth.core.otp.OtpDigest
+import com.xinto.mauth.core.otp.OtpType
 import java.util.UUID
 
 data class OtpSpec(

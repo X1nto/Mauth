@@ -16,14 +16,6 @@ import com.xinto.mauth.core.backup.importer.ProtonImporter
 import com.xinto.mauth.core.backup.importer.StratumImporter
 import com.xinto.mauth.core.backup.importer.TwoFasImporter
 import com.xinto.mauth.core.backup.importer.UriListImporter
-import com.xinto.mauth.core.otp.exporter.DefaultOtpExporter
-import com.xinto.mauth.core.otp.exporter.OtpExporter
-import com.xinto.mauth.core.otp.generator.DefaultOtpGenerator
-import com.xinto.mauth.core.otp.generator.OtpGenerator
-import com.xinto.mauth.core.otp.parser.DefaultOtpUriParser
-import com.xinto.mauth.core.otp.parser.OtpUriParser
-import com.xinto.mauth.core.otp.transformer.DefaultKeyTransformer
-import com.xinto.mauth.core.otp.transformer.KeyTransformer
 import com.xinto.mauth.db.AccountDatabase
 import com.xinto.mauth.domain.AuthRepository
 import com.xinto.mauth.domain.QrRepository
@@ -50,17 +42,11 @@ import com.xinto.mauth.ui.screen.theme.ThemeViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
 import org.koin.dsl.module
 
 object MauthDI {
 
     val CoreModule = module {
-        singleOf(::DefaultOtpGenerator) bind OtpGenerator::class
-        singleOf(::DefaultOtpUriParser) bind OtpUriParser::class
-        singleOf(::DefaultKeyTransformer) bind KeyTransformer::class
-        singleOf(::DefaultOtpExporter) bind OtpExporter::class
-
         singleOf(::BackupCrypto)
         singleOf(::MauthExporter)
         singleOf(::AegisExporter)
@@ -125,7 +111,7 @@ object MauthDI {
         singleOf(::SettingsRepository)
         singleOf(::AuthRepository)
         singleOf(::GroupRepository)
-        single { BackupRepository(androidContext(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+        single { BackupRepository(androidContext(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
     }
 
     val UiModule = module {

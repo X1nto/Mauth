@@ -3,8 +3,8 @@ package com.xinto.mauth.domain.account.model
 import android.net.Uri
 import android.os.Parcelable
 import androidx.compose.runtime.Immutable
-import com.xinto.mauth.core.otp.model.OtpDigest
-import com.xinto.mauth.core.otp.model.OtpType
+import com.xinto.mauth.core.otp.OtpDigest
+import com.xinto.mauth.core.otp.OtpType
 import kotlinx.parcelize.Parcelize
 import java.util.UUID
 

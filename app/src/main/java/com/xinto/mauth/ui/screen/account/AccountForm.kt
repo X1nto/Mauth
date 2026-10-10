@@ -8,7 +8,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.runtime.Stable
 import com.xinto.mauth.R
-import com.xinto.mauth.core.otp.model.OtpType
+import com.xinto.mauth.core.otp.OtpType
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.domain.group.model.DomainGroup
 import com.xinto.mauth.ui.component.form.ComboBoxFormField

@@ -5,15 +5,14 @@ import com.xinto.mauth.core.backup.crypto.BackupCrypto
 import com.xinto.mauth.core.backup.model.toBackupAccount
 import com.xinto.mauth.core.backup.model.BackupAccount
 import com.xinto.mauth.core.backup.model.BackupOtpType
-import com.xinto.mauth.core.otp.parser.OtpUriParser
-import com.xinto.mauth.core.otp.parser.OtpUriParserResult
+import com.xinto.mauth.core.otp.OtpUriParserResult
+import com.xinto.mauth.core.otp.parseOtpUri
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.util.UUID
 import kotlin.io.encoding.Base64
 
 class BitwardenImporter(
-    private val otpUriParser: OtpUriParser,
     private val crypto: BackupCrypto
 ) : AccountImporter {
 
@@ -153,7 +152,7 @@ class BitwardenImporter(
                 continue
 
             if (totp.startsWith("otpauth", ignoreCase = true)) {
-                when (val result = otpUriParser.parseOtpUri(totp)) {
+                when (val result = totp.parseOtpUri()) {
                     is OtpUriParserResult.Success -> {
                         accounts.add(result.data.toBackupAccount())
                     }
