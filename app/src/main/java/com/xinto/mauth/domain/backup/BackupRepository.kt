@@ -4,8 +4,10 @@ import android.content.Context
 import android.net.Uri
 import androidx.room.withTransaction
 import com.xinto.mauth.core.backup.BackupFormat
+import com.xinto.mauth.core.backup.GoogleAuthenticatorBackup
 import com.xinto.mauth.core.backup.ImportFailure
 import com.xinto.mauth.core.backup.ImportResult
+import com.xinto.mauth.core.backup.RejectedEntry
 import com.xinto.mauth.core.backup.exporter
 import com.xinto.mauth.core.backup.BackupAccount
 import com.xinto.mauth.core.backup.BackupData
@@ -69,6 +71,12 @@ class BackupRepository(
         }
     }
 
+    suspend fun exportGoogleAuthenticator(accountIds: List<UUID>): List<String> {
+        return withContext(Dispatchers.IO) {
+            GoogleAuthenticatorBackup.export(readContents(accountIds))
+        }
+    }
+
     suspend fun import(uri: Uri, source: BackupFormat, password: CharArray?): ImportOutcome {
         return withContext(Dispatchers.IO) {
             val content = try {
@@ -94,6 +102,12 @@ class BackupRepository(
             } finally {
                 password?.fill('\u0000')
             }
+        }
+    }
+
+    suspend fun import(accounts: List<BackupAccount>, rejected: List<RejectedEntry>): ImportOutcome.Parsed {
+        return withContext(Dispatchers.IO) {
+            toCandidates(source = null, result = ImportResult.Success(accounts, rejected = rejected))
         }
     }
 
@@ -131,7 +145,10 @@ class BackupRepository(
     }
 
     private suspend fun readContents(accountIds: List<UUID>): BackupData {
-        val accounts = accountsDao.getAll().filter { it.id in accountIds }
+        val order = accountIds.withIndex().associate { it.value to it.index }
+        val accounts = accountsDao.getAll()
+            .filter { it.id in order }
+            .sortedBy { order.getValue(it.id) }
         val counters = rtdataDao.getAll().associate { it.accountId to it.count }
         val groups = groupsDao.getAll()
 
@@ -145,7 +162,7 @@ class BackupRepository(
         )
     }
 
-    private suspend fun toCandidates(source: BackupFormat, result: ImportResult.Success): ImportOutcome {
+    private suspend fun toCandidates(source: BackupFormat?, result: ImportResult.Success): ImportOutcome.Parsed {
         val existingKeys = accountsDao.getAll()
             .map { dedupKeyOf(it.issuer, it.label, it.secret) }
             .toSet()

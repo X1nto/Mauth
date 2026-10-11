@@ -10,7 +10,7 @@ import com.xinto.mauth.domain.backup.model.DomainRejectedEntry
 sealed interface ImportOutcome {
 
     data class Parsed(
-        val source: BackupFormat,
+        val source: BackupFormat?,
         val candidates: List<DomainImportCandidate>,
         val rejected: List<DomainRejectedEntry>
     ) : ImportOutcome

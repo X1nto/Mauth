@@ -265,6 +265,15 @@ class MainActivity : FragmentActivity() {
                                     onBack = dropUnlessResumed { navigator.pop() },
                                     onScan = dropUnlessResumed { accountInfo ->
                                         navigator.replaceLast(MauthDestination.AddAccount(accountInfo))
+                                    },
+                                    onScanBatch = dropUnlessResumed { outcome ->
+                                        navigator.replaceLast(
+                                            MauthDestination.ImportReview(
+                                                source = outcome.source,
+                                                candidates = outcome.candidates,
+                                                rejected = outcome.rejected
+                                            )
+                                        )
                                     }
                                 )
                             }

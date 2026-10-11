@@ -1,6 +1,5 @@
 package com.xinto.mauth.domain.account
 
-import com.xinto.mauth.core.otp.toMigrationUris
 import com.xinto.mauth.core.otp.toOtpUri
 import com.xinto.mauth.core.otp.OtpData
 import com.xinto.mauth.core.otp.OtpType
@@ -182,10 +181,6 @@ class AccountRepository(
                 )
             }
         }
-    }
-
-    suspend fun List<DomainAccount>.toBatchOtpUrl(): List<String> {
-        return this.map { it.toOtpData() }.toMigrationUris()
     }
 
     suspend fun DomainAccount.toOtpData(): OtpData {

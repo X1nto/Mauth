@@ -49,6 +49,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.xinto.mauth.R
 import com.xinto.mauth.core.camera.QrCodeAnalyzer
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
+import com.xinto.mauth.domain.backup.ImportOutcome
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
 import com.xinto.mauth.ui.preview.Screenshot
 import com.xinto.mauth.ui.theme.MauthTheme
@@ -60,6 +61,7 @@ import java.util.concurrent.Executors
 fun QrScanScreen(
     onBack: () -> Unit,
     onScan: (DomainAccountInfo) -> Unit,
+    onScanBatch: (ImportOutcome.Parsed) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -70,10 +72,9 @@ fun QrScanScreen(
     val scanError by viewModel.scanError.collectAsStateWithLifecycle()
     LaunchedEffect(viewModel) {
         viewModel.parseEvent.collect {
-            if (it != null) {
-                onScan(it)
-            } else {
-                onBack()
+            when (it) {
+                is QrScanEvent.Single -> onScan(it.info)
+                is QrScanEvent.Batch -> onScanBatch(it.data)
             }
         }
     }

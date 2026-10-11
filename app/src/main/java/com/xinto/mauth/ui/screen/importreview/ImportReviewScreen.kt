@@ -77,7 +77,7 @@ import java.util.UUID
 
 @Composable
 fun ImportReviewScreen(
-    source: BackupFormat,
+    source: BackupFormat?,
     candidates: List<DomainImportCandidate>,
     rejected: List<DomainRejectedEntry>,
     onBack: () -> Unit,
@@ -119,7 +119,7 @@ fun ImportReviewScreen(
 @Composable
 fun ImportReviewScreen(
     state: ImportReviewState,
-    source: BackupFormat,
+    source: BackupFormat?,
     accounts: ImmutableList<DomainAccount>,
     realtimeData: SnapshotStateMap<UUID, DomainOtpRealtimeData>,
     selected: SnapshotStateList<UUID>,
@@ -290,7 +290,7 @@ private fun ImportFailedDialog(
 
 @Composable
 private fun ImportHintCard(
-    source: BackupFormat,
+    source: BackupFormat?,
     modifier: Modifier = Modifier
 ) {
     Surface(
@@ -310,7 +310,7 @@ private fun ImportHintCard(
                 contentDescription = null
             )
             Text(
-                text = if (source in BackupFormat.appFormats) {
+                text = if (source != null && source in BackupFormat.appFormats) {
                     stringResource(R.string.importreview_verify_hint_app, stringResource(source.titleRes))
                 } else {
                     stringResource(R.string.importreview_verify_hint)

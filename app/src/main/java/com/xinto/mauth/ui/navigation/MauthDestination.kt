@@ -60,7 +60,7 @@ sealed interface MauthDestination : Parcelable {
 
     @Parcelize
     data class ImportReview(
-        val source: BackupFormat,
+        val source: BackupFormat?,
         val candidates: List<DomainImportCandidate>,
         val rejected: List<DomainRejectedEntry>
     ) : MauthDestination

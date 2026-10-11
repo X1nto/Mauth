@@ -66,11 +66,6 @@ object ProtonBackup : BackupImporter {
                 is OtpUriParserResult.Success -> {
                     accounts.add(result.data.toBackupAccount())
                 }
-                is OtpUriParserResult.Multipart -> {
-                    result.data.forEach {
-                        accounts.add(it.toBackupAccount())
-                    }
-                }
                 is OtpUriParserResult.Failure -> {
                     rejected.add(RejectedEntry(name, "", ImportFailure.Malformed))
                 }
