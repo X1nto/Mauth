@@ -48,7 +48,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
-import com.xinto.mauth.core.backup.model.BackupFormat
+import com.xinto.mauth.core.backup.BackupFormat
+import com.xinto.mauth.core.backup.exporter
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
 import com.xinto.mauth.ui.preview.Screenshot
 import com.xinto.mauth.ui.theme.MauthTheme
@@ -71,7 +72,8 @@ fun FileExportDialog(
 
     var pendingPassword by rememberSaveable { mutableStateOf<CharSequence?>(null) }
 
-    val destinationLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(format.mimeType.value)) { uri ->
+    val exporter = checkNotNull(format.exporter) { "$format can not be exported" }
+    val destinationLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(exporter.mimeType.value)) { uri ->
         if (uri != null) {
             viewModel.export(
                 format = format,
@@ -94,7 +96,7 @@ fun FileExportDialog(
         }
     }
 
-    if (format.supportsEncryption) {
+    if (exporter.supportsEncryption) {
         FileExportDialog(
             modifier = modifier,
             state = state,
@@ -102,12 +104,12 @@ fun FileExportDialog(
             onDismissRequest = onDismissRequest,
             onExport = {
                 pendingPassword = it
-                destinationLauncher.launch("mauth-export.${format.mimeType.extension}")
+                destinationLauncher.launch("mauth-export.${exporter.mimeType.extension}")
             }
         )
     } else {
         LaunchedEffect(Unit) {
-            destinationLauncher.launch("mauth-export.${format.mimeType.extension}")
+            destinationLauncher.launch("mauth-export.${exporter.mimeType.extension}")
         }
     }
 
@@ -131,10 +133,11 @@ private fun FileExportDialog(
         onDismissRequest = onDismissRequest,
         title = {
             val titleRes = when (format) {
-                BackupFormat.MauthJson -> R.string.export_file_title_mauth
-                BackupFormat.AegisVault -> R.string.export_file_title_aegis
-                BackupFormat.FreeOtpPlusJson -> R.string.export_file_title_freeotpplus
+                BackupFormat.Mauth -> R.string.export_file_title_mauth
+                BackupFormat.Aegis -> R.string.export_file_title_aegis
+                BackupFormat.FreeOtpPlus -> R.string.export_file_title_freeotpplus
                 BackupFormat.UriList -> R.string.export_file_title_otpauth
+                else -> error("$format can not be exported")
             }
             Text(stringResource(titleRes))
         },
@@ -228,7 +231,7 @@ private fun FileExportDialog_Idle_Preview() {
         ) {
             FileExportDialog(
                 state = FileExportState.Idle,
-                format = BackupFormat.MauthJson,
+                format = BackupFormat.Mauth,
                 onExport = {},
                 onDismissRequest = {}
             )
@@ -247,7 +250,7 @@ private fun FileExportDialog_Working_Preview() {
         ) {
             FileExportDialog(
                 state = FileExportState.Working,
-                format = BackupFormat.MauthJson,
+                format = BackupFormat.Mauth,
                 onExport = {},
                 onDismissRequest = {}
             )

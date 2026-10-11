@@ -1,18 +1,14 @@
-package com.xinto.mauth.core.backup.importer
+package com.xinto.mauth.core.backup
 
-import com.xinto.mauth.core.backup.crypto.BackupCrypto
-import com.xinto.mauth.core.backup.model.BackupAccount
-import com.xinto.mauth.core.backup.model.BackupOtpAlgorithm
-import com.xinto.mauth.core.backup.model.BackupOtpType
 import kotlin.io.encoding.Base64
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.util.UUID
 import javax.crypto.AEADBadTagException
 
-class TwoFasImporter(private val crypto: BackupCrypto) : AccountImporter {
+object TwoFasBackup : BackupImporter {
 
-    override val source = ImportSource.TwoFas
+    private const val PBKDF2_ITERATIONS = 10_000
 
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -24,17 +20,17 @@ class TwoFasImporter(private val crypto: BackupCrypto) : AccountImporter {
         return trimmed.contains("\"services\"") || trimmed.contains("\"servicesEncrypted\"")
     }
 
-    override fun parse(content: String, password: CharArray?): ImportResult {
-        val backup = json.decodeFromString<TwoFasBackup>(content)
+    override fun import(content: String, password: CharArray?): ImportResult {
+        val backup = json.decodeFromString<TwoFasBackupFile>(content)
 
         val services = when {
             !backup.services.isNullOrEmpty() -> backup.services
             backup.servicesEncrypted != null -> {
                 if (password == null)
-                    return ImportResult.NeedsPassword(source)
+                    return ImportResult.NeedsPassword
 
                 val decrypted = decryptServices(backup.servicesEncrypted, password)
-                    ?: return ImportResult.Failure(source, ImportFailure.WrongPassword)
+                    ?: return ImportResult.Failure(ImportFailure.WrongPassword)
 
                 try {
                     json.decodeFromString<List<TwoFasService>>(decrypted.toString(Charsets.UTF_8))
@@ -78,7 +74,7 @@ class TwoFasImporter(private val crypto: BackupCrypto) : AccountImporter {
             )
         }
 
-        return ImportResult.Success(source = source, accounts = accounts, rejected = rejected)
+        return ImportResult.Success(accounts = accounts, rejected = rejected)
     }
 
     private fun decryptServices(payload: String, password: CharArray): ByteArray? {
@@ -89,7 +85,7 @@ class TwoFasImporter(private val crypto: BackupCrypto) : AccountImporter {
         val ciphertext = Base64.Mime.decode(parts[0])
         val salt = Base64.Mime.decode(parts[1])
         val nonce = Base64.Mime.decode(parts[2])
-        val key = crypto.derivePbkdf2(
+        val key = BackupCrypto.derivePbkdf2(
             password = password,
             salt = salt,
             iterations = PBKDF2_ITERATIONS,
@@ -97,7 +93,7 @@ class TwoFasImporter(private val crypto: BackupCrypto) : AccountImporter {
         )
 
         return try {
-            crypto.decryptRaw(ciphertext, nonce, key)
+            BackupCrypto.decryptRaw(ciphertext, nonce, key)
         } catch (e: AEADBadTagException) {
             null
         } finally {
@@ -106,7 +102,7 @@ class TwoFasImporter(private val crypto: BackupCrypto) : AccountImporter {
     }
 
     @Serializable
-    private data class TwoFasBackup(
+    private data class TwoFasBackupFile(
         val schemaVersion: Int = 0,
         val services: List<TwoFasService>? = null,
         val servicesEncrypted: String? = null
@@ -130,8 +126,4 @@ class TwoFasImporter(private val crypto: BackupCrypto) : AccountImporter {
         val algorithm: String? = null,
         val tokenType: String? = null
     )
-
-    private companion object {
-        const val PBKDF2_ITERATIONS = 10_000
-    }
 }

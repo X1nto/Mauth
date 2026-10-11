@@ -49,7 +49,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
-import com.xinto.mauth.core.backup.model.BackupFormat
+import com.xinto.mauth.core.backup.BackupFormat
+import com.xinto.mauth.core.backup.exporter
 import com.xinto.mauth.domain.account.model.DomainExportAccount
 import com.xinto.mauth.ui.component.UriImage
 import com.xinto.mauth.ui.component.adaptivePainterResource
@@ -106,9 +107,9 @@ fun ExportScreen(
         snackbarHostState = snackbarHostState,
         onBackNavigate = onBackNavigate,
         onGoogleAuthQr = { showGoogleAuthenticatorQrDialog = true },
-        onMauthExport = { batchExportFormat = BackupFormat.MauthJson },
-        onAegisExport = { batchExportFormat = BackupFormat.AegisVault },
-        onFreeOtpPlusExport = { batchExportFormat = BackupFormat.FreeOtpPlusJson },
+        onMauthExport = { batchExportFormat = BackupFormat.Mauth },
+        onAegisExport = { batchExportFormat = BackupFormat.Aegis },
+        onFreeOtpPlusExport = { batchExportFormat = BackupFormat.FreeOtpPlus },
         onUriListExport = { batchExportFormat = BackupFormat.UriList },
         onAccountExport = { exportAccount = it }
     )
@@ -221,7 +222,7 @@ fun ExportScreen(
                                     contentDescription = null
                                 )
                             },
-                            supportingContent = { Text(BackupFormat.MauthJson.detail()) },
+                            supportingContent = { Text(BackupFormat.Mauth.detail()) },
                             shapes = ListItemDefaults.segmentedShapes(index = 0, count = 3),
                             colors = ListItemDefaults.colors(
                                 containerColor = MaterialTheme.colorScheme.surfaceContainer
@@ -244,7 +245,7 @@ fun ExportScreen(
                                     contentDescription = null
                                 )
                             },
-                            supportingContent = { Text(BackupFormat.AegisVault.detail()) },
+                            supportingContent = { Text(BackupFormat.Aegis.detail()) },
                             shapes = ListItemDefaults.segmentedShapes(index = 1, count = 3),
                             colors = ListItemDefaults.colors(
                                 containerColor = MaterialTheme.colorScheme.surfaceContainer
@@ -267,7 +268,7 @@ fun ExportScreen(
                                     contentDescription = null
                                 )
                             },
-                            supportingContent = { Text(BackupFormat.FreeOtpPlusJson.detail()) },
+                            supportingContent = { Text(BackupFormat.FreeOtpPlus.detail()) },
                             shapes = ListItemDefaults.segmentedShapes(index = 2, count = 3),
                             colors = ListItemDefaults.colors(
                                 containerColor = MaterialTheme.colorScheme.surfaceContainer
@@ -374,8 +375,9 @@ fun ExportScreen(
 
 @Composable
 private fun BackupFormat.detail(): String {
-    val encryption = if (supportsEncryption) stringResource(R.string.backup_encryption_both) else null
-    return listOfNotNull(mimeType.label, encryption).joinToString(" · ")
+    val exporter = checkNotNull(exporter)
+    val encryption = if (exporter.supportsEncryption) stringResource(R.string.backup_encryption_both) else null
+    return listOfNotNull(exporter.mimeType.label, encryption).joinToString(" · ")
 }
 
 @Composable

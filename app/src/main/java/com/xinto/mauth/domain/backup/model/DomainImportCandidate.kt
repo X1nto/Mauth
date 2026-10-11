@@ -2,7 +2,7 @@ package com.xinto.mauth.domain.backup.model
 
 import android.os.Parcelable
 import androidx.compose.runtime.Immutable
-import com.xinto.mauth.core.backup.importer.ImportFailure
+import com.xinto.mauth.core.backup.ImportFailure
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.domain.account.model.monogramOf
 import kotlinx.parcelize.Parcelize

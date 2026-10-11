@@ -1,17 +1,23 @@
-package com.xinto.mauth.core.backup.importer
+package com.xinto.mauth.core.backup
 
-import com.xinto.mauth.core.backup.model.BackupAccount
-import com.xinto.mauth.core.backup.model.BackupGroup
-import com.xinto.mauth.core.backup.model.BackupOtpAlgorithm
-import com.xinto.mauth.core.backup.model.BackupOtpType
-import com.xinto.mauth.core.backup.schema.FreeOtpBackup
-import com.xinto.mauth.core.backup.schema.FreeOtpPlusSchema
+import com.xinto.mauth.core.otp.decodeOtpSecret
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import org.apache.commons.codec.binary.Base32
 import java.util.UUID
 
-class FreeOtpPlusImporter : AccountImporter {
+object FreeOtpPlusBackup : BackupImporter, BackupExporter {
 
-    override val source = ImportSource.FreeOtpPlus
+    private val json = Json {
+        ignoreUnknownKeys = true
+        encodeDefaults = true
+        explicitNulls = false
+    }
+
+    override val mimeType = MimeType.Json
+
+    override val supportsEncryption = false
 
     override fun sniff(content: String): Boolean {
         val trimmed = content.trimStart()
@@ -21,8 +27,8 @@ class FreeOtpPlusImporter : AccountImporter {
         return trimmed.contains("\"tokens\"")
     }
 
-    override fun parse(content: String, password: CharArray?): ImportResult {
-        val backup = FreeOtpPlusSchema.json.decodeFromString<FreeOtpBackup>(content)
+    override fun import(content: String, password: CharArray?): ImportResult {
+        val backup = json.decodeFromString<FreeOtpBackup>(content)
 
         val accounts = mutableListOf<BackupAccount>()
         val rejected = mutableListOf<RejectedEntry>()
@@ -66,13 +72,23 @@ class FreeOtpPlusImporter : AccountImporter {
         }
 
         if (accounts.isEmpty() && rejected.isEmpty())
-            return ImportResult.Failure(source, ImportFailure.Unrecognized)
+            return ImportResult.Failure(ImportFailure.Unrecognized)
 
         return ImportResult.Success(
-            source = source,
             accounts = accounts,
             groups = categories.map { BackupGroup(id = it, name = it) },
             rejected = rejected
+        )
+    }
+
+    override fun export(contents: BackupData, password: CharArray?): String {
+        val groupNames = contents.groups.associate { it.id to it.name }
+
+        return json.encodeToString(
+            FreeOtpBackup(
+                tokens = contents.accounts.map { it.toToken(groupNames[it.group]) },
+                tokenOrder = contents.accounts.map { it.tokenId }
+            )
         )
     }
 
@@ -82,4 +98,46 @@ class FreeOtpPlusImporter : AccountImporter {
         }
         return Base32().encodeAsString(bytes).trimEnd('=')
     }
+
+    private fun BackupAccount.toToken(group: String?): FreeOtpToken {
+        return FreeOtpToken(
+            issuerExt = issuer,
+            label = name,
+            type = when (type) {
+                BackupOtpType.TOTP -> "TOTP"
+                BackupOtpType.HOTP -> "HOTP"
+            },
+            algo = algorithm.name,
+            secret = secret.decodeOtpSecret().map { it.toInt() },
+            digits = digits,
+            counter = counter ?: 0,
+            period = period ?: 30,
+            category = group
+        )
+    }
+
+    private val BackupAccount.tokenId: String
+        get() = if (issuer.isNotBlank()) "$issuer:$name" else name
 }
+
+@Serializable
+private data class FreeOtpBackup(
+    val tokens: List<FreeOtpToken> = emptyList(),
+    val tokenOrder: List<String> = emptyList()
+)
+
+@Serializable
+private data class FreeOtpToken(
+    val secret: List<Int>? = null,
+    @SerialName("secret_base32")
+    val secretBase32: String? = null,
+    val algo: String? = null,
+    val digits: Int? = null,
+    val counter: Int? = null,
+    val period: Int? = null,
+    val issuerExt: String? = null,
+    val issuerInt: String? = null,
+    val label: String? = null,
+    val type: String? = null,
+    val category: String? = null
+)

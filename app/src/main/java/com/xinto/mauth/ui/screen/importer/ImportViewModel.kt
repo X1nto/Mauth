@@ -3,8 +3,8 @@ package com.xinto.mauth.ui.screen.importer
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.xinto.mauth.core.backup.importer.ImportFailure
-import com.xinto.mauth.core.backup.importer.ImportSource
+import com.xinto.mauth.core.backup.ImportFailure
+import com.xinto.mauth.core.backup.BackupFormat
 import com.xinto.mauth.domain.backup.BackupRepository
 import com.xinto.mauth.domain.backup.ImportOutcome
 import kotlinx.coroutines.channels.BufferOverflow
@@ -28,9 +28,9 @@ class ImportViewModel(
     val parsed = _parsed.asSharedFlow()
 
     private var pending: Uri? = null
-    private var pendingSource: ImportSource? = null
+    private var pendingSource: BackupFormat? = null
 
-    fun read(uri: Uri, source: ImportSource, password: CharArray? = null) {
+    fun read(uri: Uri, source: BackupFormat, password: CharArray? = null) {
         viewModelScope.launch {
             _attempt.value = ImportAttempt.Working
             when (val outcome = backupRepository.import(uri, source, password)) {
@@ -80,7 +80,7 @@ class ImportViewModel(
         read(uri, source, password)
     }
 
-    fun retryAs(source: ImportSource) {
+    fun retryAs(source: BackupFormat) {
         val uri = pending ?: return
         read(uri, source)
     }

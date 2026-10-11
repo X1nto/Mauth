@@ -1,4 +1,4 @@
-package com.xinto.mauth.core.backup.crypto
+package com.xinto.mauth.core.backup
 
 import org.bouncycastle.crypto.PBEParametersGenerator
 import org.bouncycastle.crypto.digests.SHA1Digest
@@ -18,7 +18,18 @@ import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
-class BackupCrypto {
+object BackupCrypto {
+
+    private const val KEY_LENGTH = 32
+    private const val SALT_LENGTH = 16
+    private const val NONCE_LENGTH = 12
+    private const val TAG_LENGTH_BITS = 128
+
+    private const val ARGON2_MEMORY_KIB = 19456
+    private const val ARGON2_ITERATIONS = 2
+    private const val ARGON2_PARALLELISM = 1
+
+    private val AAD = "mauth-backup:1".toByteArray(Charsets.UTF_8)
 
     private val random = SecureRandom()
 
@@ -213,17 +224,12 @@ class BackupCrypto {
         SHA1,
         SHA256
     }
-
-   private companion object {
-        const val KEY_LENGTH = 32
-        const val SALT_LENGTH = 16
-        const val NONCE_LENGTH = 12
-        const val TAG_LENGTH_BITS = 128
-
-        const val ARGON2_MEMORY_KIB = 19456
-        const val ARGON2_ITERATIONS = 2
-        const val ARGON2_PARALLELISM = 1
-
-        val AAD = "mauth-backup:1".toByteArray(Charsets.UTF_8)
-    }
 }
+
+class Argon2Params(
+    val memoryKib: Int,
+    val iterations: Int,
+    val parallelism: Int,
+    val salt: ByteArray,
+    val nonce: ByteArray,
+)

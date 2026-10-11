@@ -1,10 +1,6 @@
-package com.xinto.mauth.core.backup.importer
+package com.xinto.mauth.core.backup
 
 import com.jsoizo.kotlincsv.csvReader
-import com.xinto.mauth.core.backup.crypto.BackupCrypto
-import com.xinto.mauth.core.backup.model.toBackupAccount
-import com.xinto.mauth.core.backup.model.BackupAccount
-import com.xinto.mauth.core.backup.model.BackupOtpType
 import com.xinto.mauth.core.otp.OtpUriParserResult
 import com.xinto.mauth.core.otp.parseOtpUri
 import kotlinx.serialization.Serializable
@@ -12,11 +8,18 @@ import kotlinx.serialization.json.Json
 import java.util.UUID
 import kotlin.io.encoding.Base64
 
-class BitwardenImporter(
-    private val crypto: BackupCrypto
-) : AccountImporter {
+object BitwardenBackup : BackupImporter {
 
-    override val source = ImportSource.Bitwarden
+    private const val KDF_PBKDF2 = 0
+    private const val KDF_ARGON2ID = 1
+    private const val KEY_LENGTH = 32
+    private const val ENC_TYPE_AES_CBC_HMAC = "2"
+    private val INFO_ENC = "enc".toByteArray(Charsets.UTF_8)
+    private val INFO_MAC = "mac".toByteArray(Charsets.UTF_8)
+
+    private const val COLUMN_TOTP = "login_totp"
+    private const val COLUMN_NAME = "name"
+    private const val COLUMN_USERNAME = "login_username"
 
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -28,7 +31,7 @@ class BitwardenImporter(
         return trimmed.lineSequence().first().contains(COLUMN_TOTP)
     }
 
-    override fun parse(content: String, password: CharArray?): ImportResult {
+    override fun import(content: String, password: CharArray?): ImportResult {
         if (content.trimStart().startsWith("{"))
             return parseJson(content, password)
 
@@ -38,12 +41,12 @@ class BitwardenImporter(
     private fun parseCsv(content: String): ImportResult {
         val rows = csvReader().readAll(content)
         if (rows.isEmpty())
-            return ImportResult.Failure(source, ImportFailure.Unrecognized)
+            return ImportResult.Failure(ImportFailure.Unrecognized)
 
         val header = rows.first().map { it.trim().lowercase() }
         val totpIndex = header.indexOf(COLUMN_TOTP)
         if (totpIndex < 0)
-            return ImportResult.Failure(source, ImportFailure.Unrecognized)
+            return ImportResult.Failure(ImportFailure.Unrecognized)
 
         val nameIndex = header.indexOf(COLUMN_NAME)
         val usernameIndex = header.indexOf(COLUMN_USERNAME)
@@ -62,13 +65,13 @@ class BitwardenImporter(
         val header = json.decodeFromString<BitwardenHeader>(content)
         val decrypted = if (header.encrypted == true) {
             if (header.passwordProtected != true)
-                return ImportResult.Failure(source, ImportFailure.Unrecognized)
+                return ImportResult.Failure(ImportFailure.Unrecognized)
 
             if (password == null)
-                return ImportResult.NeedsPassword(source)
+                return ImportResult.NeedsPassword
 
             decrypt(header, password)
-                ?: return ImportResult.Failure(source, ImportFailure.WrongPassword)
+                ?: return ImportResult.Failure(ImportFailure.WrongPassword)
         } else {
             content
         }
@@ -101,7 +104,7 @@ class BitwardenImporter(
 
         val material = when (header.kdfType) {
             KDF_PBKDF2 -> {
-                crypto.derivePbkdf2(
+                BackupCrypto.derivePbkdf2(
                     password = password,
                     salt = salt,
                     iterations = iterations,
@@ -113,9 +116,9 @@ class BitwardenImporter(
                 val memory = header.kdfMemory ?: return null
                 val parallelism = header.kdfParallelism ?: return null
 
-                crypto.deriveArgon2id(
+                BackupCrypto.deriveArgon2id(
                     password = password,
-                    salt = crypto.sha256(salt),
+                    salt = BackupCrypto.sha256(salt),
                     memoryKib = memory * 1024,
                     iterations = iterations,
                     parallelism = parallelism
@@ -125,10 +128,10 @@ class BitwardenImporter(
             else -> return null
         }
 
-        val encKey = crypto.hkdfExpand(material, INFO_ENC, KEY_LENGTH)
-        val macKey = crypto.hkdfExpand(material, INFO_MAC, KEY_LENGTH)
+        val encKey = BackupCrypto.hkdfExpand(material, INFO_ENC, KEY_LENGTH)
+        val macKey = BackupCrypto.hkdfExpand(material, INFO_MAC, KEY_LENGTH)
         try {
-            return crypto.decryptCbcHmac(
+            return BackupCrypto.decryptCbcHmac(
                 iv = Base64.Mime.decode(parts[0]),
                 ciphertext = Base64.Mime.decode(parts[1]),
                 mac = Base64.Mime.decode(parts[2]),
@@ -180,9 +183,9 @@ class BitwardenImporter(
         }
 
         if (accounts.isEmpty() && rejected.isEmpty())
-            return ImportResult.Failure(source, ImportFailure.Unrecognized)
+            return ImportResult.Failure(ImportFailure.Unrecognized)
 
-        return ImportResult.Success(source, accounts, rejected = rejected)
+        return ImportResult.Success(accounts, rejected = rejected)
     }
 
     private data class BitwardenEntry(
@@ -220,17 +223,4 @@ class BitwardenImporter(
         val username: String? = null,
         val totp: String? = null
     )
-
-    private companion object {
-        const val KDF_PBKDF2 = 0
-        const val KDF_ARGON2ID = 1
-        const val KEY_LENGTH = 32
-        const val ENC_TYPE_AES_CBC_HMAC = "2"
-        val INFO_ENC = "enc".toByteArray(Charsets.UTF_8)
-        val INFO_MAC = "mac".toByteArray(Charsets.UTF_8)
-
-        const val COLUMN_TOTP = "login_totp"
-        const val COLUMN_NAME = "name"
-        const val COLUMN_USERNAME = "login_username"
-    }
 }

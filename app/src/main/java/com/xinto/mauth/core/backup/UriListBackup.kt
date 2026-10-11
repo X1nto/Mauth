@@ -1,20 +1,23 @@
-package com.xinto.mauth.core.backup.importer
+package com.xinto.mauth.core.backup
 
 import androidx.core.net.toUri
-import com.xinto.mauth.core.backup.model.toBackupAccount
-import com.xinto.mauth.core.backup.model.BackupAccount
 import com.xinto.mauth.core.otp.OtpUriParserResult
 import com.xinto.mauth.core.otp.parseOtpUri
+import com.xinto.mauth.core.otp.toOtpUri
 
-class UriListImporter : AccountImporter {
+object UriListBackup : BackupImporter, BackupExporter {
 
-    override val source = ImportSource.UriList
+    private const val BOM = "\uFEFF"
+
+    override val mimeType = MimeType.PlainText
+
+    override val supportsEncryption = false
 
     override fun sniff(content: String): Boolean {
         return lines(content).firstOrNull()?.isOtpUri() == true
     }
 
-    override fun parse(content: String, password: CharArray?): ImportResult {
+    override fun import(content: String, password: CharArray?): ImportResult {
         val accounts = mutableListOf<BackupAccount>()
         val rejected = mutableListOf<RejectedEntry>()
 
@@ -49,9 +52,15 @@ class UriListImporter : AccountImporter {
         }
 
         if (accounts.isEmpty() && rejected.isEmpty())
-            return ImportResult.Failure(source, ImportFailure.Unrecognized)
+            return ImportResult.Failure(ImportFailure.Unrecognized)
 
-        return ImportResult.Success(source = source, accounts = accounts, rejected = rejected)
+        return ImportResult.Success(accounts = accounts, rejected = rejected)
+    }
+
+    override fun export(contents: BackupData, password: CharArray?): String {
+        return contents.accounts.joinToString("\n") {
+            it.toOtpData().toOtpUri()
+        }
     }
 
     private fun lines(content: String): Sequence<String> {
@@ -63,9 +72,5 @@ class UriListImporter : AccountImporter {
 
     private fun String.isOtpUri(): Boolean {
         return startsWith("otpauth://", ignoreCase = true) || startsWith("otpauth-migration://", ignoreCase = true)
-    }
-
-    private companion object {
-        const val BOM = "\uFEFF"
     }
 }

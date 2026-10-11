@@ -1,4 +1,4 @@
-package com.xinto.mauth.core.backup.model
+package com.xinto.mauth.core.backup
 
 enum class MimeType(
     val value: String,

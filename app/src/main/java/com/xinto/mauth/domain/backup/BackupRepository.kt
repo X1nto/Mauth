@@ -3,22 +3,18 @@ package com.xinto.mauth.domain.backup
 import android.content.Context
 import android.net.Uri
 import androidx.room.withTransaction
-import com.xinto.mauth.core.backup.exporter.AegisExporter
-import com.xinto.mauth.core.backup.exporter.FreeOtpPlusExporter
-import com.xinto.mauth.core.backup.exporter.MauthExporter
-import com.xinto.mauth.core.backup.exporter.UriListExporter
-import com.xinto.mauth.core.backup.importer.ImportFailure
-import com.xinto.mauth.core.backup.importer.ImportResult
-import com.xinto.mauth.core.backup.importer.ImportSource
-import com.xinto.mauth.core.backup.importer.ImporterRegistry
-import com.xinto.mauth.core.backup.model.BackupAccount
-import com.xinto.mauth.core.backup.model.BackupData
-import com.xinto.mauth.core.backup.model.BackupFormat
-import com.xinto.mauth.core.backup.model.BackupGroup
-import com.xinto.mauth.core.backup.model.toBackupOtpAlgorithm
-import com.xinto.mauth.core.backup.model.toBackupOtpType
-import com.xinto.mauth.core.backup.model.toOtpDigest
-import com.xinto.mauth.core.backup.model.toOtpType
+import com.xinto.mauth.core.backup.BackupFormat
+import com.xinto.mauth.core.backup.ImportFailure
+import com.xinto.mauth.core.backup.ImportResult
+import com.xinto.mauth.core.backup.exporter
+import com.xinto.mauth.core.backup.BackupAccount
+import com.xinto.mauth.core.backup.BackupData
+import com.xinto.mauth.core.backup.BackupGroup
+import com.xinto.mauth.core.backup.import
+import com.xinto.mauth.core.backup.toBackupOtpAlgorithm
+import com.xinto.mauth.core.backup.toBackupOtpType
+import com.xinto.mauth.core.backup.toOtpDigest
+import com.xinto.mauth.core.backup.toOtpType
 import com.xinto.mauth.core.otp.OtpType
 import com.xinto.mauth.core.otp.decodeOtpSecret
 import com.xinto.mauth.db.AccountDatabase
@@ -40,12 +36,7 @@ class BackupRepository(
     private val database: AccountDatabase,
     private val accountsDao: AccountsDao,
     private val groupsDao: GroupsDao,
-    private val rtdataDao: RtdataDao,
-    private val mauthExporter: MauthExporter,
-    private val aegisExporter: AegisExporter,
-    private val freeOtpPlusExporter: FreeOtpPlusExporter,
-    private val uriListExporter: UriListExporter,
-    private val importerRegistry: ImporterRegistry
+    private val rtdataDao: RtdataDao
 ) {
     suspend fun export(
         format: BackupFormat,
@@ -53,7 +44,9 @@ class BackupRepository(
         password: CharArray?,
         accountIds: List<UUID>
     ) {
-        if (!format.supportsEncryption && password != null) {
+        val exporter = requireNotNull(format.exporter) { "$format can not be exported" }
+
+        if (!exporter.supportsEncryption && password != null) {
             throw IllegalArgumentException("$format does not support encryption")
         }
 
@@ -64,12 +57,7 @@ class BackupRepository(
         withContext(Dispatchers.IO) {
             val contents = readContents(accountIds)
             val serialized = try {
-                when (format) {
-                    BackupFormat.MauthJson -> mauthExporter.export(contents, password)
-                    BackupFormat.AegisVault -> aegisExporter.export(contents, password)
-                    BackupFormat.FreeOtpPlusJson -> freeOtpPlusExporter.export(contents, password)
-                    BackupFormat.UriList -> uriListExporter.export(contents, password)
-                }
+                exporter.export(contents, password)
             } finally {
                 password?.fill('\u0000')
             }
@@ -81,7 +69,7 @@ class BackupRepository(
         }
     }
 
-    suspend fun import(uri: Uri, source: ImportSource, password: CharArray?): ImportOutcome {
+    suspend fun import(uri: Uri, source: BackupFormat, password: CharArray?): ImportOutcome {
         return withContext(Dispatchers.IO) {
             val content = try {
                 context.contentResolver.openInputStream(uri)?.use {
@@ -97,11 +85,11 @@ class BackupRepository(
             }
 
             try {
-                when (val result = importerRegistry.parse(source, content, password)) {
-                    is ImportResult.NeedsPassword -> ImportOutcome.NeedsPassword(result.source)
-                    is ImportResult.WrongFormat -> ImportOutcome.WrongFormat(result.expected, result.actual)
-                    is ImportResult.Failure -> ImportOutcome.Failed(result.source, result.reason)
-                    is ImportResult.Success -> toCandidates(result)
+                when (val result = source.import(content, password)) {
+                    is ImportResult.NeedsPassword -> ImportOutcome.NeedsPassword(source)
+                    is ImportResult.WrongFormat -> ImportOutcome.WrongFormat(source, result.actual)
+                    is ImportResult.Failure -> ImportOutcome.Failed(source, result.reason)
+                    is ImportResult.Success -> toCandidates(source, result)
                 }
             } finally {
                 password?.fill('\u0000')
@@ -157,7 +145,7 @@ class BackupRepository(
         )
     }
 
-    private suspend fun toCandidates(result: ImportResult.Success): ImportOutcome {
+    private suspend fun toCandidates(source: BackupFormat, result: ImportResult.Success): ImportOutcome {
         val existingKeys = accountsDao.getAll()
             .map { dedupKeyOf(it.issuer, it.label, it.secret) }
             .toSet()
@@ -212,7 +200,7 @@ class BackupRepository(
         }
 
         return ImportOutcome.Parsed(
-            source = result.source,
+            source = source,
             candidates = candidates,
             rejected = rejected
         )

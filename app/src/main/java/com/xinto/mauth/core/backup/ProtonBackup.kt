@@ -1,8 +1,5 @@
-package com.xinto.mauth.core.backup.importer
+package com.xinto.mauth.core.backup
 
-import com.xinto.mauth.core.backup.crypto.BackupCrypto
-import com.xinto.mauth.core.backup.model.toBackupAccount
-import com.xinto.mauth.core.backup.model.BackupAccount
 import com.xinto.mauth.core.otp.OtpUriParserResult
 import com.xinto.mauth.core.otp.parseOtpUri
 import kotlinx.serialization.SerialName
@@ -11,11 +8,16 @@ import kotlinx.serialization.json.Json
 import javax.crypto.AEADBadTagException
 import kotlin.io.encoding.Base64
 
-class ProtonImporter(
-    private val crypto: BackupCrypto
-) : AccountImporter {
+object ProtonBackup : BackupImporter {
 
-    override val source = ImportSource.Proton
+    private const val SUPPORTED_VERSION = 1
+    private const val NONCE_LENGTH = 12
+
+    private const val ARGON2_MEMORY_KIB = 19 * 1024
+    private const val ARGON2_ITERATIONS = 2
+    private const val ARGON2_PARALLELISM = 1
+
+    private val AAD = "proton.authenticator.export.v1".toByteArray(Charsets.UTF_8)
 
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -32,17 +34,17 @@ class ProtonImporter(
                 (trimmed.contains("\"salt\"") && trimmed.contains("\"content\""))
     }
 
-    override fun parse(content: String, password: CharArray?): ImportResult {
+    override fun import(content: String, password: CharArray?): ImportResult {
         val header = json.decodeFromString<ProtonHeader>(content)
         if (header.version != SUPPORTED_VERSION)
-            return ImportResult.Failure(source, ImportFailure.UnsupportedVersion)
+            return ImportResult.Failure(ImportFailure.UnsupportedVersion)
 
         val plaintext = if (header.salt != null && header.content != null) {
             if (password == null)
-                return ImportResult.NeedsPassword(source)
+                return ImportResult.NeedsPassword
 
             decrypt(header.salt, header.content, password)
-                ?: return ImportResult.Failure(source, ImportFailure.WrongPassword)
+                ?: return ImportResult.Failure(ImportFailure.WrongPassword)
         } else {
             content
         }
@@ -76,9 +78,9 @@ class ProtonImporter(
         }
 
         if (accounts.isEmpty() && rejected.isEmpty())
-            return ImportResult.Failure(source, ImportFailure.Unrecognized)
+            return ImportResult.Failure(ImportFailure.Unrecognized)
 
-        return ImportResult.Success(source = source, accounts = accounts, rejected = rejected)
+        return ImportResult.Success(accounts = accounts, rejected = rejected)
     }
 
     private fun decrypt(salt: String, content: String, password: CharArray): String? {
@@ -87,7 +89,7 @@ class ProtonImporter(
         if (payload.size <= NONCE_LENGTH)
             return null
 
-        val key = crypto.deriveArgon2id(
+        val key = BackupCrypto.deriveArgon2id(
             password = password,
             salt = saltBytes,
             memoryKib = ARGON2_MEMORY_KIB,
@@ -96,7 +98,7 @@ class ProtonImporter(
         )
 
         return try {
-            crypto.decryptRaw(
+            BackupCrypto.decryptRaw(
                 ciphertext = payload.copyOfRange(NONCE_LENGTH, payload.size),
                 nonce = payload.copyOfRange(0, NONCE_LENGTH),
                 key = key,
@@ -135,15 +137,4 @@ class ProtonImporter(
         @SerialName("entry_type") val entryType: String? = null,
         val name: String? = null
     )
-
-    private companion object {
-        const val SUPPORTED_VERSION = 1
-        const val NONCE_LENGTH = 12
-
-        const val ARGON2_MEMORY_KIB = 19 * 1024
-        const val ARGON2_ITERATIONS = 2
-        const val ARGON2_PARALLELISM = 1
-
-        val AAD = "proton.authenticator.export.v1".toByteArray(Charsets.UTF_8)
-    }
 }

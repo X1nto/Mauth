@@ -1,9 +1,5 @@
-package com.xinto.mauth.core.backup.importer
+package com.xinto.mauth.core.backup
 
-import com.xinto.mauth.core.backup.crypto.BackupCrypto
-import com.xinto.mauth.core.backup.model.BackupAccount
-import com.xinto.mauth.core.backup.model.BackupOtpAlgorithm
-import com.xinto.mauth.core.backup.model.BackupOtpType
 import kotlin.io.encoding.Base64
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -11,11 +7,15 @@ import java.nio.ByteBuffer
 import java.util.UUID
 import javax.crypto.AEADBadTagException
 
-class AndOtpImporter(
-    private val crypto: BackupCrypto
-) : AccountImporter {
+object AndOtpBackup : BackupImporter {
 
-    override val source = ImportSource.AndOtp
+    private const val SALT_LENGTH = 12
+    private const val NONCE_LENGTH = 12
+    private const val TAG_LENGTH = 16
+    private const val HEADER_LENGTH = Int.SIZE_BYTES + SALT_LENGTH + NONCE_LENGTH
+
+    private const val MIN_ITERATIONS = 1_000
+    private const val MAX_ITERATIONS = 10_000_000
 
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -29,17 +29,17 @@ class AndOtpImporter(
         return isEncryptedPayload(trimmed)
     }
 
-    override fun parse(content: String, password: CharArray?): ImportResult {
+    override fun import(content: String, password: CharArray?): ImportResult {
         val trimmed = content.trim()
 
         val entries = if (trimmed.startsWith("[")) {
             json.decodeFromString<List<AndOtpEntry>>(trimmed)
         } else {
             if (password == null)
-                return ImportResult.NeedsPassword(source)
+                return ImportResult.NeedsPassword
 
             val decrypted = decrypt(trimmed, password)
-                ?: return ImportResult.Failure(source, ImportFailure.WrongPassword)
+                ?: return ImportResult.Failure(ImportFailure.WrongPassword)
 
             try {
                 json.decodeFromString<List<AndOtpEntry>>(decrypted.toString(Charsets.UTF_8))
@@ -63,7 +63,7 @@ class AndOtpImporter(
             )
         }
 
-        return ImportResult.Success(source = source, accounts = accounts)
+        return ImportResult.Success(accounts = accounts)
     }
 
     private fun isEncryptedPayload(content: String): Boolean {
@@ -85,7 +85,7 @@ class AndOtpImporter(
         val nonce = bytes.copyOfRange(HEADER_LENGTH - NONCE_LENGTH, HEADER_LENGTH)
         val ciphertext = bytes.copyOfRange(HEADER_LENGTH, bytes.size)
 
-        val key = crypto.derivePbkdf2(
+        val key = BackupCrypto.derivePbkdf2(
             password = password,
             salt = salt,
             iterations = iterations,
@@ -93,7 +93,7 @@ class AndOtpImporter(
         )
 
         return try {
-            crypto.decryptRaw(ciphertext, nonce, key)
+            BackupCrypto.decryptRaw(ciphertext, nonce, key)
         } catch (e: AEADBadTagException) {
             null
         } finally {
@@ -112,14 +112,4 @@ class AndOtpImporter(
         val period: Int? = null,
         val counter: Int? = null
     )
-
-    private companion object {
-        const val SALT_LENGTH = 12
-        const val NONCE_LENGTH = 12
-        const val TAG_LENGTH = 16
-        const val HEADER_LENGTH = Int.SIZE_BYTES + SALT_LENGTH + NONCE_LENGTH
-
-        const val MIN_ITERATIONS = 1_000
-        const val MAX_ITERATIONS = 10_000_000
-    }
 }

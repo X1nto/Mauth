@@ -39,8 +39,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
-import com.xinto.mauth.core.backup.importer.ImportSource
-import com.xinto.mauth.core.backup.model.toFilterArray
+import com.xinto.mauth.core.backup.BackupFormat
+import com.xinto.mauth.core.backup.toFilterArray
 import com.xinto.mauth.domain.backup.ImportOutcome
 import com.xinto.mauth.ui.component.adaptivePainterResource
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
@@ -58,7 +58,7 @@ fun ImportScreen(
     val viewModel: ImportViewModel = koinViewModel()
     val attempt by viewModel.attempt.collectAsStateWithLifecycle()
 
-    var chosen by rememberSaveable { mutableStateOf<ImportSource?>(null) }
+    var chosen by rememberSaveable { mutableStateOf<BackupFormat?>(null) }
     val openLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         val source = chosen
         if (uri != null && source != null) {
@@ -72,8 +72,8 @@ fun ImportScreen(
 
     ImportScreen(
         modifier = modifier,
-        sources = ImportSource.appSources,
-        otherSources = ImportSource.otherSources,
+        sources = BackupFormat.appFormats,
+        otherSources = BackupFormat.otherFormats,
         onBack = onBack,
         onScanQrCode = onScanQrCode,
         onChooseFile = { source ->
@@ -94,10 +94,10 @@ fun ImportScreen(
 
 @Composable
 fun ImportScreen(
-    sources: List<ImportSource>,
-    otherSources: List<ImportSource>,
+    sources: List<BackupFormat>,
+    otherSources: List<BackupFormat>,
     onBack: () -> Unit,
-    onChooseFile: (ImportSource) -> Unit,
+    onChooseFile: (BackupFormat) -> Unit,
     onScanQrCode: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -183,7 +183,7 @@ fun ImportScreen(
 }
 
 @Composable
-private fun ImportSource.detail(): String? {
+private fun BackupFormat.detail(): String? {
     val encryption = encryptionRes?.let { stringResource(it) }
     return listOfNotNull(format, encryption)
         .takeIf { it.isNotEmpty() }
@@ -249,8 +249,8 @@ private fun ImportScreen_Preview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             ImportScreen(
                 modifier = Modifier.fillMaxSize(),
-                sources = ImportSource.appSources,
-                otherSources = ImportSource.otherSources,
+                sources = BackupFormat.appFormats,
+                otherSources = BackupFormat.otherFormats,
                 onBack = {},
                 onChooseFile = {},
                 onScanQrCode = {}

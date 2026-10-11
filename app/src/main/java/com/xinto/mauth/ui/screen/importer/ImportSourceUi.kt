@@ -3,43 +3,41 @@ package com.xinto.mauth.ui.screen.importer
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.xinto.mauth.R
-import com.xinto.mauth.core.backup.importer.ImportFailure
-import com.xinto.mauth.core.backup.importer.ImportSource
-import com.xinto.mauth.core.backup.model.labels
+import com.xinto.mauth.core.backup.ImportFailure
+import com.xinto.mauth.core.backup.BackupFormat
+import com.xinto.mauth.core.backup.labels
 
 @get:StringRes
-val ImportSource.titleRes: Int
+val BackupFormat.titleRes: Int
     get() = when (this) {
-        ImportSource.Mauth -> R.string.app_name
-        ImportSource.UriList -> R.string.import_source_urilist
-        ImportSource.Aegis -> R.string.backup_app_aegis
-        ImportSource.TwoFas -> R.string.backup_app_2fas
-        ImportSource.AndOtp -> R.string.backup_app_andotp
-        ImportSource.Bitwarden -> R.string.backup_app_bitwarden
-        ImportSource.FreeOtpPlus -> R.string.backup_app_freeotpplus
-        ImportSource.Stratum -> R.string.backup_app_stratum
-        ImportSource.Proton -> R.string.backup_app_proton
-        ImportSource.Unknown -> R.string.import_source_unknown
+        BackupFormat.Mauth -> R.string.app_name
+        BackupFormat.UriList -> R.string.import_source_urilist
+        BackupFormat.Aegis -> R.string.backup_app_aegis
+        BackupFormat.TwoFas -> R.string.backup_app_2fas
+        BackupFormat.AndOtp -> R.string.backup_app_andotp
+        BackupFormat.Bitwarden -> R.string.backup_app_bitwarden
+        BackupFormat.FreeOtpPlus -> R.string.backup_app_freeotpplus
+        BackupFormat.Stratum -> R.string.backup_app_stratum
+        BackupFormat.Proton -> R.string.backup_app_proton
     }
 
-val ImportSource.format: String?
+val BackupFormat.format: String?
     get() = mimeTypes.labels()
 
 @get:StringRes
-val ImportSource.encryptionRes: Int?
+val BackupFormat.encryptionRes: Int?
     get() = when (this) {
-        ImportSource.Mauth,
-        ImportSource.Aegis,
-        ImportSource.TwoFas,
-        ImportSource.AndOtp,
-        ImportSource.Bitwarden,
-        ImportSource.Proton -> R.string.backup_encryption_both
+        BackupFormat.Mauth,
+        BackupFormat.Aegis,
+        BackupFormat.TwoFas,
+        BackupFormat.AndOtp,
+        BackupFormat.Bitwarden,
+        BackupFormat.Proton -> R.string.backup_encryption_both
 
-        ImportSource.Stratum -> R.string.backup_encryption_unencrypted
+        BackupFormat.Stratum -> R.string.backup_encryption_unencrypted
 
-        ImportSource.FreeOtpPlus,
-        ImportSource.UriList,
-        ImportSource.Unknown -> null
+        BackupFormat.FreeOtpPlus,
+        BackupFormat.UriList -> null
     }
 
 sealed interface SourceIcon {
@@ -47,18 +45,17 @@ sealed interface SourceIcon {
     data class Glyph(@DrawableRes val res: Int) : SourceIcon
 }
 
-val ImportSource.icon: SourceIcon
+val BackupFormat.icon: SourceIcon
     get() = when (this) {
-        ImportSource.Mauth -> SourceIcon.AppIcon(R.mipmap.ic_launcher)
-        ImportSource.Aegis -> SourceIcon.AppIcon(R.drawable.ic_aegis)
-        ImportSource.TwoFas -> SourceIcon.AppIcon(R.drawable.ic_2fas)
-        ImportSource.AndOtp -> SourceIcon.AppIcon(R.drawable.ic_andotp)
-        ImportSource.Bitwarden -> SourceIcon.AppIcon(R.drawable.ic_bitwarden)
-        ImportSource.FreeOtpPlus -> SourceIcon.AppIcon(R.drawable.ic_freeotpplus)
-        ImportSource.Stratum -> SourceIcon.AppIcon(R.drawable.ic_stratum)
-        ImportSource.Proton -> SourceIcon.AppIcon(R.drawable.ic_proton)
-        ImportSource.UriList -> SourceIcon.Glyph(R.drawable.ic_link)
-        ImportSource.Unknown -> SourceIcon.Glyph(0)
+        BackupFormat.Mauth -> SourceIcon.AppIcon(R.mipmap.ic_launcher)
+        BackupFormat.Aegis -> SourceIcon.AppIcon(R.drawable.ic_aegis)
+        BackupFormat.TwoFas -> SourceIcon.AppIcon(R.drawable.ic_2fas)
+        BackupFormat.AndOtp -> SourceIcon.AppIcon(R.drawable.ic_andotp)
+        BackupFormat.Bitwarden -> SourceIcon.AppIcon(R.drawable.ic_bitwarden)
+        BackupFormat.FreeOtpPlus -> SourceIcon.AppIcon(R.drawable.ic_freeotpplus)
+        BackupFormat.Stratum -> SourceIcon.AppIcon(R.drawable.ic_stratum)
+        BackupFormat.Proton -> SourceIcon.AppIcon(R.drawable.ic_proton)
+        BackupFormat.UriList -> SourceIcon.Glyph(R.drawable.ic_link)
     }
 
 @get:StringRes

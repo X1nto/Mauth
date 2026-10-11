@@ -3,7 +3,7 @@ package com.xinto.mauth.ui.screen.export
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.xinto.mauth.core.backup.model.BackupFormat
+import com.xinto.mauth.core.backup.BackupFormat
 import com.xinto.mauth.domain.backup.BackupRepository
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive

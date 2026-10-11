@@ -15,11 +15,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.xinto.mauth.R
-import com.xinto.mauth.core.backup.importer.ImportSource
+import com.xinto.mauth.core.backup.BackupFormat
 
 @Composable
 fun ImportPasswordDialog(
-    source: ImportSource,
+    source: BackupFormat,
     wrongPassword: Boolean,
     onConfirm: (CharArray) -> Unit,
     onDismissRequest: () -> Unit,

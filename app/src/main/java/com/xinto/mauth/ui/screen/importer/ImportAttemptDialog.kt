@@ -20,8 +20,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.xinto.mauth.R
 import com.xinto.mauth.R.drawable.ic_error
-import com.xinto.mauth.core.backup.importer.ImportFailure
-import com.xinto.mauth.core.backup.importer.ImportSource
+import com.xinto.mauth.core.backup.ImportFailure
+import com.xinto.mauth.core.backup.BackupFormat
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
 import com.xinto.mauth.ui.preview.Screenshot
 import com.xinto.mauth.ui.theme.MauthTheme
@@ -30,7 +30,7 @@ import com.xinto.mauth.ui.theme.MauthTheme
 fun ImportAttemptDialog(
     attempt: ImportAttempt,
     onPassword: (CharArray) -> Unit,
-    onRetryAs: (ImportSource) -> Unit,
+    onRetryAs: (BackupFormat) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -104,9 +104,9 @@ private fun WorkingDialog(modifier: Modifier = Modifier) {
 
 @Composable
 private fun WrongFormatDialog(
-    expected: ImportSource,
-    actual: ImportSource,
-    onRetryAs: (ImportSource) -> Unit,
+    expected: BackupFormat,
+    actual: BackupFormat,
+    onRetryAs: (BackupFormat) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -198,7 +198,7 @@ private fun ImportAttemptDialog_AwaitingPassword_Preview() {
         ) {
             ImportAttemptDialog(
                 attempt = ImportAttempt.AwaitingPassword(
-                    source = ImportSource.Mauth,
+                    source = BackupFormat.Mauth,
                     wrongPassword = false
                 ),
                 onPassword = {},
@@ -220,7 +220,7 @@ private fun ImportAttemptDialog_WrongPassword_Preview() {
         ) {
             ImportAttemptDialog(
                 attempt = ImportAttempt.AwaitingPassword(
-                    source = ImportSource.Mauth,
+                    source = BackupFormat.Mauth,
                     wrongPassword = true
                 ),
                 onPassword = {},
@@ -242,8 +242,8 @@ private fun ImportAttemptDialog_WrongFormat_Preview() {
         ) {
             ImportAttemptDialog(
                 attempt = ImportAttempt.WrongFormat(
-                    expected = ImportSource.Mauth,
-                    actual = ImportSource.TwoFas
+                    expected = BackupFormat.Mauth,
+                    actual = BackupFormat.TwoFas
                 ),
                 onPassword = {},
                 onRetryAs = {},

@@ -1,21 +1,6 @@
 package com.xinto.mauth.di
 
 import androidx.room.Room
-import com.xinto.mauth.core.backup.crypto.BackupCrypto
-import com.xinto.mauth.core.backup.exporter.AegisExporter
-import com.xinto.mauth.core.backup.exporter.FreeOtpPlusExporter
-import com.xinto.mauth.core.backup.exporter.MauthExporter
-import com.xinto.mauth.core.backup.exporter.UriListExporter
-import com.xinto.mauth.core.backup.importer.ImporterRegistry
-import com.xinto.mauth.core.backup.importer.AegisImporter
-import com.xinto.mauth.core.backup.importer.AndOtpImporter
-import com.xinto.mauth.core.backup.importer.BitwardenImporter
-import com.xinto.mauth.core.backup.importer.FreeOtpPlusImporter
-import com.xinto.mauth.core.backup.importer.MauthImporter
-import com.xinto.mauth.core.backup.importer.ProtonImporter
-import com.xinto.mauth.core.backup.importer.StratumImporter
-import com.xinto.mauth.core.backup.importer.TwoFasImporter
-import com.xinto.mauth.core.backup.importer.UriListImporter
 import com.xinto.mauth.db.AccountDatabase
 import com.xinto.mauth.domain.AuthRepository
 import com.xinto.mauth.domain.QrRepository
@@ -45,40 +30,6 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 object MauthDI {
-
-    val CoreModule = module {
-        singleOf(::BackupCrypto)
-        singleOf(::MauthExporter)
-        singleOf(::AegisExporter)
-        singleOf(::FreeOtpPlusExporter)
-        singleOf(::UriListExporter)
-
-        singleOf(::MauthImporter)
-        singleOf(::AegisImporter)
-        singleOf(::TwoFasImporter)
-        singleOf(::AndOtpImporter)
-        singleOf(::BitwardenImporter)
-        singleOf(::FreeOtpPlusImporter)
-        singleOf(::StratumImporter)
-        singleOf(::ProtonImporter)
-        singleOf(::UriListImporter)
-        single {
-            //FIXME: garbage.
-            ImporterRegistry(
-                importers = listOf(
-                    get<MauthImporter>(),
-                    get<AegisImporter>(),
-                    get<TwoFasImporter>(),
-                    get<AndOtpImporter>(),
-                    get<BitwardenImporter>(),
-                    get<FreeOtpPlusImporter>(),
-                    get<StratumImporter>(),
-                    get<ProtonImporter>(),
-                    get<UriListImporter>(),
-                )
-            )
-        }
-    }
 
     val DbModule = module {
         single {
@@ -111,7 +62,7 @@ object MauthDI {
         singleOf(::SettingsRepository)
         singleOf(::AuthRepository)
         singleOf(::GroupRepository)
-        single { BackupRepository(androidContext(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+        single { BackupRepository(androidContext(), get(), get(), get(), get()) }
     }
 
     val UiModule = module {
@@ -132,6 +83,6 @@ object MauthDI {
         viewModelOf(::ImportReviewViewModel)
     }
 
-    val all = listOf(CoreModule, DbModule, DomainModule, UiModule)
+    val all = listOf(DbModule, DomainModule, UiModule)
 
 }

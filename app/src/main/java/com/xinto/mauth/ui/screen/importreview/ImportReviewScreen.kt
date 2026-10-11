@@ -52,8 +52,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xinto.mauth.R
-import com.xinto.mauth.core.backup.importer.ImportFailure
-import com.xinto.mauth.core.backup.importer.ImportSource
+import com.xinto.mauth.core.backup.ImportFailure
+import com.xinto.mauth.core.backup.BackupFormat
 import com.xinto.mauth.core.otp.OtpDigest
 import com.xinto.mauth.domain.account.model.DomainAccount
 import com.xinto.mauth.domain.backup.model.DomainImportCandidate
@@ -77,7 +77,7 @@ import java.util.UUID
 
 @Composable
 fun ImportReviewScreen(
-    source: ImportSource,
+    source: BackupFormat,
     candidates: List<DomainImportCandidate>,
     rejected: List<DomainRejectedEntry>,
     onBack: () -> Unit,
@@ -119,7 +119,7 @@ fun ImportReviewScreen(
 @Composable
 fun ImportReviewScreen(
     state: ImportReviewState,
-    source: ImportSource,
+    source: BackupFormat,
     accounts: ImmutableList<DomainAccount>,
     realtimeData: SnapshotStateMap<UUID, DomainOtpRealtimeData>,
     selected: SnapshotStateList<UUID>,
@@ -290,7 +290,7 @@ private fun ImportFailedDialog(
 
 @Composable
 private fun ImportHintCard(
-    source: ImportSource,
+    source: BackupFormat,
     modifier: Modifier = Modifier
 ) {
     Surface(
@@ -310,7 +310,7 @@ private fun ImportHintCard(
                 contentDescription = null
             )
             Text(
-                text = if (source in ImportSource.appSources) {
+                text = if (source in BackupFormat.appFormats) {
                     stringResource(R.string.importreview_verify_hint_app, stringResource(source.titleRes))
                 } else {
                     stringResource(R.string.importreview_verify_hint)
@@ -481,7 +481,7 @@ private fun ImportReviewScreen_Preview() {
             ImportReviewScreen(
                 modifier = Modifier.fillMaxSize(),
                 state = ImportReviewState.Reviewing,
-                source = ImportSource.Proton,
+                source = BackupFormat.Proton,
                 accounts = PreviewAccounts,
                 realtimeData = PreviewRealtimeData,
                 selected = remember { mutableStateListOf(PreviewGithub.id, PreviewAws.id) },
@@ -505,7 +505,7 @@ private fun ImportReviewScreen_Importing_Preview() {
             ImportReviewScreen(
                 modifier = Modifier.fillMaxSize(),
                 state = ImportReviewState.Importing,
-                source = ImportSource.Proton,
+                source = BackupFormat.Proton,
                 accounts = PreviewAccounts,
                 realtimeData = PreviewRealtimeData,
                 selected = remember { mutableStateListOf(PreviewGithub.id, PreviewAws.id) },
@@ -529,7 +529,7 @@ private fun ImportReviewScreen_Failed_Preview() {
             ImportReviewScreen(
                 modifier = Modifier.fillMaxSize(),
                 state = ImportReviewState.Failed,
-                source = ImportSource.Proton,
+                source = BackupFormat.Proton,
                 accounts = PreviewAccounts,
                 realtimeData = PreviewRealtimeData,
                 selected = remember { mutableStateListOf(PreviewGithub.id, PreviewAws.id) },
@@ -553,7 +553,7 @@ private fun ImportReviewScreen_Partial_Preview() {
             ImportReviewScreen(
                 modifier = Modifier.fillMaxSize(),
                 state = ImportReviewState.Reviewing,
-                source = ImportSource.Aegis,
+                source = BackupFormat.Aegis,
                 accounts = persistentListOf(PreviewGithub),
                 realtimeData = PreviewRealtimeData,
                 selected = remember { mutableStateListOf(PreviewGithub.id) },

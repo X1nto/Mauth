@@ -1,16 +1,20 @@
-package com.xinto.mauth.core.backup.importer
+package com.xinto.mauth.core.backup
 
-import com.xinto.mauth.core.backup.model.BackupAccount
-import com.xinto.mauth.core.backup.model.BackupOtpAlgorithm
-import com.xinto.mauth.core.backup.model.BackupOtpType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.util.UUID
 
-class StratumImporter : AccountImporter {
+object StratumBackup : BackupImporter {
 
-    override val source = ImportSource.Stratum
+    private const val HEADER = "AUTHENTICATORPRO"
+    private const val HEADER_LEGACY = "AuthenticatorPro"
+
+    private const val TYPE_HOTP = 1
+    private const val TYPE_TOTP = 2
+
+    private const val ALGORITHM_SHA256 = 1
+    private const val ALGORITHM_SHA512 = 2
 
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -22,12 +26,12 @@ class StratumImporter : AccountImporter {
         return trimmed.startsWith("{") && trimmed.contains("\"Authenticators\"")
     }
 
-    override fun parse(content: String, password: CharArray?): ImportResult {
+    override fun import(content: String, password: CharArray?): ImportResult {
         if (content.startsWith(HEADER) || content.startsWith(HEADER_LEGACY)) {
-            return ImportResult.Failure(source, ImportFailure.Unrecognized)
+            return ImportResult.Failure(ImportFailure.Unrecognized)
         }
 
-        val backup = json.decodeFromString<StratumBackup>(content)
+        val backup = json.decodeFromString<StratumBackupFile>(content)
         val accounts = mutableListOf<BackupAccount>()
         val rejected = mutableListOf<RejectedEntry>()
 
@@ -80,13 +84,13 @@ class StratumImporter : AccountImporter {
         }
 
         if (accounts.isEmpty() && rejected.isEmpty())
-            return ImportResult.Failure(source, ImportFailure.Unrecognized)
+            return ImportResult.Failure(ImportFailure.Unrecognized)
 
-        return ImportResult.Success(source, accounts, rejected = rejected)
+        return ImportResult.Success(accounts, rejected = rejected)
     }
 
     @Serializable
-    private data class StratumBackup(
+    private data class StratumBackupFile(
         @SerialName("Authenticators") val authenticators: List<StratumAuthenticator> = emptyList()
     )
 
@@ -101,15 +105,4 @@ class StratumImporter : AccountImporter {
         @SerialName("Period") val period: Int = 30,
         @SerialName("Counter") val counter: Int = 0
     )
-
-    private companion object {
-        const val HEADER = "AUTHENTICATORPRO"
-        const val HEADER_LEGACY = "AuthenticatorPro"
-
-        const val TYPE_HOTP = 1
-        const val TYPE_TOTP = 2
-
-        const val ALGORITHM_SHA256 = 1
-        const val ALGORITHM_SHA512 = 2
-    }
 }
