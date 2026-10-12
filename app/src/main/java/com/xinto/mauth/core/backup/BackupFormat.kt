@@ -54,14 +54,14 @@ val BackupFormat.exporter: BackupExporter?
     get() = when (this) {
         BackupFormat.Mauth -> MauthBackup
         BackupFormat.Aegis -> AegisBackup
+        BackupFormat.TwoFas -> TwoFasBackup
+        BackupFormat.Bitwarden -> BitwardenBackup
         BackupFormat.FreeOtpPlus -> FreeOtpPlusBackup
+        BackupFormat.Stratum -> StratumBackup
+        BackupFormat.Proton -> ProtonBackup
         BackupFormat.UriList -> UriListBackup
 
-        BackupFormat.TwoFas,
-        BackupFormat.AndOtp,
-        BackupFormat.Bitwarden,
-        BackupFormat.Stratum,
-        BackupFormat.Proton -> null
+        BackupFormat.AndOtp -> null
     }
 
 fun detectBackupFormat(content: String): BackupFormat? {

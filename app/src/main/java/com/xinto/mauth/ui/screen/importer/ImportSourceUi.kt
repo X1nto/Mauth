@@ -41,8 +41,11 @@ val BackupFormat.encryptionRes: Int?
     }
 
 sealed interface SourceIcon {
-    data class AppIcon(@DrawableRes val res: Int) : SourceIcon
-    data class Glyph(@DrawableRes val res: Int) : SourceIcon
+    @get:DrawableRes
+    val res: Int
+
+    data class AppIcon(@DrawableRes override val res: Int) : SourceIcon
+    data class Glyph(@DrawableRes override val res: Int) : SourceIcon
 }
 
 val BackupFormat.icon: SourceIcon

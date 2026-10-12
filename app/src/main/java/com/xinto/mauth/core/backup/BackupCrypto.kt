@@ -61,6 +61,13 @@ object BackupCrypto {
         return gcm(Cipher.ENCRYPT_MODE, key, nonce, plaintext, aad = null)
     }
 
+    /**
+     * @return Ciphertext carrying the tag at its end.
+     */
+    fun encryptRaw(plaintext: ByteArray, nonce: ByteArray, key: ByteArray, aad: ByteArray): ByteArray {
+        return gcm(Cipher.ENCRYPT_MODE, key, nonce, plaintext, aad)
+    }
+
     fun decrypt(ciphertext: ByteArray, params: Argon2Params, password: CharArray): ByteArray {
         val key = deriveArgon2id(
             password = password,
@@ -127,6 +134,10 @@ object BackupCrypto {
             init(Cipher.DECRYPT_MODE, SecretKeySpec(encKey, "AES"), IvParameterSpec(iv))
         }
         return cipher.doFinal(ciphertext)
+    }
+
+    fun sha1(input: ByteArray): ByteArray {
+        return MessageDigest.getInstance("SHA-1").digest(input)
     }
 
     fun sha256(input: ByteArray): ByteArray {

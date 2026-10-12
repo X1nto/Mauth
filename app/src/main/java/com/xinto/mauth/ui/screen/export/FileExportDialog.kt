@@ -1,5 +1,6 @@
 package com.xinto.mauth.ui.screen.export
 
+import android.R.attr.text
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -51,6 +52,7 @@ import com.xinto.mauth.R
 import com.xinto.mauth.core.backup.BackupFormat
 import com.xinto.mauth.core.backup.exporter
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
+import com.xinto.mauth.ui.screen.importer.titleRes
 import com.xinto.mauth.ui.preview.Screenshot
 import com.xinto.mauth.ui.theme.MauthTheme
 import org.koin.androidx.compose.koinViewModel
@@ -132,14 +134,12 @@ private fun FileExportDialog(
         modifier = modifier,
         onDismissRequest = onDismissRequest,
         title = {
-            val titleRes = when (format) {
-                BackupFormat.Mauth -> R.string.export_file_title_mauth
-                BackupFormat.Aegis -> R.string.export_file_title_aegis
-                BackupFormat.FreeOtpPlus -> R.string.export_file_title_freeotpplus
-                BackupFormat.UriList -> R.string.export_file_title_otpauth
-                else -> error("$format can not be exported")
+            val title = if (format == BackupFormat.UriList) {
+                stringResource(R.string.export_file_title_otpauth)
+            } else {
+                stringResource(R.string.export_file_title_app, stringResource(format.titleRes))
             }
-            Text(stringResource(titleRes))
+            Text(title)
         },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {

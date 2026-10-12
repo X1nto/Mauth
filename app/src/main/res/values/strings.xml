@@ -175,9 +175,7 @@
     <string name="export_method_urilist">otpauth:// list</string>
     <string name="export_account_period_value">%1$ds</string>
     <string name="export_account_copy">Copy link</string>
-    <string name="export_file_title_mauth">Export for Mauth</string>
-    <string name="export_file_title_aegis">Export for Aegis</string>
-    <string name="export_file_title_freeotpplus">Export for FreeOTP+</string>
+    <string name="export_file_title_app">Export for %1$s</string>
     <string name="export_file_title_otpauth">Export URIs</string>
     <string name="export_file_input_password">Password</string>
     <string name="export_file_action_password_show">Show password</string>
@@ -196,7 +194,6 @@
     <string name="import_category_other">Other formats</string>
     <string name="import_source_googleauth">Google Authenticator QR</string>
     <string name="import_source_urilist">otpauth:// links</string>
-    <string name="import_source_unknown">Unrecognized file</string>
     <string name="import_unlock_title">Enter the password</string>
     <string name="import_unlock_subtitle">This backup was created by %1$s and is password protected.</string>
     <string name="import_unlock_wrong">Wrong password</string>

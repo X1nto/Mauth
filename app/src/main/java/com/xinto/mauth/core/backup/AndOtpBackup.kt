@@ -48,8 +48,16 @@ object AndOtpBackup : BackupImporter {
             }
         }
 
+        val tags = linkedSetOf<String>()
+
         val accounts = entries.map { entry ->
             val type = BackupOtpType.fromName(entry.type)
+
+            val tag = entry.tags.firstOrNull { it.isNotBlank() }
+            if (tag != null) {
+                tags.add(tag)
+            }
+
             BackupAccount(
                 id = UUID.randomUUID().toString(),
                 name = entry.label.orEmpty(),
@@ -59,11 +67,20 @@ object AndOtpBackup : BackupImporter {
                 algorithm = BackupOtpAlgorithm.fromName(entry.algorithm),
                 digits = entry.digits ?: 6,
                 period = if (type == BackupOtpType.TOTP) entry.period ?: 30 else null,
-                counter = if (type == BackupOtpType.HOTP) entry.counter ?: 0 else null
+                counter = if (type == BackupOtpType.HOTP) entry.counter ?: 0 else null,
+                group = tag
             )
         }
 
-        return ImportResult.Success(accounts = accounts)
+        return ImportResult.Success(
+            accounts = accounts,
+            groups = tags.map {
+                BackupGroup(
+                    id = it,
+                    name = it
+                )
+            }
+        )
     }
 
     private fun isEncryptedPayload(content: String): Boolean {
@@ -110,6 +127,7 @@ object AndOtpBackup : BackupImporter {
         val type: String? = null,
         val algorithm: String? = null,
         val period: Int? = null,
-        val counter: Int? = null
+        val counter: Int? = null,
+        val tags: List<String> = emptyList()
     )
 }

@@ -3,12 +3,13 @@ package com.xinto.mauth.core.backup
 import com.jsoizo.kotlincsv.csvReader
 import com.xinto.mauth.core.otp.OtpUriParserResult
 import com.xinto.mauth.core.otp.parseOtpUri
+import com.xinto.mauth.core.otp.toOtpUri
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.util.UUID
 import kotlin.io.encoding.Base64
 
-object BitwardenBackup : BackupImporter {
+object BitwardenBackup : BackupImporter, BackupExporter {
 
     private const val KDF_PBKDF2 = 0
     private const val KDF_ARGON2ID = 1
@@ -17,11 +18,21 @@ object BitwardenBackup : BackupImporter {
     private val INFO_ENC = "enc".toByteArray(Charsets.UTF_8)
     private val INFO_MAC = "mac".toByteArray(Charsets.UTF_8)
 
+    private const val ITEM_TYPE_LOGIN = 1
+
     private const val COLUMN_TOTP = "login_totp"
     private const val COLUMN_NAME = "name"
     private const val COLUMN_USERNAME = "login_username"
+    private const val COLUMN_FOLDER = "folder"
 
-    private val json = Json { ignoreUnknownKeys = true }
+    private val json = Json {
+        ignoreUnknownKeys = true
+        encodeDefaults = true
+    }
+
+    override val mimeType = MimeType.Json
+
+    override val supportsEncryption = false
 
     override fun sniff(content: String): Boolean {
         val trimmed = content.trimStart()
@@ -38,6 +49,36 @@ object BitwardenBackup : BackupImporter {
         return parseCsv(content)
     }
 
+    override fun export(contents: BackupData, password: CharArray?): String {
+        // Bitwarden doesn't support HOTP and fails the whole import if HOTP codes are included.
+        val items = contents.accounts
+            .filter { it.type == BackupOtpType.TOTP }
+            .map {
+                val uri = it.toOtpData().toOtpUri()
+
+                BitwardenItem(
+                    id = it.id,
+                    folderId = it.group,
+                    type = ITEM_TYPE_LOGIN,
+                    name = it.issuer.ifBlank { it.name },
+                    favorite = false,
+                    login = BitwardenLogin(username = it.name, totp = uri)
+                )
+            }
+
+        val export = BitwardenExport(
+            encrypted = false,
+            folders = contents.groups.map {
+                BitwardenFolder(
+                    id = it.id,
+                    name = it.name
+                )
+            },
+            items = items
+        )
+        return json.encodeToString(export)
+    }
+
     private fun parseCsv(content: String): ImportResult {
         val rows = csvReader().readAll(content)
         if (rows.isEmpty())
@@ -50,15 +91,22 @@ object BitwardenBackup : BackupImporter {
 
         val nameIndex = header.indexOf(COLUMN_NAME)
         val usernameIndex = header.indexOf(COLUMN_USERNAME)
+        val folderIndex = header.indexOf(COLUMN_FOLDER)
         val entries = rows.drop(1).map { row ->
             BitwardenEntry(
                 totp = row.getOrNull(totpIndex),
                 name = row.getOrNull(nameIndex).orEmpty(),
-                username = row.getOrNull(usernameIndex).orEmpty()
+                username = row.getOrNull(usernameIndex).orEmpty(),
+                folder = row.getOrNull(folderIndex)?.takeIf { it.isNotBlank() }
             )
         }
 
-        return collect(entries)
+        val folders = entries
+            .mapNotNull { it.folder }
+            .distinct()
+            .map { BackupGroup(id = it, name = it) }
+
+        return collect(entries, folders)
     }
 
     private fun parseJson(content: String, password: CharArray?): ImportResult {
@@ -77,15 +125,18 @@ object BitwardenBackup : BackupImporter {
         }
 
         val export = json.decodeFromString<BitwardenExport>(decrypted)
+        val folders = export.folders.orEmpty().map { BackupGroup(id = it.id, name = it.name) }
+        val folderIds = folders.map { it.id }.toSet()
         val entries = export.items.map { item ->
             BitwardenEntry(
                 totp = item.login?.totp,
                 name = item.name.orEmpty(),
-                username = item.login?.username.orEmpty()
+                username = item.login?.username.orEmpty(),
+                folder = item.folderId?.takeIf { it in folderIds }
             )
         }
 
-        return collect(entries)
+        return collect(entries, folders)
     }
 
     private fun decrypt(header: BitwardenHeader, password: CharArray): String? {
@@ -145,7 +196,7 @@ object BitwardenBackup : BackupImporter {
         }
     }
 
-    private fun collect(entries: List<BitwardenEntry>): ImportResult {
+    private fun collect(entries: List<BitwardenEntry>, folders: List<BackupGroup>): ImportResult {
         val accounts = mutableListOf<BackupAccount>()
         val rejected = mutableListOf<RejectedEntry>()
 
@@ -157,7 +208,7 @@ object BitwardenBackup : BackupImporter {
             if (totp.startsWith("otpauth", ignoreCase = true)) {
                 when (val result = totp.parseOtpUri()) {
                     is OtpUriParserResult.Success -> {
-                        accounts.add(result.data.toBackupAccount())
+                        accounts.add(result.data.toBackupAccount(group = entry.folder))
                     }
                     is OtpUriParserResult.Failure -> {
                         rejected.add(RejectedEntry(entry.name, "", ImportFailure.Malformed))
@@ -171,7 +222,8 @@ object BitwardenBackup : BackupImporter {
                         issuer = entry.name,
                         secret = totp,
                         type = BackupOtpType.TOTP,
-                        period = 30
+                        period = 30,
+                        group = entry.folder
                     )
                 )
             }
@@ -180,13 +232,21 @@ object BitwardenBackup : BackupImporter {
         if (accounts.isEmpty() && rejected.isEmpty())
             return ImportResult.Failure(ImportFailure.Unrecognized)
 
-        return ImportResult.Success(accounts, rejected = rejected)
+        // Vaults hold folders for passwords too, keep only the ones an account lands in
+        val usedFolders = accounts.mapNotNull { it.group }.toSet()
+
+        return ImportResult.Success(
+            accounts = accounts,
+            groups = folders.filter { it.id in usedFolders },
+            rejected = rejected
+        )
     }
 
     private data class BitwardenEntry(
         val totp: String?,
         val name: String,
-        val username: String
+        val username: String,
+        val folder: String?
     )
 
     @Serializable
@@ -204,12 +264,23 @@ object BitwardenBackup : BackupImporter {
     @Serializable
     private data class BitwardenExport(
         val encrypted: Boolean? = null,
+        val folders: List<BitwardenFolder>? = null,
         val items: List<BitwardenItem> = emptyList()
     )
 
     @Serializable
+    private data class BitwardenFolder(
+        val id: String,
+        val name: String
+    )
+
+    @Serializable
     private data class BitwardenItem(
+        val id: String? = null,
+        val folderId: String? = null,
+        val type: Int? = null,
         val name: String? = null,
+        val favorite: Boolean = false,
         val login: BitwardenLogin? = null
     )
 

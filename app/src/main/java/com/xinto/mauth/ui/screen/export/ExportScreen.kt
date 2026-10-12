@@ -56,6 +56,9 @@ import com.xinto.mauth.ui.component.UriImage
 import com.xinto.mauth.ui.component.adaptivePainterResource
 import com.xinto.mauth.ui.preview.PreviewAllConfigurations
 import com.xinto.mauth.ui.preview.Screenshot
+import com.xinto.mauth.ui.screen.importer.encryptionRes
+import com.xinto.mauth.ui.screen.importer.icon
+import com.xinto.mauth.ui.screen.importer.titleRes
 import com.xinto.mauth.ui.theme.MauthTheme
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -107,23 +110,19 @@ fun ExportScreen(
         snackbarHostState = snackbarHostState,
         onBackNavigate = onBackNavigate,
         onGoogleAuthQr = { showGoogleAuthenticatorQrDialog = true },
-        onMauthExport = { batchExportFormat = BackupFormat.Mauth },
-        onAegisExport = { batchExportFormat = BackupFormat.Aegis },
-        onFreeOtpPlusExport = { batchExportFormat = BackupFormat.FreeOtpPlus },
-        onUriListExport = { batchExportFormat = BackupFormat.UriList },
+        onFileExport = { batchExportFormat = it },
         onAccountExport = { exportAccount = it }
     )
 }
+
+private val exportFormats = BackupFormat.appFormats.filter { it.exporter != null }
 
 @Composable
 fun ExportScreen(
     state: ExportScreenState,
     onBackNavigate: () -> Unit,
     onGoogleAuthQr: () -> Unit,
-    onMauthExport: () -> Unit,
-    onAegisExport: () -> Unit,
-    onFreeOtpPlusExport: () -> Unit,
-    onUriListExport: () -> Unit,
+    onFileExport: (BackupFormat) -> Unit,
     onAccountExport: (UUID) -> Unit,
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
@@ -210,72 +209,30 @@ fun ExportScreen(
                         CategoryHeader(stringResource(R.string.export_category_batch))
                     }
 
-                    item(key = "batch-mauth", contentType = "batch-method") {
+                    itemsIndexed(
+                        items = exportFormats,
+                        key = { _, format -> "batch-${format.name}" },
+                        contentType = { _, _ -> "batch-method" }
+                    ) { index, format ->
                         ListItem(
-                            onClick = onMauthExport,
+                            onClick = { onFileExport(format) },
                             leadingContent = {
                                 Image(
                                     modifier = Modifier
                                         .size(40.dp)
                                         .clip(MaterialTheme.shapes.medium),
-                                    painter = adaptivePainterResource(id = R.mipmap.ic_launcher),
+                                    painter = adaptivePainterResource(id = format.icon.res),
                                     contentDescription = null
                                 )
                             },
-                            supportingContent = { Text(BackupFormat.Mauth.detail()) },
-                            shapes = ListItemDefaults.segmentedShapes(index = 0, count = 3),
+                            supportingContent = { Text(format.detail()) },
+                            shapes = ListItemDefaults.segmentedShapes(index = index, count = exportFormats.size),
                             colors = ListItemDefaults.colors(
                                 containerColor = MaterialTheme.colorScheme.surfaceContainer
                             ),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(stringResource(id = R.string.app_name))
-                        }
-                    }
-
-                    item(key = "batch-aegis", contentType = "batch-method") {
-                        ListItem(
-                            onClick = onAegisExport,
-                            leadingContent = {
-                                Image(
-                                    modifier = Modifier
-                                        .size(40.dp)
-                                        .clip(MaterialTheme.shapes.medium),
-                                    painter = painterResource(id = R.drawable.ic_aegis),
-                                    contentDescription = null
-                                )
-                            },
-                            supportingContent = { Text(BackupFormat.Aegis.detail()) },
-                            shapes = ListItemDefaults.segmentedShapes(index = 1, count = 3),
-                            colors = ListItemDefaults.colors(
-                                containerColor = MaterialTheme.colorScheme.surfaceContainer
-                            ),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(stringResource(id = R.string.backup_app_aegis))
-                        }
-                    }
-
-                    item(key = "batch-freeotpplus", contentType = "batch-method") {
-                        ListItem(
-                            onClick = onFreeOtpPlusExport,
-                            leadingContent = {
-                                Image(
-                                    modifier = Modifier
-                                        .size(40.dp)
-                                        .clip(MaterialTheme.shapes.medium),
-                                    painter = painterResource(id = R.drawable.ic_freeotpplus),
-                                    contentDescription = null
-                                )
-                            },
-                            supportingContent = { Text(BackupFormat.FreeOtpPlus.detail()) },
-                            shapes = ListItemDefaults.segmentedShapes(index = 2, count = 3),
-                            colors = ListItemDefaults.colors(
-                                containerColor = MaterialTheme.colorScheme.surfaceContainer
-                            ),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(stringResource(id = R.string.backup_app_freeotpplus))
+                            Text(stringResource(id = format.titleRes))
                         }
                     }
 
@@ -308,7 +265,7 @@ fun ExportScreen(
 
                     item(key = "batch-urilist", contentType = "batch-method") {
                         ListItem(
-                            onClick = onUriListExport,
+                            onClick = { onFileExport(BackupFormat.UriList) },
                             modifier = Modifier,
                             leadingContent = {
                                 Box(
@@ -376,7 +333,11 @@ fun ExportScreen(
 @Composable
 private fun BackupFormat.detail(): String {
     val exporter = checkNotNull(exporter)
-    val encryption = if (exporter.supportsEncryption) stringResource(R.string.backup_encryption_both) else null
+    val encryption = when {
+        exporter.supportsEncryption -> stringResource(R.string.backup_encryption_both)
+        encryptionRes != null -> stringResource(R.string.backup_encryption_unencrypted)
+        else -> null
+    }
     return listOfNotNull(exporter.mimeType.label, encryption).joinToString(" · ")
 }
 
@@ -501,10 +462,7 @@ private fun ExportScreen_Default_Preview() {
                 ),
                 onBackNavigate = {},
                 onGoogleAuthQr = {},
-                onMauthExport = {},
-                onAegisExport = {},
-                onFreeOtpPlusExport = {},
-                onUriListExport = {},
+                onFileExport = {},
                 onAccountExport = {},
             )
         }
@@ -522,10 +480,7 @@ private fun ExportScreen_Empty_Preview() {
                 state = ExportScreenState.Empty,
                 onBackNavigate = {},
                 onGoogleAuthQr = {},
-                onMauthExport = {},
-                onAegisExport = {},
-                onFreeOtpPlusExport = {},
-                onUriListExport = {},
+                onFileExport = {},
                 onAccountExport = {},
             )
         }

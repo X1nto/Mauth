@@ -2,16 +2,21 @@ package com.xinto.mauth.core.backup
 
 import com.xinto.mauth.core.otp.OtpUriParserResult
 import com.xinto.mauth.core.otp.parseOtpUri
+import com.xinto.mauth.core.otp.toOtpUri
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import javax.crypto.AEADBadTagException
 import kotlin.io.encoding.Base64
 
-object ProtonBackup : BackupImporter {
+object ProtonBackup : BackupImporter, BackupExporter {
 
     private const val SUPPORTED_VERSION = 1
     private const val NONCE_LENGTH = 12
+    private const val SALT_LENGTH = 16
+    private const val ENTRY_TYPE_TOTP = "Totp"
+
+    private val SUPPORTED_DIGITS = 1..9
 
     private const val ARGON2_MEMORY_KIB = 19 * 1024
     private const val ARGON2_ITERATIONS = 2
@@ -20,6 +25,10 @@ object ProtonBackup : BackupImporter {
     private val AAD = "proton.authenticator.export.v1".toByteArray(Charsets.UTF_8)
 
     private val json = Json { ignoreUnknownKeys = true }
+
+    override val mimeType = MimeType.Json
+
+    override val supportsEncryption = true
 
     override fun sniff(content: String): Boolean {
         val trimmed = content.trimStart()
@@ -76,6 +85,55 @@ object ProtonBackup : BackupImporter {
             return ImportResult.Failure(ImportFailure.Unrecognized)
 
         return ImportResult.Success(accounts = accounts, rejected = rejected)
+    }
+
+    override fun export(contents: BackupData, password: CharArray?): String {
+        // Proton doesn't support HOTP
+        val entries = contents.accounts
+            .filter { it.type == BackupOtpType.TOTP && it.digits in SUPPORTED_DIGITS }
+            .map {
+                ProtonEntry(
+                    id = it.id,
+                    content = ProtonEntryContent(
+                        uri = it.toOtpData().toOtpUri(),
+                        entryType = ENTRY_TYPE_TOTP,
+                        name = it.name.ifEmpty { it.issuer }
+                    )
+                )
+            }
+
+        val plaintext = json.encodeToString(ProtonExport(version = SUPPORTED_VERSION, entries = entries))
+        if (password == null)
+            return plaintext
+
+        val salt = BackupCrypto.randomBytes(SALT_LENGTH)
+        val nonce = BackupCrypto.randomBytes(NONCE_LENGTH)
+        val key = BackupCrypto.deriveArgon2id(
+            password = password,
+            salt = salt,
+            memoryKib = ARGON2_MEMORY_KIB,
+            iterations = ARGON2_ITERATIONS,
+            parallelism = ARGON2_PARALLELISM
+        )
+
+        val ciphertext = try {
+            BackupCrypto.encryptRaw(
+                plaintext = plaintext.toByteArray(Charsets.UTF_8),
+                nonce = nonce,
+                key = key,
+                aad = AAD
+            )
+        } finally {
+            key.fill(0)
+        }
+
+        return json.encodeToString(
+            ProtonHeader(
+                version = SUPPORTED_VERSION,
+                salt = Base64.encode(salt),
+                content = Base64.encode(nonce + ciphertext)
+            )
+        )
     }
 
     private fun decrypt(salt: String, content: String, password: CharArray): String? {
