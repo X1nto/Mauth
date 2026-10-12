@@ -4,9 +4,9 @@ import androidx.core.net.toUri
 import com.google.protobuf.ByteString
 import com.google.protobuf.InvalidProtocolBufferException
 import com.xinto.mauth.GoogleAuthenticator
+import com.xinto.mauth.util.Base32
 import com.xinto.mauth.core.otp.pairLabelAndIssuer
 import kotlin.io.encoding.Base64
-import org.apache.commons.codec.binary.Base32
 import java.net.URLEncoder
 import java.util.UUID
 import kotlin.random.Random
@@ -93,7 +93,7 @@ object GoogleAuthenticatorBackup {
                     id = UUID.randomUUID().toString(),
                     name = name,
                     issuer = issuer,
-                    secret = Base32().encodeAsString(entry.secret.toByteArray()).trimEnd('='),
+                    secret = Base32.encode(entry.secret.toByteArray()),
                     type = type,
                     algorithm = algorithm,
                     digits = digits,
@@ -119,7 +119,7 @@ object GoogleAuthenticatorBackup {
             GoogleAuthenticator.MigrationPayload.OtpData.newBuilder()
                 .setIssuer(it.issuer)
                 .setName(it.name)
-                .setSecret(ByteString.copyFrom(Base32().decode(it.secret)))
+                .setSecret(ByteString.copyFrom(Base32.decode(it.secret)))
                 .setAlgorithm(
                     when (it.algorithm) {
                         BackupOtpAlgorithm.SHA1 -> GoogleAuthenticator.MigrationPayload.Algorithm.ALGORITHM_SHA1

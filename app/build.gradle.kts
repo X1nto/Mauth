@@ -192,8 +192,6 @@ dependencies {
     implementation("androidx.navigation3:navigation3-runtime:$navigationVersion")
     implementation("androidx.navigation3:navigation3-ui:$navigationVersion")
 
-    implementation("commons-codec:commons-codec:1.22.1")
-
     implementation("com.jsoizo:kotlin-csv-jvm:2.0.0")
 
     implementation("com.google.zxing:core:3.5.4")

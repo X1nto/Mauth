@@ -1,10 +1,9 @@
 package com.xinto.mauth.core.backup
 
-import com.xinto.mauth.core.otp.decodeOtpSecret
+import com.xinto.mauth.util.Base32
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import org.apache.commons.codec.binary.Base32
 import java.util.UUID
 
 object FreeOtpPlusBackup : BackupImporter, BackupExporter {
@@ -96,7 +95,7 @@ object FreeOtpPlusBackup : BackupImporter, BackupExporter {
         val bytes = ByteArray(signedBytes.size) {
             (signedBytes[it] and 0xFF).toByte()
         }
-        return Base32().encodeAsString(bytes).trimEnd('=')
+        return Base32.encode(bytes)
     }
 
     private fun BackupAccount.toToken(group: String?): FreeOtpToken {
@@ -108,7 +107,7 @@ object FreeOtpPlusBackup : BackupImporter, BackupExporter {
                 BackupOtpType.HOTP -> "HOTP"
             },
             algo = algorithm.name,
-            secret = secret.decodeOtpSecret().map { it.toInt() },
+            secret = Base32.decode(secret).map { it.toInt() },
             digits = digits,
             counter = counter ?: 0,
             period = period ?: 30,
