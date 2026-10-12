@@ -18,7 +18,7 @@ import com.xinto.mauth.core.backup.toBackupOtpType
 import com.xinto.mauth.core.backup.toOtpDigest
 import com.xinto.mauth.core.backup.toOtpType
 import com.xinto.mauth.core.otp.OtpType
-import com.xinto.mauth.core.otp.decodeOtpSecret
+import com.xinto.mauth.core.otp.normalizeOtpSecret
 import com.xinto.mauth.db.AccountDatabase
 import com.xinto.mauth.db.dao.account.AccountsDao
 import com.xinto.mauth.db.dao.account.entity.EntityAccount
@@ -193,8 +193,8 @@ class BackupRepository(
                 }
             }
 
-            val secret = account.secret.trim()
-            if (secret.decodeOtpSecret().isEmpty()) {
+            val secret = account.secret.normalizeOtpSecret()
+            if (secret == null) {
                 rejected.add(
                     DomainRejectedEntry(
                         name = account.name,
@@ -224,7 +224,7 @@ class BackupRepository(
     }
 
     private fun dedupKeyOf(issuer: String, label: String, secret: String): String {
-        return listOf(issuer.lowercase(), label.lowercase(), secret.uppercase()).joinToString("\u0000")
+        return listOf(issuer.lowercase(), label.lowercase(), secret).joinToString("\u0000")
     }
 
     private fun EntityGroup.toBackupGroup(): BackupGroup {

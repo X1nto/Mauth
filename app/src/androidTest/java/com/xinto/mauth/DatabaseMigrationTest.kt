@@ -208,6 +208,38 @@ class DatabaseMigrationTest {
         db.close()
     }
 
+    @Test
+    fun migrate6To7() {
+        val secrets = listOf(
+            "JBSWY3DPEHPK3PXP" to "JBSWY3DPEHPK3PXP",
+            "jbsw y3dp-ehpk 3pxp" to "JBSWY3DPEHPK3PXP",
+            "ABCDEFGHIJKLMNOPQRSTUVWXYY======" to "ABCDEFGHIJKLMNOPQRSTUVWXYY",
+            "jbsw y3dp ehpk 3px0" to "jbsw y3dp ehpk 3px0",
+            "1" to "1"
+        )
+        migrationTestHelper.createDatabase(testDb, 6).use { db ->
+            secrets.forEachIndexed { index, (secret, _) ->
+                db.execSQL(
+                    "INSERT INTO accounts " +
+                        "(id, icon, secret, label, issuer, algorithm, type, digits, period, create_date, group_id) " +
+                        "VALUES (?, NULL, ?, ?, ?, 0, 0, 6, 30, 1700000000, NULL)",
+                    arrayOf(uuidBytes(uuid(70 + index)), secret, "Grace$index", "Example")
+                )
+            }
+        }
+
+        val db = migrationTestHelper.runMigrationsAndValidate(testDb, 7, true, AccountDatabase.Migrate6To7)
+
+        db.query("SELECT secret FROM accounts ORDER BY label").use { c ->
+            Assert.assertEquals(secrets.size, c.count)
+            for ((_, expected) in secrets) {
+                Assert.assertTrue(c.moveToNext())
+                Assert.assertEquals(expected, c.getString(0))
+            }
+        }
+        db.close()
+    }
+
     private fun uuidBytes(uuid: UUID): ByteArray =
         ByteBuffer.allocate(16)
             .putLong(uuid.mostSignificantBits)

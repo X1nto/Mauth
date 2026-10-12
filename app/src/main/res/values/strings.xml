@@ -92,6 +92,7 @@
     <string name="account_discard_buttons_cancel">Cancel</string>
     <string name="account_error">An error occurred while loading the account</string>
     <string name="account_data_status_required">required</string>
+    <string name="account_data_status_invalid">invalid</string>
     <string name="account_data_status_range">range %1$s-%2$s</string>
     <string name="account_action_save">Save</string>
     <string name="account_action_secret_show">Show secret</string>

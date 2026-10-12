@@ -1,5 +1,6 @@
 package com.xinto.mauth.domain.account
 
+import com.xinto.mauth.core.otp.normalizeOtpSecret
 import com.xinto.mauth.core.otp.toOtpUri
 import com.xinto.mauth.core.otp.OtpData
 import com.xinto.mauth.core.otp.OtpType
@@ -264,7 +265,7 @@ class AccountRepository(
         return EntityAccount(
             id = id,
             icon = icon,
-            secret = secret,
+            secret = secret.normalizeOtpSecret() ?: secret,
             label = label,
             issuer = issuer,
             algorithm = algorithm,

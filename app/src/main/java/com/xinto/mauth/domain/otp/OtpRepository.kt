@@ -3,7 +3,6 @@ package com.xinto.mauth.domain.otp
 import com.xinto.mauth.core.otp.generateHotp
 import com.xinto.mauth.core.otp.generateTotp
 import com.xinto.mauth.core.otp.OtpType
-import com.xinto.mauth.core.otp.decodeOtpSecret
 import com.xinto.mauth.db.dao.account.AccountsDao
 import com.xinto.mauth.db.dao.rtdata.RtdataDao
 import com.xinto.mauth.domain.otp.model.DomainOtpRealtimeData
@@ -17,6 +16,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
+import org.apache.commons.codec.binary.Base32
 
 class OtpRepository(
     private val accountsDao: AccountsDao,
@@ -55,7 +55,7 @@ class OtpRepository(
         counters: Map<UUID, Int>
     ) {
         val secretBytes = specs.associate { spec ->
-            spec.id to spec.secret.decodeOtpSecret()
+            spec.id to Base32().decode(spec.secret)
         }
 
         val (hotpAccounts, totpAccounts) = specs.partition { it.type == OtpType.HOTP }

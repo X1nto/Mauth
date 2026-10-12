@@ -34,7 +34,8 @@ class PasswordFormField(
 
     @param:DrawableRes
     private val icon: Int,
-    private val required: Boolean = false
+    private val required: Boolean = false,
+    private val validator: (String) -> Boolean = { true }
 ) : FormField<String>(initial, id = label) {
 
     private val fieldState = TextFieldState(initial)
@@ -81,8 +82,14 @@ class PasswordFormField(
                     },
                 )
             },
-            supportingText = if (!required) null else { ->
-                Text(stringResource(R.string.account_data_status_required))
+            supportingText = when {
+                error && value.isNotEmpty() -> { ->
+                    Text(stringResource(R.string.account_data_status_invalid))
+                }
+                required -> { ->
+                    Text(stringResource(R.string.account_data_status_required))
+                }
+                else -> null
             },
             textObfuscationMode = if (showPassword) TextObfuscationMode.Visible else TextObfuscationMode.System,
             isError = error
@@ -90,9 +97,9 @@ class PasswordFormField(
     }
 
     override fun isValid(): Boolean {
-        if (!required) return true
+        if (value.isEmpty()) return !required
 
-        return value.isNotEmpty()
+        return validator(value)
     }
 
 }

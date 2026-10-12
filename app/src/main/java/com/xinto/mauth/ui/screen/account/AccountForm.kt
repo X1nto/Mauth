@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.runtime.Stable
 import com.xinto.mauth.R
 import com.xinto.mauth.core.otp.OtpType
+import com.xinto.mauth.core.otp.normalizeOtpSecret
 import com.xinto.mauth.domain.account.model.DomainAccountInfo
 import com.xinto.mauth.domain.group.model.DomainGroup
 import com.xinto.mauth.ui.component.form.ComboBoxFormField
@@ -46,7 +47,8 @@ class AccountForm(
         initial = initial.secret,
         label = R.string.account_data_secret,
         icon = R.drawable.ic_key,
-        required = true
+        required = true,
+        validator = { it.normalizeOtpSecret() != null }
     )
     val group = GroupFormField(
         initial = initial.groupId,

@@ -6,6 +6,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.xinto.mauth.core.otp.normalizeOtpSecret
 import com.xinto.mauth.db.converter.OtpConverter
 import com.xinto.mauth.db.converter.UriConverter
 import com.xinto.mauth.db.converter.UuidConverter
@@ -18,7 +19,7 @@ import com.xinto.mauth.db.dao.rtdata.entity.EntityCountData
 
 @Database(
     entities = [EntityAccount::class, EntityCountData::class, EntityGroup::class],
-    version = 6,
+    version = 7,
     autoMigrations = [
         AutoMigration(
             from = 1,
@@ -64,6 +65,24 @@ abstract class AccountDatabase : RoomDatabase() {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE accounts ADD COLUMN create_date INTEGER NOT NULL DEFAULT 0")
                 db.execSQL("UPDATE accounts SET create_date = strftime('%s','now') + ROWID")
+            }
+        }
+
+        val Migrate6To7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                val secrets = mutableListOf<Pair<ByteArray, String>>()
+                db.query("SELECT id, secret FROM accounts").use { cursor ->
+                    while (cursor.moveToNext()) {
+                        secrets.add(cursor.getBlob(0) to cursor.getString(1))
+                    }
+                }
+
+                for ((id, secret) in secrets) {
+                    val normalized = secret.normalizeOtpSecret()
+                    if (normalized != null && normalized != secret) {
+                        db.execSQL("UPDATE accounts SET secret = ? WHERE id = ?", arrayOf(normalized, id))
+                    }
+                }
             }
         }
     }

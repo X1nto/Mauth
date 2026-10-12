@@ -36,6 +36,7 @@ object MauthDI {
             Room.databaseBuilder(androidContext(), AccountDatabase::class.java, "accounts")
                 .addMigrations(AccountDatabase.Migrate3to4)
                 .addMigrations(AccountDatabase.Migrate4To5)
+                .addMigrations(AccountDatabase.Migrate6To7)
                 .build()
         }
 

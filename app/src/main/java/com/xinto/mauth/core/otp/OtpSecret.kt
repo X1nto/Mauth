@@ -1,12 +1,27 @@
 package com.xinto.mauth.core.otp
 
-import org.apache.commons.codec.binary.Base32
+// Lengths a Base32 encoder can produce, modulo 8
+// https://www.rfc-editor.org/rfc/rfc4648#section-6
+private val VALID_LENGTHS = setOf(0, 2, 4, 5, 7)
 
-private val base32 = Base32()
-
-fun String.decodeOtpSecret(): ByteArray {
-    val trimmed = trim()
-        .replace("-", "")
+/**
+ * @return the secret in spec form (uppercase, no separators, no padding), or null when it isn't valid Base32.
+ */
+fun String.normalizeOtpSecret(): String? {
+    val cleaned = trim()
         .replace(" ", "")
-    return base32.decode(trimmed)
+        .replace("-", "")
+        .trimEnd('=')
+        .uppercase()
+
+    if (cleaned.isEmpty())
+        return null
+
+    if (cleaned.any { it !in 'A'..'Z' && it !in '2'..'7' })
+        return null
+
+    if (cleaned.length % 8 !in VALID_LENGTHS)
+        return null
+
+    return cleaned
 }
