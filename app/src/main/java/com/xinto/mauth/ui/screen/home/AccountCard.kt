@@ -27,25 +27,36 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.layer.drawLayer
+import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.constrainHeight
 import androidx.compose.ui.unit.constrainWidth
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.takeOrElse
+import androidx.compose.ui.util.lerp
 import com.xinto.mauth.domain.account.model.DomainAccount
 import com.xinto.mauth.ui.component.UriImage
-import kotlin.math.roundToInt
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun AccountAvatar(
@@ -93,26 +104,17 @@ fun OtpCode(
     color: Color = LocalContentColor.current,
     style: TextStyle = MaterialTheme.typography.titleMedium,
     dotSize: TextUnit = style.fontSize * 0.36f,
-    dotGap: TextUnit = style.fontSize * 0.23f,
 ) {
-    val target = remember(visible, code) {
-        Pair(visible, code)
-    }
     AnimatedContent(
         modifier = modifier,
-        targetState = target,
+        targetState = code,
         transitionSpec = {
-            if (initialState.first == targetState.first) {
-                slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Up) + fadeIn() togetherWith
-                        slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Up) + fadeOut()
-            } else {
-                slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Down) + fadeIn() togetherWith
-                        slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Down) + fadeOut()
-            }
+            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Up) + fadeIn() togetherWith
+                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Up) + fadeOut()
         },
         contentAlignment = Alignment.CenterEnd,
         label = "OtpCode",
-    ) { (show, animatedCode) ->
+    ) { animatedCode ->
         val drain = progress?.let { animateDrainAsState(it) }
         val drainModifier = if (drain == null) Modifier else Modifier
             .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
@@ -128,25 +130,14 @@ fun OtpCode(
                     )
                 }
             }
-        if (show) {
-            Text(
-                modifier = drainModifier,
-                text = animatedCode,
-                color = color,
-                style = style,
-                maxLines = 1,
-                softWrap = false
-            )
-        } else {
-            OtpCodeDots(
-                modifier = drainModifier,
-                count = animatedCode.length,
-                color = color,
-                dotSize = dotSize,
-                dotGap = dotGap,
-                height = style.lineHeight.takeOrElse { style.fontSize * 1.5f },
-            )
-        }
+        OtpCodeGlyphs(
+            modifier = drainModifier,
+            code = animatedCode,
+            visible = visible,
+            color = color,
+            style = style,
+            dotSize = dotSize,
+        )
     }
 }
 
@@ -164,35 +155,118 @@ private fun animateDrainAsState(target: Float): State<Float> {
 }
 
 @Composable
-private fun OtpCodeDots(
-    count: Int,
+private fun OtpCodeGlyphs(
+    code: String,
+    visible: Boolean,
     color: Color,
+    style: TextStyle,
     dotSize: TextUnit,
-    dotGap: TextUnit,
-    height: TextUnit,
     modifier: Modifier = Modifier,
 ) {
-    Layout(
-        modifier = modifier.drawBehind {
-            val diameter = dotSize.toPx()
-            val radius = diameter / 2f
-            val step = diameter + dotGap.toPx()
-            repeat(count) { index ->
-                drawCircle(
-                    color = color,
-                    radius = radius,
-                    center = Offset(
-                        x = index * step + radius,
-                        y = size.height / 2f,
-                    ),
-                )
+    val textMeasurer = rememberTextMeasurer(cacheSize = 0)
+    val textLayout = remember(code, style, textMeasurer) {
+        textMeasurer.measure(text = code, style = style)
+    }
+    val bounds = remember(textLayout) {
+        FloatArray(code.length + 1) {
+            if (it < code.length) {
+                textLayout.getHorizontalPosition(offset = it, usePrimaryDirection = true)
+            } else {
+                textLayout.multiParagraph.intrinsics.maxIntrinsicWidth
             }
         }
+    }
+    val dotRadius = with(LocalDensity.current) { dotSize.toPx() } / 2f
+    val layer = rememberGraphicsLayer()
+    val reveals = remember(code.length) {
+        List(code.length) {
+            Animatable(if (visible) 1f else 0f)
+        }
+    }
+    val revealSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
+    LaunchedEffect(visible, reveals) {
+        val target = if (visible) 1f else 0f
+        reveals.forEachIndexed { index, reveal ->
+            launch {
+                if (visible) {
+                    delay(index * 25L)
+                }
+                reveal.animateTo(targetValue = target, animationSpec = revealSpec)
+            }
+        }
+    }
+
+    Layout(
+        modifier = modifier
+            .semantics {
+                if (visible) text = AnnotatedString(code)
+            }
+            .drawWithCache {
+                layer.record {
+                    val dotStep = (bounds[code.length] - dotRadius * 2f) / maxOf(code.lastIndex, 1)
+                    repeat(code.length) { index ->
+                        val reveal = reveals[index].value
+                        val start = bounds[index]
+                        val end = bounds[index + 1]
+                        val center = Offset(
+                            x = lerp(
+                                start = dotRadius + index * dotStep,
+                                stop = (start + end) / 2f,
+                                fraction = reveal
+                            ),
+                            y = size.height / 2f,
+                        )
+
+                        val dotAlpha = (1f - reveal / 0.6f).coerceIn(0f, 1f)
+                        if (dotAlpha > 0f) {
+                            drawCircle(
+                                color = color,
+                                radius = dotRadius * lerp(
+                                    start = 1f,
+                                    stop = 1.8f,
+                                    fraction = reveal
+                                ),
+                                center = center,
+                                alpha = dotAlpha,
+                            )
+                        }
+
+                        val glyphAlpha = ((reveal - 0.3f) / 0.7f).coerceIn(0f, 1f)
+                        if (glyphAlpha > 0f) {
+                            withTransform(transformBlock = {
+                                scale(
+                                    scale = lerp(
+                                        start = 0.5f,
+                                        stop = 1f,
+                                        fraction = reveal
+                                    ),
+                                    pivot = center
+                                )
+                                translate(left = center.x - (start + end) / 2f)
+                                clipRect(
+                                    left = if (index == 0) -size.width else start,
+                                    top = -size.height,
+                                    right = if (index == code.lastIndex) size.width * 2f else end,
+                                    bottom = size.height * 2f,
+                                )
+                            }) {
+                                drawText(
+                                    textLayoutResult = textLayout,
+                                    color = color,
+                                    alpha = glyphAlpha
+                                )
+                            }
+                        }
+                    }
+                }
+                onDrawBehind {
+                    drawLayer(layer)
+                }
+            }
     ) { _, constraints ->
-        val width = dotSize.toPx() * count + dotGap.toPx() * (count - 1)
         layout(
-            width = constraints.constrainWidth(width.roundToInt()),
-            height = constraints.constrainHeight(height.toPx().roundToInt()),
+            width = constraints.constrainWidth(textLayout.size.width),
+            height = constraints.constrainHeight(textLayout.size.height),
         ) {}
     }
 }
